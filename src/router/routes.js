@@ -3,13 +3,7 @@ export default [
     path: "",
     name: "EmptyLayout",
     component: () => import("../layouts/EmptyLayout.vue"),
-    children: [
-      {
-        path: "/home",
-        name: "home",
-        component: () => import("../pages/home/index.vue"),
-      },
-    ],
+    children: [],
   },
   {
     path: "",
@@ -24,10 +18,21 @@ export default [
     ],
   },
   {
-    path: "",
+    path: "/admin",
     name: "AdminLayout",
     component: () => import("../layouts/AdminLayout.vue"),
-    children: [],
+    children: [
+      {
+        path: "",
+        name: "Dashboard",
+        component: () => import("../pages/admin/home/Home.vue"),
+      },
+      {
+        path: "/course",
+        name: "Course",
+        component: () => import("../pages/admin/course/Course.vue"),
+      },
+    ],
   },
   {
     path: "/:pathMatch(.*)*",

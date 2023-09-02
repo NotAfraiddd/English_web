@@ -4,20 +4,20 @@
 }
 
 .main {
-  background: $white-color;
+  background:#fff;
 }
 
-.main-sidebar {
-  background: $white-color;
+.sidebar-wrapper {
+  background:#fff;
   height: 100vh !important;
 }
 
 .nav-pills .nav-link.active {
-  background: $bg-active;
-  color: $text-gray-color;
+  background: #bcb9b9 ;
+  color: #615a5a;
 }
 
-.main-sidebar {
+.sidebar-wrapper {
   width: 250px;
   transition: all 0.3s ease;
   z-index: 12;
@@ -31,13 +31,14 @@
   .hidden-box-shadow-sidebar {
     top: 0;
     right: 0;
-    background-color: $white-color;
+    background-color:#fff;
   }
 }
 
 .sidebar {
   max-height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .name-app-close {
@@ -59,25 +60,25 @@
 .extend-icon {
   display: none;
   z-index: -1;
-  @include res_max-width(992) {
-    display: block;
-    z-index: 10;
-  }
+  // @include res_max-width(992) {
+  //   display: block;
+  //   z-index: 10;
+  // }
 }
 
 .hide-on-sp {
   transition: opacity 0.3s ease, visibility 0.3s ease,
     transform 0.3s ease-in-out, width 0.3s ease-in-out;
-  @include res_max-width(992) {
-    opacity: 0;
-    visibility: hidden;
-    width: 0px !important;
-  }
+  // @include res_max-width(992) {
+  //   opacity: 0;
+  //   visibility: hidden;
+  //   width: 0px !important;
+  // }
 }
 
 .separator {
   display: list-item;
-  background-color: $seperate-color;
+  // background-color: $seperate-color;
   opacity: 0.2;
 }
 
@@ -85,7 +86,7 @@
   white-space: nowrap;
   width: 250px;
   transition: width 0.3s ease-in-out;
-  background-color: $white-color;
+  background-color:#fff;
   .text-btn-collapse {
     margin-left: 10px;
     opacity: 1;
@@ -114,7 +115,7 @@
   width: 3.6rem;
 }
 
-.main-sidebar-resize {
+.sidebar-wrapper-resize {
   width: 80px;
   transition: all 0.3s ease;
 }
