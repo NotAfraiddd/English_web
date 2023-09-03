@@ -1,9 +1,9 @@
 <template>
-  <div>erros</div>
+  <div>user</div>
 </template>
 <script>
 export default {
-  name: "not-found",
+  name: "User",
 };
 </script>
 

@@ -1,6 +1,7 @@
 <template>
   <BaseSidebar @resize="onResizeSidebar" :isResize="isResize" />
   <div :class="!isResize ? 'content' : 'content-resize'">
+    <BaseHeader />
     <div class="layout">
       <div class="layout-content">
         <router-view />
@@ -14,12 +15,14 @@
 <script>
 import LoadingScreen from "../components/common/LoadingScreen";
 import BaseSidebar from "../components/admin/BaseSidebar.vue";
+import BaseHeader from "../components/admin/BaseHeader.vue";
 import $ from "jquery";
 export default {
   name: "AdminLayout",
   components: {
     LoadingScreen,
     BaseSidebar,
+    BaseHeader,
   },
   data() {
     return {
@@ -56,6 +59,7 @@ export default {
     updateWindowWidth() {
       this.windowWidth = window.innerWidth;
     },
+
     onCollapse() {
       if (this.windowWidth < 996) {
         $('[data-widget="pushmenu"]').PushMenu("collapse");

@@ -1,9 +1,22 @@
 <template lang="">
   <!-- Main Sidebar Container -->
   <aside
-    :class="isResize ? 'sidebar-wrapper-resize' : 'sidebar-wrapper'"
+    :class="isResize ? 'sidebar-wrapper-resize ' : 'sidebar-wrapper '"
     class="main sidebar-collapse fixed overflow-x-hidden sidebar-no-expand"
   >
+    <div
+      :class="isResize ? 'logo rounded-full' : 'sidebar-logo rounded-full'"
+      class="mt-5 mx-auto"
+    >
+      <div
+        :class="
+          isResize ? 'sidebar-title-resize rounded-full' : 'sidebar-title'
+        "
+        class="text-2xl font-semibold h-full w-full"
+      >
+        CircleZ
+      </div>
+    </div>
     <!-- Sidebar -->
     <div ref="sidebar" class="sidebar p-0" id="js-sidebar">
       <!-- Sidebar Menu -->
@@ -22,12 +35,15 @@
   >
     <span class="nav-link h-10 flex items-center mb-0 ml-3">
       <img
-        :class="['toggle-sidebar-icon', isResize && 'logo-xl-btn-collapse']"
-        src="../../assets/images/menu-icon-1.png"
+        :class="[
+          'toggle-sidebar-icon',
+          isResize && 'logo-xl-btn-collapse mx-auto',
+        ]"
+        :src="ADMIN_BUTTON_BACK"
       />
       <span
         v-bind:class="isResize && 'hidden'"
-        class="text-red-300 text-btn-collapse"
+        class="text-primary text-btn-collapse leading-10"
       >
         Put away the menu
       </span>
@@ -46,7 +62,12 @@
 import BaseMenu from "./BaseMenu.vue";
 // import { LOGO_V } from "../../../js/constants/imageConst";
 // import { HOME_ROUTE, ADMIN_DASHBOARD_ROUTE } from "../constants";
-import { HOME_ICON } from "../../constants/image";
+import {
+  ADMIN_BUTTON_BACK,
+  ADMIN_COURSE,
+  ADMIN_HOME,
+  ADMIN_MEMBER,
+} from "../../constants/image";
 export default {
   name: "BaseSidebar",
   props: {
@@ -66,7 +87,10 @@ export default {
     //   indexOfHeadquaterInSubAdminPanel
     // ].to = "/shop/" + this.$store.state?.auth.staff.shop_id;
     // this.LOGO_V = LOGO_V;
-    this.HOME_ICON = HOME_ICON;
+    this.ADMIN_BUTTON_BACK = ADMIN_BUTTON_BACK;
+    this.ADMIN_COURSE = ADMIN_COURSE;
+    this.ADMIN_HOME = ADMIN_HOME;
+    this.ADMIN_MEMBER = ADMIN_MEMBER;
     // this.logoRoute = this.isRoleAdmin ? ADMIN_DASHBOARD_ROUTE : HOME_ROUTE;
   },
   data() {
@@ -78,36 +102,20 @@ export default {
         {
           message: "Dashboard",
           to: "/admin",
-          iconPath: HOME_ICON,
+          iconPath: ADMIN_HOME,
           activeLinks: [],
         },
         {
-          message: "",
-          to: "/admin",
-          iconPath: "",
+          message: "Course",
+          to: "/admin/course",
+          iconPath: ADMIN_COURSE,
           activeLinks: [],
-          children: [
-            {
-              message: "Course",
-              to: "/course",
-              iconPath: HOME_ICON,
-              activeLinks: [],
-            },
-          ],
         },
         {
-          message: "",
-          to: "",
-          iconPath: "",
+          message: "Member",
+          to: "/admin/member",
+          iconPath: ADMIN_MEMBER,
           activeLinks: [],
-          children: [
-            {
-              message: "Member",
-              to: "/admin/member",
-              iconPath: HOME_ICON,
-              activeLinks: [],
-            },
-          ],
         },
       ],
     };
@@ -126,5 +134,5 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-@import "../../assets/styles/sidebar";
+@import "../../assets/styles/sidebar.scss";
 </style>

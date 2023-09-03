@@ -18,17 +18,20 @@
           :to="menu.to"
           @click="onCollapse"
           :class="[
-            'nav-link h-10 flex items-center gap-10 mb-2 ml-2',
+            'nav-link h-10 flex items-center gap-10 mb-2 ml-4',
             isActiveMenu(menu.to, menu.activeLinks),
           ]"
         >
           <img
             v-if="menu.iconPath"
-            class="h-8 w-8"
+            class="h-7 w-7"
             :src="menu.iconPath"
             alt="navIcon"
           />
-          <p class="mb-0" v-bind:class="{ hidden: isResize }">
+          <p
+            class="mb-0 h-10 leading-10 text-base"
+            v-bind:class="{ hidden: isResize }"
+          >
             {{ menu.message }}
           </p>
         </router-link>
@@ -52,12 +55,15 @@
             >
               <img
                 v-if="subMenu.iconPath"
-                class="w-8 h-8"
+                class="w-7 h-7"
                 :src="subMenu.iconPath"
                 alt="navIcon"
               />
-              <div v-else class="h-8 w-8" />
-              <p class="mb-0" v-bind:class="{ hidden: isResize }">
+              <div v-else class="h-7 w-7" />
+              <p
+                class="mb-0 h-10 leading-10 text-base"
+                v-bind:class="{ hidden: isResize }"
+              >
                 {{ subMenu.message }}
               </p>
             </router-link>
@@ -79,12 +85,15 @@
                 >
                   <img
                     v-if="subMenu3.iconPath"
-                    class="h-8 w-8"
+                    class="h-7 w-7"
                     :src="subMenu3.iconPath"
                     alt="navIcon"
                   />
-                  <div v-else class="h-8 w-8" />
-                  <p class="mb-0" v-bind:class="{ hidden: isResize }">
+                  <div v-else class="h-7 w-7" />
+                  <p
+                    class="mb-0 h-10 leading-10 text-base"
+                    v-bind:class="{ hidden: isResize }"
+                  >
                     {{ subMenu3.message }}
                   </p>
                 </router-link>
