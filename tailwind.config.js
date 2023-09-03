@@ -4,12 +4,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        dark: "#363853",
-        hoverText: "#288ad6",
-        tragop: "#f1f1f1",
-        btn: "#755731",
-        backgroundColor: "#f8fafb",
-        borderBtn: "e0e0e0",
+        primary: "rgba(81, 166, 221, 0.70)",
+        primary_black :"#615A5A",
       },
     },
   },
