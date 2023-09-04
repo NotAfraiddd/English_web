@@ -28,9 +28,19 @@ export default [
         component: () => import("../pages/admin/home/Home.vue"),
       },
       {
-        path: "/course",
+        path: "course",
         name: "Course",
         component: () => import("../pages/admin/course/Course.vue"),
+      },
+      {
+        path: "blog/pending",
+        name: "BlogPending",
+        component: () => import("../pages/admin/blog/BlogPending.vue"),
+      },
+      {
+        path: "comment/reported",
+        name: "CommentReported",
+        component: () => import("../pages/admin/comment/CommentReported.vue"),
       },
     ],
   },

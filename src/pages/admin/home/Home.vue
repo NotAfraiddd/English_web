@@ -1,42 +1,8 @@
 <template>
   <div class="text-primary_black">
     <div class="flex justify-between flex-wrap gap-4 mb-10">
-      <div
-        class="contain hover:bg-table_border w-4/12 h-20 border flex justify-between p-3 flex-wrap cursor-pointer"
-      >
-        <div class="flex flex-col items-start justify-center">
-          <div class="text-sm text-primary_black_opacity">Report</div>
-          <div class="text-xl text-primary_black font-semibold">
-            Report comment
-          </div>
-        </div>
-        <div class="flex justify-center items-start">
-          <div
-            class="text-xs bg-red-600 text-white text-center leading-6 h-6 w-6 rounded-full"
-          >
-            +99
-          </div>
-          <div class="ml-2">notifications</div>
-        </div>
-      </div>
-      <div
-        class="contain hover:bg-table_border w-4/12 h-20 border flex justify-between p-3 flex-wrap cursor-pointer"
-      >
-        <div class="flex flex-col items-start justify-center">
-          <div class="text-sm text-primary_black_opacity">Report</div>
-          <div class="text-xl text-primary_black font-semibold">
-            Report comment
-          </div>
-        </div>
-        <div class="flex justify-center items-start">
-          <div
-            class="text-xs bg-red-600 text-white text-center leading-6 h-6 w-6 rounded-full"
-          >
-            +99
-          </div>
-          <div class="ml-2">notifications</div>
-        </div>
-      </div>
+      <Notify :data="report" @clicked="changeUI" />
+      <Notify :data="blog" @clicked="changeUI" />
     </div>
     <BaseTable
       :columns="columns"
@@ -48,12 +14,83 @@
 
 <script>
 import BaseTable from "../../../components/common/BaseTable.vue";
-
+import Notify from "../../../components/common/Notify.vue";
+import { ARROW_LEFT, AVATAR } from "../../../constants/image";
+import { NOTIFY, SCREEN } from "../../../constants/index";
 export default {
   name: "Dashboard",
-  components: { BaseTable },
+  components: { BaseTable, Notify },
+  created() {
+    this.AVATAR = AVATAR;
+    this.ARROW_LEFT = ARROW_LEFT;
+    this.NOTIFY = NOTIFY;
+    this.SCREEN = SCREEN;
+  },
+  mounted() {
+    if (this.screenUI == SCREEN.comment) {
+      const containWidthElement = this.$refs.containWidth;
+      console.log(containWidthElement);
+    }
+  },
+  methods: {
+    changeUI(data) {
+      if (data == NOTIFY.comment)
+        this.$router.push({ name: "CommentReported" });
+      else if (data == NOTIFY.blog) this.$router.push({ name: "BlogPending" });
+      else this.screenUI = SCREEN.dashboard;
+    },
+    changeBack() {
+      this.screenUI = SCREEN.dashboard;
+    },
+  },
   data() {
     return {
+      isHover: false,
+      screenUI: SCREEN.dashboard,
+      report: {
+        id: NOTIFY.comment,
+        subtitle: "Report",
+        title: "Report comment",
+      },
+      blog: {
+        id: NOTIFY.blog,
+        subtitle: "Blog",
+        title: "Blog pending approval",
+      },
+      listReported: [
+        {
+          comment: "John was reported for calling a comment",
+          offense: "stupid",
+        },
+        {
+          comment: "John was reported for calling a comment",
+          offense: "shut up !!! bitch",
+        },
+        {
+          comment: "John was reported for calling a comment",
+          offense: "stupid",
+        },
+        {
+          comment: "John was reported for calling a comment",
+          offense: "shut up !!! bitch",
+        },
+        {
+          comment: "John was reported for calling a comment",
+          offense: "stupid",
+        },
+        {
+          comment: "John was reported for calling a comment",
+          offense: "shut up !!! bitch",
+        },
+        {
+          comment: "John was reported for calling a comment",
+          offense: "stupid",
+        },
+        {
+          comment: "John was reported for calling a comment",
+          offense: "shut up !!! bitch",
+        },
+      ],
       data: [
         {
           title: "Current level member",
@@ -109,12 +146,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.contain {
-  min-width: 300px;
-
-  /* @media screen and (max-width: 1024px) {
-    height: 96px;
-  } */
-}
-</style>
+<style lang="scss" scoped></style>

@@ -32,7 +32,14 @@
         @mouseleave="isHovered = false"
         class="list-menu relative flex items-center justify-between flex-grow cur-pointer"
       >
-        <div v-if="isMatchedRoute('Dashboard')" class="flex items-center">
+        <div
+          v-if="
+            isMatchedRoute('Dashboard') ||
+            isMatchedRoute('BlogPending') ||
+            isMatchedRoute('CommentReported')
+          "
+          class="flex items-center"
+        >
           <span class="name ml-2 w-48">Nguyen Huynh Chi Bao</span>
           <Avatar :imgUrl="AVATAR" class="w-9" />
         </div>

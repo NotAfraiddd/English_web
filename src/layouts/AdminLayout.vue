@@ -16,6 +16,8 @@
 import LoadingScreen from "../components/common/LoadingScreen";
 import BaseSidebar from "../components/admin/BaseSidebar.vue";
 import BaseHeader from "../components/admin/BaseHeader.vue";
+import { LoadingMixins } from "../mixins/Loading";
+
 import $ from "jquery";
 export default {
   name: "AdminLayout",
@@ -24,6 +26,7 @@ export default {
     BaseSidebar,
     BaseHeader,
   },
+  mixins: [LoadingMixins],
   data() {
     return {
       isResize: false,
