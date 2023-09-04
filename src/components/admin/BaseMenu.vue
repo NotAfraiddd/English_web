@@ -13,14 +13,17 @@
         @click="onCollapse"
       />
 
-      <li v-else class="nav-item" :key="menu.message">
+      <li
+        v-else
+        :class="[
+          'nav-item',
+          { active: isActiveMenu(menu.to, menu.activeLinks) },
+        ]"
+      >
         <router-link
           :to="menu.to"
           @click="onCollapse"
-          :class="[
-            'nav-link h-10 flex items-center gap-10 mb-2 ml-4',
-            isActiveMenu(menu.to, menu.activeLinks),
-          ]"
+          class="nav-link h-10 flex items-center gap-10 mb-2 ml-4"
         >
           <img
             v-if="menu.iconPath"
@@ -35,72 +38,6 @@
             {{ menu.message }}
           </p>
         </router-link>
-      </li>
-
-      <li v-if="menu.children" :key="`children_${menu.message}`">
-        <ul class="nav">
-          <li
-            class="nav-item"
-            v-for="subMenu in menu.children"
-            :key="`submenu_${subMenu.message}`"
-            @click="onCollapse"
-          >
-            <router-link
-              :to="subMenu.to"
-              :class="[
-                'nav-link h-10 flex items-center gap-10 mb-1 w-full ml-2',
-                !subMenu.children &&
-                  isActiveMenu(subMenu.to, subMenu.activeLinks),
-              ]"
-            >
-              <img
-                v-if="subMenu.iconPath"
-                class="w-7 h-7"
-                :src="subMenu.iconPath"
-                alt="navIcon"
-              />
-              <div v-else class="h-7 w-7" />
-              <p
-                class="mb-0 h-10 leading-10 text-base"
-                v-bind:class="{ hidden: isResize }"
-              >
-                {{ subMenu.message }}
-              </p>
-            </router-link>
-            <ul
-              v-if="subMenu.children"
-              :class="{ hidden: isResize, 'nav-menu-3': true }"
-            >
-              <li
-                class="w-full"
-                v-for="subMenu3 in subMenu.children"
-                :key="`submenu_${subMenu3.message}`"
-              >
-                <router-link
-                  :to="subMenu3.to"
-                  :class="[
-                    'nav-link h-10 flex items-center gap-10 mb-1 w-full ml-2',
-                    isActiveMenu(subMenu3.to, subMenu3.activeLinks),
-                  ]"
-                >
-                  <img
-                    v-if="subMenu3.iconPath"
-                    class="h-7 w-7"
-                    :src="subMenu3.iconPath"
-                    alt="navIcon"
-                  />
-                  <div v-else class="h-7 w-7" />
-                  <p
-                    class="mb-0 h-10 leading-10 text-base"
-                    v-bind:class="{ hidden: isResize }"
-                  >
-                    {{ subMenu3.message }}
-                  </p>
-                </router-link>
-              </li>
-            </ul>
-          </li>
-        </ul>
       </li>
     </template>
   </ul>
@@ -122,7 +59,6 @@ export default {
   data() {
     return {
       windowWidth: window.innerWidth,
-      isFirstItemActive: false,
     };
   },
   mounted() {
@@ -143,10 +79,6 @@ export default {
           activeRoute.some(
             (route) => route === currentPath || route === currentRouteName
           ));
-      if (!this.isFirstItemActive && isActive) {
-        this.isFirstItemActive = true;
-        return "active";
-      }
       return isActive ? "active" : "";
     },
     /**
@@ -191,10 +123,11 @@ export default {
     border-radius: 8px;
     background: rgba(227, 226, 226, 0.4);
   }
+}
 
-  &:active {
-    background: rgba(227, 226, 226, 0.4);
-  }
+.nav-item.active {
+  border-radius: 8px;
+  background: rgba(227, 226, 226, 0.4);
 }
 
 .nav-item p,

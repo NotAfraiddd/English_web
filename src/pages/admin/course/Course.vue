@@ -1,10 +1,27 @@
 <template>
-  <div>course</div>
+  <div>
+    <BaseSearch :search="inputSearch" @update="updateValue" />
+  </div>
 </template>
 <script>
+import BaseSearch from "../../../components/common/BaseSearch.vue";
+
+BaseSearch;
 export default {
   name: "Course",
-  components: {},
+  components: { BaseSearch },
+
+  data() {
+    return {
+      inputSearch: "",
+    };
+  },
+  methods: {
+    updateValue(data) {
+      console.log(data);
+      this.inputSearch = data;
+    },
+  },
 };
 </script>
 
