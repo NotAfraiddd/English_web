@@ -1,7 +1,7 @@
 <template lang="">
   <!-- Main Sidebar Container -->
   <aside
-    :class="isResize ? 'sidebar-wrapper-resize ' : 'sidebar-wrapper '"
+    :class="isResize ? 'main-sidebar-resize ' : 'main-sidebar '"
     class="main sidebar-collapse fixed overflow-x-hidden sidebar-no-expand"
   >
     <div
@@ -79,7 +79,7 @@ export default {
   components: {
     BaseMenu,
   },
-  // emits: ["resize"],
+  emits: ["resize"],
   created() {
     // const indexOfHeadquaterInAdminPanel = 6;
     // const indexOfHeadquaterInSubAdminPanel = 1;

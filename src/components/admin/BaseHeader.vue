@@ -20,9 +20,9 @@
 
     <div class="flex items-center justify-between content-header-right mr-8">
       <div class="relative">
-        <img :src="BELL" alt="" srcset="" class="mr-2 cursor-pointer" />
+        <img :src="BELL" alt="" srcset="" class="mr-2 cursor-pointer h-5" />
         <div
-          class="absolute header-notify text-xs bg-red-600 text-white leading-6 h-6 w-6 rounded-full"
+          class="absolute header-notify text-xs bg-red-600 text-center text-white leading-6 h-6 w-6 rounded-full"
         >
           +99
         </div>

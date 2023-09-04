@@ -6,6 +6,9 @@ module.exports = {
       colors: {
         primary: "rgba(81, 166, 221, 0.70)",
         primary_black :"#615A5A",
+        primary_black_opacity :"rgba(97, 90, 90, 0.5)",
+        table_header:"#ECECEC",
+        table_border:"rgba(217, 217, 217, 0.6)"
       },
     },
   },

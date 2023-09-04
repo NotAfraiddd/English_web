@@ -8,7 +8,11 @@ import AVATAR from "../assets/images/avatar.jpg";
 import ARROW_UP from "../assets/images/admin_arrow_up.svg";
 import ARROW_DOWN from "../assets/images/admin_arrow_down.svg";
 import BELL from "../assets/images/bell.svg";
+import EDIT_ICON from "../assets/images/edit-default.svg";
+import DELETE_GRAY_ICON from "../assets/images/delete-gray-icon.png";
 export {
+  DELETE_GRAY_ICON,
+  EDIT_ICON,
   LOCK,
   AVATAR,
   BELL,

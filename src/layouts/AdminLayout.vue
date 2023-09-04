@@ -85,8 +85,8 @@ export default {
   // box-shadow: inset 11px 0 9px -7px rgb(0 0 0 / 10%),
   //   inset 0px 11px 9px -7px rgb(0 0 0 / 10%);
   min-height: 100vh;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
   border-left: 1px solid #eee;
   border-top: 1px solid #eee;
   background-color: #fff;
@@ -95,6 +95,7 @@ export default {
     border-radius: 15px;
     width: 100%;
     min-height: 100%;
+    margin-top: 30px;
   }
 }
 </style>
