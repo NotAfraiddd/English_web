@@ -10,9 +10,14 @@ import ARROW_UP from "../assets/images/admin_arrow_up.svg";
 import ARROW_DOWN from "../assets/images/admin_arrow_down.svg";
 import BELL from "../assets/images/bell.svg";
 import EDIT_ICON from "../assets/images/edit-default.svg";
+import ERROR from "../assets/images/error.svg";
 import DELETE_GRAY_ICON from "../assets/images/delete-gray-icon.png";
 import TITLE from "../assets/images/title.png";
+import ERROR_GIF from "../assets/images/gifError.gif";
+
 export {
+  ERROR_GIF,
+  ERROR,
   TITLE,
   DELETE_GRAY_ICON,
   EDIT_ICON,

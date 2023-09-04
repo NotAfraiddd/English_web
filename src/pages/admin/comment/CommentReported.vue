@@ -91,4 +91,30 @@ export default {
     width: 5rem;
   }
 }
+
+.ant-pagination-item:focus-visible a,
+.ant-pagination-item-active a,
+.ant-pagination-item:hover {
+  border-color: rgba(81, 166, 221, 0.7);
+  color: rgba(81, 166, 221, 0.7);
+}
+.ant-pagination-item,
+.ant-pagination-prev .ant-pagination-item-link,
+.ant-pagination-disabled .ant-pagination-item-link,
+.ant-pagination-next .ant-pagination-item-link {
+  border-color: #fff;
+}
+.ant-pagination-next .ant-pagination-item-link,
+.ant-pagination-prev .ant-pagination-item-link {
+  border: none;
+}
+
+.ant-pagination-item-active,
+.ant-pagination-item:hover {
+  border-radius: 50%;
+  background-color: rgba(81, 166, 221, 0.7);
+  a {
+    color: #fff;
+  }
+}
 </style>
