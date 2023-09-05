@@ -18,7 +18,7 @@
 <script>
 import GroupBack from '../../../components/common/GroupBack.vue';
 import ListBlog from '../../../components/common/ListBlog.vue';
-import { ARROW_LEFT, AVATAR, TITLE } from '../../../constants/image';
+import { AVATAR, TITLE } from '../../../constants/image';
 import { NOTIFY } from '../../../constants/index';
 export default {
   name: 'BlogPending',
@@ -26,7 +26,6 @@ export default {
   created() {
     this.TITLE = TITLE;
     this.AVATAR = AVATAR;
-    this.ARROW_LEFT = ARROW_LEFT;
     this.NOTIFY = NOTIFY;
   },
   watch: {
@@ -105,7 +104,7 @@ export default {
   border-radius: 50%;
   background-color: rgba(81, 166, 221, 0.7);
   a {
-    color: #fff;
+    color: #fff !important;
   }
 }
 </style>

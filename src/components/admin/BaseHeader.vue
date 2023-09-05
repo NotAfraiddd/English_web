@@ -36,6 +36,7 @@
           v-if="
             isMatchedRoute('Dashboard') ||
             isMatchedRoute('BlogPending') ||
+            isMatchedRoute('Course') ||
             isMatchedRoute('CommentReported')
           "
           class="flex items-center"

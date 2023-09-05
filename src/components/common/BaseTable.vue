@@ -302,3 +302,10 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.table td,
+.table th,
+.table thead th {
+  vertical-align: middle !important;
+}
+</style>

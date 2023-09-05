@@ -75,6 +75,7 @@ export default {
 
 <style lang="scss">
 .content {
+  color: #615a5a !important;
   padding-left: 250px;
   transition: all 0.3s ease-in-out;
   @media screen and (max-width: 992px) {
@@ -83,6 +84,7 @@ export default {
 }
 
 .content-resize {
+  color: #615a5a !important;
   width: 100%;
   padding-left: 80px;
   transition: all 0.3s ease-in-out;

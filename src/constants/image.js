@@ -15,10 +15,16 @@ import SEARCH from '../assets/images/search.svg';
 import OPTION_ICON from '../assets/images/option_icon.svg';
 import DELETE_GRAY_ICON from '../assets/images/delete-gray-icon.png';
 import TITLE from '../assets/images/title.png';
+import HEART from '../assets/images/heart.png';
+import HEART_DEFAULT from '../assets/images/heart-default.png';
 import ERROR_GIF from '../assets/images/gifError.gif';
 import MENU from '../assets/images/menu.svg';
+import CHAT from '../assets/images/chat.svg';
 
 export {
+  HEART,
+  HEART_DEFAULT,
+  CHAT,
   MENU,
   OPTION_ICON,
   SEARCH,

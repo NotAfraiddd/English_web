@@ -1,5 +1,5 @@
 <template>
-  <div class="relative">
+  <div class="relative my-5">
     <div class="flex relative w-1/3 search-width h-9">
       <input
         type="text"
