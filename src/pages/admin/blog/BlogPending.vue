@@ -2,7 +2,7 @@
   <div class="text-primary_black">
     <GroupBack title="Blog pending" @back="changeBack" />
     <ListBlog :data="listBlog" />
-    <div class="mt-3">
+    <div class="mt-5 flex justify-center">
       <a-pagination
         class="pagination"
         v-model:current="current"

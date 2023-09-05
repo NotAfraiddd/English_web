@@ -1,6 +1,6 @@
 <template>
   <div class="relative">
-    <div class="flex relative w-1/3">
+    <div class="flex relative w-1/3 search-width h-9">
       <input
         type="text"
         class="px-5 text-base h-9 border input-search w-full"
@@ -9,14 +9,16 @@
         @input="onInputChange"
         spellcheck="false"
       />
-      <div class="absolute right-5 top-2 cursor-pointer">
+      <div
+        class="absolute right-5 cursor-pointer flex items-center my-auto h-full"
+      >
         <img :src="SEARCH" alt="" srcset="" />
       </div>
     </div>
-    <div class="w-1/3 absolute" v-if="showSuggestion">
-      <ul class="border border-t-0">
+    <div class="w-1/3 absolute search-width" v-if="showSuggestion">
+      <ul class="border border-t-0 w-full">
         <li
-          class="h-8 leading-8 item-search hover:bg-primary text-base hover:text-white cursor-pointer text-primary_black"
+          class="h-8 leading-8 text-left pl-5 item-search hover:bg-primary text-base hover:text-white cursor-pointer text-primary_black"
           v-for="(suggestion, index) in filteredSuggestions"
           :key="index"
           @click="select(suggestion)"
@@ -91,10 +93,12 @@ export default {
   color: #fff;
   background: rgba(81, 166, 221, 0.7);
 }
-
-.input-search {
-  &:focus-visible {
-    outline: none;
+.search-width {
+  max-width: 300px;
+  .input-search {
+    &:focus-visible {
+      outline: none;
+    }
   }
 }
 

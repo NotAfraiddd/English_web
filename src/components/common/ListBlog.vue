@@ -26,22 +26,29 @@
         </div>
       </div>
     </div>
-    <div class="w-1/5 flex justify-end">
+    <div class="w-1/5 flex justify-end gap-3">
       <img
         :src="item.imageTitle"
         alt=""
         srcset=""
         class="h-40 min-w-max rounded-md"
       />
+      <div v-if="icon">
+        <img :src="OPTION_ICON" alt="" srcset="" />
+      </div>
     </div>
   </div>
 </template>
 <script>
+import { OPTION_ICON } from '../../constants/image';
 export default {
   name: 'BlogPending',
-  created() {},
+  created() {
+    this.OPTION_ICON = OPTION_ICON;
+  },
   props: {
     data: { type: Array, default: () => [] },
+    icon: { type: Boolean, default: false },
   },
   methods: {},
   data() {

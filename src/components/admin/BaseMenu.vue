@@ -1,6 +1,6 @@
 <template>
   <ul
-    class="nav nav-pills nav-sidebar nav-child-indent flex-col"
+    class="nav nav-pills nav-sidebar nav-child-indent flex-col gap-2"
     data-widget="treeview"
     role="menu"
   >
@@ -23,7 +23,7 @@
         <router-link
           :to="menu.to"
           @click="onCollapse"
-          class="nav-link h-10 flex items-center gap-10 mb-2 ml-4"
+          class="nav-link h-10 flex items-center gap-10"
         >
           <img
             v-if="menu.iconPath"
@@ -44,7 +44,6 @@
 </template>
 
 <script>
-import $ from 'jquery';
 export default {
   props: {
     panel: {
@@ -85,7 +84,7 @@ export default {
      * hide sidebar when click change screen and screen less 996
      */
     onCollapse() {
-      if (this.windowWidth < 996) {
+      if (this.windowWidth < 1000) {
         $('[data-widget="pushmenu"]').PushMenu('collapse');
       }
     },
@@ -112,12 +111,12 @@ export default {
 }
 
 .nav-link {
-  margin-bottom: 0.5rem !important;
+  margin-bottom: 0px !important;
 }
 
 .nav-item {
-  margin-left: 0.5rem;
   margin-right: 0.5rem;
+  margin-left: 0.5rem;
 
   &:hover {
     border-radius: 8px;

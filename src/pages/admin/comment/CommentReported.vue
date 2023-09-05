@@ -19,7 +19,7 @@
       </div>
     </div>
   </div>
-  <div class="mt-5">
+  <div class="mt-5 flex justify-center">
     <a-pagination
       class="pagination"
       v-model:current="current"
@@ -82,7 +82,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .total-width {
   width: 88%;
 }
@@ -114,7 +114,7 @@ export default {
   border-radius: 50%;
   background-color: rgba(81, 166, 221, 0.7);
   a {
-    color: #fff;
+    color: #fff !important;
   }
 }
 </style>

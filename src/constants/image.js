@@ -12,11 +12,15 @@ import BELL from '../assets/images/bell.svg';
 import EDIT_ICON from '../assets/images/edit-default.svg';
 import ERROR from '../assets/images/error.svg';
 import SEARCH from '../assets/images/search.svg';
+import OPTION_ICON from '../assets/images/option_icon.svg';
 import DELETE_GRAY_ICON from '../assets/images/delete-gray-icon.png';
 import TITLE from '../assets/images/title.png';
 import ERROR_GIF from '../assets/images/gifError.gif';
+import MENU from '../assets/images/menu.svg';
 
 export {
+  MENU,
+  OPTION_ICON,
   SEARCH,
   ERROR_GIF,
   ERROR,

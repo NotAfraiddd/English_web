@@ -1,7 +1,7 @@
 <template lang="">
   <!-- Main Sidebar Container -->
   <aside
-    :class="isResize ? 'main-sidebar-resize ' : 'main-sidebar '"
+    :class="isResize ? 'main-sidebar-resize ' : 'main-sidebar'"
     class="main sidebar-collapse fixed overflow-x-hidden sidebar-no-expand"
   >
     <div
@@ -10,9 +10,11 @@
     >
       <div
         :class="
-          isResize ? 'sidebar-title-resize rounded-full' : 'sidebar-title'
+          isResize
+            ? 'sidebar-title-resize text-xs rounded-full'
+            : 'sidebar-title text-2xl'
         "
-        class="text-2xl font-semibold h-full w-full"
+        class="font-semibold h-full w-full flex items-center justify-center"
       >
         CircleZ
       </div>
@@ -29,21 +31,22 @@
   </aside>
   <div
     :class="isResize && 'btn-sidebar-collapse-resize'"
-    class="nav-item btn-sidebar-collapse fixed mb-0 cursor-pointer overflow-hidden hide-on-sp"
+    class="btn-sidebar-collapse fixed mb-0 cursor-pointer overflow-hidden hide-on-sp"
     data-widget="pushmenu"
     @click="onResizeSidebar"
   >
-    <span class="nav-link h-10 flex items-center mb-0 ml-3">
+    <span class="nav-link h-10 flex items-center mb-0">
       <img
         :class="[
           'toggle-sidebar-icon',
           isResize && 'logo-xl-btn-collapse mx-auto',
         ]"
         :src="ADMIN_BUTTON_BACK"
+        alt="navIcon"
       />
       <span
         v-bind:class="isResize && 'hidden'"
-        class="text-primary text-btn-collapse leading-10"
+        class="text-primary text-btn-collapse leading-10 text-base w-full"
       >
         Put away the menu
       </span>
@@ -55,7 +58,7 @@
     href="#"
     role="button"
   >
-    <i class="fas fa-bars text-red-300" />
+    <img :src="MENU" alt="" srcset="" class="w-6 h-6" />
   </a>
 </template>
 <script>
@@ -67,6 +70,7 @@ import {
   ADMIN_COURSE,
   ADMIN_HOME,
   ADMIN_MEMBER,
+  MENU,
 } from '../../constants/image';
 export default {
   name: 'BaseSidebar',
@@ -91,6 +95,7 @@ export default {
     this.ADMIN_COURSE = ADMIN_COURSE;
     this.ADMIN_HOME = ADMIN_HOME;
     this.ADMIN_MEMBER = ADMIN_MEMBER;
+    this.MENU = MENU;
     // this.logoRoute = this.isRoleAdmin ? ADMIN_DASHBOARD_ROUTE : HOME_ROUTE;
   },
   data() {
@@ -134,5 +139,8 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.nav-item {
+  z-index: 999 !important;
+}
 @import '../../assets/styles/sidebar.scss';
 </style>

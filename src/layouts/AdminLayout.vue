@@ -14,11 +14,10 @@
 
 <script>
 import LoadingScreen from '../components/common/LoadingScreen';
-import BaseSidebar from '../components/admin/BaseSidebar.vue';
-import BaseHeader from '../components/admin/BaseHeader.vue';
+import BaseSidebar from '../components/admin/BaseSidebar';
+import BaseHeader from '../components/admin/BaseHeader';
 import { LoadingMixins } from '../mixins/Loading';
 
-import $ from 'jquery';
 export default {
   name: 'AdminLayout',
   components: {
@@ -26,6 +25,7 @@ export default {
     BaseSidebar,
     BaseHeader,
   },
+
   mixins: [LoadingMixins],
   data() {
     return {
@@ -44,7 +44,7 @@ export default {
   },
   watch: {
     windowWidth(newWidth) {
-      if (newWidth <= 990 && this.isResize === true) {
+      if (newWidth <= 1001 && this.isResize === true) {
         this.isResize = false;
       }
     },
@@ -57,6 +57,7 @@ export default {
   },
   methods: {
     onResizeSidebar() {
+      console.log('onResizeSidebar');
       this.isResize = !this.isResize;
     },
     updateWindowWidth() {
@@ -64,7 +65,7 @@ export default {
     },
 
     onCollapse() {
-      if (this.windowWidth < 996) {
+      if (this.windowWidth < 1000) {
         $('[data-widget="pushmenu"]').PushMenu('collapse');
       }
     },
@@ -76,12 +77,21 @@ export default {
 .content {
   padding-left: 250px;
   transition: all 0.3s ease-in-out;
+  @media screen and (max-width: 992px) {
+    padding-left: 0;
+  }
 }
 
 .content-resize {
   width: 100%;
   padding-left: 80px;
   transition: all 0.3s ease-in-out;
+  @media screen and (max-width: 992px) {
+    padding-left: 0;
+  }
+}
+#sidebar-overlay {
+  z-index: 0 !important;
 }
 
 .layout {

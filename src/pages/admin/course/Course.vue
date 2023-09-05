@@ -18,7 +18,6 @@ export default {
   },
   methods: {
     updateValue(data) {
-      console.log(data);
       this.inputSearch = data;
     },
   },
