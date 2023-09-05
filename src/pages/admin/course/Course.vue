@@ -4,16 +4,16 @@
   </div>
 </template>
 <script>
-import BaseSearch from "../../../components/common/BaseSearch.vue";
+import BaseSearch from '../../../components/common/BaseSearch.vue';
 
 BaseSearch;
 export default {
-  name: "Course",
+  name: 'Course',
   components: { BaseSearch },
 
   data() {
     return {
-      inputSearch: "",
+      inputSearch: '',
     };
   },
   methods: {

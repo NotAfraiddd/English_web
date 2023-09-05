@@ -38,7 +38,7 @@
 </template>
 <script>
 export default {
-  name: "BlogPending",
+  name: 'BlogPending',
   created() {},
   props: {
     data: { type: Array, default: () => [] },

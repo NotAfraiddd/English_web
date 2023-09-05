@@ -160,29 +160,29 @@
   </div>
 </template>
 <script>
-import { DELETE_GRAY_ICON, EDIT_ICON } from "../../constants/image";
-import { RENDER_TYPE, DOWN, UP, ACTION_TYPE } from "../../constants/table";
+import { DELETE_GRAY_ICON, EDIT_ICON } from '../../constants/image';
+import { RENDER_TYPE, DOWN, UP, ACTION_TYPE } from '../../constants/table';
 export default {
-  name: "BaseTable",
+  name: 'BaseTable',
   props: {
     data: { type: Array, default: () => [] },
     columns: { type: Array, default: () => [] },
     onClickRow: { type: Function, default: () => {} },
-    tableClass: { type: String, default: "" },
-    extendClass: { type: String, default: "" },
+    tableClass: { type: String, default: '' },
+    extendClass: { type: String, default: '' },
     total: { type: Number, default: 0 },
     fromIndex: { type: Number, default: 0 },
     toIndex: { type: Number, default: 0 },
     hasPagination: { type: Boolean, default: false },
     actions: { type: Array, default: () => [] },
-    deletedField: { type: String, default: "" },
-    emptyText: { type: String, default: "Data empty" },
+    deletedField: { type: String, default: '' },
+    emptyText: { type: String, default: 'Data empty' },
     allowRestore: { type: Boolean, default: false },
     visibleActions: { type: Boolean, default: false },
     showCheckAction: { type: Boolean, default: false },
     showActionFunctions: { type: Object, default: () => ({}) },
     isHasActionCondition: { type: Boolean, default: false },
-    conditionField: { type: String, default: "" },
+    conditionField: { type: String, default: '' },
   },
   emits: [...Object.values(ACTION_TYPE)],
   created() {
@@ -233,7 +233,7 @@ export default {
       this.sort[fieldName] = { ...currentSort };
       this.sort = { ...this.sort };
       const param = { [`${fieldName}`]: currentSort.currentDirection };
-      this.$emit("sort", param);
+      this.$emit('sort', param);
     },
     hasEmptySlot() {
       return !!this.$slots?.empty;
@@ -243,9 +243,9 @@ export default {
     },
     getCellData(rowData, key) {
       try {
-        if (key.includes(".")) {
-          return key.split(".").reduce((acc, cur) => {
-            return acc ? acc[cur] : "";
+        if (key.includes('.')) {
+          return key.split('.').reduce((acc, cur) => {
+            return acc ? acc[cur] : '';
           }, rowData);
         } else {
           return rowData[key];
@@ -259,12 +259,12 @@ export default {
         case ACTION_TYPE.delete:
           return DELETE_GRAY_ICON;
         case ACTION_TYPE.restore:
-          return "fas fa-redo";
+          return 'fas fa-redo';
         case ACTION_TYPE.edit:
           return EDIT_ICON;
 
         default:
-          return "";
+          return '';
       }
     },
     handleAction(type, rowData) {
@@ -278,15 +278,15 @@ export default {
     getActionText(actionType) {
       switch (actionType) {
         case ACTION_TYPE.delete:
-          return "delete";
+          return 'delete';
         case ACTION_TYPE.detail:
-          return "detail";
+          return 'detail';
         case ACTION_TYPE.edit:
-          return "edit";
+          return 'edit';
         case ACTION_TYPE.restore:
-          return "restore";
+          return 'restore';
         default:
-          return "";
+          return '';
       }
     },
     /**

@@ -49,7 +49,7 @@
 
 <script>
 export default {
-  name: "ConfirmModal",
+  name: 'ConfirmModal',
   props: {
     showModal: {
       type: Boolean,
@@ -69,7 +69,7 @@ export default {
     },
     widthCustom: {
       type: [String, Number],
-      default: "auto",
+      default: 'auto',
     },
     modalCustomClass: {
       type: String,
@@ -77,15 +77,15 @@ export default {
   },
   methods: {
     PopupCancel() {
-      this.$emit("closeModal");
+      this.$emit('closeModal');
     },
     onSave() {
-      this.$emit("save");
+      this.$emit('save');
     },
     onCancel() {
-      this.$emit("handleCancel");
-      this.$emit("closeModal");
-      this.$emit("cancel");
+      this.$emit('handleCancel');
+      this.$emit('closeModal');
+      this.$emit('cancel');
     },
   },
 };

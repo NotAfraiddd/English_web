@@ -16,12 +16,12 @@
 </template>
 
 <script>
-import GroupBack from "../../../components/common/GroupBack.vue";
-import ListBlog from "../../../components/common/ListBlog.vue";
-import { ARROW_LEFT, AVATAR, TITLE } from "../../../constants/image";
-import { NOTIFY } from "../../../constants/index";
+import GroupBack from '../../../components/common/GroupBack.vue';
+import ListBlog from '../../../components/common/ListBlog.vue';
+import { ARROW_LEFT, AVATAR, TITLE } from '../../../constants/image';
+import { NOTIFY } from '../../../constants/index';
 export default {
-  name: "BlogPending",
+  name: 'BlogPending',
   components: { GroupBack, ListBlog },
   created() {
     this.TITLE = TITLE;
@@ -31,7 +31,7 @@ export default {
   },
   watch: {
     pageSize(value) {
-      console.log("value", value);
+      console.log('value', value);
     },
     current(value) {},
   },
@@ -50,29 +50,29 @@ export default {
       listBlog: [
         {
           id: 1,
-          author: "Chi Bao",
+          author: 'Chi Bao',
           avatar: AVATAR,
           imageTitle: TITLE,
-          title: "Effective Methods for Improving English Language Skills.",
+          title: 'Effective Methods for Improving English Language Skills.',
           content:
             "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
         },
         {
           id: 2,
-          author: "Ngoc Huan",
+          author: 'Ngoc Huan',
           avatar: AVATAR,
           imageTitle: TITLE,
-          title: "Hello",
+          title: 'Hello',
           content:
             "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
         },
         {
           id: 3,
-          author: "Bao Huan",
+          author: 'Bao Huan',
           avatar: AVATAR,
           imageTitle: TITLE,
           title:
-            "Effective Methods for Improving English Language Skills.adbjabskbdk",
+            'Effective Methods for Improving English Language Skills.adbjabskbdk',
           content:
             "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
         },

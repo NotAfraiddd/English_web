@@ -96,9 +96,9 @@ import {
   AVATAR,
   BELL,
   LOCK,
-} from "../../constants/image";
-import Avatar from "../common/Avatar.vue";
-import { formatNumber } from "../../constants/function";
+} from '../../constants/image';
+import Avatar from '../common/Avatar.vue';
+import { formatNumber } from '../../constants/function';
 export default {
   created() {
     this.BELL = BELL;
@@ -154,5 +154,5 @@ export default {
 };
 </script>
 <style lang="scss">
-@import "../../assets/styles/baseheader.scss";
+@import '../../assets/styles/baseheader.scss';
 </style>

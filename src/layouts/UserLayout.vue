@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  name: "UserLayout",
+  name: 'UserLayout',
   components: {},
 };
 </script>

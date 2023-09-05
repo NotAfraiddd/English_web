@@ -4,9 +4,9 @@
 </template>
 <script>
 export default {
-  name: "LoadingScreen",
+  name: 'LoadingScreen',
 };
 </script>
 <style lang="scss">
-@import "../../assets/styles/loading";
+@import '../../assets/styles/loading';
 </style>

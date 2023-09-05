@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import $ from "jquery";
+import $ from 'jquery';
 export default {
   props: {
     panel: {
@@ -63,11 +63,11 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      window.addEventListener("resize", this.updateWindowWidth);
+      window.addEventListener('resize', this.updateWindowWidth);
     });
   },
   beforeUnmount() {
-    window.removeEventListener("resize", this.updateWindowWidth);
+    window.removeEventListener('resize', this.updateWindowWidth);
   },
   methods: {
     isActiveMenu(checkPath, activeRoute) {
@@ -77,16 +77,16 @@ export default {
         currentPath === checkPath ||
         (activeRoute &&
           activeRoute.some(
-            (route) => route === currentPath || route === currentRouteName
+            (route) => route === currentPath || route === currentRouteName,
           ));
-      return isActive ? "active" : "";
+      return isActive ? 'active' : '';
     },
     /**
      * hide sidebar when click change screen and screen less 996
      */
     onCollapse() {
       if (this.windowWidth < 996) {
-        $('[data-widget="pushmenu"]').PushMenu("collapse");
+        $('[data-widget="pushmenu"]').PushMenu('collapse');
       }
     },
 

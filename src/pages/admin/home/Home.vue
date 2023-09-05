@@ -13,12 +13,12 @@
 </template>
 
 <script>
-import BaseTable from "../../../components/common/BaseTable.vue";
-import Notify from "../../../components/common/Notify.vue";
-import { ARROW_LEFT, AVATAR } from "../../../constants/image";
-import { NOTIFY, SCREEN } from "../../../constants/index";
+import BaseTable from '../../../components/common/BaseTable.vue';
+import Notify from '../../../components/common/Notify.vue';
+import { ARROW_LEFT, AVATAR } from '../../../constants/image';
+import { NOTIFY, SCREEN } from '../../../constants/index';
 export default {
-  name: "Dashboard",
+  name: 'Dashboard',
   components: { BaseTable, Notify },
   created() {
     this.AVATAR = AVATAR;
@@ -35,8 +35,8 @@ export default {
   methods: {
     changeUI(data) {
       if (data == NOTIFY.comment)
-        this.$router.push({ name: "CommentReported" });
-      else if (data == NOTIFY.blog) this.$router.push({ name: "BlogPending" });
+        this.$router.push({ name: 'CommentReported' });
+      else if (data == NOTIFY.blog) this.$router.push({ name: 'BlogPending' });
       else this.screenUI = SCREEN.dashboard;
     },
     changeBack() {
@@ -49,63 +49,63 @@ export default {
       screenUI: SCREEN.dashboard,
       report: {
         id: NOTIFY.comment,
-        subtitle: "Report",
-        title: "Report comment",
+        subtitle: 'Report',
+        title: 'Report comment',
       },
       blog: {
         id: NOTIFY.blog,
-        subtitle: "Blog",
-        title: "Blog pending approval",
+        subtitle: 'Blog',
+        title: 'Blog pending approval',
       },
       listReported: [
         {
-          comment: "John was reported for calling a comment",
-          offense: "stupid",
+          comment: 'John was reported for calling a comment',
+          offense: 'stupid',
         },
         {
-          comment: "John was reported for calling a comment",
-          offense: "shut up !!! bitch",
+          comment: 'John was reported for calling a comment',
+          offense: 'shut up !!! bitch',
         },
         {
-          comment: "John was reported for calling a comment",
-          offense: "stupid",
+          comment: 'John was reported for calling a comment',
+          offense: 'stupid',
         },
         {
-          comment: "John was reported for calling a comment",
-          offense: "shut up !!! bitch",
+          comment: 'John was reported for calling a comment',
+          offense: 'shut up !!! bitch',
         },
         {
-          comment: "John was reported for calling a comment",
-          offense: "stupid",
+          comment: 'John was reported for calling a comment',
+          offense: 'stupid',
         },
         {
-          comment: "John was reported for calling a comment",
-          offense: "shut up !!! bitch",
+          comment: 'John was reported for calling a comment',
+          offense: 'shut up !!! bitch',
         },
         {
-          comment: "John was reported for calling a comment",
-          offense: "stupid",
+          comment: 'John was reported for calling a comment',
+          offense: 'stupid',
         },
         {
-          comment: "John was reported for calling a comment",
-          offense: "shut up !!! bitch",
+          comment: 'John was reported for calling a comment',
+          offense: 'shut up !!! bitch',
         },
       ],
       data: [
         {
-          title: "Current level member",
+          title: 'Current level member',
           basic: 20,
           intermediate: 1,
           advanced: 15,
         },
         {
-          title: "Blog",
+          title: 'Blog',
           basic: 1,
           intermediate: 2,
           advanced: 3,
         },
         {
-          title: "Online",
+          title: 'Online',
           basic: 1,
           intermediate: 2,
           advanced: 3,
@@ -114,31 +114,31 @@ export default {
       columns: [
         {
           headerClass:
-            "text-center border border-table_border h-20 w-60 bg-table_header",
-          columnClass: "text-center border border-table_border h-20 w-60",
-          title: "",
-          key: "title",
+            'text-center border border-table_border h-20 w-60 bg-table_header',
+          columnClass: 'text-center border border-table_border h-20 w-60',
+          title: '',
+          key: 'title',
         },
         {
           headerClass:
-            "text-center border border-table_border h-20 w-60 bg-table_header",
-          columnClass: "text-center border border-table_border h-20 w-60",
-          title: "Basic Level",
-          key: "basic",
+            'text-center border border-table_border h-20 w-60 bg-table_header',
+          columnClass: 'text-center border border-table_border h-20 w-60',
+          title: 'Basic Level',
+          key: 'basic',
         },
         {
           headerClass:
-            "text-center  border border-table_border h-20 w-60 bg-table_header",
-          columnClass: "text-center h-20 w-60 border border-table_border",
-          title: "Intermediate Level",
-          key: "intermediate",
+            'text-center  border border-table_border h-20 w-60 bg-table_header',
+          columnClass: 'text-center h-20 w-60 border border-table_border',
+          title: 'Intermediate Level',
+          key: 'intermediate',
         },
         {
           headerClass:
-            "text-center border border-table_border h-20 w-60 bg-table_header",
-          columnClass: "text-center h-20 w-60 border border-table_border",
-          title: "Advanced Level",
-          key: "advanced",
+            'text-center border border-table_border h-20 w-60 bg-table_header',
+          columnClass: 'text-center h-20 w-60 border border-table_border',
+          title: 'Advanced Level',
+          key: 'advanced',
         },
       ],
     };

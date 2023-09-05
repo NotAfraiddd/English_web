@@ -32,11 +32,11 @@
 </template>
 
 <script>
-import GroupBack from "../../../components/common/GroupBack.vue";
-import { ARROW_LEFT, AVATAR } from "../../../constants/image";
-import { NOTIFY } from "../../../constants/index";
+import GroupBack from '../../../components/common/GroupBack.vue';
+import { ARROW_LEFT, AVATAR } from '../../../constants/image';
+import { NOTIFY } from '../../../constants/index';
 export default {
-  name: "CommentReported",
+  name: 'CommentReported',
   components: { GroupBack },
   created() {
     this.AVATAR = AVATAR;
@@ -52,29 +52,29 @@ export default {
     return {
       listReported: [
         {
-          comment: "John was reported for calling a comment",
-          offense: "stupid",
+          comment: 'John was reported for calling a comment',
+          offense: 'stupid',
         },
         {
-          comment: "John was reported for calling a comment",
-          offense: "shut up !!! bitch",
+          comment: 'John was reported for calling a comment',
+          offense: 'shut up !!! bitch',
         },
         {
-          comment: "John was reported for calling a comment",
-          offense: "stupid",
+          comment: 'John was reported for calling a comment',
+          offense: 'stupid',
         },
         {
-          comment: "John was reported for calling a comment",
-          offense: "shut up !!! bitch",
+          comment: 'John was reported for calling a comment',
+          offense: 'shut up !!! bitch',
         },
         {
-          comment: "John was reported for calling a comment",
-          offense: "stupid",
+          comment: 'John was reported for calling a comment',
+          offense: 'stupid',
         },
         {
-          comment: "John was reported for calling a comment",
+          comment: 'John was reported for calling a comment',
           offense:
-            "shut up !!! bitch John was reported for calling a comment John was reported for calling a comment John was reported for calling a comment",
+            'shut up !!! bitch John was reported for calling a comment John was reported for calling a comment John was reported for calling a comment',
         },
       ],
     };

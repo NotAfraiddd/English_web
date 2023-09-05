@@ -1,6 +1,6 @@
-import * as VueRouter from "vue-router";
+import * as VueRouter from 'vue-router';
 
-import routes from "./routes";
+import routes from './routes';
 
 const router = VueRouter.createRouter({
   // 4. Provide the history implementation to use. We are using the hash history for simplicity here.

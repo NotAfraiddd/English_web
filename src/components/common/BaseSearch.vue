@@ -29,13 +29,13 @@
 </template>
 
 <script>
-import { SEARCH } from "../../constants/image";
+import { SEARCH } from '../../constants/image';
 export default {
   created() {
     this.SEARCH = SEARCH;
   },
   props: {
-    search: { type: String, default: "" },
+    search: { type: String, default: '' },
   },
   watch: {
     search(newValue) {
@@ -46,17 +46,17 @@ export default {
     return {
       userData: this.search,
       suggestions: [
-        "Channel",
-        "Mr Code Box",
-        "Vs Code",
-        "Instagram",
-        "YouTube",
-        "YouTuber",
-        "YouTube Channel",
-        "Blogger",
-        "Please Like, Share & Subscribe",
-        "Bollywood",
-        "Vlogger",
+        'Channel',
+        'Mr Code Box',
+        'Vs Code',
+        'Instagram',
+        'YouTube',
+        'YouTuber',
+        'YouTube Channel',
+        'Blogger',
+        'Please Like, Share & Subscribe',
+        'Bollywood',
+        'Vlogger',
       ],
       showSuggestion: false,
     };
@@ -65,17 +65,17 @@ export default {
     filteredSuggestions() {
       const input = this.userData.toLowerCase();
       return this.suggestions.filter((suggestion) =>
-        suggestion.toLowerCase().includes(input)
+        suggestion.toLowerCase().includes(input),
       );
     },
   },
   methods: {
     onInputChange(event) {
-      if (this.userData.trim() === "") {
+      if (this.userData.trim() === '') {
         this.showSuggestion = false;
       } else {
         this.showSuggestion = true;
-        this.$emit("update", event.target.value);
+        this.$emit('update', event.target.value);
       }
     },
     select(selectedData) {

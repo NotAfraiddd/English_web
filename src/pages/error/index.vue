@@ -27,10 +27,10 @@
 </template>
 
 <script>
-import { ERROR_GIF } from "../../constants/image";
+import { ERROR_GIF } from '../../constants/image';
 
 export default {
-  name: "NotFound",
+  name: 'NotFound',
   data() {
     return {
       ERROR_GIF: ERROR_GIF,
@@ -39,13 +39,13 @@ export default {
   methods: {
     goToHome() {
       if (
-        this.isMatchedRoute("BlogPending") ||
-        this.isMatchedRoute("Course") ||
-        this.isMatchedRoute("CommentReported")
+        this.isMatchedRoute('BlogPending') ||
+        this.isMatchedRoute('Course') ||
+        this.isMatchedRoute('CommentReported')
       ) {
-        this.$router.push({ name: "Dashboard" });
+        this.$router.push({ name: 'Dashboard' });
       } else {
-        this.$router.push({ name: "Course" });
+        this.$router.push({ name: 'Course' });
       }
     },
     isMatchedRoute(routeName) {

@@ -59,7 +59,7 @@
   </a>
 </template>
 <script>
-import BaseMenu from "./BaseMenu.vue";
+import BaseMenu from './BaseMenu.vue';
 // import { LOGO_V } from "../../../js/constants/imageConst";
 // import { HOME_ROUTE, ADMIN_DASHBOARD_ROUTE } from "../constants";
 import {
@@ -67,9 +67,9 @@ import {
   ADMIN_COURSE,
   ADMIN_HOME,
   ADMIN_MEMBER,
-} from "../../constants/image";
+} from '../../constants/image';
 export default {
-  name: "BaseSidebar",
+  name: 'BaseSidebar',
   props: {
     isResize: {
       type: Boolean,
@@ -79,7 +79,7 @@ export default {
   components: {
     BaseMenu,
   },
-  emits: ["resize"],
+  emits: ['resize'],
   created() {
     // const indexOfHeadquaterInAdminPanel = 6;
     // const indexOfHeadquaterInSubAdminPanel = 1;
@@ -100,20 +100,20 @@ export default {
       adminPanel: [],
       userPanel: [
         {
-          message: "Dashboard",
-          to: "/admin",
+          message: 'Dashboard',
+          to: '/admin',
           iconPath: ADMIN_HOME,
           activeLinks: [],
         },
         {
-          message: "Course",
-          to: "/admin/course",
+          message: 'Course',
+          to: '/admin/course',
           iconPath: ADMIN_COURSE,
           activeLinks: [],
         },
         {
-          message: "Member",
-          to: "/admin/member",
+          message: 'Member',
+          to: '/admin/member',
           iconPath: ADMIN_MEMBER,
           activeLinks: [],
         },
@@ -121,18 +121,18 @@ export default {
     };
   },
   mounted() {
-    const scrollTop = sessionStorage.getItem("scrollTop");
+    const scrollTop = sessionStorage.getItem('scrollTop');
     if (this.$refs.sidebar) {
       this.$refs.sidebar.scrollTop = scrollTop;
     }
   },
   methods: {
     onResizeSidebar() {
-      this.$emit("resize");
+      this.$emit('resize');
     },
   },
 };
 </script>
 <style lang="scss" scoped>
-@import "../../assets/styles/sidebar.scss";
+@import '../../assets/styles/sidebar.scss';
 </style>

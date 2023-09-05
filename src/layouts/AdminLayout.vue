@@ -13,14 +13,14 @@
 </template>
 
 <script>
-import LoadingScreen from "../components/common/LoadingScreen";
-import BaseSidebar from "../components/admin/BaseSidebar.vue";
-import BaseHeader from "../components/admin/BaseHeader.vue";
-import { LoadingMixins } from "../mixins/Loading";
+import LoadingScreen from '../components/common/LoadingScreen';
+import BaseSidebar from '../components/admin/BaseSidebar.vue';
+import BaseHeader from '../components/admin/BaseHeader.vue';
+import { LoadingMixins } from '../mixins/Loading';
 
-import $ from "jquery";
+import $ from 'jquery';
 export default {
-  name: "AdminLayout",
+  name: 'AdminLayout',
   components: {
     LoadingScreen,
     BaseSidebar,
@@ -36,11 +36,11 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      window.addEventListener("resize", this.updateWindowWidth);
+      window.addEventListener('resize', this.updateWindowWidth);
     });
   },
   beforeUnmount() {
-    window.removeEventListener("resize", this.updateWindowWidth);
+    window.removeEventListener('resize', this.updateWindowWidth);
   },
   watch: {
     windowWidth(newWidth) {
@@ -49,9 +49,9 @@ export default {
       }
     },
     $route(to, from) {
-      this.emitter.emit("isShowLoading", true);
+      this.emitter.emit('isShowLoading', true);
       setTimeout(() => {
-        this.emitter.emit("isShowLoading", false);
+        this.emitter.emit('isShowLoading', false);
       }, 1000);
     },
   },
@@ -65,7 +65,7 @@ export default {
 
     onCollapse() {
       if (this.windowWidth < 996) {
-        $('[data-widget="pushmenu"]').PushMenu("collapse");
+        $('[data-widget="pushmenu"]').PushMenu('collapse');
       }
     },
   },

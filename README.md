@@ -1,5 +1,5 @@
-# newbies-training
-This repo helps newbies how to use git
+# English website
+This repo helps users how to use it
 
 ## Steps to setup
 

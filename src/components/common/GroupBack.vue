@@ -17,36 +17,36 @@
 </template>
 
 <script>
-import { ARROW_LEFT } from "../../constants/image";
+import { ARROW_LEFT } from '../../constants/image';
 
 export default {
-  name: "GroupBack",
-  emits: ["back"],
+  name: 'GroupBack',
+  emits: ['back'],
   created() {
     this.ARROW_LEFT = ARROW_LEFT;
   },
   props: {
-    title: { type: String, default: "" },
+    title: { type: String, default: '' },
   },
   data() {
     return {};
   },
   methods: {
     changeBack() {
-      this.$emit("back");
+      this.$emit('back');
     },
     hoverBack() {
       this.isHover = true;
-      const imageArrow = document.querySelector(".image-arrow");
+      const imageArrow = document.querySelector('.image-arrow');
       if (this.isHover) {
-        imageArrow.style.transform = "translateX(-5px) ";
+        imageArrow.style.transform = 'translateX(-5px) ';
       }
     },
     resetHover() {
       this.isHover = false;
-      const imageArrow = document.querySelector(".image-arrow");
+      const imageArrow = document.querySelector('.image-arrow');
       if (!this.isHover) {
-        imageArrow.style.transform = "translateX(0px)";
+        imageArrow.style.transform = 'translateX(0px)';
       }
     },
   },

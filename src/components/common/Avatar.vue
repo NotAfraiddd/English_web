@@ -9,19 +9,19 @@
 </template>
 <script>
 export default {
-  name: "Avatar",
+  name: 'Avatar',
   props: {
     imgUrl: {
       type: String,
-      default: "",
+      default: '',
     },
     externalClass: {
       type: String,
-      default: "",
+      default: '',
     },
     name: {
       type: String,
-      default: "",
+      default: '',
     },
   },
   computed: {

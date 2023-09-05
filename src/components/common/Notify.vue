@@ -28,8 +28,8 @@
 
 <script>
 export default {
-  name: "Notify",
-  emits: ["clicked"],
+  name: 'Notify',
+  emits: ['clicked'],
   props: {
     data: { type: Object, default: () => {} },
   },
@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     handleClick(data) {
-      this.$emit("clicked", data);
+      this.$emit('clicked', data);
     },
   },
 };
