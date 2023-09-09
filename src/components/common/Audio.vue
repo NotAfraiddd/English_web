@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-2 mt-2 w-full">
+  <div class="flex flex-col gap-4 mt-4 w-full">
     <audio
       ref="audioElement"
       controls

@@ -48,16 +48,19 @@
     <!-- listening -->
     <GroupBack title="Listening" extend-class="mt-5" />
     <Audio :data-prop="selectedAudio" />
+    <GroupBack title="Transcript" extend-class="mt-5" />
+    <Word :contentProp="content" @update="updateContent" />
   </div>
 </template>
 <script>
 import jscolor from '@eastdesire/jscolor';
 import GroupBack from '../../../components/common/GroupBack.vue';
 import Audio from '../../../components/common/Audio.vue';
+import Word from '../../../components/common/Editor.vue';
 import { STAR_RED } from '../../../constants/image';
 export default {
   name: 'CreateCourse',
-  components: { GroupBack, Audio },
+  components: { GroupBack, Audio, Word },
   created() {
     this.handleEditColor();
     this.STAR_RED = STAR_RED;

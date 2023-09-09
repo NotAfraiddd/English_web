@@ -1,18 +1,19 @@
 <template>
   <div class="flex" :class="extendClass">
     <div
-      class="bg-primary w-max p-2 text-white text-xl rounded-xl font-semibold"
+      class="bg-primary w-max p-2 text-white text-lg rounded-xl font-semibold"
     >
       {{ title }}
     </div>
     <div
       v-if="hideBack"
       class="flex ml-3 justify-center items-center cursor-pointer"
+      @click="changeBack"
       @mouseenter="hoverBack"
       @mouseleave="resetHover"
     >
       <img :src="ARROW_LEFT" alt="" srcset="" class="image-arrow mr-3" />
-      <div class="text-xl text-text_back" @click="changeBack">Back</div>
+      <div class="text-xl text-text_back">Back</div>
     </div>
   </div>
 </template>

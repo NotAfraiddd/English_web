@@ -14,7 +14,7 @@
         <div class="text-base text-white">
           {{ item.subtitle }}
         </div>
-        <Processbar :percentages="item.percentages" />
+        <Processbar v-if="hideProcessBar" :percentages="item.percentages" />
       </div>
       <div class="w-full mt-3 flex flex-col gap-1 items-start my-4 ml-4">
         <div class="font-semibold text-xl">{{ item.name }}</div>
@@ -35,6 +35,7 @@ export default {
   emits: ['clicked'],
   props: {
     data: { type: Array, default: () => [] },
+    hideProcessBar: { type: Boolean, default: false },
   },
   methods: {
     handleClick(data) {
