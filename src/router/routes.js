@@ -33,6 +33,11 @@ export default [
         component: () => import('../pages/admin/course/Course.vue'),
       },
       {
+        path: 'course/create-course',
+        name: 'CreateCourse',
+        component: () => import('../pages/admin/course/CreateCourse.vue'),
+      },
+      {
         path: 'blog/pending',
         name: 'BlogPending',
         component: () => import('../pages/admin/blog/BlogPending.vue'),

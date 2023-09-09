@@ -11,47 +11,65 @@
       :class="{ 'overlay-visible': showComment }"
       @click="handleCloseComment"
     />
-    <GroupBack title="Course" @back="changeBack" />
+    <GroupBack title="Course" :hideBack="false" />
     <BaseSearch :search="inputSearch" @update="updateValue" />
-    <ListBlog
-      :data="listBlog"
-      :icon="true"
-      :react="true"
-      @show-comment="handleShowComment"
-    />
-    <div class="mt-5 flex justify-center">
-      <a-pagination
-        class="pagination"
-        v-model:current="current"
-        :showSizeChanger="false"
-        v-model:page-size="pageSize"
-        :total="500"
-        @change="onShowSizeChange"
-      />
+    <ListCourse :data="listCourses" />
+    <div
+      @click="goToCreateCourse"
+      class="flex flex-col h-auto cursor-pointer text-base flex-1 justify-between items-center mt-3 border-dashed border-4 border-primary_black_opacity-600 gap-1 py-2 px-5 rounded-lg"
+    >
+      <div
+        class="bg-text_back w-7 h-7 rounded-full text-xl font-semibold text-gray-400"
+      >
+        +
+      </div>
+      <div class="text-primary_black font-semibold">Add new course</div>
     </div>
   </div>
 </template>
 <script>
 import BaseSearch from '../../../components/common/BaseSearch.vue';
 import GroupBack from '../../../components/common/GroupBack.vue';
-import ListBlog from '../../../components/common/ListBlog.vue';
+import ListCourse from '../../../components/common/ListCourse.vue';
+import jscolor from '@eastdesire/jscolor';
 import { NOTIFY } from '../../../constants';
 import { AVATAR, TITLE } from '../../../constants/image';
 BaseSearch;
 export default {
   name: 'Course',
-  components: { BaseSearch, ListBlog, GroupBack },
+  components: { BaseSearch, ListCourse, GroupBack },
   created() {
     this.TITLE = TITLE;
     this.AVATAR = AVATAR;
     this.NOTIFY = NOTIFY;
+    this.handleEditColor();
   },
 
   methods: {
+    goToCreateCourse() {
+      this.$router.push({ name: 'CreateCourse' });
+    },
     handleShowComment(data) {
       if (data.status) {
         this.showComment = true;
       }
+    },
+    /**
+     * @description show colorPicker and resolve value color when user choose any color
+     * @returns {void}
+     */
+    handleEditColor() {
+      this.colorTemp = this.color;
+      // NOTE: Waitting DOM is updated before we access into DOM
+      this.$nextTick(() => {
+        this.colorPickerTemp = new jscolor(this.$refs.colorPicker, {
+          width: 120,
+          position: 'top',
+        });
+        // NOTE: always set jscolor.init() before always show to set changing color
+        jscolor.init();
+        // this.colorPickerTemp.show();
+      });
     },
     handleCloseComment() {
       this.showComment = false;
@@ -62,50 +80,53 @@ export default {
     onShowSizeChange(current, pageSize) {
       console.log(current, pageSize);
     },
-    changeBack() {
-      this.$router.push(`/admin`);
-    },
   },
   data() {
     return {
+      color: '000000',
+      colorTemp: '',
+      colorPickerTemp: '',
       inputSearch: '',
       showComment: false,
+      showModal: false,
       current: 6,
       pageSize: 3,
-      listBlog: [
+      listCourses: [
         {
           id: 1,
-          author: 'Chi Bao',
-          avatar: AVATAR,
-          imageTitle: TITLE,
-          numReact: 12,
-          numComment: 12,
-          title: 'Effective Methods for Improving English Language Skills.',
-          content:
-            "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
+          title: 'Basic Level',
+          subtitle: 'English for individuals with basic knowledge.',
+          percentages: [{ percentage: 30 }],
+          name: 'Basic English Course',
+          courseFinished: '3/10',
+          color: '#0068FF',
         },
         {
           id: 2,
-          author: 'Ngoc Huan',
-          avatar: AVATAR,
-          imageTitle: TITLE,
-          numReact: 0,
-          numComment: 12,
-          title: 'Hello',
-          content:
-            "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
+          title: 'Intermediate Level',
+          subtitle: 'English for individuals with intermediate knowledge.',
+          percentages: [{ percentage: 65 }],
+          name: 'Intermediate English Course',
+          courseFinished: '3/10',
+          color: '#AA53EE',
         },
         {
           id: 3,
-          author: 'Bao Huan',
-          avatar: AVATAR,
-          imageTitle: TITLE,
-          numReact: 0,
-          numComment: 0,
-          title:
-            'Effective Methods for Improving English Language Skills.adbjabskbdk',
-          content:
-            "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
+          title: 'Advanced Level',
+          subtitle: 'English for individuals with advanced knowledge.',
+          percentages: [{ percentage: 10 }],
+          name: 'Advanced English Course',
+          courseFinished: '3/10',
+          color: '#87CF2A',
+        },
+        {
+          id: 4,
+          title: 'Grammar',
+          subtitle: 'English for individuals with basic knowledge.',
+          percentages: [{ percentage: 90 }],
+          name: 'Grammar English Course',
+          courseFinished: '3/10',
+          color: '#7C89CE',
         },
       ],
     };

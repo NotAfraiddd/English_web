@@ -37,6 +37,7 @@
             isMatchedRoute('Dashboard') ||
             isMatchedRoute('BlogPending') ||
             isMatchedRoute('Course') ||
+            isMatchedRoute('CreateCourse') ||
             isMatchedRoute('CommentReported')
           "
           class="flex items-center"

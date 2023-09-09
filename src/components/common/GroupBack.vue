@@ -1,11 +1,12 @@
 <template>
-  <div class="flex">
+  <div class="flex" :class="extendClass">
     <div
       class="bg-primary w-max p-2 text-white text-xl rounded-xl font-semibold"
     >
       {{ title }}
     </div>
     <div
+      v-if="hideBack"
       class="flex ml-3 justify-center items-center cursor-pointer"
       @mouseenter="hoverBack"
       @mouseleave="resetHover"
@@ -27,6 +28,8 @@ export default {
   },
   props: {
     title: { type: String, default: '' },
+    extendClass: { type: String, default: '' },
+    hideBack: { type: Boolean, default: false },
   },
   data() {
     return {};

@@ -44,7 +44,7 @@ export default {
   },
   watch: {
     windowWidth(newWidth) {
-      if (newWidth <= 1001 && this.isResize === true) {
+      if (newWidth <= 990 && this.isResize === true) {
         this.isResize = false;
       }
     },
@@ -57,7 +57,6 @@ export default {
   },
   methods: {
     onResizeSidebar() {
-      console.log('onResizeSidebar');
       this.isResize = !this.isResize;
     },
     updateWindowWidth() {
@@ -112,5 +111,37 @@ export default {
     min-height: 100%;
     margin-top: 30px;
   }
+}
+
+html *::-webkit-scrollbar {
+  border-radius: 0;
+  height: 12px;
+  width: 8px;
+}
+
+html *::-webkit-scrollbar {
+  border-radius: 0;
+  height: 12px;
+  width: 8px;
+}
+
+html *::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+html *::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+html *::-webkit-scrollbar-track {
+  border-radius: 0;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+html *::-webkit-scrollbar-track {
+  border-radius: 0;
+  background-color: rgba(0, 0, 0, 0);
 }
 </style>

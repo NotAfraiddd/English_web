@@ -15,7 +15,7 @@
         <img :src="SEARCH" alt="" srcset="" />
       </div>
     </div>
-    <div class="w-1/3 absolute search-width" v-if="showSuggestion">
+    <div class="w-1/3 absolute search-width bg-white" v-if="showSuggestion">
       <ul class="border border-t-0 w-full">
         <li
           class="h-8 leading-8 text-left pl-5 item-search hover:bg-primary text-base hover:text-white cursor-pointer text-primary_black"

@@ -1,101 +1,104 @@
 .header {
-    border-left: 1px solid #eee;
-    padding-left: 20px;
+  border-left: 1px solid #eee;
+  padding-left: 20px;
+  @media screen and (max-width: 992px) {
+    padding-left: 56px;
   }
-  
-  .list-menu {
-    list-style: none;
-    z-index: 1;
-  }
-  
-  .list-menu > li {
+}
+
+.list-menu {
+  list-style: none;
+  z-index: 1;
+}
+
+.list-menu > li {
+  color: #fff;
+  display: block;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.list-menu ul {
+  overflow: hidden;
+  right: 0;
+  height: 0;
+  transition: height 0.65s ease, opacity 0.65s ease;
+  top: 40px;
+  background-color: #fff;
+  width: 350px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+}
+
+.list-menu:hover ul {
+  height: 230px;
+  opacity: 1;
+}
+
+.item {
+  color: #615a5a;
+  list-style-type: none;
+
+  &:hover {
+    background: rgba(204, 204, 204, 0.7);
     color: #fff;
-    display: block;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-  }
-  
-  .list-menu ul {
-    overflow: hidden;
-    right: 0;
-    height: 0;
-    transition: height 0.65s ease, opacity 0.65s ease;
-    top: 40px;
-    background-color: #fff;
-    width: 350px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    border-radius: 12px;
-  }
-  
-  .list-menu:hover ul {
-    height: 230px;
-    opacity: 1;
-  }
-  
-  .item {
-    color: #615a5a;
-    list-style-type: none;
-  
-    &:hover {
-      background: rgba(204, 204, 204, 0.7);
-      color: #fff;
-      cursor: pointer;
-    }
-    &:first-child:hover{
-      background: #fff;
-      color: currentColor;
-    }
-  }
-  
-  .name {
-    letter-spacing: 2px;
-    color: #615a5a;
-  }
-  
-  .sub-text {
-    border-bottom: 1px solid;
-    letter-spacing: 2px;
-  }
-  
-  .content-header-right {
-    width: fit-content;
-  }
-  
-  .toggle-sidebar-icon {
-    transform: scale(1);
-    transition: 0.3s ease;
-    user-select: none;
-  }
-  
-  .logo-xl-btn-collapse {
-    transform: scaleX(-1);
-  }
-  
-  .arrow-container {
     cursor: pointer;
   }
-  
-  .button-ok {
-    border: none;
-    padding: 2px 0;
-  
-    &:focus-visible {
-      outline: none;
-    }
+  &:first-child:hover {
+    background: #fff;
+    color: currentColor;
   }
-  
-  .spacer {
-    height: 1px;
+}
+
+.name {
+  letter-spacing: 2px;
+  color: #615a5a;
+}
+
+.sub-text {
+  border-bottom: 1px solid;
+  letter-spacing: 2px;
+}
+
+.content-header-right {
+  width: fit-content;
+}
+
+.toggle-sidebar-icon {
+  transform: scale(1);
+  transition: 0.3s ease;
+  user-select: none;
+}
+
+.logo-xl-btn-collapse {
+  transform: scaleX(-1);
+}
+
+.arrow-container {
+  cursor: pointer;
+}
+
+.button-ok {
+  border: none;
+  padding: 2px 0;
+
+  &:focus-visible {
+    outline: none;
   }
-  
-  .header {
-    &-notify {
-      top: -16px;
-      left: 12px;
-    }
-  
-    &-lock {
-      top: 80px;
-    }
+}
+
+.spacer {
+  height: 1px;
+}
+
+.header {
+  &-notify {
+    top: -16px;
+    left: 12px;
   }
+
+  &-lock {
+    top: 80px;
+  }
+}

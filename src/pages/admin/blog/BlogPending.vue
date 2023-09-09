@@ -1,7 +1,12 @@
 <template>
   <div class="text-primary_black">
-    <GroupBack title="Blog pending" @back="changeBack" />
-    <ListBlog :data="listBlog" />
+    <GroupBack title="Blog pending" @back="changeBack" :hide-back="true" />
+    <ListBlog
+      :data="listBlog"
+      :avatar="true"
+      :groupbutton="true"
+      :image="true"
+    />
     <div class="mt-5 flex justify-center">
       <a-pagination
         class="pagination"

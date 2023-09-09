@@ -81,10 +81,10 @@ export default {
       return isActive ? 'active' : '';
     },
     /**
-     * hide sidebar when click change screen and screen less 996
+     * hide sidebar when click change screen and screen less 1000
      */
     onCollapse() {
-      if (this.windowWidth < 1000) {
+      if (this.windowWidth < 996) {
         $('[data-widget="pushmenu"]').PushMenu('collapse');
       }
     },

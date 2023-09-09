@@ -4,7 +4,7 @@
     title=""
     centered
     :footer="null"
-    :closable="showClose"
+    :closable="closeModal"
     :maskClosable="disabledClickOutside"
     @cancel="PopupCancel"
     :class="`base-confirm-modal ${modalCustomClass}`"
@@ -12,34 +12,28 @@
     :width="widthCustom"
   >
     <slot name="text-button" />
-    <div class="d-flex justify-content-center align-items-center fz-32">
+    <div class="flex justify-center items-center text-3xl">
       <slot name="icon" />
     </div>
-    <div
-      class="d-flex align-items-center justify-content-center fz-20 flex-column fz-sm-16"
-    >
+    <div class="flex items-center justify-center flex-column text-xl">
       <slot name="content" />
     </div>
-    <div
-      class="d-flex align-items-center justify-content-center gap-40 gap-sm-0"
-    >
+    <div class="flex items-center justify-center gap-10 sm:gap-0">
       <slot name="select" />
     </div>
-    <div
-      class="d-flex align-items-center justify-content-center gap-40 gap-sm-0"
-    >
+    <div class="flex items-center justify-center gap-10 sm:gap-0">
       <slot name="time-keeping" />
     </div>
 
     <div
       v-if="showFooter"
-      class="d-flex justify-content-center align-items-center mt-3 gap-80 gap-md-60 gap-xs-40 fz-18 fz-sm-14"
+      class="flex justify-center items-center mt-3 gap-20 md:gap-14 lg:gap-14 text-lg sm:text-sm"
     >
-      <div class="text-underline cur-p" @click="onCancel">
+      <div class="underline cur-p" @click="onCancel">
         <slot name="text-cancel" />
       </div>
-      <button class="min-w-120-px btn btn-primary h-40-px" @click="onSave">
-        <span class="d-flex align-items-center justify-content-center gap-5">
+      <button class="min-w-max bg-primary h-10" @click="onSave">
+        <span class="flex items-center justify-center gap-5">
           <slot name="text-save" />
         </span>
       </button>
@@ -55,7 +49,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    showClose: {
+    closeModal: {
       type: Boolean,
       default: true,
     },
@@ -90,3 +84,6 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+@import '../../assets/styles/modal';
+</style>

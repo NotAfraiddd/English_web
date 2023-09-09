@@ -2,17 +2,17 @@
   <div
     v-for="item in data"
     :key="item.id"
-    class="flex h-auto hover:bg-table_header cursor-default text-base flex-1 justify-between items-start mt-3 border gap-2 py-3 px-5 rounded-lg"
+    class="flex h-auto hover:bg-table_header cursor-default text-base flex-1 justify-between items-start mt-3 border gap-2 py-4 px-5 rounded-lg"
   >
     <div
       class="flex gap-3 flex-col list-blog-contain"
       :class="image == true ? 'w-3/4' : 'w-full'"
     >
-      <div class="flex gap-3">
+      <div class="flex gap-3" v-if="avatar">
         <img :src="item.avatar" alt="" srcset="" class="h-8 w-8 rounded-full" />
         <div class="font-semibold my-auto">{{ item.author }}</div>
       </div>
-      <div class="flex flex-col items-start">
+      <div class="flex flex-col items-start gap-1">
         <div class="font-semibold text-xl text-primary_black text-left">
           {{ item.title }}
         </div>
@@ -90,6 +90,7 @@ export default {
     image: { type: Boolean, default: false },
     groupbutton: { type: Boolean, default: false },
     react: { type: Boolean, default: false },
+    avatar: { type: Boolean, default: false },
   },
   methods: {
     handleClickReact(data) {

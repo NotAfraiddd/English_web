@@ -1,5 +1,5 @@
 <template>
-  <GroupBack title="Reported comments" @back="changeBack" />
+  <GroupBack title="Reported comments" @back="changeBack" :hide-back="true" />
   <div
     v-for="(item, index) in listReported"
     :key="index"
