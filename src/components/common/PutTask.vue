@@ -22,7 +22,6 @@
 export default {
   components: {},
   created() {},
-  emits: ['subtract'],
   props: {
     dataPutTasks: { type: Array, default: () => [] },
   },

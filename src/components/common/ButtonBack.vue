@@ -22,7 +22,7 @@
 import { ARROW_LEFT } from '../../constants/image';
 
 export default {
-  name: 'GroupBack',
+  name: 'ButtonBack',
   emits: ['back'],
   created() {
     this.ARROW_LEFT = ARROW_LEFT;

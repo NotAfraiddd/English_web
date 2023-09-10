@@ -1,5 +1,6 @@
 <template>
-  <!-- <div class="personal-image text-center">
+  <div class="personal-image text-left mt-5 flex items-center gap-10">
+    <div class="text-base text-primary_black font-semibold">Image</div>
     <label class="label">
       <input
         type="file"
@@ -7,14 +8,10 @@
         accept="image/png, image/gif, image/jpeg"
         @change="handleImageChange"
       />
-      <figure class="personal-figure relative w-32 h-32">
-        <img
-          :src="imageURL"
-          class="personal-avatar w-32 h-32 rounded-full"
-          alt="avatar"
-        />
+      <figure class="personal-figure relative w-28 h-28 m-0">
+        <img :src="imageURL" class="personal-avatar w-28 h-28" alt="avatar" />
         <figcaption
-          class="personal-figcaption absolute top-0 opacity-0 hover:opacity-100 rounded-full"
+          class="personal-figcaption absolute top-0 opacity-0 hover:opacity-100"
         >
           <img
             class="mx-auto"
@@ -23,15 +20,22 @@
         </figcaption>
       </figure>
     </label>
-  </div> -->
-  <div class="flex">acb</div>
+  </div>
 </template>
 
 <script>
 export default {
+  props: {
+    srcImg: { type: String, default: '' },
+  },
+  watch: {
+    srcImg(newValue) {
+      this.imageURL = newValue;
+    },
+  },
   data() {
     return {
-      imageURL: 'https://avatars1.githubusercontent.com/u/11435231?s=460&v=4',
+      imageURL: this.srcImg,
     };
   },
   methods: {

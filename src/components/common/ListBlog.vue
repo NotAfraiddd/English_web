@@ -20,7 +20,7 @@
           {{ item.content }}
         </div>
       </div>
-      <div v-if="groupbutton" class="flex w-40 justify-between flex-wrap gap-2">
+      <div v-if="ButtonBack" class="flex w-40 justify-between flex-wrap gap-2">
         <div class="text-red-500 hover:text-red-600 cursor-pointer">
           Rejected
         </div>
@@ -88,7 +88,7 @@ export default {
     data: { type: Array, default: () => [] },
     icon: { type: Boolean, default: false },
     image: { type: Boolean, default: false },
-    groupbutton: { type: Boolean, default: false },
+    ButtonBack: { type: Boolean, default: false },
     react: { type: Boolean, default: false },
     avatar: { type: Boolean, default: false },
   },

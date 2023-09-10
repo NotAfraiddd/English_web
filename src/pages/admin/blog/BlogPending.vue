@@ -1,10 +1,10 @@
 <template>
   <div class="text-primary_black">
-    <GroupBack title="Blog pending" @back="changeBack" :hide-back="true" />
+    <ButtonBack title="Blog pending" @back="changeBack" :hide-back="true" />
     <ListBlog
       :data="listBlog"
       :avatar="true"
-      :groupbutton="true"
+      :ButtonBack="true"
       :image="true"
     />
     <div class="mt-5 flex justify-center">
@@ -21,13 +21,13 @@
 </template>
 
 <script>
-import GroupBack from '../../../components/common/GroupBack.vue';
+import ButtonBack from '../../../components/common/ButtonBack.vue';
 import ListBlog from '../../../components/common/ListBlog.vue';
 import { AVATAR, TITLE } from '../../../constants/image';
 import { NOTIFY } from '../../../constants/index';
 export default {
   name: 'BlogPending',
-  components: { GroupBack, ListBlog },
+  components: { ButtonBack, ListBlog },
   created() {
     this.TITLE = TITLE;
     this.AVATAR = AVATAR;

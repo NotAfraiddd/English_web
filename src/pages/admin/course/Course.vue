@@ -11,7 +11,7 @@
       :class="{ 'overlay-visible': showComment }"
       @click="handleCloseComment"
     />
-    <GroupBack title="Course" :hideBack="false" />
+    <ButtonBack title="Course" :hideBack="false" />
     <BaseSearch :search="inputSearch" @update="updateValue" />
     <ListCourse :data="listCourses" />
     <div
@@ -29,7 +29,7 @@
 </template>
 <script>
 import BaseSearch from '../../../components/common/BaseSearch.vue';
-import GroupBack from '../../../components/common/GroupBack.vue';
+import ButtonBack from '../../../components/common/ButtonBack.vue';
 import ListCourse from '../../../components/common/ListCourse.vue';
 import jscolor from '@eastdesire/jscolor';
 import { NOTIFY } from '../../../constants';
@@ -37,7 +37,7 @@ import { AVATAR, TITLE } from '../../../constants/image';
 BaseSearch;
 export default {
   name: 'Course',
-  components: { BaseSearch, ListCourse, GroupBack },
+  components: { BaseSearch, ListCourse, ButtonBack },
   created() {
     this.TITLE = TITLE;
     this.AVATAR = AVATAR;

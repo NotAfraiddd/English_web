@@ -1,5 +1,5 @@
 <template>
-  <GroupBack title="Reported comments" @back="changeBack" :hide-back="true" />
+  <ButtonBack title="Reported comments" @back="changeBack" :hide-back="true" />
   <div
     v-for="(item, index) in listReported"
     :key="index"
@@ -32,12 +32,12 @@
 </template>
 
 <script>
-import GroupBack from '../../../components/common/GroupBack.vue';
+import ButtonBack from '../../../components/common/ButtonBack.vue';
 import { ARROW_LEFT, AVATAR } from '../../../constants/image';
 import { NOTIFY } from '../../../constants/index';
 export default {
   name: 'CommentReported',
-  components: { GroupBack },
+  components: { ButtonBack },
   created() {
     this.AVATAR = AVATAR;
     this.ARROW_LEFT = ARROW_LEFT;
