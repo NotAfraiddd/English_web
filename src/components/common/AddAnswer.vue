@@ -3,7 +3,7 @@
     <div
       v-for="(item, index) in dataQuestions"
       :key="index"
-      class="flex mt-5 flex-col"
+      class="flex flex-col"
     >
       <div class="flex create-course__title items-center gap-2">
         <div
@@ -16,7 +16,7 @@
           @click="subtract(index)"
           class="font-semibold text-base cursor-pointer text-red-500"
         >
-          ( X )
+          ( x )
         </div>
       </div>
       <div class="flex gap-4">
@@ -60,18 +60,7 @@ export default {
   props: {
     dataQuestions: { type: Array, default: () => [] },
   },
-  watch: {
-    dataQuestions: {
-      deep: true,
-      handler(newDataQuestions) {
-        for (const item of newDataQuestions) {
-          if (!Array.isArray(item.answers) || item.answers.length !== 4) {
-            item.answers = ['', '', '', ''];
-          }
-        }
-      },
-    },
-  },
+  watch: {},
   methods: {
     subtract(index) {
       this.$emit('subtract', index);

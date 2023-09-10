@@ -52,7 +52,7 @@
     <GroupBack title="Transcript" extend-class="mt-5" />
     <Word :contentProp="content" @update="updateContent" />
     <GroupBack
-      title="Listen to the dialogue above and choose the correct answer"
+      title="Listen to the dialogue above and choose the correct answer ( only 6 questions )"
       extend-class="mt-5"
     />
     <AddAnswer :data-questions="dataQuestion" @subtract="subtractQuestion" />
@@ -65,7 +65,7 @@
       </div>
     </div>
     <GroupBack
-      title="Listen to the dialogue above and match the beginnings and endings of the phrases"
+      title="Listen to the dialogue above and match the beginnings and endings of the phrases ( only 5 questions )"
       extend-class="text-left mt-5"
     />
     <div class="text-primary_black font-semibold mt-2 text-left">
@@ -100,6 +100,13 @@
         +
       </div>
     </div>
+    <FillWord
+      :data-words="dataWords"
+      placeholder-left="Phrase 1 to be filled in"
+      placeholder-right="phrase 2 to be filled in"
+    />
+    <GroupBack title="Put the tasks in order of priority" extend-class="mt-5" />
+    <PutTask :data-put-tasks="dataPutTasks" />
   </div>
 </template>
 <script>
@@ -108,13 +115,15 @@ import GroupBack from '../../../components/common/GroupBack.vue';
 import Audio from '../../../components/common/Audio.vue';
 import Word from '../../../components/common/Editor.vue';
 import AddAnswer from '../../../components/common/AddAnswer.vue';
+import FillWord from '../../../components/common/FillWord.vue';
+import PutTask from '../../../components/common/PutTask.vue';
 import { STAR_RED } from '../../../constants/image';
 import { NOTIFY_MESSAGE } from '../../../constants/index';
 import { notification } from 'ant-design-vue';
 
 export default {
   name: 'CreateCourse',
-  components: { GroupBack, Audio, Word, AddAnswer },
+  components: { GroupBack, Audio, Word, AddAnswer, FillWord, PutTask },
   created() {
     this.handleEditColor();
     this.NOTIFY_MESSAGE = NOTIFY_MESSAGE;
@@ -186,6 +195,19 @@ export default {
           title: '',
           answers: [],
         },
+      ],
+      dataWords: [
+        { id: 1, contentLeft: '', contentRight: '' },
+        { id: 2, contentLeft: '', contentRight: '' },
+        { id: 3, contentLeft: '', contentRight: '' },
+        { id: 4, contentLeft: '', contentRight: '' },
+        { id: 5, contentLeft: '', contentRight: '' },
+      ],
+      dataPutTasks: [
+        { id: 1, contentLeft: '', contentRight: '' },
+        { id: 2, contentLeft: '', contentRight: '' },
+        { id: 3, contentLeft: '', contentRight: '' },
+        { id: 4, contentLeft: '', contentRight: '' },
       ],
       color: '#000000',
       colorTemp: '',
