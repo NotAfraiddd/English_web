@@ -1,7 +1,7 @@
 <template>
   <div class="flex" :class="extendClass">
     <div
-      class="bg-primary w-max p-2 text-white text-lg rounded-xl font-semibold"
+      class="bg-primary w-max px-2 py-1 text-white text-lg rounded-xl font-semibold"
     >
       {{ title }}
     </div>

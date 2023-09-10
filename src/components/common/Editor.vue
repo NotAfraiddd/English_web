@@ -29,10 +29,10 @@
     </div>
     <div
       v-if="activeTab == 2"
-      class="mt-4 text-left preview-transcript"
+      class="mt-4 text-left preview-transcript p-5"
       v-html="content"
     />
-    <div v-else class="mt-5 preview-transcript">
+    <div v-else class="mt-5 transcript">
       <Editor
         api-key="no-api-key"
         v-model="content"
@@ -103,8 +103,14 @@ export default {
   letter-spacing: 2px;
   font-weight: 500;
 }
+.transcript,
+.preview-transcript {
+  min-height: 400px;
+}
 
 .preview-transcript {
-  height: 400px;
+  border-radius: 12px;
+  border: 1px solid #eae4e4;
+  box-shadow: -4px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
 </style>

@@ -1,13 +1,13 @@
 <template>
-  <div class="grid grid-cols-3">
+  <div class="grid grid-cols-3 list-course">
     <div
       v-for="(item, index) in data"
       :key="index"
-      class="h-auto min-h-max w-80"
+      class="h-auto min-h-max w-80 item-course"
       @click="handleClick(item)"
     >
       <div
-        class="course flex justify-center border flex-col w-80 px-2 gap-1 rounded-2xl h-40 cursor-pointer hover:opacity-80"
+        class="course flex justify-center border flex-col w-full px-2 gap-1 rounded-2xl h-40 cursor-pointer hover:opacity-80"
         :style="`background-color: ${item.color};`"
       >
         <div class="font-semibold text-2xl text-white">{{ item.title }}</div>
@@ -52,6 +52,23 @@ export default {
 .course {
   &:hover {
     transform: translateY(-2px);
+  }
+}
+
+.list-course {
+  @media screen and (max-width: 1280px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    column-gap: 8px !important;
+  }
+  @media screen and (max-width: 725px) {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+}
+
+.item-course {
+  @media screen and (max-width: 725px) {
+    width: 26rem !important;
+    margin: 0 auto;
   }
 }
 </style>

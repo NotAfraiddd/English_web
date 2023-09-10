@@ -3,6 +3,7 @@
   padding-left: 20px;
   @media screen and (max-width: 992px) {
     padding-left: 56px;
+    padding-right: 12px;
   }
 }
 
@@ -94,7 +95,7 @@
 
 .header {
   &-notify {
-    top: -16px;
+    top: -12px;
     left: 12px;
   }
 

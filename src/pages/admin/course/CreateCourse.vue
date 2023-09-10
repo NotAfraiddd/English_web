@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="create-course">
     <GroupBack title="Create Course" @back="changeBack" :hide-back="true" />
     <!-- title -->
     <div class="flex gap-10">
@@ -14,6 +14,7 @@
         </div>
         <input
           type="text"
+          v-model="title"
           class="w-full border rounded-lg form-control"
           spellcheck="false"
         />
@@ -50,6 +51,55 @@
     <Audio :data-prop="selectedAudio" />
     <GroupBack title="Transcript" extend-class="mt-5" />
     <Word :contentProp="content" @update="updateContent" />
+    <GroupBack
+      title="Listen to the dialogue above and choose the correct answer"
+      extend-class="mt-5"
+    />
+    <AddAnswer :data-questions="dataQuestion" @subtract="subtractQuestion" />
+    <div class="flex items-center gap-5">
+      <div
+        @click="addQuestion"
+        class="bg-primary w-max px-2 py-1 mt-3 cursor-pointer text-white text-lg rounded-xl font-semibold"
+      >
+        Add Question
+      </div>
+    </div>
+    <GroupBack
+      title="Listen to the dialogue above and match the beginnings and endings of the phrases"
+      extend-class="text-left mt-5"
+    />
+    <div class="text-primary_black font-semibold mt-2 text-left">
+      Phrases or words that need to be filled in
+    </div>
+    <div class="flex gap-2 items-center w-full flex-wrap">
+      <div
+        v-for="(item, index) in numWords"
+        :key="index"
+        class="flex items-center"
+      >
+        <input
+          type="text"
+          v-model="word[index]"
+          class="w-max border rounded-lg form-control text-center"
+          spellcheck="false"
+          @focus="setIsFocused(index)"
+          @blur="setIsFocused(index)"
+        />
+        <div
+          v-if="index == indexFocus && numWords > 1"
+          @click="subtractWord(index)"
+          class="ml-2 text-sm text-red-500 cursor-pointer"
+        >
+          ( x )
+        </div>
+      </div>
+      <div
+        @click="addWord"
+        class="bg-text_back w-7 h-7 rounded-full text-xl font-semibold text-gray-400 cursor-pointer"
+      >
+        +
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -57,18 +107,45 @@ import jscolor from '@eastdesire/jscolor';
 import GroupBack from '../../../components/common/GroupBack.vue';
 import Audio from '../../../components/common/Audio.vue';
 import Word from '../../../components/common/Editor.vue';
+import AddAnswer from '../../../components/common/AddAnswer.vue';
 import { STAR_RED } from '../../../constants/image';
+import { NOTIFY_MESSAGE } from '../../../constants/index';
+import { notification } from 'ant-design-vue';
+
 export default {
   name: 'CreateCourse',
-  components: { GroupBack, Audio, Word },
+  components: { GroupBack, Audio, Word, AddAnswer },
   created() {
     this.handleEditColor();
+    this.NOTIFY_MESSAGE = NOTIFY_MESSAGE;
     this.STAR_RED = STAR_RED;
   },
 
   methods: {
+    setIsFocused(index) {
+      this.indexFocus = index;
+    },
+    subtractWord(index) {
+      this.word.splice(index, 1);
+      this.numWords--;
+    },
     changeBack() {
       this.$router.push({ name: 'Course' });
+    },
+    addWord() {
+      if (this.numWords <= 4) this.numWords++;
+      else notification.error({ message: NOTIFY_MESSAGE.ADD_WORD });
+    },
+    addQuestion() {
+      if (this.dataQuestion.length <= 5)
+        this.dataQuestion.push({
+          title: '',
+          answers: [],
+        });
+      else notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION });
+    },
+    subtractQuestion(data) {
+      this.dataQuestion.splice(data, 1);
     },
     /**
      * @description show colorPicker and resolve value color when user choose any color
@@ -87,11 +164,29 @@ export default {
         // this.colorPickerTemp.show();
       });
     },
+    /**
+     * Scroll to last
+     */
+    scrollToLast() {
+      let element = document.querySelector('.create-course');
+      if (element)
+        $('.create-course').animate({ scrollTo: element.scrollHeight }, 0);
+    },
   },
   computed: {},
 
   data() {
     return {
+      title: '',
+      indexFocus: null,
+      numWords: 1,
+      word: [],
+      dataQuestion: [
+        {
+          title: '',
+          answers: [],
+        },
+      ],
       color: '#000000',
       colorTemp: '',
       colorPickerTemp: '',
@@ -111,7 +206,8 @@ export default {
 .create-course {
   &__title,
   &__subtitle {
-    min-width: 100px;
+    width: fit-content;
+    min-width: 150px;
   }
 }
 </style>
