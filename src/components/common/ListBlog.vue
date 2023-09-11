@@ -2,13 +2,14 @@
   <div
     v-for="item in data"
     :key="item.id"
-    class="flex h-auto hover:bg-table_header cursor-default text-base flex-1 justify-between items-start mt-3 border gap-2 py-4 px-5 rounded-lg"
+    :class="extendClass"
+    @click="goToDetail(item.id)"
+    class="flex h-auto cursor-pointer text-base flex-1 justify-between items-start mt-3 border gap-2 py-3 px-5 rounded-lg hover:opacity-80"
   >
     <div
-      class="flex gap-3 flex-col list-blog-contain"
-      :class="image == true ? 'w-3/4' : 'w-full'"
+      class="flex max-h-40 flex-col list-blog-contain w-full h-40 justify-between"
     >
-      <div class="flex gap-3" v-if="avatar">
+      <div v-if="user" class="flex gap-3">
         <img :src="item.avatar" alt="" srcset="" class="h-8 w-8 rounded-full" />
         <div class="font-semibold my-auto">{{ item.author }}</div>
       </div>
@@ -16,11 +17,13 @@
         <div class="font-semibold text-xl text-primary_black text-left">
           {{ item.title }}
         </div>
-        <div class="text-base text-primary_black text-left">
+        <div
+          class="text-base text-primary_black text-left overflow-hidden text-sub-content"
+        >
           {{ item.content }}
         </div>
       </div>
-      <div v-if="ButtonBack" class="flex w-40 justify-between flex-wrap gap-2">
+      <div v-if="buttonBack" class="flex w-40 justify-between flex-wrap gap-3">
         <div class="text-red-500 hover:text-red-600 cursor-pointer">
           Rejected
         </div>
@@ -55,19 +58,38 @@
     </div>
     <div
       class="flex justify-end gap-3"
-      :class="image == true ? 'w-1/5' : 'w-5'"
+      :class="image == true ? 'w-1/4' : 'w-5'"
     >
-      <div v-if="image">
+      <div v-if="image" class="w-40">
         <img
           :src="item.imageTitle"
           alt=""
           srcset=""
-          class="h-40 min-w-max rounded-md"
+          class="h-40 w-max rounded-md"
         />
       </div>
       <div v-if="icon">
-        <div class="p-1 cursor-pointer w-8">
+        <div
+          :class="[
+            'relative cursor-pointer w-8 pb-2',
+            showOption != null && 'icon-option',
+          ]"
+          @mouseenter="showOptions(item.id)"
+          @mouseout="showOptions"
+        >
           <img :src="OPTION_ICON" alt="" srcset="" />
+        </div>
+        <div
+          :class="[
+            'w-52 rounded-lg absolute menu-option right-14 bg-white z-10 border',
+            showOption == item.id ? 'block' : 'hidden',
+          ]"
+        >
+          <div v-for="(item, index) in options" :key="index">
+            <div class="h-7 leading-7 hover:bg-table_border cursor-pointer">
+              {{ item.title }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -76,34 +98,77 @@
 <script>
 import { OPTION_ICON, HEART, CHAT, HEART_DEFAULT } from '../../constants/image';
 export default {
-  name: 'BlogPending',
+  name: 'ListBlog',
   created() {
     this.HEART = HEART;
     this.CHAT = CHAT;
     this.HEART_DEFAULT = HEART_DEFAULT;
     this.OPTION_ICON = OPTION_ICON;
   },
-  emits: ['showComment'],
+  emits: ['showComment', 'changePath'],
   props: {
     data: { type: Array, default: () => [] },
     icon: { type: Boolean, default: false },
     image: { type: Boolean, default: false },
-    ButtonBack: { type: Boolean, default: false },
+    buttonBack: { type: Boolean, default: false },
     react: { type: Boolean, default: false },
-    avatar: { type: Boolean, default: false },
+    user: { type: Boolean, default: false },
+    extendClass: { type: String, default: '' },
   },
   methods: {
     handleClickReact(data) {
       data.numReact += 1;
     },
+    goToDetail(data) {
+      this.$emit('changePath', data);
+    },
     showComment(data) {
       this.$emit('showComment', { item: data, status: true });
     },
+    showOptions(data) {
+      this.showOption = data;
+    },
+    closeOptions() {
+      this.showOption = null;
+    },
   },
   data() {
-    return {};
+    return {
+      showOption: null,
+      options: [
+        { id: 1, title: 'Delete' },
+        { id: 2, title: 'Edit' },
+      ],
+    };
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.menu-option {
+  height: fit-content;
+  padding: 8px 0;
+}
+
+.icon-option {
+  transform: translateY(3px);
+  transition: transform 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+  &::after {
+    content: '';
+    position: absolute;
+    width: 50px;
+    height: 20px;
+    right: 8px;
+  }
+  &:hover {
+    transform: translateY(0);
+  }
+}
+
+.text-sub-content {
+  display: block;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+</style>

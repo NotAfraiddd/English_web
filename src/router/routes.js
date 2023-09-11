@@ -43,6 +43,11 @@ export default [
         component: () => import('../pages/admin/blog/BlogPending.vue'),
       },
       {
+        path: 'blog/pending/detail/:id',
+        name: 'DetailBlogPending',
+        component: () => import('../pages/admin/blog/DetailBlogPending.vue'),
+      },
+      {
         path: 'comment/reported',
         name: 'CommentReported',
         component: () => import('../pages/admin/comment/CommentReported.vue'),

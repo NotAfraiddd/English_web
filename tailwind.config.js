@@ -12,6 +12,7 @@ module.exports = {
         table_border: 'rgba(217, 217, 217, 0.6)',
         text_back: '#D9D9D9',
         orange: 'rgba(240, 81, 35, 1)',
+        text_green: '#45CD15',
       },
     },
   },

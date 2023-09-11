@@ -4,7 +4,7 @@
       <ButtonBack title="Create Course" @back="changeBack" :hide-back="true" />
       <!-- title -->
       <div class="flex gap-10">
-        <div class="flex mt-5 w-1/2">
+        <div class="flex mt-5 w-full">
           <div class="flex create-course__title">
             <div
               class="h-10 leading-10 text-primary_black text-left font-semibold text-base mr-2"
@@ -18,20 +18,6 @@
             v-model="title"
             class="w-full border rounded-lg form-control"
             spellcheck="false"
-          />
-        </div>
-        <div class="flex mt-5 w-1/2">
-          <div
-            class="text-primary_black h-10 leading-10 text-left font-semibold text-base mr-5 create-course__title"
-          >
-            Background
-          </div>
-          <input
-            v-model="color"
-            class="input-color h-10 text-left w-full px-2 py-1 border cursor-pointer rounded-lg"
-            ref="colorPicker"
-            data-jscolor=""
-            @input="colorTemp?.length < 3 ? (colorTemp = color) : null"
           />
         </div>
       </div>
@@ -172,7 +158,6 @@ export default {
     GroupButton,
   },
   created() {
-    this.handleEditColor();
     this.UI = UI;
     this.NOTIFY_MESSAGE = NOTIFY_MESSAGE;
     this.AVATAR = AVATAR;
@@ -232,23 +217,6 @@ export default {
       this.dataQuestionReading.splice(data, 1);
     },
     /**
-     * @description show colorPicker and resolve value color when user choose any color
-     * @returns {void}
-     */
-    handleEditColor() {
-      this.colorTemp = this.color;
-      // NOTE: Waitting DOM is updated before we access into DOM
-      this.$nextTick(() => {
-        this.colorPickerTemp = new jscolor(this.$refs.colorPicker, {
-          width: 120,
-          position: 'bottom',
-        });
-        // NOTE: always set jscolor.init() before always show to set changing color
-        jscolor.init();
-        // this.colorPickerTemp.show();
-      });
-    },
-    /**
      * Scroll to last
      */
     scrollToLast() {
@@ -293,9 +261,6 @@ export default {
         { id: 3, content: '' },
         { id: 4, content: '' },
       ],
-      color: '#000000',
-      colorTemp: '',
-      colorPickerTemp: '',
       selectedAudio: null,
     };
   },

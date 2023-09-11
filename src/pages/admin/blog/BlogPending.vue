@@ -4,8 +4,9 @@
     <ListBlog
       :data="listBlog"
       :avatar="true"
-      :ButtonBack="true"
+      :buttonBack="true"
       :image="true"
+      @changePath="goToDetail"
     />
     <div class="mt-5 flex justify-center">
       <a-pagination
@@ -44,7 +45,10 @@ export default {
       console.log(current, pageSize);
     },
     changeBack() {
-      this.$router.push(`/admin`);
+      this.$router.push({ name: 'Dashboard' });
+    },
+    goToDetail(dataID) {
+      this.$router.push({ name: 'DetailBlogPending', params: { id: dataID } });
     },
   },
   data() {
@@ -59,7 +63,7 @@ export default {
           imageTitle: TITLE,
           title: 'Effective Methods for Improving English Language Skills.',
           content:
-            "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
+            "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill. When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
         },
         {
           id: 2,

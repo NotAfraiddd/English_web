@@ -7,18 +7,20 @@
       @click="handleClick(item)"
     >
       <div
-        class="course flex justify-center border flex-col w-full px-2 gap-1 rounded-2xl h-40 cursor-pointer hover:opacity-80"
+        class="course flex justify-center border flex-col w-full px-4 gap-1 rounded-2xl h-40 cursor-pointer hover:opacity-80"
         :style="`background-color: ${item.color};`"
       >
-        <div class="font-semibold text-2xl text-white">{{ item.title }}</div>
-        <div class="text-base text-white">
+        <div class="font-semibold text-2xl text-white break-all">
+          {{ item.title }}
+        </div>
+        <div class="text-base text-white break-all">
           {{ item.subtitle }}
         </div>
         <Processbar v-if="hideProcessBar" :percentages="item.percentages" />
       </div>
-      <div class="w-full mt-3 flex flex-col gap-1 items-start my-4 ml-4">
-        <div class="font-semibold text-xl">{{ item.name }}</div>
-        <div class="text-sm flex gap-3">
+      <div class="w-full mt-3 flex flex-col gap-1 items-start my-4">
+        <div class="font-semibold text-xl w-full">{{ item.name }}</div>
+        <div v-if="hideCourseFinished" class="text-sm flex gap-3">
           Completed
           <div class="font-semibold">{{ item.courseFinished }}</div>
         </div>
@@ -36,6 +38,7 @@ export default {
   props: {
     data: { type: Array, default: () => [] },
     hideProcessBar: { type: Boolean, default: false },
+    hideCourseFinished: { type: Boolean, default: false },
   },
   methods: {
     handleClick(data) {
