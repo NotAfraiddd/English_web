@@ -13,7 +13,7 @@
     />
     <ButtonBack title="Course" :hideBack="false" />
     <BaseSearch :search="inputSearch" @update="updateValue" />
-    <ListCourse :data="listCourses" @clicked="getData" />
+    <ListTypeCourse :data="listCourses" @clicked="getData" />
     <div
       @click="showModalCreate"
       class="flex flex-col h-auto cursor-pointer text-base flex-1 justify-between items-center mt-3 border-dashed border-4 border-primary_black_opacity-600 gap-1 py-2 px-5 rounded-lg"
@@ -26,7 +26,7 @@
       <div class="text-primary_black font-semibold">Add new course</div>
     </div>
   </div>
-  <!-- modal -->
+  <!-- modal create -->
   <ConfirmModal
     :showModal="showModalCreateCourse"
     @closeModal="closeModalCreateCourse"
@@ -116,7 +116,7 @@
       </div>
     </template>
   </ConfirmModal>
-
+  <!-- modal edit -->
   <ConfirmModal
     :showModal="showModalChooseCourse"
     @closeModal="closeModalChoose"
@@ -221,7 +221,7 @@
 <script>
 import BaseSearch from '../../../components/common/BaseSearch.vue';
 import ButtonBack from '../../../components/common/ButtonBack.vue';
-import ListCourse from '../../../components/common/ListCourse.vue';
+import ListTypeCourse from '../../../components/common/ListTypeCourse.vue';
 import jscolor from '@eastdesire/jscolor';
 import { NOTIFY, NOTIFY_MESSAGE } from '../../../constants';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
@@ -229,7 +229,7 @@ import { AVATAR, TITLE, ADMIN_COURSE } from '../../../constants/image';
 import { notification } from 'ant-design-vue';
 export default {
   name: 'Course',
-  components: { BaseSearch, ListCourse, ButtonBack, ConfirmModal },
+  components: { BaseSearch, ListTypeCourse, ButtonBack, ConfirmModal },
   created() {
     this.NOTIFY_MESSAGE = NOTIFY_MESSAGE;
     this.ADMIN_COURSE = ADMIN_COURSE;
@@ -251,6 +251,21 @@ export default {
   },
 
   methods: {
+    handleEditUpdate(record) {
+      console.log(record);
+    },
+    goToListening() {
+      this.$router.push({
+        name: 'CourseListening',
+        params: { course: this.editNameCourse },
+      });
+    },
+    goToReading() {
+      this.$router.push({
+        name: 'CourseReading',
+        params: { course: this.editNameCourse },
+      });
+    },
     cancelTypeCourse() {
       this.createTitle = '';
       this.createSubtitle = '';

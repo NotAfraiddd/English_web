@@ -13,8 +13,10 @@
       </div>
     </div>
     <div class="flex w-40 justify-between flex-wrap gap-2 group-button">
-      <div class="text-red-500 hover:text-red-600 cursor-pointer">Rejected</div>
-      <div class="text-green-500 hover:text-green-600 cursor-pointer">
+      <div class="text-text_red hover:text-red-600 cursor-pointer">
+        Rejected
+      </div>
+      <div class="text-text_green hover:text-green-600 cursor-pointer">
         Approved
       </div>
     </div>
@@ -74,7 +76,7 @@ export default {
         {
           comment: 'John was reported for calling a comment',
           offense:
-            'shut up !!! bitch John was reported for calling a comment John was reported for calling a comment John was reported for calling a comment',
+            'shut up !!! bitch John was reported for calling a comment John was reported for calling a comment John was reported for calling a comment ch John was reported for calling a comment John was reported for calling a comment John was reported for calling a comment',
         },
       ],
     };

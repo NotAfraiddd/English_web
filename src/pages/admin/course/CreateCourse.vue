@@ -76,7 +76,7 @@
           <div
             v-if="index == indexFocus && numWords > 1"
             @click="subtractWord(index)"
-            class="ml-2 text-sm text-red-500 cursor-pointer"
+            class="ml-2 text-sm text-text_red cursor-pointer"
           >
             ( x )
           </div>

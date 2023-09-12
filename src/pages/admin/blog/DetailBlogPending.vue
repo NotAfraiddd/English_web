@@ -10,7 +10,7 @@
     </div>
     <div class="mt-4 p-5" v-html="content" />
     <div class="flex gap-5 absolute right-0">
-      <div class="text-red-500 text-base h-10 leading-10 w-24 cursor-pointer">
+      <div class="text-text_red text-base h-10 leading-10 w-24 cursor-pointer">
         Rejected
       </div>
       <div

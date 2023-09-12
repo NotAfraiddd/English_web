@@ -13,6 +13,7 @@ module.exports = {
         text_back: '#D9D9D9',
         orange: 'rgba(240, 81, 35, 1)',
         text_green: '#45CD15',
+        text_red: '#F00',
       },
     },
   },

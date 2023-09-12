@@ -24,10 +24,10 @@
         </div>
       </div>
       <div v-if="buttonBack" class="flex w-40 justify-between flex-wrap gap-3">
-        <div class="text-red-500 hover:text-red-600 cursor-pointer">
+        <div class="text-text_red hover:text-red-600 cursor-pointer">
           Rejected
         </div>
-        <div class="text-green-500 hover:text-green-600 cursor-pointer">
+        <div class="text-text_green hover:text-green-600 cursor-pointer">
           Approved
         </div>
       </div>

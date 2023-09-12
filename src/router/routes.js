@@ -33,6 +33,21 @@ export default [
         component: () => import('../pages/admin/course/Course.vue'),
       },
       {
+        path: 'member',
+        name: 'Member',
+        component: () => import('../pages/admin/member/Member.vue'),
+      },
+      {
+        path: 'course/:course/listening',
+        name: 'CourseListening',
+        component: () => import('../pages/admin/course/CourseListening.vue'),
+      },
+      {
+        path: 'course/:course/reading',
+        name: 'CourseReading',
+        component: () => import('../pages/admin/course/CourseReading.vue'),
+      },
+      {
         path: 'course/create-course',
         name: 'CreateCourse',
         component: () => import('../pages/admin/course/CreateCourse.vue'),

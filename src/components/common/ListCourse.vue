@@ -1,44 +1,33 @@
 <template>
-  <div class="grid grid-cols-3 list-course">
-    <div
-      v-for="(item, index) in data"
-      :key="index"
-      class="h-auto min-h-max w-80 item-course"
-      @click="handleClick(item)"
-    >
+  <div class="flex mt-7 flex-col gap-10">
+    <slot name="content">
       <div
-        class="course flex justify-center border flex-col w-full px-4 gap-1 rounded-2xl h-40 cursor-pointer hover:opacity-80"
-        :style="`background-color: ${item.color};`"
+        v-for="(item, index) in data"
+        :key="index"
+        class="relative w-full hover:opacity-80 cursor-pointer"
+        @click="handleClick"
       >
-        <div class="font-semibold text-2xl text-white break-all">
-          {{ item.title }}
-        </div>
-        <div class="text-base text-white break-all">
-          {{ item.subtitle }}
-        </div>
-        <Processbar v-if="hideProcessBar" :percentages="item.percentages" />
-      </div>
-      <div class="w-full mt-3 flex flex-col gap-1 items-start my-4">
-        <div class="font-semibold text-xl w-full">{{ item.name }}</div>
-        <div v-if="hideCourseFinished" class="text-sm flex gap-3">
-          Completed
-          <div class="font-semibold">{{ item.courseFinished }}</div>
+        <img :src="item.image" alt="" srcset="" class="h-44 course-image" />
+        <div class="absolute w-1/2 top-12 bg-white h-32 course-infor">
+          <div class="flex flex-col items-start ml-10 mt-10">
+            <div class="font-semibold text-2xl">{{ item.title }}</div>
+            <div class="text-base">
+              Read a direct message on social media to practise and improve your
+              reading skills.
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </slot>
   </div>
 </template>
 <script>
-import Processbar from './Processbar.vue';
 export default {
   name: 'ListCourse',
-  components: { Processbar },
   created() {},
   emits: ['clicked'],
   props: {
     data: { type: Array, default: () => [] },
-    hideProcessBar: { type: Boolean, default: false },
-    hideCourseFinished: { type: Boolean, default: false },
   },
   methods: {
     handleClick(data) {
@@ -52,26 +41,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.course {
-  &:hover {
-    transform: translateY(-2px);
+.course-image {
+  width: 20rem;
+  border-bottom-left-radius: 40px;
+  @media screen and (max-width: 1400px) {
+    width: 19rem;
+  }
+  @media screen and (max-width: 900px) {
+    height: 10rem !important;
+    width: 18rem;
   }
 }
-
-.list-course {
-  @media screen and (max-width: 1280px) {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    column-gap: 8px !important;
-  }
-  @media screen and (max-width: 725px) {
-    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
-  }
-}
-
-.item-course {
-  @media screen and (max-width: 725px) {
-    width: 26rem !important;
-    margin: 0 auto;
-  }
+.course-infor {
+  left: 220px;
+  border-top-left-radius: 40px;
 }
 </style>

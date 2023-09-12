@@ -6,7 +6,7 @@
     </div>
     <BaseTable
       :columns="columns"
-      :data="data"
+      :data="dataInformation"
       extend-class="flex justify-center"
     />
   </div>
@@ -29,7 +29,7 @@ export default {
   mounted() {
     if (this.screenUI == SCREEN.comment) {
       const containWidthElement = this.$refs.containWidth;
-      console.log(containWidthElement);
+      console.log('containWidthElement');
     }
   },
   methods: {
@@ -55,7 +55,7 @@ export default {
       blog: {
         id: NOTIFY.blog,
         subtitle: 'Blog',
-        title: 'Blog pending approval',
+        title: 'Blog pending',
       },
       listReported: [
         {
@@ -91,7 +91,7 @@ export default {
           offense: 'shut up !!! bitch',
         },
       ],
-      data: [
+      dataInformation: [
         {
           title: 'Current level member',
           basic: 20,

@@ -1,5 +1,6 @@
 import HOME_ICON from '../assets/images/menu-icon-1.png';
 import LOCK from '../assets/images/lock.png';
+import LOCK_COLOR from '../assets/images/lock_color.svg';
 import ADMIN_HOME from '../assets/images/admin_home.svg';
 import ADMIN_MEMBER from '../assets/images/admin_member.svg';
 import ARROW_LEFT from '../assets/images/arrow_left.svg';
@@ -21,8 +22,13 @@ import HEART_DEFAULT from '../assets/images/heart-default.png';
 import ERROR_GIF from '../assets/images/gifError.gif';
 import MENU from '../assets/images/menu.svg';
 import CHAT from '../assets/images/chat.svg';
+import GARBAGE from '../assets/images/garbage.svg';
+import EXAMPLE from '../assets/images/example.jpg';
 
 export {
+  GARBAGE,
+  LOCK_COLOR,
+  EXAMPLE,
   STAR_RED,
   HEART,
   HEART_DEFAULT,

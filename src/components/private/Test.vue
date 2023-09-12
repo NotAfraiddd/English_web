@@ -13,7 +13,7 @@
         {{ key + 1 }}. {{ value }}
       </label>
     </div>
-    <span v-if="hasError(i.id + 1)" class="ml-1 text-red-500">chibao</span>
+    <span v-if="hasError(i.id + 1)" class="ml-1 text-text_red">chibao</span>
   </div>
 </template>
 

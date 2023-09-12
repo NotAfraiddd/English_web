@@ -14,7 +14,7 @@
         <div
           v-if="dataQuestions.length >= 2"
           @click="subtract(index)"
-          class="font-semibold text-base cursor-pointer text-red-500"
+          class="font-semibold text-base cursor-pointer text-text_red"
         >
           ( x )
         </div>
