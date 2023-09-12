@@ -38,6 +38,11 @@ export default [
         component: () => import('../pages/admin/member/Member.vue'),
       },
       {
+        path: 'member/:id',
+        name: 'MemberDetail',
+        component: () => import('../pages/admin/member/MemberDetail.vue'),
+      },
+      {
         path: 'course/:course/listening',
         name: 'CourseListening',
         component: () => import('../pages/admin/course/CourseListening.vue'),
@@ -48,17 +53,24 @@ export default [
         component: () => import('../pages/admin/course/CourseReading.vue'),
       },
       {
-        path: 'course/create-course',
-        name: 'CreateCourse',
-        component: () => import('../pages/admin/course/CreateCourse.vue'),
+        path: 'course/:course/listening/create',
+        name: 'CreateCourseListening',
+        component: () =>
+          import('../pages/admin/course/CreateCourseListening.vue'),
       },
       {
-        path: 'blog/pending',
+        path: 'course/:course/reading/create',
+        name: 'CreateCourseReading',
+        component: () =>
+          import('../pages/admin/course/CreateCourseReading.vue'),
+      },
+      {
+        path: 'blog-pending',
         name: 'BlogPending',
         component: () => import('../pages/admin/blog/BlogPending.vue'),
       },
       {
-        path: 'blog/pending/detail/:id',
+        path: 'blog-pending/detail/:id',
         name: 'DetailBlogPending',
         component: () => import('../pages/admin/blog/DetailBlogPending.vue'),
       },

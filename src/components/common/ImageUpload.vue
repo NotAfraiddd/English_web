@@ -1,17 +1,32 @@
 <template>
-  <div class="personal-image text-left mt-5 flex items-center gap-10">
-    <div class="text-base text-primary_black font-semibold">Image</div>
+  <div
+    :class="[
+      'personal-image text-left mt-5 flex items-center',
+      avatar ? '' : 'gap-10',
+    ]"
+  >
+    <div class="text-base text-primary_black font-semibold">{{ title }}</div>
     <label class="label">
       <input
         type="file"
         ref="imageInput"
         accept="image/png, image/gif, image/jpeg"
+        :disabled="disabled"
         @change="handleImageChange"
       />
       <figure class="personal-figure relative w-28 h-28 m-0">
-        <img :src="imageURL" class="personal-avatar w-28 h-28" alt="avatar" />
+        <img
+          :src="imageURL || AVATAR"
+          class="personal-avatar w-28 h-28"
+          :class="avatar ? 'rounded-full' : ''"
+          alt="avatar"
+        />
         <figcaption
-          class="personal-figcaption absolute top-0 opacity-0 hover:opacity-100"
+          :class="[
+            'personal-figcaption absolute top-0 opacity-0 ',
+            avatar ? 'rounded-full' : '',
+            disabled ? '' : 'hover:opacity-100',
+          ]"
         >
           <img
             class="mx-auto"
@@ -24,19 +39,30 @@
 </template>
 
 <script>
+import { mapMutations, mapState } from 'vuex';
+import { AVATAR } from '../../constants/image';
 export default {
   props: {
     srcImg: { type: String, default: '' },
+    title: { type: String, default: '' },
+    avatar: { type: Boolean, default: false },
+    disabled: { type: Boolean, default: false },
   },
   watch: {
     srcImg(newValue) {
       this.imageURL = newValue;
     },
   },
+  created() {
+    this.AVATAR = AVATAR;
+  },
   data() {
     return {
       imageURL: this.srcImg,
     };
+  },
+  computed: {
+    ...mapState('member', ['save']),
   },
   methods: {
     handleImageChange(event) {

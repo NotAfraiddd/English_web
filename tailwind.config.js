@@ -6,6 +6,7 @@ module.exports = {
     extend: {
       colors: {
         primary: 'rgba(81, 166, 221, 0.70)',
+        primary_line: 'rgba(153, 153, 153, 0.60)',
         primary_black: '#615A5A',
         primary_black_opacity: 'rgba(97, 90, 90, 0.5)',
         table_header: '#ECECEC',

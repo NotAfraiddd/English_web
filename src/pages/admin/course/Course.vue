@@ -373,9 +373,7 @@ export default {
     closeModalChoose() {
       this.showModalChooseCourse = false;
     },
-    goToCreateCourse() {
-      this.$router.push({ name: 'CreateCourse' });
-    },
+
     handleShowComment(data) {
       if (data.status) {
         this.showComment = true;

@@ -1,5 +1,6 @@
 <template>
-  <div class="text-primary_black">
+  <ButtonBack title="Members" @back="changeBack" />
+  <div class="text-primary_black mt-5">
     <BaseTable
       :columns="columns"
       :data="listMember"
@@ -7,6 +8,7 @@
     >
       <template #user="{ record }">
         <div
+          @click="goToDetail(record.id)"
           class="flex items-center gap-3 hover:underline cursor-pointer hover:opacity-70"
         >
           <img
@@ -49,6 +51,14 @@
         </div>
       </template>
     </BaseTable>
+    <a-pagination
+      class="pagination flex justify-center"
+      v-model:current="current"
+      :showSizeChanger="false"
+      v-model:page-size="pageSize"
+      :total="500"
+      @change="onShowSizeChange"
+    />
   </div>
   <!-- Modal edit status blog -->
   <ConfirmModal
@@ -141,9 +151,10 @@ import {
 } from '../../../constants/image';
 import { NOTIFY, SCREEN } from '../../../constants/index';
 import { RENDER_TYPE } from '../../../constants/table';
+import ButtonBack from '../../../components/common/ButtonBack.vue';
 export default {
   name: 'Member',
-  components: { BaseTable, ConfirmModal },
+  components: { BaseTable, ConfirmModal, ButtonBack },
   created() {
     this.GARBAGE = GARBAGE;
     this.LOCK_COLOR = LOCK_COLOR;
@@ -153,6 +164,9 @@ export default {
     this.SCREEN = SCREEN;
   },
   methods: {
+    goToDetail(dataID) {
+      this.$router.push({ name: 'MemberDetail', params: { id: dataID } });
+    },
     // modal edit
     handleEdit(data) {
       this.statusBlog = data;
@@ -217,6 +231,102 @@ export default {
           blog: 0,
           status: 1,
         },
+        {
+          id: 3,
+          user: {
+            avatar: AVATAR,
+            name: 'Nguyen Huynh Chi Bao',
+          },
+          gender: 0,
+          registration_date: '09/06/2023',
+          level: 0,
+          blog: 0,
+          status: 1,
+        },
+        {
+          id: 4,
+          user: {
+            avatar: AVATAR,
+            name: 'Nguyen Huynh Chi Bao',
+          },
+          gender: 0,
+          registration_date: '09/06/2023',
+          level: 0,
+          blog: 0,
+          status: 1,
+        },
+        {
+          id: 5,
+          user: {
+            avatar: AVATAR,
+            name: 'Nguyen Huynh Chi Bao',
+          },
+          gender: 0,
+          registration_date: '09/06/2023',
+          level: 0,
+          blog: 0,
+          status: 1,
+        },
+        {
+          id: 6,
+          user: {
+            avatar: AVATAR,
+            name: 'Nguyen Huynh Chi Bao',
+          },
+          gender: 0,
+          registration_date: '09/06/2023',
+          level: 0,
+          blog: 0,
+          status: 1,
+        },
+        {
+          id: 7,
+          user: {
+            avatar: AVATAR,
+            name: 'Nguyen Huynh Chi Bao',
+          },
+          gender: 0,
+          registration_date: '09/06/2023',
+          level: 0,
+          blog: 0,
+          status: 1,
+        },
+        {
+          id: 8,
+          user: {
+            avatar: AVATAR,
+            name: 'Nguyen Huynh Chi Bao',
+          },
+          gender: 0,
+          registration_date: '09/06/2023',
+          level: 0,
+          blog: 0,
+          status: 1,
+        },
+        {
+          id: 9,
+          user: {
+            avatar: AVATAR,
+            name: 'Nguyen Huynh Chi Bao',
+          },
+          gender: 1,
+          registration_date: '09/06/2023',
+          level: 2,
+          blog: 1,
+          status: 1,
+        },
+        {
+          id: 10,
+          user: {
+            avatar: AVATAR,
+            name: 'Nguyen Huynh Chi Bao',
+          },
+          gender: 1,
+          registration_date: '09/06/2023',
+          level: 2,
+          blog: 1,
+          status: 1,
+        },
       ],
       columns: [
         {
@@ -246,7 +356,7 @@ export default {
         },
         {
           headerClass:
-            'text-center text-bas h-20 w-60 bg-table_header border-b-0',
+            'text-center text-base h-20 w-60 bg-table_header border-b-0',
           columnClass: 'text-center text-base h-20 w-6',
           title: 'Level',
           renderType: RENDER_TYPE.slot,
@@ -254,7 +364,7 @@ export default {
         },
         {
           headerClass:
-            'text-center text-bas h-20 w-60 bg-table_header border-b-0',
+            'text-center text-base h-20 w-60 bg-table_header border-b-0',
           columnClass: 'text-center text-base h-20 w-6',
           title: 'Blog',
           renderType: RENDER_TYPE.slot,
@@ -262,7 +372,7 @@ export default {
         },
         {
           headerClass:
-            'text-center text-bas h-20 w-60 bg-table_header border-b-0',
+            'text-center text-base h-20 w-60 bg-table_header border-b-0',
           columnClass: 'text-center text-base h-20 w-6',
           title: '',
           renderType: RENDER_TYPE.slot,
@@ -274,4 +384,30 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+.ant-pagination-item:focus-visible a,
+.ant-pagination-item-active a,
+.ant-pagination-item:hover {
+  border-color: rgba(81, 166, 221, 0.7);
+  color: rgba(81, 166, 221, 0.7);
+}
+.ant-pagination-item,
+.ant-pagination-prev .ant-pagination-item-link,
+.ant-pagination-disabled .ant-pagination-item-link,
+.ant-pagination-next .ant-pagination-item-link {
+  border-color: #fff;
+}
+.ant-pagination-next .ant-pagination-item-link,
+.ant-pagination-prev .ant-pagination-item-link {
+  border: none;
+}
+
+.ant-pagination-item-active,
+.ant-pagination-item:hover {
+  border-radius: 50%;
+  background-color: rgba(81, 166, 221, 0.7);
+  a {
+    color: #fff !important;
+  }
+}
+</style>

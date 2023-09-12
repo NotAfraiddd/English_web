@@ -152,7 +152,7 @@
       </table>
       <template v-if="data.length === 0">
         <slot v-if="hasEmptySlot()" name="empty" />
-        <div v-else class="table-empty-text text-center pt-1 pb-3">
+        <div v-else class="table-empty-text text-center pt-1 pb-3 text-base">
           {{ emptyText }}
         </div>
       </template>

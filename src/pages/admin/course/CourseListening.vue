@@ -1,11 +1,18 @@
 <template>
   <div>
-    <ButtonBack
-      title="List Course Listening"
-      :hide-back="true"
-      @back="onBack"
-    />
+    <ButtonBack title="Course Listening" :hide-back="true" @back="onBack" />
     <ListCourse :data="listListening" />
+    <div
+      @click="goToCreateCourse"
+      class="flex flex-col mt-5 h-auto cursor-pointer text-base flex-1 justify-between items-center border-dashed border-4 border-primary_black_opacity-600 gap-1 py-2 px-5 rounded-lg"
+    >
+      <div
+        class="bg-text_back w-7 h-7 rounded-full text-xl font-semibold text-gray-400"
+      >
+        +
+      </div>
+      <div class="text-primary_black font-semibold">Add new course</div>
+    </div>
   </div>
 </template>
 <script>
@@ -21,6 +28,9 @@ export default {
   methods: {
     onBack() {
       this.$router.push({ name: 'Course' });
+    },
+    goToCreateCourse() {
+      this.$router.push({ name: 'CreateCourseListening' });
     },
   },
   data() {
