@@ -98,11 +98,19 @@
     />
     <PutTask :data-put-tasks="dataPutTasks" />
     <div class="border-t border-primary_line mt-5" />
-    <div
-      @click="createCourse"
-      class="bg-primary btn-countinue w-20 text-center px-2 py-1 text-white text-lg rounded-xl font-semibold cursor-pointer mt-5 mx-auto"
-    >
-      Create
+    <div class="flex">
+      <div
+        @click="cancelCreate"
+        class="border border-primary btn-countinue w-32 text-center px-2 py-1 text-primary hover:opacity-70 text-lg rounded-xl font-semibold cursor-pointer mt-5 mx-auto"
+      >
+        Cancel
+      </div>
+      <div
+        @click="createCourse"
+        class="bg-primary btn-countinue w-32 text-center px-2 py-1 text-white text-lg hover:opacity-70 rounded-xl font-semibold cursor-pointer mt-5 mx-auto"
+      >
+        Create
+      </div>
     </div>
   </div>
 </template>
@@ -151,6 +159,9 @@ export default {
     },
     createCourse() {
       notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
+    },
+    cancelCreate() {
+      this.$router.push({ name: 'CourseListening' });
     },
     changeBack() {
       this.$router.push({ name: 'CourseListening' });

@@ -59,6 +59,12 @@ export default [
           import('../pages/admin/course/CreateCourseListening.vue'),
       },
       {
+        path: 'course/:course/listening/detail/:name',
+        name: 'DetailCourseListening',
+        component: () =>
+          import('../pages/admin/course/DetailCourseListening.vue'),
+      },
+      {
         path: 'course/:course/reading/create',
         name: 'CreateCourseReading',
         component: () =>

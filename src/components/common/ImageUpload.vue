@@ -25,7 +25,7 @@
           :class="[
             'personal-figcaption absolute top-0 opacity-0 ',
             avatar ? 'rounded-full' : '',
-            disabled ? '' : 'hover:opacity-100',
+            disabled ? 'cursor-not-allowed' : 'hover:opacity-100',
           ]"
         >
           <img
@@ -39,7 +39,6 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex';
 import { AVATAR } from '../../constants/image';
 export default {
   props: {
@@ -61,13 +60,9 @@ export default {
       imageURL: this.srcImg,
     };
   },
-  computed: {
-    ...mapState('member', ['save']),
-  },
   methods: {
     handleImageChange(event) {
       const imageFile = event.target.files[0];
-
       if (imageFile) {
         const imageURL = URL.createObjectURL(imageFile);
         this.imageURL = imageURL;

@@ -30,3 +30,8 @@ export const UI = {
   UI_LISTENING: 1,
   UI_READING: 2,
 };
+
+export const REGEX = {
+  emailPattern: /^[^ ]+@[^ ]+\.[a-z]{2,3}$/,
+  passwordPattern: /^(?=.*[a-zA-Z])(?=.*[0-9])(?!^[ぁ-んァ-ン]+$).{8,}$/,
+};

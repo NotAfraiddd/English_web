@@ -5,7 +5,7 @@
         v-for="(item, index) in data"
         :key="index"
         class="relative w-full hover:opacity-80 cursor-pointer"
-        @click="handleClick"
+        @click="handleClick(item)"
       >
         <img :src="item.image" alt="" srcset="" class="h-44 course-image" />
         <div class="absolute w-1/2 top-12 bg-white h-32 course-infor">

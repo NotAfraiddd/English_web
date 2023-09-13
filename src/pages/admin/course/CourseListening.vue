@@ -1,7 +1,7 @@
 <template>
   <div>
     <ButtonBack title="Course Listening" :hide-back="true" @back="onBack" />
-    <ListCourse :data="listListening" />
+    <ListCourse :data="listListening" @clicked="goToDetailCourse" />
     <div
       @click="goToCreateCourse"
       class="flex flex-col mt-5 h-auto cursor-pointer text-base flex-1 justify-between items-center border-dashed border-4 border-primary_black_opacity-600 gap-1 py-2 px-5 rounded-lg"
@@ -31,6 +31,13 @@ export default {
     },
     goToCreateCourse() {
       this.$router.push({ name: 'CreateCourseListening' });
+    },
+    goToDetailCourse(data) {
+      const path = data.item.title;
+      this.$router.push({
+        name: 'DetailCourseListening',
+        params: { name: path },
+      });
     },
   },
   data() {
