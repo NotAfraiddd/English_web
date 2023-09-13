@@ -18,12 +18,14 @@
 <script>
 import ButtonBack from '../../../components/common/ButtonBack.vue';
 import ListCourse from '../../../components/common/ListCourse.vue';
+import { formatSpacerIntoHyphen } from '../../../constants/function';
 import { EXAMPLE } from '../../../constants/image';
 export default {
   name: 'CourseListening',
   components: { ButtonBack, ListCourse },
   created() {
     this.EXAMPLE = EXAMPLE;
+    this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
   },
   methods: {
     onBack() {
@@ -33,7 +35,7 @@ export default {
       this.$router.push({ name: 'CreateCourseListening' });
     },
     goToDetailCourse(data) {
-      const path = data.item.title;
+      const path = formatSpacerIntoHyphen(data.item.title);
       this.$router.push({
         name: 'DetailCourseListening',
         params: { name: path },

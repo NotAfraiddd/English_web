@@ -24,8 +24,10 @@ import MENU from '../assets/images/menu.svg';
 import CHAT from '../assets/images/chat.svg';
 import GARBAGE from '../assets/images/garbage.svg';
 import EXAMPLE from '../assets/images/example.jpg';
+import MOUNTAIN_CLIMB from '../assets/images/mountain-climbing.jpg';
 
 export {
+  MOUNTAIN_CLIMB,
   GARBAGE,
   LOCK_COLOR,
   EXAMPLE,

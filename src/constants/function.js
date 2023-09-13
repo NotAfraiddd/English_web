@@ -4,6 +4,10 @@ export const formatNumber = (number) => {
   return number.toLocaleString('en-US');
 };
 
+export const formatSpacerIntoHyphen = (string) => {
+  return string.replace(/\s+/g, '-');
+};
+
 export const validEmail = (email) => {
   const emailPattern = REGEX.emailPattern;
   return email.match(emailPattern);

@@ -1,7 +1,8 @@
 <template>
   <div class="flex" :class="extendClass">
     <div
-      class="bg-primary w-max px-2 py-1 text-white text-lg rounded-xl font-semibold"
+      @click="handleClicked"
+      class="bg-primary w-max px-2 py-1 text-white text-lg rounded-xl font-semibold cursor-pointer"
     >
       {{ title }}
     </div>
@@ -23,7 +24,7 @@ import { ARROW_LEFT } from '../../constants/image';
 
 export default {
   name: 'ButtonBack',
-  emits: ['back'],
+  emits: ['back', 'clicked'],
   created() {
     this.ARROW_LEFT = ARROW_LEFT;
   },
@@ -36,6 +37,9 @@ export default {
     return {};
   },
   methods: {
+    handleClicked() {
+      this.$emit('clicked');
+    },
     changeBack() {
       this.$emit('back');
     },

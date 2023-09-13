@@ -9,6 +9,7 @@
       class="w-full"
     />
     <input
+      v-if="hideChoose"
       type="file"
       id="audioInput"
       @change="selectAudio"
@@ -22,6 +23,7 @@
 export default {
   props: {
     dataProp: { type: String, default: '' },
+    hideChoose: { type: Boolean, default: false },
   },
   watch: {
     dataProp(newValue) {

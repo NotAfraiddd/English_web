@@ -227,6 +227,7 @@ import { NOTIFY, NOTIFY_MESSAGE } from '../../../constants';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import { AVATAR, TITLE, ADMIN_COURSE } from '../../../constants/image';
 import { notification } from 'ant-design-vue';
+import { formatSpacerIntoHyphen } from '../../../constants/function';
 export default {
   name: 'Course',
   components: { BaseSearch, ListTypeCourse, ButtonBack, ConfirmModal },
@@ -236,6 +237,7 @@ export default {
     this.TITLE = TITLE;
     this.AVATAR = AVATAR;
     this.NOTIFY = NOTIFY;
+    this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
   },
 
   watch: {
@@ -257,13 +259,13 @@ export default {
     goToListening() {
       this.$router.push({
         name: 'CourseListening',
-        params: { course: this.editNameCourse },
+        params: { course: formatSpacerIntoHyphen(this.editNameCourse) },
       });
     },
     goToReading() {
       this.$router.push({
         name: 'CourseReading',
-        params: { course: this.editNameCourse },
+        params: { course: formatSpacerIntoHyphen(this.editNameCourse) },
       });
     },
     cancelTypeCourse() {
