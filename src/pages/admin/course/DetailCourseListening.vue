@@ -60,6 +60,10 @@
         extend-class="mt-5"
       />
     </div>
+    <div class="detail-match-word">
+      <div class="bg-primary h-16">abc</div>
+      <div class="h-16">abc</div>
+    </div>
     <div
       @click="handleSubmit"
       class="bg-primary w-max px-2 py-1 text-white text-lg rounded-xl font-semibold cursor-pointer"

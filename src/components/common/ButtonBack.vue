@@ -2,7 +2,7 @@
   <div class="flex" :class="extendClass">
     <div
       @click="handleClicked"
-      class="bg-primary w-max px-2 py-1 text-white text-lg rounded-xl font-semibold cursor-pointer"
+      class="bg-primary w-max px-2 py-1 text-white text-lg rounded-xl font-semibold cursor-default"
     >
       {{ title }}
     </div>
