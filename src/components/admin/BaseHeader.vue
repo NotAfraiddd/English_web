@@ -1,5 +1,7 @@
 <template lang="">
-  <div class="h-20 flex justify-between items-center header w-full">
+  <div
+    class="h-20 flex justify-between items-center header w-full fixed bg-white border-b z-10"
+  >
     <div class="flex items-center content-header-left space-x-2">
       <div class="flex flex-col items-start w-40">
         <span class="text-primary_black">
@@ -18,7 +20,9 @@
       </div>
     </div>
 
-    <div class="flex items-center justify-between content-header-right mr-8">
+    <div
+      class="flex items-center justify-between content-header-right mr-8 fixed right-0"
+    >
       <div class="relative h-6 w-6">
         <img :src="BELL" alt="" srcset="" class="mr-2 cursor-pointer h-full" />
         <div

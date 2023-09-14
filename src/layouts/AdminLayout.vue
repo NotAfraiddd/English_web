@@ -109,7 +109,7 @@ export default {
     border-radius: 15px;
     width: 100%;
     min-height: 100%;
-    margin-top: 30px;
+    margin-top: 100px;
   }
 }
 
