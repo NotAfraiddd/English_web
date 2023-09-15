@@ -133,14 +133,15 @@ export default {
   },
   watch: {
     listAnswers(newValue) {
-      const temp = [];
       const filteredArr = newValue.filter((item) => {
-        temp.push({ id: item.id, word: item.word });
-        console.log(temp);
-        console.log(item.word, item.id);
-        item.word !== null && item.word !== '';
+        return (
+          item.word !== null ||
+          newValue.filter((i) => i.id === item.id && i.word !== null).length ===
+            1
+        );
       });
-      filteredArr.forEach((item) => console.log(item.word));
+
+      this.listAnswers = filteredArr;
     },
   },
   methods: {
