@@ -41,6 +41,7 @@ export default {
       const file = event.target.files[0];
       if (file) {
         this.playAudio(file);
+        this.$emit('valueAudio', URL.createObjectURL(file));
       }
     },
     playAudio(file) {

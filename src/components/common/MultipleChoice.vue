@@ -10,7 +10,7 @@
         class="question flex my-1"
       >
         <input
-          type="checkbox"
+          type="radio"
           :id="'question-' + i.id + '-' + key"
           :value="key"
           :checked="isSelected(i.id, key + 1)"

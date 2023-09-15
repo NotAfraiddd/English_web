@@ -48,7 +48,7 @@
         />
         <div class="px-5 pb-2 mt-5 detail-multiple-choice">
           <MultipleChoice
-            :data="data"
+            :data="dataMultipleChoice"
             @setValue="getAnswerFromUser"
             :correctAnswer="correctAnswer"
             :errors="errors"
@@ -60,9 +60,54 @@
         extend-class="mt-5"
       />
     </div>
-    <div class="detail-match-word">
-      <div class="bg-primary h-16">abc</div>
-      <div class="h-16">abc</div>
+    <div class="detail-match-word p-5 border mt-5 rounded-2xl">
+      <div class="bg-primary h-16 rounded-xl flex items-center flex-1">
+        <Draggable
+          v-model="dataListWords"
+          group="people"
+          @start="drag = true"
+          @end="drag = false"
+          item-key="id"
+          style="display: flex; justify-content: space-around; flex-grow: 1"
+        >
+          <template #item="{ element }">
+            <div
+              class="w-max px-3 bg-white text-primary h-10 leading-10 rounded-xl text-base cursor-pointer"
+            >
+              {{ element.word }}
+            </div>
+          </template>
+        </Draggable>
+      </div>
+      <div class="flex items-start justify-between text-base mt-3 pr-32">
+        <div>
+          <div
+            v-for="(item, index) in listSentences"
+            :key="index"
+            class="text-left mt-2"
+          >
+            {{ index + 1 }}.{{ item.vedau }}__{{ item.vesau }}
+          </div>
+        </div>
+        <div class="h-40 w-40 list-2">
+          <Draggable
+            v-model="listAnswers"
+            group="people"
+            @start="onDragStart"
+            @end="onDragEnd"
+            item-key="id"
+            style="display: flex; flex-direction: column; gap: 4px"
+          >
+            <template #item="{ element }">
+              <div
+                class="border border-primary w-40 h-7 cursor-pointer rounded-lg"
+              >
+                {{ element.word }}
+              </div>
+            </template>
+          </Draggable>
+        </div>
+      </div>
     </div>
     <div
       @click="handleSubmit"
@@ -78,16 +123,34 @@ import Audio from '../../../components/common/Audio.vue';
 import { ARROW_LEFT, MOUNTAIN_CLIMB } from '../../../constants/image';
 import MultipleChoice from '../../../components/common/MultipleChoice.vue';
 import { mapMutations, mapState } from 'vuex';
-
+import Draggable from 'vuedraggable';
 export default {
   name: 'DetailCourseListening',
-  components: { ButtonBack, Audio, MultipleChoice },
+  components: { ButtonBack, Audio, MultipleChoice, Draggable },
   created() {
     this.ARROW_LEFT = ARROW_LEFT;
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
   },
+  watch: {
+    listAnswers(newValue) {
+      const temp = [];
+      const filteredArr = newValue.filter((item) => {
+        temp.push({ id: item.id, word: item.word });
+        console.log(temp);
+        console.log(item.word, item.id);
+        item.word !== null && item.word !== '';
+      });
+      filteredArr.forEach((item) => console.log(item.word));
+    },
+  },
   methods: {
     ...mapMutations('course', ['setSubmit']),
+    onDragStart() {
+      this.drag = true;
+    },
+    onDragEnd() {
+      this.drag = false;
+    },
     getAnswerFromUser(data) {
       this.myAnswer = data;
     },
@@ -97,11 +160,11 @@ export default {
     handleSubmit() {
       this.setSubmit(true);
       this.errors = [];
-      for (let i = 0; i < this.data.length; i++) {
+      for (let i = 0; i < this.dataMultipleChoice.length; i++) {
         if (
           this.compareArrays(this.correctAnswer[i], this.myAnswer[i]) == false
         ) {
-          this.errors.push(this.data[i].id + 1);
+          this.errors.push(this.dataMultipleChoice[i].id + 1);
         }
       }
     },
@@ -146,7 +209,54 @@ export default {
   },
   data() {
     return {
-      data: [
+      drag: false,
+      listSentences: [
+        {
+          id: 1,
+          vedau: 'I have',
+          vesau: ' in my bag.',
+          word: 'an apple',
+        },
+        {
+          id: 2,
+          vedau: 'Susan and John go',
+          vesau: 'with theirs parent today.',
+          word: 'have breakfast',
+        },
+        {
+          id: 3,
+          vedau: 'I have',
+          vesau: ' in my bag.',
+          word: 'an apple',
+        },
+        {
+          id: 4,
+          vedau: 'Susan and John go',
+          vesau: 'with theirs parent today.',
+          word: 'have breakfast',
+        },
+        {
+          id: 5,
+          vedau: 'I have',
+          vesau: ' in my bag.',
+          word: 'an apple',
+        },
+      ],
+      listAnswers: [
+        { id: 1, word: null },
+        { id: 2, word: null },
+        { id: 3, word: null },
+        { id: 4, word: null },
+        { id: 5, word: null },
+      ],
+      dataListWords: [
+        { id: 1, word: 'at the school' },
+        { id: 2, word: 'apple' },
+        { id: 3, word: 'at the school' },
+        { id: 4, word: 'at the school' },
+        { id: 5, word: 'at the school' },
+      ],
+      dataMultipleChoice: [
         {
           id: 0,
           title: 'Mary ask John about that: Mary ask John',

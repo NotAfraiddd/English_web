@@ -35,7 +35,11 @@
     <!-- listening -->
     <ButtonBack title="Listening" extend-class="mt-5" />
     <ImageUpload :src-img="AVATAR" />
-    <Audio :data-prop="selectedAudio" />
+    <Audio
+      :data-prop="selectedAudio"
+      :hide-choose="true"
+      @valueAudio="handleGetValueAuio"
+    />
     <ButtonBack title="Transcript" extend-class="mt-5" />
     <Word :contentProp="contentListening" @update="updateContentListening" />
     <ButtonBack
@@ -145,6 +149,9 @@ export default {
   },
 
   methods: {
+    handleGetValueAuio(data) {
+      this.selectedAudio = data;
+    },
     updateContentListening(data) {
       this.contentListening = data;
     },
