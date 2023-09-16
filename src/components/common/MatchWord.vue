@@ -27,7 +27,10 @@
         </template>
       </Draggable>
     </div>
-    <div class="flex items-start justify-between text-base mt-3 gap-2">
+    <div
+      ref="matchWord"
+      class="flex items-start justify-between text-base mt-3 gap-2"
+    >
       <div class="flex flex-col gap-1">
         <div
           v-for="(item, index) in listQuestions"
@@ -38,7 +41,8 @@
         </div>
       </div>
       <div
-        class="min-h-40 detail-course-listening__answers flex justify-between gap-4"
+        ref="answers"
+        class="detail-course-listening__answers flex justify-between gap-4"
       >
         <Draggable
           v-model="answers"
@@ -47,14 +51,18 @@
           @end="onDragEndAnswers"
           @change="handleChangeListAnswers"
           item-key="id"
-          style="display: flex; flex-direction: column; gap: 4px"
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            justify-content: space-between;
+          "
         >
           <template #item="{ element }">
             <div class="detail-match-word__drag">
               <div
-                ref="matchWord"
                 @click="handleDoubleClick(element)"
-                class="border border-primary w-40 h-8 cursor-pointer rounded-lg"
+                class="border border-primary w-40 h-8 leading-7 cursor-pointer rounded-lg"
               >
                 {{ element.word }}
               </div>
@@ -64,10 +72,10 @@
         <div class="flex flex-col gap-2 items-center justify-center">
           <div v-for="item in errorsMatching" :key="item.id" class="h-7">
             <div class="text-text_red font-semibold" v-if="item.type == 0">
-              Empty
+              x
             </div>
             <div class="text-text_red font-semibold" v-else-if="item.type == 1">
-              Wrong
+              x
             </div>
             <div v-else />
           </div>
@@ -78,7 +86,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex';
+import { mapState } from 'vuex';
 import Draggable from 'vuedraggable';
 
 export default {
@@ -98,12 +106,20 @@ export default {
       errors: this.errorsMatching,
     };
   },
+  watch: {
+    '$refs.matchWord.scrollHeight': {
+      handler(newValue, oldValue) {
+        const heightMatch = this.$refs.matchWord.scrollHeight;
+        console.log(heightMatch);
+      },
+      deep: true,
+    },
+  },
 
   computed: {
     ...mapState('course', ['submit']),
   },
   methods: {
-    ...mapMutations('course', ['setSubmit']),
     handleDoubleClick(data) {
       const currentTime = new Date().getTime();
       if (currentTime - this.lastClickTime < 300) {

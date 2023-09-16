@@ -73,8 +73,11 @@
       />
       <PutPriority
         :data-priority="listPriority"
-        :data-answers="listPriorityAnswers"
         placeholder="Priority sequence"
+        @update1="setValuePriority1"
+        @update2="setValuePriority2"
+        @update3="setValuePriority3"
+        @update4="setValuePriority4"
       />
     </div>
     <div
@@ -107,6 +110,18 @@ export default {
   },
   methods: {
     ...mapMutations('course', ['setSubmit']),
+    setValuePriority1(data) {
+      console.log(data);
+    },
+    setValuePriority2(data) {
+      console.log(data);
+    },
+    setValuePriority3(data) {
+      console.log(data);
+    },
+    setValuePriority4(data) {
+      console.log(data);
+    },
     onBack() {
       this.$router.push({ name: 'CourseListening' });
     },
@@ -153,7 +168,6 @@ export default {
             type: 2,
           });
       }
-      this.setSubmit(false);
     },
     checkHeight() {
       const heightTranscript = this.$refs.transcript;
@@ -205,24 +219,6 @@ export default {
           question: 'I have an apple in my bag.I have an apple in my bag.',
         },
         { id: 4, question: 'I have an apple in my bag.' },
-      ],
-      listPriorityAnswers: [
-        {
-          answer: 1,
-          error: 0,
-        },
-        {
-          answer: 1,
-          error: 1,
-        },
-        {
-          answer: 1,
-          error: 2,
-        },
-        {
-          answer: 1,
-          error: 0,
-        },
       ],
       listQuestions: [
         {

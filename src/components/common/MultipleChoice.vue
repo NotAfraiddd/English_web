@@ -28,7 +28,7 @@
         v-if="hasError(i.id + 1)"
         class="ml-1 text-text_red font-semibold text-base"
       >
-        Wrong answer
+        x
       </span>
     </div>
   </div>

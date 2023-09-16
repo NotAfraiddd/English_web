@@ -6,25 +6,53 @@
       </div>
     </div>
     <div class="flex flex-col justify-between gap-1">
-      <div
-        v-for="(item, index) in dataAnswers"
-        :key="index"
-        class="flex gap-2 items-center"
-      >
+      <div class="flex gap-2 items-center">
         <input
           type="text"
-          class="border border-primary w-40 h-8 rounded-lg form-control"
-          @change="handleChangeInput"
-          v-model="inputPriority[index]"
+          class="border text-center border-primary w-40 h-8 rounded-lg form-control"
+          @change="handleChangeInput1"
+          v-model="inputPriority1"
           spellcheck="false"
           :placeholder="placeholder"
         />
-        <div v-if="item.error == 1" class="text-text_red font-semibold">
-          Wrong
-        </div>
-        <div v-else-if="item.error == 2" class="text-text_red font-semibold">
-          Empty
-        </div>
+        <div v-if="true" class="text-text_red font-semibold">x</div>
+        <div v-else />
+      </div>
+      <div class="flex gap-2 items-center">
+        <input
+          type="text"
+          class="border text-center border-primary w-40 h-8 rounded-lg form-control"
+          @change="handleChangeInput2"
+          v-model="inputPriority2"
+          spellcheck="false"
+          :placeholder="placeholder"
+        />
+        <div v-if="true" class="text-text_red font-semibold">x</div>
+        <div v-else />
+      </div>
+      <div class="flex gap-2 items-center">
+        <input
+          type="text"
+          class="border text-center border-primary w-40 h-8 rounded-lg form-control"
+          @change="handleChangeInput3"
+          v-model="inputPriority3"
+          spellcheck="false"
+          :placeholder="placeholder"
+        />
+        <div v-if="true" class="text-text_red font-semibold">x</div>
+        <div v-else />
+      </div>
+      <div class="flex gap-2 items-center">
+        <input
+          type="text"
+          class="border text-center border-primary w-40 h-8 rounded-lg form-control"
+          @change="handleChangeInput4"
+          v-model="inputPriority4"
+          spellcheck="false"
+          :placeholder="placeholder"
+        />
+        <div v-if="true" class="text-text_red font-semibold">x</div>
+
         <div v-else />
       </div>
     </div>
@@ -36,22 +64,20 @@ import { mapMutations, mapState } from 'vuex';
 export default {
   props: {
     dataPriority: { type: Array, default: () => [] },
-    dataAnswers: { type: Array, default: () => [] },
     placeholder: { type: String, default: null },
   },
   watch: {
     dataPriority(newValue) {
       this.priority = newValue;
     },
-    dataAnswers(newValue) {
-      this.answers = newValue;
-    },
   },
   data() {
     return {
       priority: this.dataPriority,
-      answers: this.dataAnswers,
-      inputPriority: [],
+      inputPriority1: null,
+      inputPriority2: null,
+      inputPriority3: null,
+      inputPriority4: null,
     };
   },
   computed: {
@@ -59,8 +85,17 @@ export default {
   },
   methods: {
     ...mapMutations('course', ['setSubmit']),
-    handleChangeInput(e) {
-      console.log(e.targe.value);
+    handleChangeInput1(event) {
+      this.$emit('update1', event.target.value);
+    },
+    handleChangeInput2(event) {
+      this.$emit('update2', event.target.value);
+    },
+    handleChangeInput3(event) {
+      this.$emit('update3', event.target.value);
+    },
+    handleChangeInput4(event) {
+      this.$emit('update4', event.target.value);
     },
   },
 };
