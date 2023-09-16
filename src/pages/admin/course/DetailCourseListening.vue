@@ -49,7 +49,7 @@
         <div class="px-5 pb-2 mt-5 detail-multiple-choice">
           <MultipleChoice
             :data="dataMultipleChoice"
-            @setValue="getAnswerFromUser"
+            @setValue="getAnswerMultichoice"
             :correctAnswer="correctAnswer"
             :errors="errorsMultiple"
           />
@@ -59,67 +59,23 @@
         title="Listen to the dialogue above and match the beginnings and endings of the phrases"
         extend-class="mt-5"
       />
-    </div>
-    <div class="detail-match-word p-5 border mt-5 rounded-2xl">
-      <div class="bg-primary h-16 rounded-xl flex items-center flex-1">
-        <Draggable
-          v-model="dataListWords"
-          group="people"
-          @start="onDragStartWords"
-          @end="onDragEndWords"
-          @change="handleChangeDataListWords"
-          item-key="id"
-          style="display: flex; justify-content: space-around; flex-grow: 1"
-        >
-          <template #item="{ element }">
-            <div
-              class="w-max px-3 bg-white text-primary h-10 leading-10 rounded-xl text-base cursor-pointer"
-            >
-              {{ element.word }}
-            </div>
-          </template>
-        </Draggable>
-      </div>
-      <div class="flex items-start justify-between text-base mt-3">
-        <div>
-          <div
-            v-for="(item, index) in listSentences"
-            :key="index"
-            class="text-left mt-2"
-          >
-            {{ index + 1 }}. {{ item.vedau }}__{{ item.vesau }}
-          </div>
-        </div>
-        <div class="h-40 detail-course-listening__answers flex justify-between">
-          <Draggable
-            v-model="listAnswers"
-            group="people"
-            @start="onDragStartAnswers"
-            @end="onDragEndAnswers"
-            @change="handleChangeListAnswers"
-            item-key="id"
-            style="display: flex; flex-direction: column; gap: 4px"
-          >
-            <template #item="{ element }">
-              <div
-                @click="handleDoubleClick(element)"
-                class="border border-primary w-40 h-7 cursor-pointer rounded-lg"
-              >
-                {{ element.word }}
-              </div>
-            </template>
-          </Draggable>
-          <div class="flex flex-col gap-2 items-center justify-center">
-            <div
-              v-for="item in errorsMatching"
-              :key="item.id"
-              class="text-text_red font-semibold h-7"
-            >
-              {{ item.type == 0 ? 'Empty' : 'Wrong' }}
-            </div>
-          </div>
-        </div>
-      </div>
+      <MatchWord
+        :data-list-words="dataListWords"
+        :list-answers="listAnswers"
+        :list-questions="listQuestions"
+        :errorsMatching="errorsMatching"
+        @setAnswers="setAnswers"
+        @setQuetions="setQuetions"
+      />
+      <ButtonBack
+        title="Put the tasks in order of priority."
+        extend-class="mt-5"
+      />
+      <PutPriority
+        :data-priority="listPriority"
+        :data-answers="listPriorityAnswers"
+        placeholder="Priority sequence"
+      />
     </div>
     <div
       @click="handleSubmit"
@@ -134,11 +90,12 @@ import ButtonBack from '../../../components/common/ButtonBack.vue';
 import Audio from '../../../components/common/Audio.vue';
 import { ARROW_LEFT, MOUNTAIN_CLIMB } from '../../../constants/image';
 import MultipleChoice from '../../../components/common/MultipleChoice.vue';
+import MatchWord from '../../../components/common/MatchWord.vue';
+import PutPriority from '../../../components/common/PutPriority.vue';
 import { mapMutations, mapState } from 'vuex';
-import Draggable from 'vuedraggable';
 export default {
   name: 'DetailCourseListening',
-  components: { ButtonBack, Audio, MultipleChoice, Draggable },
+  components: { ButtonBack, Audio, MultipleChoice, MatchWord, PutPriority },
   created() {
     this.ARROW_LEFT = ARROW_LEFT;
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
@@ -153,73 +110,13 @@ export default {
     onBack() {
       this.$router.push({ name: 'CourseListening' });
     },
-    handleDoubleClick(data) {
-      const currentTime = new Date().getTime();
-      if (currentTime - this.lastClickTime < 300) {
-        const findIndex = this.listAnswers.findIndex(
-          (item) => item.id == data.id && item.word == data.word,
-        );
-        const clickedItem = this.listAnswers[findIndex];
-        if (clickedItem && clickedItem.word !== null) {
-          this.listAnswers.splice(findIndex, 1);
-          this.listAnswers.push({ id: data.id, word: null });
-          this.dataListWords.push(clickedItem);
-        }
-      }
-      this.lastClickTime = currentTime;
+    setQuetions(data) {
+      this.dataListWords = data;
     },
-
-    onDragStartAnswers(evt) {
-      const draggedItem = evt.item.element;
-      if (draggedItem == undefined) {
-        evt.cancel = true;
-      }
+    setAnswers(data) {
+      this.listAnswers = data;
     },
-    onDragEndAnswers(evt) {
-      const draggedItem = evt.item.element;
-      if (draggedItem == undefined) {
-        evt.cancel = false;
-      }
-    },
-    onDragStartWords(evt) {
-      const draggedItem = evt.item.element;
-      if (draggedItem == undefined) {
-        evt.cancel = true;
-      }
-    },
-    onDragEndWords(evt) {
-      const draggedItem = evt.item.element;
-      if (draggedItem == undefined) {
-        this.drag = false;
-      }
-    },
-    handleChangeDataListWords(data) {
-      const temp = this.dataListWords;
-      if (data.added) {
-        const filteredArr = this.dataListWords.filter((item) => {
-          return (
-            item.word !== null ||
-            temp.filter((i) => i.id === item.id && i.word !== null).length === 0
-          );
-        });
-        this.dataListWords = filteredArr;
-      }
-    },
-    handleChangeListAnswers(data) {
-      const temp = this.listAnswers;
-      if (data.added) {
-        const filteredArr = this.listAnswers.filter((item) => {
-          return (
-            item.word !== null ||
-            temp.filter((i) => i.id === item.id && i.word !== null).length === 0
-          );
-        });
-        this.listAnswers = filteredArr;
-      } else if (data.removed) {
-        this.listAnswers.push({ id: data.removed?.element.id, word: null });
-      }
-    },
-    getAnswerFromUser(data) {
+    getAnswerMultichoice(data) {
       this.myAnswer = data;
     },
     compareMultiple(valueA, valueB) {
@@ -241,16 +138,22 @@ export default {
         }
       }
       // matching
+      this.errorsMatching = [];
       for (let i = 0; i < this.listAnswers.length; i++) {
         if (
-          this.compareMatch(this.listSentences[i], this.listAnswers[i]) == false
+          this.compareMatch(this.listQuestions[i], this.listAnswers[i]) == false
         ) {
           this.errorsMatching.push({
             id: this.listAnswers[i].id,
             type: this.listAnswers[i].word == null ? 0 : 1,
           });
-        }
+        } else
+          this.errorsMatching.push({
+            id: this.listAnswers[i].id,
+            type: 2,
+          });
       }
+      this.setSubmit(false);
     },
     checkHeight() {
       const heightTranscript = this.$refs.transcript;
@@ -294,36 +197,62 @@ export default {
   data() {
     return {
       drag: false,
-      lastClickTime: 0,
-      listSentences: [
+      listPriority: [
+        { id: 1, question: 'I have an apple in my bag.' },
+        { id: 2, question: 'I have an apple in my bag.' },
+        {
+          id: 3,
+          question: 'I have an apple in my bag.I have an apple in my bag.',
+        },
+        { id: 4, question: 'I have an apple in my bag.' },
+      ],
+      listPriorityAnswers: [
+        {
+          answer: 1,
+          error: 0,
+        },
+        {
+          answer: 1,
+          error: 1,
+        },
+        {
+          answer: 1,
+          error: 2,
+        },
+        {
+          answer: 1,
+          error: 0,
+        },
+      ],
+      listQuestions: [
         {
           id: 1,
-          vedau: 'I have',
-          vesau: ' in my bag.',
+          contentLeft: 'I have',
+          contentRight: ' in my bag.',
           word: 'apple',
         },
         {
           id: 2,
-          vedau: 'Susan and John go',
-          vesau: 'with theirs parent today.',
+          contentLeft: 'Susan and John go',
+          contentRight: 'with theirs parent today.',
           word: 'at the school',
         },
         {
           id: 3,
-          vedau: 'I have',
-          vesau: ' in my bag.',
+          contentLeft: 'I have',
+          contentRight: ' in my bag.',
           word: 'have lunch',
         },
         {
           id: 4,
-          vedau: 'Susan and John go',
-          vesau: 'with theirs parent today.',
+          contentLeft: 'Susan and John go',
+          contentRight: 'with theirs parent today.',
           word: 'have breakfast',
         },
         {
           id: 5,
-          vedau: 'I have',
-          vesau: ' in my bag.',
+          contentLeft: 'I have',
+          contentRight: ' in my bag.',
           word: 'at the hospital',
         },
       ],

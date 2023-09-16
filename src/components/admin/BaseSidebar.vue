@@ -53,7 +53,7 @@
     </span>
   </div>
   <a
-    class="nav-link top-5 flex absolute justify-center items-center text-2xl extend-icon"
+    class="nav-link top-5 flex fixed justify-center items-center text-2xl extend-icon"
     data-widget="pushmenu"
     href="#"
     role="button"

@@ -24,7 +24,10 @@
           {{ key + 1 }}. {{ value }}
         </label>
       </div>
-      <span v-if="hasError(i.id + 1)" class="ml-1 text-text_red font-semibold">
+      <span
+        v-if="hasError(i.id + 1)"
+        class="ml-1 text-text_red font-semibold text-base"
+      >
         Wrong answer
       </span>
     </div>
