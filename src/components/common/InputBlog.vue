@@ -5,15 +5,15 @@
     :class="externalClass"
     @change="updateGender"
   >
-    <a-radio :value="1">Locked</a-radio>
-    <a-radio :value="2">Unlocked</a-radio>
+    <a-radio :value="0">Locked</a-radio>
+    <a-radio :value="1">Unlocked</a-radio>
   </a-radio-group>
 </template>
 <script>
 export default {
   props: {
     externalClass: { type: String, default: '' },
-    radioProp: { type: String, default: '' },
+    radioProp: { type: Number, default: 0 },
     disabled: { type: Boolean, default: false },
   },
   created() {
@@ -26,7 +26,7 @@ export default {
   },
   data() {
     return {
-      radio: null,
+      radio: this.radioProp,
     };
   },
   methods: {

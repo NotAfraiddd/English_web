@@ -213,10 +213,10 @@ export default {
             avatar: AVATAR,
             name: 'Nguyen Huynh Chi Bao',
           },
-          gender: 0,
+          gender: 1,
           registration_date: '09/06/2023',
-          level: 1,
-          blog: 1,
+          level: 0,
+          blog: 2,
           status: 1,
         },
         {

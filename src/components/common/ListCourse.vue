@@ -10,8 +10,8 @@
         <img :src="item.image" alt="" srcset="" class="h-44 course-image" />
         <div class="absolute w-1/2 top-12 bg-white h-32 course-infor">
           <div class="flex flex-col items-start ml-10 mt-10">
-            <div class="font-semibold text-2xl">{{ item.title }}</div>
-            <div class="text-base">
+            <div class="font-semibold text-2xl text-left">{{ item.title }}</div>
+            <div class="text-base text-left">
               Read a direct message on social media to practise and improve your
               reading skills.
             </div>

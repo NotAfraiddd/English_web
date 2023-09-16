@@ -51,7 +51,7 @@
             :data="dataMultipleChoice"
             @setValue="getAnswerFromUser"
             :correctAnswer="correctAnswer"
-            :errors="errors"
+            :errors="errorsMultiple"
           />
         </div>
       </div>
@@ -65,8 +65,9 @@
         <Draggable
           v-model="dataListWords"
           group="people"
-          @start="drag = true"
-          @end="drag = false"
+          @start="onDragStartWords"
+          @end="onDragEndWords"
+          @change="handleChangeDataListWords"
           item-key="id"
           style="display: flex; justify-content: space-around; flex-grow: 1"
         >
@@ -79,33 +80,44 @@
           </template>
         </Draggable>
       </div>
-      <div class="flex items-start justify-between text-base mt-3 pr-32">
+      <div class="flex items-start justify-between text-base mt-3">
         <div>
           <div
             v-for="(item, index) in listSentences"
             :key="index"
             class="text-left mt-2"
           >
-            {{ index + 1 }}.{{ item.vedau }}__{{ item.vesau }}
+            {{ index + 1 }}. {{ item.vedau }}__{{ item.vesau }}
           </div>
         </div>
-        <div class="h-40 w-40 list-2">
+        <div class="h-40 detail-course-listening__answers flex justify-between">
           <Draggable
             v-model="listAnswers"
             group="people"
-            @start="onDragStart"
-            @end="onDragEnd"
+            @start="onDragStartAnswers"
+            @end="onDragEndAnswers"
+            @change="handleChangeListAnswers"
             item-key="id"
             style="display: flex; flex-direction: column; gap: 4px"
           >
             <template #item="{ element }">
               <div
+                @click="handleDoubleClick(element)"
                 class="border border-primary w-40 h-7 cursor-pointer rounded-lg"
               >
                 {{ element.word }}
               </div>
             </template>
           </Draggable>
+          <div class="flex flex-col gap-2 items-center justify-center">
+            <div
+              v-for="item in errorsMatching"
+              :key="item.id"
+              class="text-text_red font-semibold h-7"
+            >
+              {{ item.type == 0 ? 'Empty' : 'Wrong' }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -132,40 +144,111 @@ export default {
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
   },
   watch: {
-    listAnswers(newValue) {
-      const filteredArr = newValue.filter((item) => {
-        return (
-          item.word !== null ||
-          newValue.filter((i) => i.id === item.id && i.word !== null).length ===
-            1
-        );
-      });
-
-      this.listAnswers = filteredArr;
+    listAnswers() {
+      this.errorsMatching = [];
     },
   },
   methods: {
     ...mapMutations('course', ['setSubmit']),
-    onDragStart() {
-      this.drag = true;
+    onBack() {
+      this.$router.push({ name: 'CourseListening' });
     },
-    onDragEnd() {
-      this.drag = false;
+    handleDoubleClick(data) {
+      const currentTime = new Date().getTime();
+      if (currentTime - this.lastClickTime < 300) {
+        const findIndex = this.listAnswers.findIndex(
+          (item) => item.id == data.id && item.word == data.word,
+        );
+        const clickedItem = this.listAnswers[findIndex];
+        if (clickedItem && clickedItem.word !== null) {
+          this.listAnswers.splice(findIndex, 1);
+          this.listAnswers.push({ id: data.id, word: null });
+          this.dataListWords.push(clickedItem);
+        }
+      }
+      this.lastClickTime = currentTime;
+    },
+
+    onDragStartAnswers(evt) {
+      const draggedItem = evt.item.element;
+      if (draggedItem == undefined) {
+        evt.cancel = true;
+      }
+    },
+    onDragEndAnswers(evt) {
+      const draggedItem = evt.item.element;
+      if (draggedItem == undefined) {
+        evt.cancel = false;
+      }
+    },
+    onDragStartWords(evt) {
+      const draggedItem = evt.item.element;
+      if (draggedItem == undefined) {
+        evt.cancel = true;
+      }
+    },
+    onDragEndWords(evt) {
+      const draggedItem = evt.item.element;
+      if (draggedItem == undefined) {
+        this.drag = false;
+      }
+    },
+    handleChangeDataListWords(data) {
+      const temp = this.dataListWords;
+      if (data.added) {
+        const filteredArr = this.dataListWords.filter((item) => {
+          return (
+            item.word !== null ||
+            temp.filter((i) => i.id === item.id && i.word !== null).length === 0
+          );
+        });
+        this.dataListWords = filteredArr;
+      }
+    },
+    handleChangeListAnswers(data) {
+      const temp = this.listAnswers;
+      if (data.added) {
+        const filteredArr = this.listAnswers.filter((item) => {
+          return (
+            item.word !== null ||
+            temp.filter((i) => i.id === item.id && i.word !== null).length === 0
+          );
+        });
+        this.listAnswers = filteredArr;
+      } else if (data.removed) {
+        this.listAnswers.push({ id: data.removed?.element.id, word: null });
+      }
     },
     getAnswerFromUser(data) {
       this.myAnswer = data;
     },
-    compareArrays(valueA, valueB) {
+    compareMultiple(valueA, valueB) {
       return JSON.stringify(valueA) === JSON.stringify(valueB);
+    },
+    compareMatch(quetions, answers) {
+      if (quetions.word == answers.word) return true;
+      else return false;
     },
     handleSubmit() {
       this.setSubmit(true);
-      this.errors = [];
+      // MultipleChoice
+      this.errorsMultiple = [];
       for (let i = 0; i < this.dataMultipleChoice.length; i++) {
         if (
-          this.compareArrays(this.correctAnswer[i], this.myAnswer[i]) == false
+          this.compareMultiple(this.correctAnswer[i], this.myAnswer[i]) == false
         ) {
-          this.errors.push(this.dataMultipleChoice[i].id + 1);
+          this.errorsMultiple.push(this.dataMultipleChoice[i].id + 1);
+        }
+      }
+      // matching
+      for (let i = 0; i < this.listAnswers.length; i++) {
+        if (
+          this.compareMatch(this.listSentences[i], this.listAnswers[i]) == false
+        ) {
+          this.errorsMatching.push({
+            id: this.listAnswers[i].id,
+            type: this.listAnswers[i].word == null ? 0 : 1,
+          });
         }
       }
     },
@@ -211,24 +294,25 @@ export default {
   data() {
     return {
       drag: false,
+      lastClickTime: 0,
       listSentences: [
         {
           id: 1,
           vedau: 'I have',
           vesau: ' in my bag.',
-          word: 'an apple',
+          word: 'apple',
         },
         {
           id: 2,
           vedau: 'Susan and John go',
           vesau: 'with theirs parent today.',
-          word: 'have breakfast',
+          word: 'at the school',
         },
         {
           id: 3,
           vedau: 'I have',
           vesau: ' in my bag.',
-          word: 'an apple',
+          word: 'have lunch',
         },
         {
           id: 4,
@@ -240,7 +324,7 @@ export default {
           id: 5,
           vedau: 'I have',
           vesau: ' in my bag.',
-          word: 'an apple',
+          word: 'at the hospital',
         },
       ],
       listAnswers: [
@@ -251,10 +335,10 @@ export default {
         { id: 5, word: null },
       ],
       dataListWords: [
-        { id: 1, word: 'at the school' },
+        { id: 1, word: 'at the hospital' },
         { id: 2, word: 'apple' },
-        { id: 3, word: 'at the school' },
-        { id: 4, word: 'at the school' },
+        { id: 3, word: 'have breakfast' },
+        { id: 4, word: 'have lunch' },
         { id: 5, word: 'at the school' },
       ],
       dataMultipleChoice: [
@@ -322,7 +406,9 @@ export default {
       ],
       correctAnswer: [1, 2, 3, 4, 1, 2],
       myAnswer: [],
-      errors: [],
+      errorsMultiple: [],
+      errorsMatching: [],
+      emptysMultiple: [],
       transcript: false,
       selectedAudio:
         'https://6a63fca904fd268f15f7-d5770ffdd579eb31eaa89faeffc55fe7.ssl.cf1.rackcdn.com/LE_listening_C1_A_job_interview.mp3',
@@ -368,5 +454,10 @@ export default {
 .detail-arrow {
   transition: transform 0.2s;
   transform-origin: center;
+}
+.detail-course-listening {
+  &__answers {
+    width: 14rem;
+  }
 }
 </style>
