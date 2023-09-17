@@ -1,9 +1,9 @@
 <template>
-  <div class="grid grid-cols-3 list-course px-5">
+  <div class="grid grid-cols-3 list-course">
     <div
       v-for="(item, index) in data"
       :key="index"
-      class="h-auto min-h-max w-80 item-course"
+      class="h-auto min-h-max item-course"
       @click="handleClick(item)"
     >
       <div
@@ -59,18 +59,20 @@ export default {
 }
 
 .list-course {
+  padding: 0 25px;
   @media screen and (max-width: 1280px) {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     column-gap: 8px !important;
   }
-  @media screen and (max-width: 725px) {
-    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  @media screen and (max-width: 750px) {
+    padding: 0;
   }
 }
 
 .item-course {
+  width: 20rem;
   @media screen and (max-width: 725px) {
-    width: 26rem !important;
+    width: 98%;
     margin: 0 auto;
   }
 }
