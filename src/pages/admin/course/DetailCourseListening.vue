@@ -1,90 +1,109 @@
 <template>
   <div>
-    <ButtonBack title="Course Listening" :hide-back="true" @back="onBack" />
-    <div class="flex flex-col mt-5">
-      <div class="detail-field mx-auto">
-        <img :src="MOUNTAIN_CLIMB" alt="" srcset="" class="detail-image" />
-      </div>
-      <Audio :data-prop="selectedAudio" :hideChoose="false" />
-      <!-- transcript -->
-      <div class="relative">
-        <div class="flex mt-5">
-          <div
-            @click="showTranscript"
-            class="bg-primary w-max px-2 py-1 text-white text-lg rounded-xl font-semibold cursor-pointer"
-          >
-            Transcript
-          </div>
-          <div
-            class="flex ml-3 justify-center items-center cursor-pointer"
-            @click="showTranscript"
-            @mouseenter="hoverBack"
-            @mouseleave="resetHover"
-          >
-            <img :src="ARROW_LEFT" alt="" srcset="" class="detail-arrow mr-3" />
-            <div class="text-xl text-text_back">Click here</div>
-          </div>
+    <ButtonBack title="Detail Listening" :hide-back="true" @back="onBack" />
+    <div class="detail-field mx-auto mt-5">
+      <img :src="MOUNTAIN_CLIMB" alt="" srcset="" class="detail-image" />
+    </div>
+    <Audio :data-prop="selectedAudio" :hideChoose="false" />
+    <!-- transcript -->
+    <div class="relative">
+      <div class="flex mt-5">
+        <div
+          @click="showTranscript"
+          class="bg-primary w-max px-2 py-1 text-white text-lg rounded-xl font-semibold cursor-pointer"
+        >
+          Transcript
         </div>
         <div
-          ref="transcript"
-          :class="[
-            'detail-transcript absolute text-left ',
-            { open: transcript },
-            transcript && 'border',
-          ]"
+          class="flex ml-3 justify-center items-center cursor-pointer"
+          @click="showTranscript"
+          @mouseenter="hoverBack"
+          @mouseleave="resetHover"
         >
-          <div
-            class="m-5"
-            v-html="
-              `<div>Susanne: Hi, Mario. Can you help me prepare some things for the next month?<br>Mario: OK, sure. What can I help you with?<br>Susanne: I need to visit the customer in Germany. It's important.<br>Mario: What can I do to help?<br>Susanne: Can you send an email to the customer? Ask them when I can visit them next week. Please do this first. It's a priority and very urgent.<br>Mario: Right. I'll do it today.<br>Susanne: Thanks. This next task is also important. Can you invite everyone to the next team meeting?<br>Mario: Yes, I will.<br>Susanne: But first you need to book a meeting room. After that, please send everyone an email about it.<br>Mario: Yes, of course.<br>Susanne: And finally, can you write a short report about our new project? I have to give a presentation to our managers next month. Please do it when you have time &ndash; sometime in the next two or three weeks. It's not too urgent.<br>Mario: Sure, no problem. I can do it this week.<br>Susanne: There's no hurry. Take your time.</div>`
-            "
-          />
+          <img :src="ARROW_LEFT" alt="" srcset="" class="detail-arrow mr-3" />
+          <div class="text-xl text-text_back">Click here</div>
         </div>
       </div>
-      <div ref="transcriptTop">
-        <ButtonBack
-          title="Listen to the dialogue above and choose the correct answer"
-          extend-class="mt-5"
+      <div
+        ref="transcript"
+        :class="[
+          'detail-transcript absolute text-left ',
+          { open: transcript },
+          transcript && 'border',
+        ]"
+      >
+        <div
+          class="m-5"
+          v-html="
+            `<div>Susanne: Hi, Mario. Can you help me prepare some things for the next month?<br>Mario: OK, sure. What can I help you with?<br>Susanne: I need to visit the customer in Germany. It's important.<br>Mario: What can I do to help?<br>Susanne: Can you send an email to the customer? Ask them when I can visit them next week. Please do this first. It's a priority and very urgent.<br>Mario: Right. I'll do it today.<br>Susanne: Thanks. This next task is also important. Can you invite everyone to the next team meeting?<br>Mario: Yes, I will.<br>Susanne: But first you need to book a meeting room. After that, please send everyone an email about it.<br>Mario: Yes, of course.<br>Susanne: And finally, can you write a short report about our new project? I have to give a presentation to our managers next month. Please do it when you have time &ndash; sometime in the next two or three weeks. It's not too urgent.<br>Mario: Sure, no problem. I can do it this week.<br>Susanne: There's no hurry. Take your time.</div>`
+          "
         />
-        <div class="px-5 pb-2 mt-5 detail-multiple-choice">
-          <MultipleChoice
-            :data="dataMultipleChoice"
-            @setValue="getAnswerMultichoice"
-            :correctAnswer="correctAnswer"
-            :errors="errorsMultiple"
-          />
+      </div>
+    </div>
+    <div ref="transcriptTop">
+      <ButtonBack
+        title="Listen to the dialogue above and choose the correct answer"
+        extend-class="mt-5"
+      />
+      <div class="px-5 pb-2 mt-5 detail-multiple-choice">
+        <MultipleChoice
+          :data="dataMultipleChoice"
+          @setValue="getAnswerMultichoice"
+          :correctAnswer="correctAnswer"
+          :errors="errorsMultiple"
+        />
+      </div>
+    </div>
+    <ButtonBack
+      title="Listen to the dialogue above and match the beginnings and endings of the phrases"
+      extend-class="mt-5"
+    />
+    <MatchWord
+      :data-list-words="dataListWords"
+      :list-answers="listAnswers"
+      :list-questions="listQuestions"
+      :errorsMatching="errorsMatching"
+      @setAnswers="setAnswers"
+      @setQuetions="setQuetions"
+    />
+    <ButtonBack
+      title="Put the tasks in order of priority."
+      extend-class="mt-5"
+    />
+    <PutPriority
+      :data-priority="listPriority"
+      :list-correct-priority="listCorrectPriority"
+      placeholder="Priority sequence"
+      :input-priority-prop1="inputPriority1"
+      :input-priority-prop2="inputPriority2"
+      :input-priority-prop3="inputPriority3"
+      :input-priority-prop4="inputPriority4"
+      @update1="setValuePriority1"
+      @update2="setValuePriority2"
+      @update3="setValuePriority3"
+      @update4="setValuePriority4"
+    />
+    <div class="flex justify-center gap-20 items-center py-5 text-base">
+      <div class="flex gap-7">
+        <div
+          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="handleBack"
+        >
+          <span class="text-base text-primary">Back</span>
+        </div>
+        <div
+          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="handleUpdate"
+        >
+          <span class="text-base text-white">Edit</span>
         </div>
       </div>
-      <ButtonBack
-        title="Listen to the dialogue above and match the beginnings and endings of the phrases"
-        extend-class="mt-5"
-      />
-      <MatchWord
-        :data-list-words="dataListWords"
-        :list-answers="listAnswers"
-        :list-questions="listQuestions"
-        :errorsMatching="errorsMatching"
-        @setAnswers="setAnswers"
-        @setQuetions="setQuetions"
-      />
-      <ButtonBack
-        title="Put the tasks in order of priority."
-        extend-class="mt-5"
-      />
-      <PutPriority
-        :data-priority="listPriority"
-        placeholder="Priority sequence"
-        @update1="setValuePriority1"
-        @update2="setValuePriority2"
-        @update3="setValuePriority3"
-        @update4="setValuePriority4"
-      />
-    </div>
-    <div
-      @click="handleSubmit"
-      class="bg-primary w-max px-2 py-1 text-white text-lg rounded-xl font-semibold cursor-pointer"
-    >
-      Okay
+      <div
+        @click="handleSubmit"
+        class="cursor-pointer rounded-lg bg-yellow-300 text-white w-24 text-center h-8 leading-8 hover:opacity-50"
+      >
+        Test
+      </div>
     </div>
   </div>
 </template>
@@ -102,6 +121,7 @@ export default {
   created() {
     this.ARROW_LEFT = ARROW_LEFT;
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
+    this.paramName = this.$route.params.name;
   },
   watch: {
     listAnswers() {
@@ -111,18 +131,21 @@ export default {
   methods: {
     ...mapMutations('course', ['setSubmit']),
     setValuePriority1(data) {
-      console.log(data);
+      this.inputPriority1 = data;
     },
     setValuePriority2(data) {
-      console.log(data);
+      this.inputPriority2 = data;
     },
     setValuePriority3(data) {
-      console.log(data);
+      this.inputPriority3 = data;
     },
     setValuePriority4(data) {
-      console.log(data);
+      this.inputPriority4 = data;
     },
     onBack() {
+      this.$router.push({ name: 'CourseListening' });
+    },
+    handleBack() {
       this.$router.push({ name: 'CourseListening' });
     },
     setQuetions(data) {
@@ -186,6 +209,12 @@ export default {
         }
       }
     },
+    handleUpdate() {
+      this.$router.push({
+        name: 'CreateCourseListening',
+        params: { name: this.paramName },
+      });
+    },
     goToDetailCourse(data) {
       console.log(data);
     },
@@ -210,7 +239,12 @@ export default {
   },
   data() {
     return {
+      paramName: null,
       drag: false,
+      inputPriority1: null,
+      inputPriority2: null,
+      inputPriority3: null,
+      inputPriority4: null,
       listPriority: [
         { id: 1, question: 'I have an apple in my bag.' },
         { id: 2, question: 'I have an apple in my bag.' },
@@ -220,6 +254,7 @@ export default {
         },
         { id: 4, question: 'I have an apple in my bag.' },
       ],
+      listCorrectPriority: [1, 3, 2, 4],
       listQuestions: [
         {
           id: 1,

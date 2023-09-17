@@ -259,13 +259,17 @@ export default {
     goToListening() {
       this.$router.push({
         name: 'CourseListening',
-        params: { course: formatSpacerIntoHyphen(this.editNameCourse) },
+        params: {
+          course: formatSpacerIntoHyphen(this.editNameCourse).toLowerCase(),
+        },
       });
     },
     goToReading() {
       this.$router.push({
         name: 'CourseReading',
-        params: { course: formatSpacerIntoHyphen(this.editNameCourse) },
+        params: {
+          course: formatSpacerIntoHyphen(this.editNameCourse).toLowerCase(),
+        },
       });
     },
     cancelTypeCourse() {

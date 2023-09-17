@@ -216,7 +216,7 @@ export default {
           gender: 1,
           registration_date: '09/06/2023',
           level: 0,
-          blog: 2,
+          blog: 1,
           status: 1,
         },
         {

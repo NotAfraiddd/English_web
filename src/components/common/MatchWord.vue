@@ -107,12 +107,8 @@ export default {
     };
   },
   watch: {
-    '$refs.matchWord.scrollHeight': {
-      handler(newValue, oldValue) {
-        const heightMatch = this.$refs.matchWord.scrollHeight;
-        console.log(heightMatch);
-      },
-      deep: true,
+    '$refs.matchWord.scrollHeight'(newValue) {
+      console.log(newValue);
     },
   },
 

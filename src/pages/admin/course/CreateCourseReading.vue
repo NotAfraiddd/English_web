@@ -32,13 +32,13 @@
     <div class="flex">
       <div
         @click="cancelCreate"
-        class="border border-primary btn-countinue w-32 text-center px-2 py-1 text-primary hover:opacity-70 text-lg rounded-xl font-semibold cursor-pointer mt-5 mx-auto"
+        class="border border-primary btn-countinue w-24 text-center text-primary hover:opacity-70 text-lg rounded-xl font-semibold cursor-pointer mt-5 mx-auto"
       >
         Cancel
       </div>
       <div
         @click="createCourse"
-        class="bg-primary btn-countinue w-32 text-center px-2 py-1 text-white text-lg hover:opacity-70 rounded-xl font-semibold cursor-pointer mt-5 mx-auto"
+        class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
       >
         Create
       </div>

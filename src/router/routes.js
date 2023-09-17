@@ -53,22 +53,40 @@ export default [
         component: () => import('../pages/admin/course/CourseReading.vue'),
       },
       {
-        path: 'course/:course/listening/create',
-        name: 'CreateCourseListening',
-        component: () =>
-          import('../pages/admin/course/CreateCourseListening.vue'),
-      },
-      {
         path: 'course/:course/listening/detail/:name',
         name: 'DetailCourseListening',
         component: () =>
           import('../pages/admin/course/DetailCourseListening.vue'),
       },
       {
+        path: 'course/:course/reading/detail/:name',
+        name: 'DetailCourseReading',
+        component: () =>
+          import('../pages/admin/course/DetailCourseReading.vue'),
+      },
+      {
         path: 'course/:course/reading/create',
         name: 'CreateCourseReading',
         component: () =>
           import('../pages/admin/course/CreateCourseReading.vue'),
+      },
+      {
+        path: 'course/:course/reading/detail/:name/update',
+        name: 'CreateCourseReading',
+        component: () =>
+          import('../pages/admin/course/CreateCourseReading.vue'),
+      },
+      {
+        path: 'course/:course/listening/create',
+        name: 'CreateCourseListening',
+        component: () =>
+          import('../pages/admin/course/CreateCourseListening.vue'),
+      },
+      {
+        path: 'course/:course/listening/detail/:name/update',
+        name: 'CreateCourseListening',
+        component: () =>
+          import('../pages/admin/course/CreateCourseListening.vue'),
       },
       {
         path: 'blog-pending',

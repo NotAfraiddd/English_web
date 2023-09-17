@@ -1,59 +1,80 @@
 <template>
-  <div class="w-full mt-5 detail-priority flex text-base justify-between p-5">
-    <div class="flex flex-col justify-between">
-      <div class="flex" v-for="(item, index) in dataPriority" :key="index">
-        <div class="ml-1 text-left">{{ index + 1 }}. {{ item.question }}</div>
+  <div class="w-full mt-5 detail-priority text-base p-5">
+    <div class="flex justify-between">
+      <div class="flex flex-col justify-between">
+        <div class="flex" v-for="(item, index) in dataPriority" :key="index">
+          <div class="ml-1 text-left">{{ index + 1 }}. {{ item.question }}</div>
+        </div>
       </div>
-    </div>
-    <div class="flex flex-col justify-between gap-1">
-      <div class="flex gap-2 items-center">
-        <input
-          type="text"
-          class="border text-center border-primary w-40 h-8 rounded-lg form-control"
-          @change="handleChangeInput1"
-          v-model="inputPriority1"
-          spellcheck="false"
-          :placeholder="placeholder"
-        />
-        <div v-if="true" class="text-text_red font-semibold">x</div>
-        <div v-else />
-      </div>
-      <div class="flex gap-2 items-center">
-        <input
-          type="text"
-          class="border text-center border-primary w-40 h-8 rounded-lg form-control"
-          @change="handleChangeInput2"
-          v-model="inputPriority2"
-          spellcheck="false"
-          :placeholder="placeholder"
-        />
-        <div v-if="true" class="text-text_red font-semibold">x</div>
-        <div v-else />
-      </div>
-      <div class="flex gap-2 items-center">
-        <input
-          type="text"
-          class="border text-center border-primary w-40 h-8 rounded-lg form-control"
-          @change="handleChangeInput3"
-          v-model="inputPriority3"
-          spellcheck="false"
-          :placeholder="placeholder"
-        />
-        <div v-if="true" class="text-text_red font-semibold">x</div>
-        <div v-else />
-      </div>
-      <div class="flex gap-2 items-center">
-        <input
-          type="text"
-          class="border text-center border-primary w-40 h-8 rounded-lg form-control"
-          @change="handleChangeInput4"
-          v-model="inputPriority4"
-          spellcheck="false"
-          :placeholder="placeholder"
-        />
-        <div v-if="true" class="text-text_red font-semibold">x</div>
-
-        <div v-else />
+      <div class="flex flex-col justify-between gap-1">
+        <div class="flex gap-2 items-center">
+          <input
+            type="text"
+            class="border text-center border-primary w-40 h-8 rounded-lg form-control"
+            @change="handleChangeInput1"
+            v-model="inputPriority1"
+            spellcheck="false"
+            :placeholder="placeholder"
+            maxlength="1"
+          />
+          <div
+            v-if="hasError(inputPriority1)"
+            class="text-text_red font-semibold"
+          >
+            x
+          </div>
+        </div>
+        <div class="flex gap-2 items-center">
+          <input
+            type="text"
+            class="border text-center border-primary w-40 h-8 rounded-lg form-control"
+            @change="handleChangeInput2"
+            v-model="inputPriority2"
+            spellcheck="false"
+            :placeholder="placeholder"
+            maxlength="1"
+          />
+          <div
+            v-if="hasError(inputPriority2)"
+            class="text-text_red font-semibold"
+          >
+            x
+          </div>
+        </div>
+        <div class="flex gap-2 items-center">
+          <input
+            type="text"
+            class="border text-center border-primary w-40 h-8 rounded-lg form-control"
+            @change="handleChangeInput3"
+            v-model="inputPriority3"
+            spellcheck="false"
+            :placeholder="placeholder"
+            maxlength="1"
+          />
+          <div
+            v-if="hasError(inputPriority3)"
+            class="text-text_red font-semibold"
+          >
+            x
+          </div>
+        </div>
+        <div class="flex gap-2 items-center">
+          <input
+            type="text"
+            class="border text-center border-primary w-40 h-8 rounded-lg form-control"
+            @change="handleChangeInput4"
+            v-model="inputPriority4"
+            spellcheck="false"
+            :placeholder="placeholder"
+            maxlength="1"
+          />
+          <div
+            v-if="hasError(inputPriority4)"
+            class="text-text_red font-semibold"
+          >
+            x
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -64,20 +85,38 @@ import { mapMutations, mapState } from 'vuex';
 export default {
   props: {
     dataPriority: { type: Array, default: () => [] },
+    listCorrectPriority: { type: Array, default: () => [] },
     placeholder: { type: String, default: null },
+    inputPriorityProp1: { type: String, default: null },
+    inputPriorityProp2: { type: String, default: null },
+    inputPriorityProp3: { type: String, default: null },
+    inputPriorityProp4: { type: String, default: null },
   },
   watch: {
     dataPriority(newValue) {
       this.priority = newValue;
     },
+    inputPriorityProp1(newValue) {
+      this.inputPriority1 = newValue;
+    },
+    inputPriorityProp2(newValue) {
+      this.inputPriority2 = newValue;
+    },
+    inputPriorityProp3(newValue) {
+      this.inputPriority3 = newValue;
+    },
+    inputPriorityProp4(newValue) {
+      this.inputPriority4 = newValue;
+    },
   },
   data() {
     return {
       priority: this.dataPriority,
-      inputPriority1: null,
-      inputPriority2: null,
-      inputPriority3: null,
-      inputPriority4: null,
+      correctPriority: this.listCorrectPriority,
+      inputPriority1: this.inputPriorityProp1,
+      inputPriority2: this.inputPriorityProp2,
+      inputPriority3: this.inputPriorityProp3,
+      inputPriority4: this.inputPriorityProp4,
     };
   },
   computed: {
@@ -85,6 +124,17 @@ export default {
   },
   methods: {
     ...mapMutations('course', ['setSubmit']),
+    hasError(data) {
+      if (this.submit == true) {
+        console.log(this.submit);
+        console.log(data);
+        this.correctPriority.forEach((item) => {
+          console.log(item, data);
+          if (item == data) return true;
+          else return false;
+        });
+      }
+    },
     handleChangeInput1(event) {
       this.$emit('update1', event.target.value);
     },
