@@ -17,16 +17,22 @@ import OPTION_ICON from '../assets/images/option_icon.svg';
 import DELETE_GRAY_ICON from '../assets/images/delete-gray-icon.png';
 import TITLE from '../assets/images/title.png';
 import HEART from '../assets/images/heart.png';
+import ICON_LOGIN from '../assets/images/icon-login.png';
 import STAR_RED from '../assets/images/start_red.png';
 import HEART_DEFAULT from '../assets/images/heart-default.png';
 import ERROR_GIF from '../assets/images/gifError.gif';
 import MENU from '../assets/images/menu.svg';
+import EYE_ENABLE from '../assets/images/eye-slash.svg';
+import EYE_DISABLE from '../assets/images/eye-visible.svg';
 import CHAT from '../assets/images/chat.svg';
 import GARBAGE from '../assets/images/garbage.svg';
 import EXAMPLE from '../assets/images/example.jpg';
 import MOUNTAIN_CLIMB from '../assets/images/mountain-climbing.jpg';
 
 export {
+  EYE_ENABLE,
+  EYE_DISABLE,
+  ICON_LOGIN,
   MOUNTAIN_CLIMB,
   GARBAGE,
   LOCK_COLOR,

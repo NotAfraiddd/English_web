@@ -3,7 +3,13 @@ export default [
     path: '',
     name: 'EmptyLayout',
     component: () => import('../layouts/EmptyLayout.vue'),
-    children: [],
+    children: [
+      {
+        path: '/Login',
+        name: 'Login',
+        component: () => import('../pages/login/Login.vue'),
+      },
+    ],
   },
   {
     path: '',

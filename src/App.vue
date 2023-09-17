@@ -3,6 +3,11 @@
 </template>
 
 <style lang="scss">
+body {
+  ::selection {
+    background-color: #f05123;
+  }
+}
 #app {
   font-family: 'Jost', sans-serif;
   -webkit-font-smoothing: antialiased;
