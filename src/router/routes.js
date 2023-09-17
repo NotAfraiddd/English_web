@@ -38,8 +38,13 @@ export default [
         component: () => import('../pages/admin/member/Member.vue'),
       },
       {
-        path: 'member/:id',
+        path: 'member/edit/:id',
         name: 'MemberDetail',
+        component: () => import('../pages/admin/member/MemberDetail.vue'),
+      },
+      {
+        path: 'edit/:id',
+        name: 'AdminDetail',
         component: () => import('../pages/admin/member/MemberDetail.vue'),
       },
       {

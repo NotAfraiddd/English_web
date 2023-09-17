@@ -29,16 +29,16 @@
       </div>
     </div>
     <div class="border-t border-primary_line mt-5" />
-    <div class="flex">
+    <div class="flex text-base gap-20 justify-center mt-5">
       <div
         @click="cancelCreate"
-        class="border border-primary btn-countinue w-24 text-center text-primary hover:opacity-70 text-lg rounded-xl font-semibold cursor-pointer mt-5 mx-auto"
+        class="border border-primary w-24 text-center h-8 leading-8 text-primary hover:opacity-70 rounded-lg font-semibold cursor-pointer"
       >
         Cancel
       </div>
       <div
         @click="createCourse"
-        class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+        class="cursor-pointer rounded-lg bg-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
       >
         Create
       </div>

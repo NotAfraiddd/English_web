@@ -42,6 +42,15 @@
             isMatchedRoute('BlogPending') ||
             isMatchedRoute('Course') ||
             isMatchedRoute('CreateCourse') ||
+            isMatchedRoute('Member') ||
+            isMatchedRoute('MemberDetail') ||
+            isMatchedRoute('CourseReading') ||
+            isMatchedRoute('DetailCourseListening') ||
+            isMatchedRoute('CreateCourseListening') ||
+            isMatchedRoute('DetailCourseReading') ||
+            isMatchedRoute('CreateCourseReading') ||
+            isMatchedRoute('AdminDetail') ||
+            isMatchedRoute('MemberDetail') ||
             isMatchedRoute('CommentReported')
           "
           class="flex items-center"
@@ -68,7 +77,10 @@
                 srcset=""
                 class="w-12 h-12 rounded-full"
               />
-              <div class="flex flex-col items-start">
+              <div
+                class="flex flex-col items-start hover:opacity-50"
+                @click="handleEditAdmin"
+              >
                 <div class="text-lg font-semibold text-primary_black">
                   Nguyen Huynh Chi Bao
                 </div>
@@ -155,6 +167,9 @@ export default {
       return this.$route.matched.some(({ name }) => {
         return name == routeName;
       });
+    },
+    handleEditAdmin() {
+      this.$router.push({ name: 'AdminDetail', params: { id: 1 } });
     },
   },
 };
