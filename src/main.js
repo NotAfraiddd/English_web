@@ -19,7 +19,7 @@ const gauthOption = {
 };
 const app = createApp(App)
   .component('confirm-modal', ConfirmModal)
-  .use(GAuth, gauthOption)
+  // .use(GAuth, gauthOption)
   .use(router)
   .use(store)
   .use(Antd);
