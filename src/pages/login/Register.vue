@@ -11,7 +11,7 @@
         Are you ready to take the next step towards a successful future ? Look
         no further than Circlez!
       </div>
-      <div class="mt-4 mx-10 flex flex-col items-start">
+      <div class="mt-3 mx-10 flex flex-col items-start">
         <div class="text-primary_black font-semibold text-base">Account</div>
         <div class="relative w-full mt-2">
           <label
@@ -38,10 +38,23 @@
             @blur="onBlurEmail"
             role="presentation"
             autocomplete="new-password"
+            ref="inputEmail"
           />
+          <div
+            class="text-red-500 mt-1 text-base text-left w-full"
+            v-if="emptyEmail"
+          >
+            {{ ERROR_MESSAGE.empty }}
+          </div>
+          <div
+            class="text-red-500 mt-1 text-base text-left w-full"
+            v-if="syntaxEmail"
+          >
+            {{ ERROR_MESSAGE.wrong }}
+          </div>
         </div>
       </div>
-      <div class="mt-4 mx-10 flex flex-col items-start">
+      <div class="mt-3 mx-10 flex flex-col items-start">
         <div class="text-primary_black font-semibold text-base">Password</div>
         <div class="relative mt-2 w-full">
           <label
@@ -77,37 +90,64 @@
           </span>
         </div>
       </div>
-      <div
-        class="mt-3 mx-10 text-right underline text-primary_999 cursor-pointer animation-translate-y py-1"
-      >
-        Forget password
+      <div class="mt-3 mx-10 flex flex-col items-start">
+        <div class="text-primary_black font-semibold text-base">
+          Confirm Password
+        </div>
+        <div class="relative mt-2 w-full">
+          <label
+            :class="{ active: focusedConfirmPassword }"
+            for="fname"
+            class="text-primary_line flex justify-center items-center gap-1"
+          >
+            Enter your confirm password
+            <div
+              class="text-xs"
+              :class="focusedConfirmPassword && 'text-text_red'"
+              ref="star"
+            >
+              ★
+            </div>
+          </label>
+          <input
+            id="fname"
+            :type="showConfirmPassword ? 'text' : 'password'"
+            class="rounded-lg pl-3 form-control"
+            v-model="confirmPassword"
+            @focus="onFocusConfirmPassword"
+            @blur="onBlurConfirmPassword"
+            role="presentation"
+            autocomplete="new-password"
+          />
+          <span
+            class="h-10 w-6 absolute z-20 top-2 right-2 cursor-pointer"
+            @click="toggleShowConfirmPassword"
+          >
+            <img
+              :src="EYE_DISABLE"
+              alt=""
+              srcset=""
+              v-if="showConfirmPassword"
+            />
+            <img :src="EYE_ENABLE" alt="" srcset="" v-else />
+          </span>
+        </div>
       </div>
       <div
         @click="handleLogin"
-        class="mt-4 mx-10 h-10 leading-10 rounded-lg bg-primary text-white text-lg font-semibold cursor-pointer hover:opacity-70"
+        class="mt-5 mx-10 h-10 leading-10 rounded-lg bg-primary text-white text-lg font-semibold cursor-pointer hover:opacity-70"
       >
-        Login
-      </div>
-      <div class="flex flex-1 items-center mx-10">
-        <div class="border-primary_line w-full border-b" />
-        <div class="text-primary_black mx-2">or</div>
-        <div class="border-primary_line w-full border-b" />
-      </div>
-      <div
-        class="flex justify-center items-center border mx-10 h-10 leading-10 rounded-lg text-lg font-semibold cursor-pointer hover:opacity-70"
-      >
-        <img :src="GOOGLE" alt="" srcset="" class="w-7 h-7" />
-        <div class="h-7 leading-7 text-primary_black">Login with Google</div>
+        Register
       </div>
       <div
         class="mt-2 text-base text-primary_black flex mx-auto justify-center"
       >
-        If you don’t have an account ?&nbsp;
+        Already have an account ?&nbsp;
         <div
-          @click="goToRegister"
+          @click="goToLogin"
           class="font-semibold underline hover:opacity-70 cursor-pointer animation-translate-y"
         >
-          Sign up now
+          Login now
         </div>
       </div>
     </div>
@@ -184,6 +224,9 @@
 </template>
 
 <script>
+import { ERROR_MESSAGE } from '../../constants/index';
+import { validEmail, validPassword } from '../../constants/function';
+
 import {
   ICON_LOGIN,
   EYE_DISABLE,
@@ -191,7 +234,7 @@ import {
   GOOGLE,
 } from '../../constants/image.js';
 export default {
-  name: 'Login',
+  name: 'Register',
   created() {
     this.GOOGLE = GOOGLE;
     this.EYE_DISABLE = EYE_DISABLE;
@@ -200,18 +243,46 @@ export default {
     // Trigger Enter
     document.addEventListener('keyup', this.handleKeyPress);
   },
+  watch: {
+    email() {
+      this.emptyEmail = false;
+      this.syntaxEmail = false;
+      this.$refs.inputEmail.classList.remove('border-red-500');
+    },
+  },
   data() {
     return {
+      isSubmit: false,
+      emptyEmail: false,
+      syntaxEmail: false,
       email: '',
       password: '',
+      confirmPassword: '',
       focusedEmail: false,
       focusedPassword: false,
+      focusedConfirmPassword: false,
       showPassword: false,
+      showConfirmPassword: false,
+      ERROR_MESSAGE: {
+        empty: ERROR_MESSAGE.EMAIL_EMPTY,
+        wrong: ERROR_MESSAGE.EMAIL_SYNTAX,
+      },
     };
   },
   methods: {
-    goToRegister() {
-      this.$router.push({ name: 'Register' });
+    validateEmail() {
+      const isValidEmail = validEmail(this.email);
+      if (this.email.trim() === '') {
+        this.$refs.inputEmail.classList.add('border-red-500');
+        this.emptyEmail = true;
+      } else if (!isValidEmail) {
+        this.$refs.inputEmail.classList.add('border-red-500');
+        this.syntaxEmail = true;
+      } else return;
+    },
+
+    goToLogin() {
+      this.$router.push({ name: 'Login' });
     },
     handleKeyPress(event) {
       if (event.keyCode === 13) {
@@ -219,7 +290,11 @@ export default {
       }
     },
     handleLogin() {
-      console.log('abc');
+      this.isSubmit = true;
+      const validEmail = this.validateEmail();
+      if (validEmail) {
+        console.log('Login successful!');
+      }
     },
     toggleShowPassword() {
       this.showPassword = !this.showPassword;
@@ -239,6 +314,17 @@ export default {
       if (!this.password) {
         this.focusedPassword = false;
       }
+    },
+    onFocusConfirmPassword() {
+      this.focusedConfirmPassword = true;
+    },
+    onBlurConfirmPassword() {
+      if (!this.password) {
+        this.focusedConfirmPassword = false;
+      }
+    },
+    toggleShowConfirmPassword() {
+      this.showConfirmPassword = !this.showConfirmPassword;
     },
   },
 };

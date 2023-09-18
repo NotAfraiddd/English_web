@@ -19,6 +19,7 @@ import TITLE from '../assets/images/title.png';
 import HEART from '../assets/images/heart.png';
 import ICON_LOGIN from '../assets/images/icon-login.png';
 import STAR_RED from '../assets/images/start_red.png';
+import GOOGLE from '../assets/images/google.png';
 import HEART_DEFAULT from '../assets/images/heart-default.png';
 import ERROR_GIF from '../assets/images/gifError.gif';
 import MENU from '../assets/images/menu.svg';
@@ -30,6 +31,7 @@ import EXAMPLE from '../assets/images/example.jpg';
 import MOUNTAIN_CLIMB from '../assets/images/mountain-climbing.jpg';
 
 export {
+  GOOGLE,
   EYE_ENABLE,
   EYE_DISABLE,
   ICON_LOGIN,

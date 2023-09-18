@@ -5,9 +5,14 @@ export default [
     component: () => import('../layouts/EmptyLayout.vue'),
     children: [
       {
-        path: '/Login',
+        path: '/login',
         name: 'Login',
         component: () => import('../pages/login/Login.vue'),
+      },
+      {
+        path: '/register',
+        name: 'Register',
+        component: () => import('../pages/login/Register.vue'),
       },
     ],
   },

@@ -26,6 +26,11 @@ export const NOTIFY_MESSAGE = {
   ADD_QUESTION: 'Maximum 6 questions',
 };
 
+export const ERROR_MESSAGE = {
+  EMAIL_EMPTY: 'Your email is empty',
+  EMAIL_SYNTAX: 'Your email is not correct syntax',
+};
+
 export const UI = {
   UI_LISTENING: 1,
   UI_READING: 2,
