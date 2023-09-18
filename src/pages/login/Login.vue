@@ -108,12 +108,12 @@
       >
         Forget password
       </div>
-      <div
-        @click="handleLogin"
+      <button
+        @click="handleLogin()"
         class="mt-4 mx-10 h-10 leading-10 rounded-lg bg-primary text-white text-lg font-semibold cursor-pointer hover:opacity-70"
       >
         Login
-      </div>
+      </button>
       <div class="flex flex-1 items-center mx-10">
         <div class="border-primary_line w-full border-b" />
         <div class="text-primary_black mx-2">or</div>
@@ -294,7 +294,10 @@ export default {
       const validEmail = this.validateEmail();
       const validPassword = this.validatePassword();
       if (validEmail && validPassword) {
-        console.log('Login successful!');
+        this.$gAuth.signIn().then((GoogleUser) => {
+          console.log('GoogleUser', GoogleUser);
+          this.isSignIn = this.$gAuth.isAuthorized;
+        });
       }
     },
     toggleShowPassword() {
