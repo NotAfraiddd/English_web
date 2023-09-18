@@ -20,3 +20,7 @@ export const validPassword = (password) => {
   const passwordPattern = REGEX.passwordPattern;
   return password.match(passwordPattern);
 };
+
+export const validConfirmPassword = (password, confirmPassword) => {
+  return password.includes(confirmPassword);
+};

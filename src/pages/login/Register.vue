@@ -19,7 +19,7 @@
             for="fname"
             class="text-primary_line flex justify-center items-center gap-1"
           >
-            Enter your email
+            Your email
             <div class="text-xs" :class="focusedEmail && 'text-text_red'">
               ★
             </div>
@@ -44,13 +44,13 @@
             class="text-red-500 mt-1 text-base text-left w-full"
             v-if="emptyEmail"
           >
-            {{ ERROR_MESSAGE.empty }}
+            {{ ERROR_MESSAGE.emptyEmail }}
           </div>
           <div
             class="text-red-500 mt-1 text-base text-left w-full"
             v-if="syntaxEmail"
           >
-            {{ ERROR_MESSAGE.wrong }}
+            {{ ERROR_MESSAGE.wrongEmail }}
           </div>
         </div>
       </div>
@@ -62,7 +62,7 @@
             for="fname"
             class="text-primary_line flex justify-center items-center gap-1"
           >
-            Enter your password
+            Your password
             <div
               class="text-xs"
               :class="focusedPassword && 'text-text_red'"
@@ -80,7 +80,20 @@
             @blur="onBlurPassword"
             role="presentation"
             autocomplete="new-password"
+            ref="inputPassword"
           />
+          <div
+            class="text-red-500 mt-1 text-base text-left w-full"
+            v-if="emptyPassword"
+          >
+            {{ ERROR_MESSAGE.emptyPassword }}
+          </div>
+          <div
+            class="text-red-500 mt-1 text-base text-left w-full"
+            v-if="syntaxPassword"
+          >
+            {{ ERROR_MESSAGE.wrongPassword }}
+          </div>
           <span
             class="h-10 w-6 absolute z-20 top-2 right-2 cursor-pointer"
             @click="toggleShowPassword"
@@ -100,7 +113,7 @@
             for="fname"
             class="text-primary_line flex justify-center items-center gap-1"
           >
-            Enter your confirm password
+            Confirm password
             <div
               class="text-xs"
               :class="focusedConfirmPassword && 'text-text_red'"
@@ -118,7 +131,20 @@
             @blur="onBlurConfirmPassword"
             role="presentation"
             autocomplete="new-password"
+            ref="inputConfirmPassword"
           />
+          <div
+            class="text-red-500 mt-1 text-base text-left w-full"
+            v-if="emptyConfirmPassword"
+          >
+            {{ ERROR_MESSAGE.emptyConfirmPassword }}
+          </div>
+          <div
+            class="text-red-500 mt-1 text-base text-left w-full"
+            v-if="syntaxConfirmPassword"
+          >
+            {{ ERROR_MESSAGE.wrongConfirmPassword }}
+          </div>
           <span
             class="h-10 w-6 absolute z-20 top-2 right-2 cursor-pointer"
             @click="toggleShowConfirmPassword"
@@ -225,7 +251,11 @@
 
 <script>
 import { ERROR_MESSAGE } from '../../constants/index';
-import { validEmail, validPassword } from '../../constants/function';
+import {
+  validEmail,
+  validPassword,
+  validConfirmPassword,
+} from '../../constants/function';
 
 import {
   ICON_LOGIN,
@@ -249,12 +279,26 @@ export default {
       this.syntaxEmail = false;
       this.$refs.inputEmail.classList.remove('border-red-500');
     },
+    password() {
+      this.emptyPassword = false;
+      this.syntaxPassword = false;
+      this.$refs.inputPassword.classList.remove('border-red-500');
+    },
+    confirmPassword() {
+      this.emptyConfirmPassword = false;
+      this.syntaxConfirmPassword = false;
+      this.$refs.inputConfirmPassword.classList.remove('border-red-500');
+    },
   },
   data() {
     return {
       isSubmit: false,
       emptyEmail: false,
+      emptyPassword: false,
+      emptyConfirmPassword: false,
       syntaxEmail: false,
+      syntaxPassword: false,
+      syntaxConfirmPassword: false,
       email: '',
       password: '',
       confirmPassword: '',
@@ -264,20 +308,47 @@ export default {
       showPassword: false,
       showConfirmPassword: false,
       ERROR_MESSAGE: {
-        empty: ERROR_MESSAGE.EMAIL_EMPTY,
-        wrong: ERROR_MESSAGE.EMAIL_SYNTAX,
+        emptyEmail: ERROR_MESSAGE.EMAIL_EMPTY,
+        emptyPassword: ERROR_MESSAGE.PASSWORD_EMPTY,
+        emptyConfirmPassword: ERROR_MESSAGE.CONFIRM_PASSWORD_EMPTY,
+        wrongEmail: ERROR_MESSAGE.EMAIL_SYNTAX,
+        wrongPassword: ERROR_MESSAGE.PASSWORD_SYNTAX,
+        wrongConfirmPassword: ERROR_MESSAGE.CONFIRM_PASSWORD_SYNTAX,
       },
     };
   },
   methods: {
     validateEmail() {
       const isValidEmail = validEmail(this.email);
-      if (this.email.trim() === '') {
+      if (this.email.trim() === '' && this.isSubmit) {
         this.$refs.inputEmail.classList.add('border-red-500');
         this.emptyEmail = true;
-      } else if (!isValidEmail) {
+      } else if (!isValidEmail && this.isSubmit) {
         this.$refs.inputEmail.classList.add('border-red-500');
         this.syntaxEmail = true;
+      } else return;
+    },
+    validatePassword() {
+      const isValidPassword = validPassword(this.password);
+      if (this.password.trim() === '' && this.isSubmit) {
+        this.$refs.inputPassword.classList.add('border-red-500');
+        this.emptyPassword = true;
+      } else if (!isValidPassword && this.isSubmit) {
+        this.$refs.inputPassword.classList.add('border-red-500');
+        this.syntaxPassword = true;
+      } else return;
+    },
+    validateConfirmPassword() {
+      const isValidConfirmPassword = validConfirmPassword(
+        this.password,
+        this.confirmPassword,
+      );
+      if (this.confirmPassword.trim() === '' && this.isSubmit) {
+        this.$refs.inputConfirmPassword.classList.add('border-red-500');
+        this.emptyConfirmPassword = true;
+      } else if (!isValidConfirmPassword && this.isSubmit) {
+        this.$refs.inputConfirmPassword.classList.add('border-red-500');
+        this.syntaxConfirmPassword = true;
       } else return;
     },
 
@@ -292,7 +363,9 @@ export default {
     handleLogin() {
       this.isSubmit = true;
       const validEmail = this.validateEmail();
-      if (validEmail) {
+      const validPassword = this.validatePassword();
+      const validateConfirmPassword = this.validateConfirmPassword();
+      if (validEmail && validPassword && validateConfirmPassword) {
         console.log('Login successful!');
       }
     },
@@ -352,11 +425,10 @@ svg {
 
 label {
   position: absolute;
-  top: -3px;
-  left: 0px;
+  top: 8px;
+  left: 8px;
   font-size: 16px;
-  margin: 10px;
-  padding: 0 10px;
+  padding-left: 10px;
   transition: top 0.2s ease-in-out, font-size 0.2s ease-in-out;
 }
 
@@ -367,7 +439,7 @@ label.active > div {
   font-size: 10px !important;
 }
 .active {
-  top: -20px;
+  top: -11px;
   font-size: 14px;
   background-color: #fff;
 }
