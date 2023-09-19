@@ -19,7 +19,7 @@
             for="fname"
             class="text-primary_line flex justify-center items-center gap-1"
           >
-            Enter your email
+            Your email
             <div class="text-xs" :class="focusedEmail && 'text-text_red'">
               ★
             </div>
@@ -38,7 +38,20 @@
             @blur="onBlurEmail"
             role="presentation"
             autocomplete="new-password"
+            ref="inputEmail"
           />
+          <div
+            class="text-red-500 mt-1 text-base text-left w-full"
+            v-if="emptyEmail"
+          >
+            {{ ERROR_MESSAGE.emptyEmail }}
+          </div>
+          <div
+            class="text-red-500 mt-1 text-base text-left w-full"
+            v-if="syntaxEmail"
+          >
+            {{ ERROR_MESSAGE.wrongEmail }}
+          </div>
         </div>
       </div>
       <div class="mt-4 mx-10 flex flex-col items-start">
@@ -49,7 +62,7 @@
             for="fname"
             class="text-primary_line flex justify-center items-center gap-1"
           >
-            Enter your password
+            Your password
             <div
               class="text-xs"
               :class="focusedPassword && 'text-text_red'"
@@ -67,7 +80,20 @@
             @blur="onBlurPassword"
             role="presentation"
             autocomplete="new-password"
+            ref="inputPassword"
           />
+          <div
+            class="text-red-500 mt-1 text-base text-left w-full"
+            v-if="emptyPassword"
+          >
+            {{ ERROR_MESSAGE.emptyPassword }}
+          </div>
+          <div
+            class="text-red-500 mt-1 text-base text-left w-full"
+            v-if="syntaxPassword"
+          >
+            {{ ERROR_MESSAGE.wrongPassword }}
+          </div>
           <span
             class="h-10 w-6 absolute z-20 top-2 right-2 cursor-pointer"
             @click="toggleShowPassword"
@@ -83,7 +109,7 @@
         Forget password
       </div>
       <div
-        @click="handleLogin"
+        @click="handleLogin()"
         class="mt-4 mx-10 h-10 leading-10 rounded-lg bg-primary text-white text-lg font-semibold cursor-pointer hover:opacity-70"
       >
         Login
@@ -184,6 +210,8 @@
 </template>
 
 <script>
+import { ERROR_MESSAGE } from '../../constants';
+import { validEmail, validPassword } from '../../constants/function';
 import {
   ICON_LOGIN,
   EYE_DISABLE,
@@ -200,16 +228,59 @@ export default {
     // Trigger Enter
     document.addEventListener('keyup', this.handleKeyPress);
   },
+  watch: {
+    email() {
+      this.emptyEmail = false;
+      this.syntaxEmail = false;
+      this.$refs.inputEmail.classList.remove('border-red-500');
+    },
+    password() {
+      this.emptyPassword = false;
+      this.syntaxPassword = false;
+      this.$refs.inputPassword.classList.remove('border-red-500');
+    },
+  },
   data() {
     return {
       email: '',
       password: '',
+      isSubmit: false,
+      emptyEmail: false,
+      emptyPassword: false,
+      syntaxEmail: false,
+      syntaxPassword: false,
       focusedEmail: false,
+      ERROR_MESSAGE: {
+        emptyEmail: ERROR_MESSAGE.EMAIL_EMPTY,
+        emptyPassword: ERROR_MESSAGE.PASSWORD_EMPTY,
+        wrongEmail: ERROR_MESSAGE.EMAIL_SYNTAX,
+        wrongPassword: ERROR_MESSAGE.PASSWORD_SYNTAX,
+      },
       focusedPassword: false,
       showPassword: false,
     };
   },
   methods: {
+    validateEmail() {
+      const isValidEmail = validEmail(this.email);
+      if (this.email.trim() === '' && this.isSubmit) {
+        this.$refs.inputEmail.classList.add('border-red-500');
+        this.emptyEmail = true;
+      } else if (!isValidEmail && this.isSubmit) {
+        this.$refs.inputEmail.classList.add('border-red-500');
+        this.syntaxEmail = true;
+      } else return;
+    },
+    validatePassword() {
+      const isValidPassword = validPassword(this.password);
+      if (this.password.trim() === '' && this.isSubmit) {
+        this.$refs.inputPassword.classList.add('border-red-500');
+        this.emptyPassword = true;
+      } else if (!isValidPassword && this.isSubmit) {
+        this.$refs.inputPassword.classList.add('border-red-500');
+        this.syntaxPassword = true;
+      } else return;
+    },
     goToRegister() {
       this.$router.push({ name: 'Register' });
     },
@@ -219,7 +290,15 @@ export default {
       }
     },
     handleLogin() {
-      console.log('abc');
+      this.isSubmit = true;
+      const validEmail = this.validateEmail();
+      const validPassword = this.validatePassword();
+      if (validEmail && validPassword) {
+        this.$gAuth.signIn().then((GoogleUser) => {
+          console.log('GoogleUser', GoogleUser);
+          this.isSignIn = this.$gAuth.isAuthorized;
+        });
+      }
     },
     toggleShowPassword() {
       this.showPassword = !this.showPassword;
