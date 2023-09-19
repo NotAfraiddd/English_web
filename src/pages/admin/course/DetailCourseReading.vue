@@ -93,6 +93,7 @@ export default {
       return JSON.stringify(valueA) === JSON.stringify(valueB);
     },
     handleSubmit() {
+      console.log('log', this.$store, this.setSubmit);
       this.setSubmit(true);
       // MultipleChoice
       this.errorsMultiple = [];

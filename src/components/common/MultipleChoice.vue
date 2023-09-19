@@ -62,7 +62,7 @@ export default {
   methods: {
     ...mapMutations('course', ['setSubmit']),
     isSelected(id, key) {
-      this.setSubmit(false);
+      // this.setSubmit(false);
       return this.selected[id] === key;
     },
     handleChange(id, key) {

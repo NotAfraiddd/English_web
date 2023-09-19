@@ -165,7 +165,7 @@ export default {
       else return false;
     },
     handleSubmit() {
-      this.setSubmit(true);
+      // this.setSubmit(true);
       // MultipleChoice
       this.errorsMultiple = [];
       for (let i = 0; i < this.dataMultipleChoice.length; i++) {
