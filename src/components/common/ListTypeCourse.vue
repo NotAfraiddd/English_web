@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-3 list-course">
+  <div class="grid grid-cols-3 list-course" :class="extendClass">
     <div
       v-for="(item, index) in data"
       :key="index"
@@ -10,15 +10,17 @@
         class="course flex justify-center border flex-col w-full px-4 gap-1 rounded-2xl h-40 cursor-pointer hover:opacity-80"
         :style="`background-color: ${item.color};`"
       >
-        <div class="font-semibold text-2xl text-white break-all">
+        <div
+          class="font-semibold text-2xl text-white flex flex-wrap justify-center"
+        >
           {{ item.title }}
         </div>
-        <div class="text-base text-white break-all">
+        <div class="text-base text-white flex flex-wrap">
           {{ item.subtitle }}
         </div>
         <Processbar v-if="hideProcessBar" :percentages="item.percentages" />
       </div>
-      <div class="w-full mt-3 flex flex-col gap-1 items-start my-4">
+      <div class="w-full mt-3 flex flex-col gap-1 my-4 items-center">
         <div class="font-semibold text-xl w-full">{{ item.name }}</div>
         <div v-if="hideCourseFinished" class="text-sm flex gap-3">
           Completed
@@ -37,6 +39,7 @@ export default {
   emits: ['clicked'],
   props: {
     data: { type: Array, default: () => [] },
+    extendClass: { type: String, default: '' },
     hideProcessBar: { type: Boolean, default: false },
     hideCourseFinished: { type: Boolean, default: false },
   },

@@ -1,29 +1,78 @@
 <template>
-  <div class="user-layout">
-    <div class="content-wrapper">
-      <router-view />
+  <BaseSideBar />
+  <div class="content-user-layout">
+    <BaseHeader />
+    <div class="user-layout">
+      <div class="user-content-wrap">
+        <router-view />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import BaseSideBar from '../components/User/BaseSideBar.vue';
+import BaseHeader from '../components/admin/BaseHeader';
+import { LoadingMixins } from '../mixins/Loading';
 export default {
   name: 'UserLayout',
-  components: {},
+  components: { BaseSideBar, BaseHeader },
+  mixins: [LoadingMixins],
+  watch: {
+    $route(to, from) {
+      this.emitter.emit('isShowLoading', true);
+      setTimeout(() => {
+        this.emitter.emit('isShowLoading', false);
+      }, 1000);
+    },
+  },
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .user-layout {
-  height: 100%;
+  min-height: 100vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  font-size: 16px;
+  color: #615a5a;
+}
+.content-user-layout {
+  position: relative;
+  width: 100%;
+  padding-left: 121px;
+}
 
-  .content-wrapper {
-    flex: 1;
-    overflow: auto;
-    overflow-x: hidden;
-    padding: 0px 20px;
-  }
+html *::-webkit-scrollbar {
+  border-radius: 0;
+  height: 12px;
+  width: 8px;
+}
+
+html *::-webkit-scrollbar {
+  border-radius: 0;
+  height: 12px;
+  width: 8px;
+}
+
+html *::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+html *::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+html *::-webkit-scrollbar-track {
+  border-radius: 0;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+html *::-webkit-scrollbar-track {
+  border-radius: 0;
+  background-color: rgba(0, 0, 0, 0);
 }
 </style>

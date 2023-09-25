@@ -14,7 +14,7 @@ export const ValidateNumInput = {
       if (charStr.match(/^[a-zA-z~!@#$%^&*(_=+[{}\]\\;':",/<>?)]$/)) {
         e.preventDefault();
       }
-      if (!isFraction && charStr === ".") {
+      if (!isFraction && charStr === '.') {
         e.preventDefault();
       }
     },
@@ -29,9 +29,9 @@ export const ValidateNumInput = {
       if (charStr.match(/^[a-zA-z~!@#$%^&*(_=+[{}\]\\;':",/<>?)]$/)) {
         e.preventDefault();
       }
-      var numberDot = str.split(".").length - 1;
-      var isNotFraction = (!str.length || numberDot) && charStr == "."; // is Not Fraction
-      var checkDot = charStr == "." && str.length > fractionLimit; // Dot appears at position <= 2
+      var numberDot = str.split('.').length - 1;
+      var isNotFraction = (!str.length || numberDot) && charStr == '.'; // is Not Fraction
+      var checkDot = charStr == '.' && str.length > fractionLimit; // Dot appears at position <= 2
       var isTaxLimit =
         !numberDot && charStr.match(/^[0-9]$/) && str.length >= fractionLimit; // exceed 100
 
@@ -50,7 +50,7 @@ export const ValidateNumInput = {
       const noneNumericRegex = /^[a-zA-z~!@#$%^&*(_=+[{}\]\\;':",/<>?)]$/;
       if (
         currentCharacter.match(noneNumericRegex) ||
-        (!fullString.length && currentCharacter == "0")
+        (!fullString.length && currentCharacter == '0')
       ) {
         e.preventDefault();
       }

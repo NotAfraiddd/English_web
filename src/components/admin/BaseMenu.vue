@@ -125,7 +125,7 @@ export default {
 }
 
 .nav-item.active {
-  border-radius: 8px;
+  border-radius: 16px;
   background: rgba(227, 226, 226, 0.4);
 }
 

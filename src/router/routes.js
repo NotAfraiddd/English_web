@@ -1,6 +1,6 @@
 export default [
   {
-    path: '',
+    path: '/auth',
     name: 'EmptyLayout',
     component: () => import('../layouts/EmptyLayout.vue'),
     children: [
@@ -22,9 +22,9 @@ export default [
     component: () => import('../layouts/UserLayout.vue'),
     children: [
       {
-        path: '/user',
-        name: 'user',
-        component: () => import('../pages/user/index.vue'),
+        path: '',
+        name: 'HomeUser',
+        component: () => import('../pages/user/home/Home.vue'),
       },
     ],
   },

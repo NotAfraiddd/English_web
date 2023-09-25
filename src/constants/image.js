@@ -28,10 +28,16 @@ import EYE_DISABLE from '../assets/images/eye-visible.svg';
 import CHAT from '../assets/images/chat.svg';
 import GARBAGE from '../assets/images/garbage.svg';
 import EXAMPLE from '../assets/images/example.jpg';
+import USER_HOME from '../assets/images/user-home.png';
+import USER_BLOG from '../assets/images/user-blog.png';
+import USER_LEARN from '../assets/images/user-learn.png';
 import MOUNTAIN_CLIMB from '../assets/images/mountain-climbing.jpg';
 
 export {
+  USER_BLOG,
+  USER_LEARN,
   GOOGLE,
+  USER_HOME,
   EYE_ENABLE,
   EYE_DISABLE,
   ICON_LOGIN,

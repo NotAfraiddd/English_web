@@ -1,5 +1,4 @@
 .header {
-  border-left: 1px solid #eee;
   padding-left: 20px;
   @media screen and (max-width: 992px) {
     padding-left: 56px;
@@ -74,6 +73,12 @@
 
 .logo-xl-btn-collapse {
   transform: scaleX(-1);
+}
+
+.bell-notify {
+  &:hover {
+    transform: translateY(-1px);
+  }
 }
 
 .arrow-container {

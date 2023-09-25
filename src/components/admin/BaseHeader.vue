@@ -1,8 +1,16 @@
 <template lang="">
   <div
-    class="h-20 flex justify-between items-center header w-full fixed bg-white border-b z-10"
+    :class="[
+      'h-20 flex justify-between items-center w-full bg-white z-10 sticky top-0',
+      isMatchedRoute('HomeUser')
+        ? 'border-b-0 border-l-0'
+        : 'border-b border-l header',
+    ]"
   >
-    <div class="flex items-center content-header-left space-x-2">
+    <div
+      class="content-header-left h-20 flex items-center"
+      :class="[isMatchedRoute('HomeUser') && 'invisible']"
+    >
       <div class="flex flex-col items-start w-40">
         <span class="text-primary_black">
           Total
@@ -19,11 +27,16 @@
         </span>
       </div>
     </div>
+    <input
+      v-model="searchInput"
+      class="h-10 rounded-lg pl-2 flex items-center w-80 border form-control"
+      placeholder="Search somethings..."
+    />
 
     <div
-      class="flex items-center justify-between content-header-right mr-8 fixed right-0"
+      class="flex items-center justify-between content-header-right mr-8 right-0 h-20"
     >
-      <div class="relative h-6 w-6">
+      <div class="h-6 w-6 bell-notify relative">
         <img :src="BELL" alt="" srcset="" class="mr-2 cursor-pointer h-full" />
         <div
           class="absolute header-notify text-xs bg-red-600 text-center text-white leading-6 h-6 w-6 rounded-full"
@@ -58,7 +71,10 @@
           <span class="name ml-2 w-48">Nguyen Huynh Chi Bao</span>
           <Avatar :imgUrl="AVATAR" class="w-9" />
         </div>
-        <span v-else class="name ml-2 w-24">My course</span>
+        <div v-else class="flex justify-center items-center">
+          <div class="name ml-2 w-24">My course</div>
+          <Avatar :imgUrl="AVATAR" class="w-9" />
+        </div>
 
         <img
           :src="isHovered ? ARROW_DOWN : ARROW_UP"
@@ -126,11 +142,21 @@ export default {
     this.AVATAR = AVATAR;
     this.formatNumber = formatNumber;
   },
+  props: {
+    hideMember: { type: Boolean, default: true },
+    searchInputProp: { type: String, default: null },
+  },
   components: {
     Avatar,
   },
+  watch: {
+    searchInputProp(newValue) {
+      this.searchInput = newValue;
+    },
+  },
   data() {
     return {
+      searchInput: this.searchInputProp,
       isHovered: false,
       titleInvite: 1,
       data: [
