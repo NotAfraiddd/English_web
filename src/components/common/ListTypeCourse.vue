@@ -1,9 +1,10 @@
 <template>
-  <div class="grid grid-cols-3 list-course" :class="extendClass">
+  <div class="grid list-course" :class="extendClass">
     <div
       v-for="(item, index) in data"
       :key="index"
-      class="h-auto min-h-max item-course"
+      class="h-auto min-h-max"
+      :class="extendItemClass"
       @click="handleClick(item)"
     >
       <div
@@ -15,7 +16,7 @@
         >
           {{ item.title }}
         </div>
-        <div class="text-base text-white flex flex-wrap">
+        <div class="text-base text-white flex flex-wrap justify-center">
           {{ item.subtitle }}
         </div>
         <Processbar v-if="hideProcessBar" :percentages="item.percentages" />
@@ -40,6 +41,7 @@ export default {
   props: {
     data: { type: Array, default: () => [] },
     extendClass: { type: String, default: '' },
+    extendItemClass: { type: String, default: '' },
     hideProcessBar: { type: Boolean, default: false },
     hideCourseFinished: { type: Boolean, default: false },
   },
@@ -69,14 +71,6 @@ export default {
   }
   @media screen and (max-width: 750px) {
     padding: 0;
-  }
-}
-
-.item-course {
-  width: 20rem;
-  @media screen and (max-width: 725px) {
-    width: 98%;
-    margin: 0 auto;
   }
 }
 </style>

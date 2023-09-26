@@ -26,6 +26,11 @@ export default [
         name: 'HomeUser',
         component: () => import('../pages/user/home/Home.vue'),
       },
+      {
+        path: 'member/edit/:id',
+        name: 'MemberDetail',
+        component: () => import('../pages/admin/member/MemberDetail.vue'),
+      },
     ],
   },
   {
@@ -47,11 +52,6 @@ export default [
         path: 'member',
         name: 'Member',
         component: () => import('../pages/admin/member/Member.vue'),
-      },
-      {
-        path: 'member/edit/:id',
-        name: 'MemberDetail',
-        component: () => import('../pages/admin/member/MemberDetail.vue'),
       },
       {
         path: 'edit/:id',

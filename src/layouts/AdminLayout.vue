@@ -102,14 +102,13 @@ export default {
   padding-left: 2rem;
   padding-right: 2rem;
   border-left: 1px solid #eee;
-  border-top: 1px solid #eee;
   background-color: #fff;
 
   .layout-content {
     border-radius: 15px;
     width: 100%;
     min-height: 100%;
-    margin-top: 100px;
+    padding-top: 30px;
   }
 }
 

@@ -1,169 +1,181 @@
 <template>
   <ButtonBack title="Information Member" :hide-back="true" @back="onBack" />
-  <div class="text-primary_black mt-5 border-t border-primary_line">
-    <div class="member-detail__width flex items-center">
-      <div class="mt-4 flex items-start w-96 mr-20">
-        <div class="flex flex-col mt-5 items-start w-64">
-          <div class="text-base text-primary_black font-semibold">Avatar</div>
-          <div class="text-base text-primary_black">
-            Accepting files: JPG, PNG or GIF.
+  <div class="mx-auto border-t border-primary_line mt-5">
+    <div class="text-primary_black mt-5">
+      <div class="member-detail__width flex items-center mx-auto">
+        <div class="mt-4 flex items-start w-96 mr-20">
+          <div class="flex flex-col mt-5 items-start w-64">
+            <div class="text-base text-primary_black font-semibold">Avatar</div>
+            <div class="text-base text-primary_black">
+              Accepting files: JPG, PNG or GIF.
+            </div>
           </div>
+          <ImageUpload
+            :src-img="avatar"
+            :avatar="true"
+            :disabled="!editAvatar"
+          />
+          <div />
         </div>
-        <ImageUpload :src-img="avatar" :avatar="true" :disabled="!editAvatar" />
-        <div />
-      </div>
-      <!-- Edit -->
-      <ButtonEdit
-        @cancel="handleCancelAvatar"
-        @edit="handleEditAvatar"
-        @update="handleUpdateAvatar"
-      />
-    </div>
-  </div>
-  <!-- name -->
-  <div class="text-primary_black mt-5 flex items-center">
-    <div class="member-detail__width flex items-center">
-      <div class="mt-4 flex items-start flex-col mr-20">
-        <div class="text-base text-primary_black font-semibold member-name">
-          Full Name
-        </div>
-        <input
-          v-model="inputFullname"
-          type="text"
-          class="border-b form-control w-96"
-          :class="!editFullname ? 'cursor-not-allowed' : ''"
-          spellcheck="false"
-          :disabled="!editFullname"
+        <!-- Edit -->
+        <ButtonEdit
+          @cancel="handleCancelAvatar"
+          @edit="handleEditAvatar"
+          @update="handleUpdateAvatar"
         />
       </div>
-      <!-- Edit -->
-      <ButtonEdit
-        @cancel="handleCancelFullName"
-        @edit="handleEditFullName"
-        @update="handleUpdateFullName"
-      />
     </div>
-  </div>
-  <!-- bio -->
-  <div class="text-primary_black mt-5 flex items-center">
-    <div class="member-detail__width flex items-center">
-      <div class="mt-4 flex items-start flex-col mr-20">
-        <div class="text-base text-primary_black font-semibold member-name">
-          Bio
+    <!-- name -->
+    <div class="text-primary_black mt-5">
+      <div class="member-detail__width flex items-center mx-auto">
+        <div class="mt-4 flex items-start flex-col mr-20">
+          <div class="text-base text-primary_black font-semibold member-name">
+            Full Name
+          </div>
+          <input
+            v-model="inputFullname"
+            type="text"
+            class="border-b form-control w-96"
+            :class="!editFullname ? 'cursor-not-allowed' : ''"
+            spellcheck="false"
+            :disabled="!editFullname"
+          />
         </div>
-        <input
-          v-model="inputBio"
-          type="text"
-          class="border-b form-control w-96"
-          :class="!editBio ? 'cursor-not-allowed' : ''"
-          spellcheck="false"
-          :disabled="!editBio"
+        <!-- Edit -->
+        <ButtonEdit
+          @cancel="handleCancelFullName"
+          @edit="handleEditFullName"
+          @update="handleUpdateFullName"
         />
       </div>
-      <!-- Edit -->
-      <ButtonEdit
-        @cancel="handleCancelBio"
-        @edit="handleEditBio"
-        @update="handleUpdateBio"
-      />
     </div>
-  </div>
-  <!-- email -->
-  <div class="text-primary_black mt-5 flex items-center">
-    <div class="member-detail__width flex items-center">
-      <div class="mt-4 flex items-start flex-col mr-20">
-        <div class="text-base text-primary_black font-semibold member-name">
-          Email
+    <!-- bio -->
+    <div class="text-primary_black mt-5">
+      <div class="member-detail__width flex items-center mx-auto">
+        <div class="mt-4 flex items-start flex-col mr-20">
+          <div class="text-base text-primary_black font-semibold member-name">
+            Bio
+          </div>
+          <input
+            v-model="inputBio"
+            type="text"
+            class="border-b form-control w-96"
+            :class="!editBio ? 'cursor-not-allowed' : ''"
+            spellcheck="false"
+            :disabled="!editBio"
+          />
         </div>
-        <input
-          v-model="inputEmail"
-          type="text"
-          class="border-b form-control w-96"
-          :class="!editEmail ? 'cursor-not-allowed' : ''"
-          spellcheck="false"
-          :disabled="!editEmail"
+        <!-- Edit -->
+        <ButtonEdit
+          @cancel="handleCancelBio"
+          @edit="handleEditBio"
+          @update="handleUpdateBio"
         />
       </div>
-      <!-- Edit -->
-      <ButtonEdit
-        @cancel="handleCancelEmail"
-        @edit="handleEditEmail"
-        @update="handleUpdateEmail"
-      />
     </div>
-  </div>
-  <!-- date -->
-  <div class="text-primary_black mt-5 flex items-center">
-    <div class="member-detail__width flex items-center">
-      <div class="mt-4 flex items-start flex-col mr-20">
-        <div class="text-base text-primary_black font-semibold member-name">
-          Registration Date
+    <!-- email -->
+    <div class="text-primary_black mt-5">
+      <div class="member-detail__width flex items-center mx-auto">
+        <div class="mt-4 flex items-start flex-col mr-20">
+          <div class="text-base text-primary_black font-semibold member-name">
+            Email
+          </div>
+          <input
+            v-model="inputEmail"
+            type="text"
+            class="border-b form-control w-96"
+            :class="!editEmail ? 'cursor-not-allowed' : ''"
+            spellcheck="false"
+            :disabled="!editEmail"
+          />
         </div>
-        <InputCalendar
-          @update="updateCalendar"
-          :calendarProp="inputDate"
-          :disabled="!editDate"
-          external-class="w-96 border-t-0 border-r-0 border-l-0 border-b"
+        <!-- Edit -->
+        <ButtonEdit
+          @cancel="handleCancelEmail"
+          @edit="handleEditEmail"
+          @update="handleUpdateEmail"
         />
       </div>
-      <!-- Edit -->
-      <ButtonEdit
-        @cancel="handleCancelDate"
-        @edit="handleEditDate"
-        @update="handleUpdateDate"
-      />
     </div>
-  </div>
-  <!-- gender -->
-  <div class="text-primary_black mt-5 flex items-center gap-20">
-    <div class="flex w-96 items-center justify-start gap-5">
-      <!-- Edit -->
-      <InputGender
-        :disabled="!editGender"
-        :radio-prop="inputGender"
-        @update="updateGender"
-      />
+    <!-- date -->
+    <div class="text-primary_black mt-5">
+      <div class="member-detail__width flex items-center mx-auto">
+        <div class="mt-4 flex items-start flex-col mr-20">
+          <div class="text-base text-primary_black font-semibold member-name">
+            Registration Date
+          </div>
+          <InputCalendar
+            @update="updateCalendar"
+            :calendarProp="inputDate"
+            :disabled="!editDate"
+            external-class="w-96 border-t-0 border-r-0 border-l-0 border-b"
+          />
+        </div>
+        <!-- Edit -->
+        <ButtonEdit
+          @cancel="handleCancelDate"
+          @edit="handleEditDate"
+          @update="handleUpdateDate"
+        />
+      </div>
     </div>
+    <!-- gender -->
+    <div class="mx-auto member-detail__width">
+      <div class="text-primary_black mt-5 flex items-center gap-20">
+        <div class="flex w-96 items-center justify-start gap-5">
+          <!-- Edit -->
+          <InputGender
+            :disabled="!editGender"
+            :radio-prop="inputGender"
+            @update="updateGender"
+          />
+        </div>
 
-    <ButtonEdit
-      @cancel="handleCancelGender"
-      @edit="handleEditGender"
-      @update="handleUpdateGender"
-    />
-  </div>
-  <!-- level -->
-  <div class="text-primary_black mt-5 flex items-center gap-20">
-    <div class="flex w-96 items-center justify-start gap-5">
-      <!-- Edit -->
-      <InputLevel
-        :disabled="!editLevel"
-        :radio-prop="inputLevel"
-        @update="updateLevel"
-      />
+        <ButtonEdit
+          @cancel="handleCancelGender"
+          @edit="handleEditGender"
+          @update="handleUpdateGender"
+        />
+      </div>
     </div>
+    <!-- level -->
+    <div class="mx-auto member-detail__width">
+      <div class="text-primary_black mt-5 flex items-center gap-20">
+        <div class="flex w-96 items-center justify-start gap-5">
+          <!-- Edit -->
+          <InputLevel
+            :disabled="!editLevel"
+            :radio-prop="inputLevel"
+            @update="updateLevel"
+          />
+        </div>
 
-    <ButtonEdit
-      @cancel="handleCancelLevel"
-      @edit="handleEditLevel"
-      @update="handleUpdateLevel"
-    />
-  </div>
-  <!-- blog -->
-  <div class="text-primary_black mt-5 flex items-center gap-20">
-    <div class="flex w-96 items-center justify-start gap-5">
-      <!-- Edit -->
-      <InputBlog
-        :disabled="!editBlog"
-        :radio-prop="inputBlog"
-        @update="updateBlog"
-      />
+        <ButtonEdit
+          @cancel="handleCancelLevel"
+          @edit="handleEditLevel"
+          @update="handleUpdateLevel"
+        />
+      </div>
     </div>
+    <!-- blog -->
+    <div class="mx-auto member-detail__width">
+      <div class="text-primary_black mt-5 flex items-center gap-20">
+        <div class="flex w-96 items-center justify-start gap-5">
+          <!-- Edit -->
+          <InputBlog
+            :disabled="!editBlog"
+            :radio-prop="inputBlog"
+            @update="updateBlog"
+          />
+        </div>
 
-    <ButtonEdit
-      @cancel="handleCancelBlog"
-      @edit="handleEditBlog"
-      @update="handleUpdateBlog"
-    />
+        <ButtonEdit
+          @cancel="handleCancelBlog"
+          @edit="handleEditBlog"
+          @update="handleUpdateBlog"
+        />
+      </div>
+    </div>
   </div>
 </template>
 

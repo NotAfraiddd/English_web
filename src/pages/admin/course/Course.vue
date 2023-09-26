@@ -13,7 +13,12 @@
     />
     <ButtonBack title="Course" :hideBack="false" />
     <BaseSearch :search="inputSearch" @update="updateValue" />
-    <ListTypeCourse :data="listCourses" @clicked="getData" />
+    <ListTypeCourse
+      :data="listCourses"
+      @clicked="getData"
+      extendClass="grid-cols-3"
+      extend-item-class="item-course"
+    />
     <div
       @click="showModalCreate"
       class="flex flex-col h-auto cursor-pointer text-base flex-1 justify-between items-center mt-3 border-dashed border-4 border-primary_black_opacity-600 gap-1 py-2 px-5 rounded-lg"
@@ -552,5 +557,13 @@ export default {
 
 .input-type-course {
   width: calc(100% - 128px);
+}
+
+.item-course {
+  width: 20rem;
+  @media screen and (max-width: 725px) {
+    width: 98%;
+    margin: 0 auto;
+  }
 }
 </style>

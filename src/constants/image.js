@@ -31,9 +31,11 @@ import EXAMPLE from '../assets/images/example.jpg';
 import USER_HOME from '../assets/images/user-home.png';
 import USER_BLOG from '../assets/images/user-blog.png';
 import USER_LEARN from '../assets/images/user-learn.png';
+import LEARN from '../assets/images/learn.png';
 import MOUNTAIN_CLIMB from '../assets/images/mountain-climbing.jpg';
 
 export {
+  LEARN,
   USER_BLOG,
   USER_LEARN,
   GOOGLE,

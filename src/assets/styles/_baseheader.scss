@@ -108,3 +108,16 @@
     top: 80px;
   }
 }
+
+.content-header-left__user {
+  @media screen and (max-width: 850px) {
+    display: none !important;
+  }
+}
+
+.content-header-left + input {
+  margin-right: 4px;
+  @media screen and (max-width: 670px) {
+    width: 95% !important;
+  }
+}

@@ -5,18 +5,60 @@
       @clicked="getData"
       :hideProcessBar="true"
       :hideCourseFinished="true"
-      extendClass="grid-cols-4"
+      extendClass="grid-cols-user"
+      extendItemClass="user-course mx-5"
     />
   </div>
+  <ConfirmModal
+    :showModal="modalChooseCourse"
+    @closeModal="closeModalChoose"
+    @save="closeModalChoose"
+    :showFooter="false"
+    :widthCustom="600"
+  >
+    <template #icon>
+      <img :src="LEARN" alt="" srcset="" />
+    </template>
+    <template #content>
+      <div class="text-primary_black my-5 flex gap-1">
+        Do you want to choose
+        <div class="font-semibold">Listening</div>
+        or
+        <div class="font-semibold">Reading</div>
+        ?
+      </div>
+    </template>
+    <template #select>
+      <div class="flex gap-20">
+        <div
+          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="goToListening"
+        >
+          <span class="text-base text-primary">Listening</span>
+        </div>
+        <div
+          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="goToReading"
+        >
+          <span class="text-base text-white">Reading</span>
+        </div>
+      </div>
+    </template>
+  </ConfirmModal>
 </template>
 <script>
+import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import ListTypeCourse from '../../../components/common/ListTypeCourse.vue';
-
+import { LEARN } from '../../../constants/image';
 export default {
   name: 'HomeUser',
-  components: { ListTypeCourse },
+  components: { ListTypeCourse, ConfirmModal },
+  created() {
+    this.LEARN = LEARN;
+  },
   data() {
     return {
+      modalChooseCourse: false,
       listCourses: [
         {
           id: 1,
@@ -58,14 +100,43 @@ export default {
     };
   },
   methods: {
+    closeModalChoose() {
+      this.modalChooseCourse = false;
+    },
     getData(data) {
       if (data.status) {
-        this.$router.push({ name: 'Dashboard' });
+        this.modalChooseCourse = data.status;
       }
-      console.log(data);
     },
+    goToListening() {
+      // this.$router.push({ name: 'DetailBlogPending', params: { id: dataID } });
+    },
+    goToReading() {},
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.grid-cols-user {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  @media screen and (max-width: 1460px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    column-gap: 8px !important;
+  }
+  @media screen and (max-width: 1200px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    column-gap: 8px !important;
+  }
+  @media screen and (max-width: 705px) {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+    width: 98%;
+  }
+}
+.user-course {
+  width: 20rem;
+  margin: 0 auto;
+  @media screen and (max-width: 705px) {
+    width: 98%;
+  }
+}
+</style>

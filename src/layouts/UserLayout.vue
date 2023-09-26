@@ -1,7 +1,7 @@
 <template>
   <BaseSideBar />
   <div class="content-user-layout">
-    <BaseHeader />
+    <BaseHeader :hideSearch="true" />
     <div class="user-layout">
       <div class="user-content-wrap">
         <router-view />
@@ -42,6 +42,10 @@ export default {
   position: relative;
   width: 100%;
   padding-left: 121px;
+}
+
+.user-content-wrap {
+  margin-top: 30px;
 }
 
 html *::-webkit-scrollbar {

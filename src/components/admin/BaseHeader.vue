@@ -2,14 +2,16 @@
   <div
     :class="[
       'h-20 flex justify-between items-center w-full bg-white z-10 sticky top-0',
-      isMatchedRoute('HomeUser')
+      isMatchedRoute('HomeUser') || isMatchedRoute('MemberDetail')
         ? 'border-b-0 border-l-0'
         : 'border-b border-l header',
     ]"
   >
     <div
       class="content-header-left h-20 flex items-center"
-      :class="[isMatchedRoute('HomeUser') && 'invisible']"
+      :class="[
+        isMatchedRoute('HomeUser') && 'invisible content-header-left__user',
+      ]"
     >
       <div class="flex flex-col items-start w-40">
         <span class="text-primary_black">
@@ -28,6 +30,7 @@
       </div>
     </div>
     <input
+      v-if="hideSearch"
       v-model="searchInput"
       class="h-10 rounded-lg pl-2 flex items-center w-80 border form-control"
       placeholder="Search somethings..."
@@ -49,25 +52,7 @@
         @mouseleave="isHovered = false"
         class="list-menu relative flex items-center justify-between flex-grow cur-pointer"
       >
-        <div
-          v-if="
-            isMatchedRoute('Dashboard') ||
-            isMatchedRoute('BlogPending') ||
-            isMatchedRoute('Course') ||
-            isMatchedRoute('CreateCourse') ||
-            isMatchedRoute('Member') ||
-            isMatchedRoute('MemberDetail') ||
-            isMatchedRoute('CourseReading') ||
-            isMatchedRoute('DetailCourseListening') ||
-            isMatchedRoute('CreateCourseListening') ||
-            isMatchedRoute('DetailCourseReading') ||
-            isMatchedRoute('CreateCourseReading') ||
-            isMatchedRoute('AdminDetail') ||
-            isMatchedRoute('MemberDetail') ||
-            isMatchedRoute('CommentReported')
-          "
-          class="flex items-center"
-        >
+        <div v-if="checkRoute == true" class="flex items-center">
           <span class="name ml-2 w-48">Nguyen Huynh Chi Bao</span>
           <Avatar :imgUrl="AVATAR" class="w-9" />
         </div>
@@ -95,7 +80,7 @@
               />
               <div
                 class="flex flex-col items-start hover:opacity-50"
-                @click="handleEditAdmin"
+                @click="handleGoProfile"
               >
                 <div class="text-lg font-semibold text-primary_black">
                   Nguyen Huynh Chi Bao
@@ -144,6 +129,7 @@ export default {
   },
   props: {
     hideMember: { type: Boolean, default: true },
+    hideSearch: { type: Boolean, default: false },
     searchInputProp: { type: String, default: null },
   },
   components: {
@@ -194,8 +180,30 @@ export default {
         return name == routeName;
       });
     },
-    handleEditAdmin() {
-      this.$router.push({ name: 'AdminDetail', params: { id: 1 } });
+    checkRoute() {
+      if (
+        this.isMatchedRoute('Dashboard') ||
+        this.isMatchedRoute('BlogPending') ||
+        this.isMatchedRoute('Course') ||
+        this.isMatchedRoute('CreateCourse') ||
+        this.isMatchedRoute('Member') ||
+        this.isMatchedRoute('MemberDetail') ||
+        this.isMatchedRoute('CourseReading') ||
+        this.isMatchedRoute('DetailCourseListening') ||
+        this.isMatchedRoute('CreateCourseListening') ||
+        this.isMatchedRoute('DetailCourseReading') ||
+        this.isMatchedRoute('CreateCourseReading') ||
+        this.isMatchedRoute('AdminDetail') ||
+        this.isMatchedRoute('MemberDetail') ||
+        this.isMatchedRoute('CommentReported')
+      )
+        return true;
+      return false;
+    },
+    handleGoProfile() {
+      if (this.checkRoute() == true)
+        this.$router.push({ name: 'AdminDetail', params: { id: 1 } });
+      else this.$router.push({ name: 'MemberDetail', params: { id: 1 } });
     },
   },
 };
