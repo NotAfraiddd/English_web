@@ -405,7 +405,7 @@ export default {
   left: 0;
   height: 0;
   transition: height 0.65s ease, opacity 0.65s ease;
-  top: 75px;
+  top: 45px;
   width: 100%;
   box-shadow: -4px 4px 4px 0px rgba(0, 0, 0, 0.25);
   border-radius: 12px;
