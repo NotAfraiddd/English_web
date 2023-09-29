@@ -8,6 +8,21 @@
         srcset=""
         class="cursor-pointer w-full mt-5 rounded-3xl"
       />
+      <div class="text-left mt-5">
+        <div>
+          Here you can find activities to practise your reading skills. Reading
+          will help you to improve your understanding of the language and build
+          your vocabulary.
+        </div>
+        <div class="mt-5">
+          The self-study lessons in this section are written and organised by
+          English level based on the Common European Framework of Reference for
+          languages (CEFR). There are different types of texts and interactive
+          exercises that practise the reading skills you need to do well in your
+          studies, to get ahead at work and to communicate in English in your
+          free time.
+        </div>
+      </div>
       <ListCourse :data="listReading" @clicked="goToDetailCourse" />
     </div>
     <div
