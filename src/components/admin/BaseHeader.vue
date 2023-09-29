@@ -2,16 +2,12 @@
   <div
     :class="[
       'h-20 flex justify-between items-center w-full bg-white z-10 sticky top-0',
-      isMatchedRoute('HomeUser') || isMatchedRoute('MemberDetail')
-        ? 'border-b-0 border-l-0'
-        : 'border-b border-l header',
+      !checkRoute ? 'border-b-0 border-l-0' : 'border-b border-l header',
     ]"
   >
     <div
       class="content-header-left h-20 flex items-center"
-      :class="[
-        isMatchedRoute('HomeUser') && 'invisible content-header-left__user',
-      ]"
+      :class="[!checkRoute && 'invisible content-header-left__user']"
     >
       <div class="flex flex-col items-start w-40">
         <span class="text-primary_black">
@@ -140,6 +136,27 @@ export default {
       this.searchInput = newValue;
     },
   },
+  computed: {
+    checkRoute() {
+      if (
+        this.isMatchedRoute('Dashboard') ||
+        this.isMatchedRoute('BlogPending') ||
+        this.isMatchedRoute('Course') ||
+        this.isMatchedRoute('CreateCourse') ||
+        this.isMatchedRoute('Member') ||
+        this.isMatchedRoute('CourseReading') ||
+        this.isMatchedRoute('DetailCourseListening') ||
+        this.isMatchedRoute('CreateCourseListening') ||
+        this.isMatchedRoute('DetailCourseReading') ||
+        this.isMatchedRoute('CreateCourseReading') ||
+        this.isMatchedRoute('AdminDetail') ||
+        this.isMatchedRoute('MemberDetail') ||
+        this.isMatchedRoute('CommentReported')
+      )
+        return true;
+      return false;
+    },
+  },
   data() {
     return {
       searchInput: this.searchInputProp,
@@ -180,30 +197,12 @@ export default {
         return name == routeName;
       });
     },
-    checkRoute() {
-      if (
-        this.isMatchedRoute('Dashboard') ||
-        this.isMatchedRoute('BlogPending') ||
-        this.isMatchedRoute('Course') ||
-        this.isMatchedRoute('CreateCourse') ||
-        this.isMatchedRoute('Member') ||
-        this.isMatchedRoute('MemberDetail') ||
-        this.isMatchedRoute('CourseReading') ||
-        this.isMatchedRoute('DetailCourseListening') ||
-        this.isMatchedRoute('CreateCourseListening') ||
-        this.isMatchedRoute('DetailCourseReading') ||
-        this.isMatchedRoute('CreateCourseReading') ||
-        this.isMatchedRoute('AdminDetail') ||
-        this.isMatchedRoute('MemberDetail') ||
-        this.isMatchedRoute('CommentReported')
-      )
-        return true;
-      return false;
-    },
     handleGoProfile() {
-      if (this.checkRoute() == true)
+      if (this.checkRoute == true) {
         this.$router.push({ name: 'AdminDetail', params: { id: 1 } });
-      else this.$router.push({ name: 'MemberDetail', params: { id: 1 } });
+      } else {
+        this.$router.push({ name: 'Profile', params: { id: 1 } });
+      }
     },
   },
 };

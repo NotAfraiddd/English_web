@@ -14,7 +14,7 @@
         :disabled="disabled"
         @change="handleImageChange"
       />
-      <figure class="personal-figure relative w-28 h-28 m-0">
+      <figure class="personal-figure relative w-28 h-28 my-0 mr-0 ml-7">
         <img
           :src="imageURL || AVATAR"
           class="personal-avatar w-28 h-28"

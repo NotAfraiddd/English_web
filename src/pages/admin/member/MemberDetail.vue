@@ -1,9 +1,11 @@
 <template>
   <ButtonBack title="Information Member" :hide-back="true" @back="onBack" />
-  <div class="mx-auto border-t border-primary_line mt-5">
+  <div class="contain__member mx-auto border-t border-primary_line mt-5">
     <div class="text-primary_black mt-5">
-      <div class="member-detail__width flex items-center mx-auto">
-        <div class="mt-4 flex items-start w-96 mr-20">
+      <div
+        class="member-detail__width flex items-center mx-auto justify-center"
+      >
+        <div class="mt-4 flex items-start w-96 contain__member-contain">
           <div class="flex flex-col mt-5 items-start w-64">
             <div class="text-base text-primary_black font-semibold">Avatar</div>
             <div class="text-base text-primary_black">
@@ -27,8 +29,10 @@
     </div>
     <!-- name -->
     <div class="text-primary_black mt-5">
-      <div class="member-detail__width flex items-center mx-auto">
-        <div class="mt-4 flex items-start flex-col mr-20">
+      <div
+        class="member-detail__width flex items-center mx-auto justify-center"
+      >
+        <div class="mt-4 flex items-start flex-col contain__member-contain">
           <div class="text-base text-primary_black font-semibold member-name">
             Full Name
           </div>
@@ -51,8 +55,10 @@
     </div>
     <!-- bio -->
     <div class="text-primary_black mt-5">
-      <div class="member-detail__width flex items-center mx-auto">
-        <div class="mt-4 flex items-start flex-col mr-20">
+      <div
+        class="member-detail__width flex items-center mx-auto justify-center"
+      >
+        <div class="mt-4 flex items-start flex-col contain__member-contain">
           <div class="text-base text-primary_black font-semibold member-name">
             Bio
           </div>
@@ -75,8 +81,10 @@
     </div>
     <!-- email -->
     <div class="text-primary_black mt-5">
-      <div class="member-detail__width flex items-center mx-auto">
-        <div class="mt-4 flex items-start flex-col mr-20">
+      <div
+        class="member-detail__width flex items-center mx-auto justify-center"
+      >
+        <div class="mt-4 flex items-start flex-col contain__member-contain">
           <div class="text-base text-primary_black font-semibold member-name">
             Email
           </div>
@@ -99,8 +107,10 @@
     </div>
     <!-- date -->
     <div class="text-primary_black mt-5">
-      <div class="member-detail__width flex items-center mx-auto">
-        <div class="mt-4 flex items-start flex-col mr-20">
+      <div
+        class="member-detail__width flex items-center mx-auto justify-center"
+      >
+        <div class="mt-4 flex items-start flex-col contain__member-contain">
           <div class="text-base text-primary_black font-semibold member-name">
             Registration Date
           </div>
@@ -121,7 +131,9 @@
     </div>
     <!-- gender -->
     <div class="mx-auto member-detail__width">
-      <div class="text-primary_black mt-5 flex items-center gap-20">
+      <div
+        class="text-primary_black mt-5 flex items-center justify-center button-radio"
+      >
         <div class="flex w-96 items-center justify-start gap-5">
           <!-- Edit -->
           <InputGender
@@ -140,7 +152,9 @@
     </div>
     <!-- level -->
     <div class="mx-auto member-detail__width">
-      <div class="text-primary_black mt-5 flex items-center gap-20">
+      <div
+        class="text-primary_black mt-5 flex items-center justify-center button-radio"
+      >
         <div class="flex w-96 items-center justify-start gap-5">
           <!-- Edit -->
           <InputLevel
@@ -159,7 +173,9 @@
     </div>
     <!-- blog -->
     <div class="mx-auto member-detail__width">
-      <div class="text-primary_black mt-5 flex items-center gap-20">
+      <div
+        class="text-primary_black mt-5 flex items-center justify-center button-radio"
+      >
         <div class="flex w-96 items-center justify-start gap-5">
           <!-- Edit -->
           <InputBlog
@@ -359,6 +375,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.contain__member {
+  &-contain {
+    margin-right: 5rem;
+    @media screen and (max-width: 782px) {
+      margin-right: 0;
+      width: 384px !important;
+    }
+  }
+}
 input.form-control {
   border-top: none;
   border-left: none;
@@ -367,12 +392,25 @@ input.form-control {
 }
 .member-detail {
   &__width {
-    width: 800px;
+    width: 100%;
+    @media screen and (max-width: 782px) {
+      flex-wrap: wrap;
+      width: 95%;
+      gap: 12px;
+    }
   }
 }
 
 .form-control:disabled,
 .form-control[readonly] {
   background-color: transparent;
+}
+
+.button-radio {
+  gap: 5rem;
+  @media screen and (max-width: 782px) {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
 }
 </style>

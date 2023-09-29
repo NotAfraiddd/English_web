@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mx-2">
     <ButtonBack title="Detail Reading" :hide-back="true" @back="onBack" />
     <div class="detail-field mx-auto mt-5">
       <img :src="MOUNTAIN_CLIMB" alt="" srcset="" class="detail-image" />
@@ -33,26 +33,29 @@ It would take a book to list all the races and awards he's won and the mountains
       />
     </div>
     <div class="flex justify-center gap-20 items-center py-5 text-base">
-      <div class="flex gap-7">
-        <div
-          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
-          @click="onBack"
-        >
-          <span class="text-base text-primary">Back</span>
+      <div v-if="!isMatchedRoute('MemberDetailCourseReading')">
+        <div class="flex gap-7">
+          <div
+            class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+            @click="onBack"
+          >
+            <span class="text-base text-primary">Back</span>
+          </div>
+          <div
+            class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+            @click="handleUpdate"
+          >
+            <span class="text-base text-white">Edit</span>
+          </div>
         </div>
         <div
-          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
-          @click="handleUpdate"
+          @click="handleSubmit"
+          class="cursor-pointer rounded-lg bg-yellow-300 text-white w-24 text-center h-8 leading-8 hover:opacity-50"
         >
-          <span class="text-base text-white">Edit</span>
+          Test
         </div>
       </div>
-      <div
-        @click="handleSubmit"
-        class="cursor-pointer rounded-lg bg-yellow-300 text-white w-24 text-center h-8 leading-8 hover:opacity-50"
-      >
-        Test
-      </div>
+      <div v-else>abc</div>
     </div>
   </div>
 </template>
@@ -77,6 +80,11 @@ export default {
   },
   methods: {
     ...mapMutations('course', ['setSubmit']),
+    isMatchedRoute(routeName) {
+      return this.$route.matched.some(({ name }) => {
+        return name == routeName;
+      });
+    },
     onBack() {
       this.$router.push({ name: 'CourseReading' });
     },
@@ -93,7 +101,6 @@ export default {
       return JSON.stringify(valueA) === JSON.stringify(valueB);
     },
     handleSubmit() {
-      console.log('log', this.$store, this.setSubmit);
       this.setSubmit(true);
       // MultipleChoice
       this.errorsMultiple = [];

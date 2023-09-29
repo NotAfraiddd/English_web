@@ -45,7 +45,7 @@ export default {
 }
 
 .user-content-wrap {
-  margin-top: 30px;
+  margin-top: 15px;
 }
 
 html *::-webkit-scrollbar {

@@ -28,8 +28,19 @@ export default [
       },
       {
         path: 'member/edit/:id',
-        name: 'MemberDetail',
-        component: () => import('../pages/admin/member/MemberDetail.vue'),
+        name: 'Profile',
+        component: () => import('../pages/user/profile/Profile.vue'),
+      },
+      {
+        path: 'member/course/:name/reading',
+        name: 'ListCourseReading',
+        component: () => import('../pages/user/course/ListCourseReading.vue'),
+      },
+      {
+        path: 'member/course/:course/reading/detail/:name',
+        name: 'MemberDetailCourseReading',
+        component: () =>
+          import('../pages/admin/course/DetailCourseReading.vue'),
       },
     ],
   },

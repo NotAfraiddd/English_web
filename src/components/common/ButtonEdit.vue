@@ -1,6 +1,6 @@
 <template>
   <div class="flex gap-5">
-    <div v-if="!edit" class="flex gap-7 mt-4">
+    <div v-if="!edit" class="flex gap-7 mt-4 flex-wrap button-gap">
       <div
         :class="[
           'cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50',
@@ -14,7 +14,7 @@
         <span class="text-base text-primary">Edit</span>
       </div>
     </div>
-    <div v-else class="flex gap-7 mt-4">
+    <div v-else class="flex gap-7 mt-4 flex-wrap button-gap">
       <div
         class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
         @click="handleUpdate"
@@ -62,5 +62,9 @@ export default {
 .image-arrow {
   transition: transform 0.2s;
   transform-origin: center;
+}
+
+.button-gap {
+  gap: 1.75rem !important;
 }
 </style>

@@ -49,16 +49,23 @@
 <script>
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import ListTypeCourse from '../../../components/common/ListTypeCourse.vue';
+import { formatSpacerIntoHyphen } from '../../../constants/function';
 import { LEARN } from '../../../constants/image';
 export default {
   name: 'HomeUser',
   components: { ListTypeCourse, ConfirmModal },
   created() {
     this.LEARN = LEARN;
+    this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
   },
   data() {
     return {
       modalChooseCourse: false,
+      courseObject: {
+        id: null,
+        title: null,
+        name: null,
+      },
       listCourses: [
         {
           id: 1,
@@ -105,11 +112,17 @@ export default {
     },
     getData(data) {
       if (data.status) {
+        this.courseObject.id = data.item.id;
+        this.courseObject.title = data.item.title;
+        this.courseObject.subtitle = data.item.subtitle;
         this.modalChooseCourse = data.status;
       }
     },
     goToListening() {
-      // this.$router.push({ name: 'DetailBlogPending', params: { id: dataID } });
+      const path = formatSpacerIntoHyphen(
+        this.courseObject.title,
+      ).toLowerCase();
+      this.$router.push({ name: 'ListCourseReading', params: { name: path } });
     },
     goToReading() {},
   },

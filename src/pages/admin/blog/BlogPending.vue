@@ -35,9 +35,7 @@ export default {
     this.NOTIFY = NOTIFY;
   },
   watch: {
-    pageSize(value) {
-      console.log('value', value);
-    },
+    pageSize(value) {},
     current(value) {},
   },
   methods: {
