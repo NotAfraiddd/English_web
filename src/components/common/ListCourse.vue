@@ -8,7 +8,7 @@
         @click="handleClick(item)"
       >
         <img :src="item.image" alt="" srcset="" class="h-44 course-image" />
-        <div class="absolute w-1/2 top-12 bg-white h-32 course-infor">
+        <div class="absolute w-7/12 top-12 bg-white h-32 course-infor">
           <div class="flex flex-col items-start ml-10 mt-10">
             <div class="font-semibold text-2xl text-left">{{ item.title }}</div>
             <div class="text-base text-left">
@@ -35,7 +35,9 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      transcript: false,
+    };
   },
 };
 </script>

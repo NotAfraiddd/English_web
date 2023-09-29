@@ -17,6 +17,8 @@ import OPTION_ICON from '../assets/images/option_icon.svg';
 import DELETE_GRAY_ICON from '../assets/images/delete-gray-icon.png';
 import TITLE from '../assets/images/title.png';
 import HEART from '../assets/images/heart.png';
+import CHECKED from '../assets/images/checked.png';
+import CANCEL from '../assets/images/cancel.png';
 import ICON_LOGIN from '../assets/images/icon-login.png';
 import STAR_RED from '../assets/images/start_red.png';
 import GOOGLE from '../assets/images/google.png';
@@ -35,6 +37,8 @@ import LEARN from '../assets/images/learn.png';
 import MOUNTAIN_CLIMB from '../assets/images/mountain-climbing.jpg';
 
 export {
+  CHECKED,
+  CANCEL,
   LEARN,
   USER_BLOG,
   USER_LEARN,

@@ -55,7 +55,14 @@ It would take a book to list all the races and awards he's won and the mountains
           Test
         </div>
       </div>
-      <div v-else>abc</div>
+      <div v-else>
+        <div
+          @click="handleSubmit"
+          class="cursor-pointer font-semibold rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+        >
+          Submit
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -86,7 +93,9 @@ export default {
       });
     },
     onBack() {
-      this.$router.push({ name: 'CourseReading' });
+      if (this.isMatchedRoute('MemberDetailCourseReading'))
+        this.$router.push({ name: 'ListCourseReading' });
+      else this.$router.push({ name: 'CourseReading' });
     },
     handleUpdate() {
       this.$router.push({

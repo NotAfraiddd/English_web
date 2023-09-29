@@ -8,16 +8,23 @@
       </div>
     </div>
   </div>
+  <LoadingScreen v-if="isLoading" />
 </template>
 
 <script>
 import BaseSideBar from '../components/User/BaseSideBar.vue';
 import BaseHeader from '../components/admin/BaseHeader';
+import LoadingScreen from '../components/common/LoadingScreen';
 import { LoadingMixins } from '../mixins/Loading';
 export default {
   name: 'UserLayout',
-  components: { BaseSideBar, BaseHeader },
+  components: { BaseSideBar, BaseHeader, LoadingScreen },
   mixins: [LoadingMixins],
+  data() {
+    return {
+      isLoading: false,
+    };
+  },
   watch: {
     $route(to, from) {
       this.emitter.emit('isShowLoading', true);
@@ -45,7 +52,7 @@ export default {
 }
 
 .user-content-wrap {
-  margin-top: 15px;
+  /* margin-top: 15px; */
 }
 
 html *::-webkit-scrollbar {
