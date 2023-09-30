@@ -2,25 +2,25 @@
   <div class="flex">
     <div class="w-3/5">
       <ButtonBack title="Course Listening" :hide-back="true" @back="onBack" />
-      <img
-        :src="MOUNTAIN_CLIMB"
-        alt=""
-        srcset=""
-        class="cursor-pointer w-full mt-5 rounded-3xl"
+      <div
+        class="profile-background mt-5"
+        :style="{ backgroundImage: 'url(' + LISTENING + ')' }"
       />
       <div class="text-left mt-5">
         <div>
-          Here you can find activities to practise your reading skills. Reading
-          will help you to improve your understanding of the language and build
-          your vocabulary.
+          Here you can find activities to practise your listening skills.
+          Listening will help you to improve your understanding of the language
+          and your pronunciation.
         </div>
         <div class="mt-5">
           The self-study lessons in this section are written and organised by
           English level based on the Common European Framework of Reference for
-          languages (CEFR). There are different types of texts and interactive
-          exercises that practise the reading skills you need to do well in your
-          studies, to get ahead at work and to communicate in English in your
-          free time.
+          languages (CEFR). There are recordings of different situations and
+          interactive exercises that practise the listening skills you need to
+          do well in your studies, to get ahead at work and to communicate in
+          English in your free time. The speakers you will hear are of different
+          nationalities and the recordings are designed to show how English is
+          being used in the world today.
         </div>
       </div>
       <ListCourse :data="listListening" @clicked="goToDetailCourse" />
@@ -111,6 +111,7 @@ import {
   MOUNTAIN_CLIMB,
   CANCEL,
   CHECKED,
+  LISTENING,
 } from '../../../constants/image';
 import { formatSpacerIntoHyphen } from '../../../constants/function';
 
@@ -122,6 +123,7 @@ export default {
     this.EXAMPLE = EXAMPLE;
     this.CANCEL = CANCEL;
     this.CHECKED = CHECKED;
+    this.LISTENING = LISTENING;
     this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
     if (this.isMatchedRoute('ListCourseListening')) {
       this.$nextTick(() => {
@@ -146,7 +148,7 @@ export default {
     goToDetailCourse(data) {
       const path = formatSpacerIntoHyphen(data.item.title);
       this.$router.push({
-        name: 'MemberDetailCourseReading',
+        name: 'MemberDetailCourseListening',
         params: { course: path.toLowerCase() },
       });
     },
@@ -231,6 +233,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.profile-background {
+  height: 450px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
 .contain-list {
   &__reading {
     height: fit-content;

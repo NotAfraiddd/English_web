@@ -2,11 +2,9 @@
   <div class="flex">
     <div class="w-3/5">
       <ButtonBack title="Course Reading" :hide-back="true" @back="onBack" />
-      <img
-        :src="MOUNTAIN_CLIMB"
-        alt=""
-        srcset=""
-        class="cursor-pointer w-full mt-5 rounded-3xl"
+      <div
+        class="profile-background mt-5"
+        :style="{ backgroundImage: 'url(' + MOUNTAIN_CLIMB + ')' }"
       />
       <div class="text-left mt-5">
         <div>
@@ -231,6 +229,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.profile-background {
+  height: 450px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
 .contain-list {
   &__reading {
     height: fit-content;

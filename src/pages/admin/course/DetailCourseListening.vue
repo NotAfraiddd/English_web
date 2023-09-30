@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mx-2">
     <ButtonBack title="Detail Listening" :hide-back="true" @back="onBack" />
     <div class="detail-field mx-auto mt-5">
       <img :src="MOUNTAIN_CLIMB" alt="" srcset="" class="detail-image" />

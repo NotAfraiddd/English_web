@@ -102,7 +102,12 @@
             My article
           </li>
           <div class="spacer flex flex-growth-1 bg-gray-300 mx-6 my-1" />
-          <li class="text-base item leading-9 h-9 text-left pl-6">Setting</li>
+          <li
+            @click="handleGoToSetting"
+            class="text-base item leading-9 h-9 text-left pl-6"
+          >
+            Setting
+          </li>
           <li class="text-base item leading-9 h-9 text-left pl-6">Logout</li>
         </ul>
       </div>
@@ -211,6 +216,9 @@ export default {
     },
     handleGoToMyCourse() {
       this.$router.push({ name: 'ListCourse' });
+    },
+    handleGoToSetting() {
+      this.$router.push({ name: 'SettingProfile', params: { id: 1 } });
     },
   },
 };

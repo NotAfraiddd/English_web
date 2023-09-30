@@ -29,14 +29,22 @@ import EYE_ENABLE from '../assets/images/eye-slash.svg';
 import EYE_DISABLE from '../assets/images/eye-visible.svg';
 import CHAT from '../assets/images/chat.svg';
 import GARBAGE from '../assets/images/garbage.svg';
+import USER from '../assets/images/user.svg';
+import SOCIAL from '../assets/images/social.svg';
+import BACKGROUND from '../assets/images/background.jpg';
 import EXAMPLE from '../assets/images/example.jpg';
 import USER_HOME from '../assets/images/user-home.png';
 import USER_BLOG from '../assets/images/user-blog.png';
 import USER_LEARN from '../assets/images/user-learn.png';
 import LEARN from '../assets/images/learn.png';
+import LISTENING from '../assets/images/listening.jpg';
 import MOUNTAIN_CLIMB from '../assets/images/mountain-climbing.jpg';
 
 export {
+  BACKGROUND,
+  SOCIAL,
+  USER,
+  LISTENING,
   CHECKED,
   CANCEL,
   LEARN,

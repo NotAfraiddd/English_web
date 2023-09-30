@@ -55,7 +55,13 @@ It would take a book to list all the races and awards he's won and the mountains
           Test
         </div>
       </div>
-      <div v-else>
+      <div v-else class="flex gap-20">
+        <div
+          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="onBack"
+        >
+          <span class="text-base text-primary">Back</span>
+        </div>
         <div
           @click="handleSubmit"
           class="cursor-pointer font-semibold rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"

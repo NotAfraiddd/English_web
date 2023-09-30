@@ -33,6 +33,11 @@ export default [
       },
       {
         path: 'member/edit/:id',
+        name: 'SettingProfile',
+        component: () => import('../pages/user/profile/SettingProfile.vue'),
+      },
+      {
+        path: 'member/information',
         name: 'Profile',
         component: () => import('../pages/user/profile/Profile.vue'),
       },
@@ -42,14 +47,14 @@ export default [
         component: () => import('../pages/user/course/ListCourseReading.vue'),
       },
       {
-        path: 'member/course/grammar',
-        name: 'Grammar',
-        component: () => import('../pages/user/course/Grammar.vue'),
-      },
-      {
         path: 'member/course/:name/listening',
         name: 'ListCourseListening',
         component: () => import('../pages/user/course/ListCourseListening.vue'),
+      },
+      {
+        path: 'member/course/grammar',
+        name: 'Grammar',
+        component: () => import('../pages/user/course/Grammar.vue'),
       },
       {
         path: 'member/course/:course/reading/detail/:name',

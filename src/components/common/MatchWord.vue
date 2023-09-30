@@ -194,7 +194,7 @@ export default {
   background: #fff;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   &__container {
-    height: 120px;
+    height: 80px;
     gap: 8px;
   }
   &__drag,
