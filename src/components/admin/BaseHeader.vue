@@ -48,12 +48,17 @@
         @mouseleave="isHovered = false"
         class="list-menu relative flex items-center justify-between flex-grow cur-pointer"
       >
-        <div v-if="checkRoute == true" class="flex items-center">
-          <span class="name ml-2 w-48">Nguyen Huynh Chi Bao</span>
+        <div v-if="checkRoute == true" class="flex items-center cursor-pointer">
+          <span class="name ml-5 w-48">Nguyen Huynh Chi Bao</span>
           <Avatar :imgUrl="AVATAR" class="w-9" />
         </div>
-        <div v-else class="flex justify-center items-center">
-          <div class="name ml-2 w-24">My course</div>
+        <div v-else class="flex justify-center items-center cursor-pointer">
+          <div
+            @click="handleGoToMyCourse"
+            class="name ml-2 w-24 hover:underline"
+          >
+            My course
+          </div>
           <Avatar :imgUrl="AVATAR" class="w-9" />
         </div>
 
@@ -203,6 +208,9 @@ export default {
       } else {
         this.$router.push({ name: 'Profile', params: { id: 1 } });
       }
+    },
+    handleGoToMyCourse() {
+      this.$router.push({ name: 'ListCourse' });
     },
   },
 };

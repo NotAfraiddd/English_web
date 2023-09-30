@@ -47,20 +47,32 @@
   </ConfirmModal>
 </template>
 <script>
+import { notification } from 'ant-design-vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import ListTypeCourse from '../../../components/common/ListTypeCourse.vue';
 import { formatSpacerIntoHyphen } from '../../../constants/function';
 import { LEARN } from '../../../constants/image';
+
 export default {
   name: 'HomeUser',
   components: { ListTypeCourse, ConfirmModal },
   created() {
     this.LEARN = LEARN;
     this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
+    if (this.isMatchedRoute('ListCourse')) {
+      this.listCourses = this.listCoursesLearned;
+    } else {
+      this.listCourses = [...this.listCourses];
+    }
   },
   data() {
     return {
       modalChooseCourse: false,
+      userLevel: [
+        { id: 1, level: 'Basic', status: 1 },
+        { id: 2, level: 'Intermediate', status: 0 },
+        { id: 3, level: 'All', status: 1 },
+      ],
       courseObject: {
         id: null,
         title: null,
@@ -70,61 +82,103 @@ export default {
         {
           id: 1,
           title: 'Basic Level',
+          level: 'Basic',
           subtitle: 'English for individuals with basic knowledge.',
           percentages: [{ percentage: 30 }],
           name: 'Basic English Course',
           courseFinished: '3/10',
           color: '#0068FF',
+          status: 1,
         },
         {
           id: 2,
           title: 'Intermediate Level',
+          level: 'Intermediate',
           subtitle: 'English for individuals with intermediate knowledge.',
           percentages: [{ percentage: 65 }],
           name: 'Intermediate English Course',
           courseFinished: '3/10',
           color: '#AA53EE',
+          status: 0,
         },
         {
           id: 3,
           title: 'Advanced Level',
+          level: 'Advanced',
           subtitle: 'English for individuals with advanced knowledge.',
-          percentages: [{ percentage: 10 }],
+          percentages: [{ percentage: 0 }],
           name: 'Advanced English Course',
-          courseFinished: '3/10',
+          courseFinished: '0/10',
           color: '#87CF2A',
+          status: 0,
         },
         {
           id: 4,
           title: 'Grammar',
+          level: 'All',
           subtitle: 'English for individuals with basic knowledge.',
           percentages: [{ percentage: 90 }],
           name: 'Grammar English Course',
           courseFinished: '3/10',
           color: '#7C89CE',
+          status: 1,
         },
       ],
     };
   },
+  computed: {
+    listCoursesLearned() {
+      return this.listCourses.filter(
+        (course) => course.percentages[0].percentage !== 0,
+      );
+    },
+  },
   methods: {
+    isMatchedRoute(routeName) {
+      return this.$route.matched.some(({ name }) => {
+        return name == routeName;
+      });
+    },
     closeModalChoose() {
       this.modalChooseCourse = false;
     },
     getData(data) {
-      if (data.status) {
-        this.courseObject.id = data.item.id;
-        this.courseObject.title = data.item.title;
-        this.courseObject.subtitle = data.item.subtitle;
-        this.modalChooseCourse = data.status;
-      }
+      const result = this.userLevel.some(
+        (item) =>
+          item.level == data.item.level && item.status == data.item.status,
+      );
+      const resultCourseAll = this.userLevel.some(
+        (item) => data.item.level == 'All' && item.status == data.item.status,
+      );
+      if (result) {
+        if (!resultCourseAll) {
+          if (data.status) {
+            this.courseObject.id = data.item.id;
+            this.courseObject.title = data.item.title;
+            this.courseObject.subtitle = data.item.subtitle;
+            this.modalChooseCourse = data.status;
+          }
+        } else
+          this.$router.push({
+            name: 'Grammar',
+          });
+      } else notification.warn({ message: 'Your level is not yet achieved' });
     },
     goToListening() {
       const path = formatSpacerIntoHyphen(
         this.courseObject.title,
       ).toLowerCase();
+      this.$router.push({
+        name: 'ListCourseListening',
+        params: { name: path },
+      });
+    },
+    goToReading() {
+      const path = formatSpacerIntoHyphen(
+        this.courseObject.title,
+      ).toLowerCase();
       this.$router.push({ name: 'ListCourseReading', params: { name: path } });
     },
-    goToReading() {},
   },
 };
 </script>

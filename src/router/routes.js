@@ -27,6 +27,11 @@ export default [
         component: () => import('../pages/user/home/Home.vue'),
       },
       {
+        path: 'member/list-course',
+        name: 'ListCourse',
+        component: () => import('../pages/user/home/Home.vue'),
+      },
+      {
         path: 'member/edit/:id',
         name: 'Profile',
         component: () => import('../pages/user/profile/Profile.vue'),
@@ -37,10 +42,26 @@ export default [
         component: () => import('../pages/user/course/ListCourseReading.vue'),
       },
       {
+        path: 'member/course/grammar',
+        name: 'Grammar',
+        component: () => import('../pages/user/course/Grammar.vue'),
+      },
+      {
+        path: 'member/course/:name/listening',
+        name: 'ListCourseListening',
+        component: () => import('../pages/user/course/ListCourseListening.vue'),
+      },
+      {
         path: 'member/course/:course/reading/detail/:name',
         name: 'MemberDetailCourseReading',
         component: () =>
           import('../pages/admin/course/DetailCourseReading.vue'),
+      },
+      {
+        path: 'member/course/:course/listening/detail/:name',
+        name: 'MemberDetailCourseListening',
+        component: () =>
+          import('../pages/admin/course/DetailCourseListening.vue'),
       },
     ],
   },

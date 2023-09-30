@@ -130,6 +130,11 @@ export default {
   },
   methods: {
     ...mapMutations('course', ['setSubmit']),
+    isMatchedRoute(routeName) {
+      return this.$route.matched.some(({ name }) => {
+        return name == routeName;
+      });
+    },
     setValuePriority1(data) {
       this.inputPriority1 = data;
     },
@@ -143,7 +148,9 @@ export default {
       this.inputPriority4 = data;
     },
     onBack() {
-      this.$router.push({ name: 'CourseListening' });
+      if (this.isMatchedRoute('MemberDetailCourseListening'))
+        this.$router.push({ name: 'ListCourseListening' });
+      else this.$router.push({ name: 'CourseListening' });
     },
     handleBack() {
       this.$router.push({ name: 'CourseListening' });
