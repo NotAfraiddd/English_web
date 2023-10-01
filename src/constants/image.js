@@ -31,6 +31,11 @@ import CHAT from '../assets/images/chat.svg';
 import GARBAGE from '../assets/images/garbage.svg';
 import USER from '../assets/images/user.svg';
 import SOCIAL from '../assets/images/social.svg';
+import SOCIAL_FACEBOOK from '../assets/images/social-facebook-color.svg';
+import SOCIAL_YOUTUBE from '../assets/images/socail-youtube-color.svg';
+import SOCIAL_INSTAGRAM from '../assets/images/social-instagram-color.svg';
+import SOCIAL_LINKEDIN from '../assets/images/socail-linkedin-color.svg';
+import USERS from '../assets/images/users.svg';
 import BACKGROUND from '../assets/images/background.jpg';
 import EXAMPLE from '../assets/images/example.jpg';
 import USER_HOME from '../assets/images/user-home.png';
@@ -41,6 +46,11 @@ import LISTENING from '../assets/images/listening.jpg';
 import MOUNTAIN_CLIMB from '../assets/images/mountain-climbing.jpg';
 
 export {
+  SOCIAL_FACEBOOK,
+  SOCIAL_YOUTUBE,
+  SOCIAL_INSTAGRAM,
+  SOCIAL_LINKEDIN,
+  USERS,
   BACKGROUND,
   SOCIAL,
   USER,

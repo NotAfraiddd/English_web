@@ -2,7 +2,10 @@
   <div class="mx-2">
     <ButtonBack title="Detail Reading" :hide-back="true" @back="onBack" />
     <div class="detail-field mx-auto mt-5">
-      <img :src="MOUNTAIN_CLIMB" alt="" srcset="" class="detail-image" />
+      <div
+        class="detail-image border-gray-100 border-t-0 border ml-2 mr-10"
+        :style="{ backgroundImage: 'url(' + MOUNTAIN_CLIMB + ')' }"
+      />
     </div>
     <ButtonBack title="Reading text" extend-class="mt-5" />
     <div
@@ -34,7 +37,7 @@ It would take a book to list all the races and awards he's won and the mountains
     </div>
     <div class="flex justify-center gap-20 items-center py-5 text-base">
       <div v-if="!isMatchedRoute('MemberDetailCourseReading')">
-        <div class="flex gap-7">
+        <div class="flex gap-20">
           <div
             class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
             @click="onBack"
@@ -47,12 +50,12 @@ It would take a book to list all the races and awards he's won and the mountains
           >
             <span class="text-base text-white">Edit</span>
           </div>
-        </div>
-        <div
-          @click="handleSubmit"
-          class="cursor-pointer rounded-lg bg-yellow-300 text-white w-24 text-center h-8 leading-8 hover:opacity-50"
-        >
-          Test
+          <div
+            @click="handleSubmit"
+            class="cursor-pointer rounded-lg bg-yellow-300 text-white w-24 text-center h-8 leading-8 hover:opacity-50"
+          >
+            Test
+          </div>
         </div>
       </div>
       <div v-else class="flex gap-20">
@@ -239,8 +242,10 @@ export default {
     object-fit: contain;
   }
   &-image {
-    width: 100%;
-    height: 100%;
+    height: 500px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
     border-radius: 20px;
     border: 1px solid #eae4e4;
     box-shadow: -4px 4px 4px 0px rgba(0, 0, 0, 0.25);

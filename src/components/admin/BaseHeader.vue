@@ -92,10 +92,13 @@
               </div>
             </div>
           </li>
-          <li class="text-base item leading-9 h-9 text-left pl-6 relative">
+          <li
+            @click="handleGoToBlog"
+            class="text-base item leading-9 h-9 text-left pl-6 relative"
+          >
             Blogging
           </li>
-          <div class="absolute w-5 h-5 right-6 header-lock">
+          <div v-if="statusBlog" class="absolute w-5 h-5 right-6 header-lock">
             <img :src="LOCK" alt="" srcset="" class="w-full h-full" />
           </div>
           <li class="text-base item leading-9 h-9 text-left pl-6">
@@ -124,6 +127,7 @@ import {
 } from '../../constants/image';
 import Avatar from '../common/Avatar.vue';
 import { formatNumber } from '../../constants/function';
+import { notification } from 'ant-design-vue';
 export default {
   created() {
     this.BELL = BELL;
@@ -169,6 +173,7 @@ export default {
   },
   data() {
     return {
+      statusBlog: true,
       searchInput: this.searchInputProp,
       isHovered: false,
       titleInvite: 1,
@@ -219,6 +224,13 @@ export default {
     },
     handleGoToSetting() {
       this.$router.push({ name: 'SettingProfile', params: { id: 1 } });
+    },
+    handleGoToBlog() {
+      if (!this.statusBlog) {
+        console.log('blog');
+      } else {
+        notification.warning({ message: 'Blogging function is not open yet' });
+      }
     },
   },
 };

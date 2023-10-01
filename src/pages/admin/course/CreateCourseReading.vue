@@ -2,12 +2,7 @@
   <div class="create-course pb-5">
     <!-- Reading -->
     <div>
-      <ButtonBack
-        title="Reading"
-        extend-class="mt-5"
-        hide-back="true"
-        @back="changeBack"
-      />
+      <ButtonBack title="Reading" hide-back="true" @back="changeBack" />
       <ImageUpload :src-img="STAR_RED" title="" />
       <ButtonBack title="Reading text" extend-class="mt-5" />
       <Word :contentProp="contentReading" @update="updateContentReading" />
@@ -38,7 +33,7 @@
       </div>
       <div
         @click="createCourse"
-        class="cursor-pointer rounded-lg bg-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+        class="font-semibold cursor-pointer rounded-lg bg-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
       >
         Create
       </div>

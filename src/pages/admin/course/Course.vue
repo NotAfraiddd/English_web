@@ -37,7 +37,7 @@
     @closeModal="closeModalCreateCourse"
     @save="closeModalCreateCourse"
     :showFooter="false"
-    :widthCustom="800"
+    :widthCustom="850"
   >
     <template #content>
       <div class="w-full font-bold text-center text-xl text-primary opacity-90">
@@ -89,6 +89,20 @@
         <div
           class="h-10 leading-10 text-primary_black text-left font-semibold text-base"
         >
+          Content
+        </div>
+        <input
+          ref="errorInputName"
+          v-model="createContent"
+          type="text"
+          class="input-type-course border rounded-lg form-control"
+          spellcheck="false"
+        />
+      </div>
+      <div class="flex w-full mt-5 justify-between">
+        <div
+          class="h-10 leading-10 text-primary_black text-left font-semibold text-base"
+        >
           Background
         </div>
         <input
@@ -127,7 +141,7 @@
     @closeModal="closeModalChoose"
     @save="closeModalChoose"
     :showFooter="false"
-    :widthCustom="800"
+    :widthCustom="850"
   >
     <template #content>
       <div class="w-full font-bold text-center text-xl text-primary opacity-90">
@@ -173,6 +187,20 @@
           class="input-type-course border rounded-lg form-control"
           spellcheck="false"
           ref="editInputName"
+        />
+      </div>
+      <div class="flex w-full mt-5 justify-between">
+        <div
+          class="h-10 leading-10 text-primary_black text-left font-semibold text-base"
+        >
+          Content
+        </div>
+        <input
+          v-model="editContent"
+          type="text"
+          class="input-type-course border rounded-lg form-control"
+          spellcheck="false"
+          ref="editInputContent"
         />
       </div>
       <div class="flex w-full mt-5 justify-between">
@@ -282,6 +310,7 @@ export default {
       this.createSubtitle = '';
       this.createColor = '#000000';
       this.createName = '';
+      this.createContent = '';
       this.showModalCreateCourse = false;
     },
     createTypeCourse() {
@@ -289,7 +318,8 @@ export default {
         this.createTitle &&
         this.createName &&
         this.createSubtitle &&
-        this.createColor
+        this.createColor &&
+        this.createContent
       ) {
         this.listCourses.push({
           id: this.listCourses.length,
@@ -297,6 +327,7 @@ export default {
           subtitle: this.createSubtitle,
           color: this.createColor,
           name: this.createName,
+          content: this.createContent,
         });
         this.cancelTypeCourse();
       } else {
@@ -326,13 +357,6 @@ export default {
         this.editSubtitle &&
         this.editColor
       ) {
-        //         id:4
-        // title:"Grammar"
-        // subtitle:"English for individuals with basic knowledge."
-        // percentages:Array[1]
-        // name:"Grammar English Course"
-        // courseFinished:"3/10"
-        // color:"#7C89CE"
         const courseToEdit = this.listCourses.find(
           (course) => course.id === this.editID,
         );
@@ -366,11 +390,13 @@ export default {
       }
     },
     getData(data) {
+      console.log(data);
       this.editID = data.item.id;
       this.editTitle = data.item.title;
       this.editSubtitle = data.item.subtitle;
       this.editNameCourse = data.item.name;
       this.editColor = data.item.color;
+      this.editContent = data.item.content;
       this.showModalChooseCourse = true;
       this.handleEditColor();
     },
@@ -441,11 +467,13 @@ export default {
       createColor: '#000000',
       createColorTemp: '',
       createColorPickerTemp: '',
+      createContent: '',
       editID: null,
       editTitle: '',
       editSubtitle: '',
       editNameCourse: '',
       editColor: '#000000',
+      editContent: '',
       editColorTemp: '',
       editColorPickerTemp: null,
       inputSearch: '',
@@ -458,36 +486,36 @@ export default {
           id: 1,
           title: 'Basic Level',
           subtitle: 'English for individuals with basic knowledge.',
-          // percentages: [{ percentage: 30 }],
           name: 'Basic English Course',
-          // courseFinished: '3/10',
+          content:
+            'In this course, we will learn basic vocabulary, simple reading and listening lessons.',
           color: '#0068FF',
         },
         {
           id: 2,
           title: 'Intermediate Level',
           subtitle: 'English for individuals with intermediate knowledge.',
-          percentages: [{ percentage: 65 }],
           name: 'Intermediate English Course',
-          courseFinished: '3/10',
+          content:
+            'In this course, we will learn basic vocabulary, simple reading and listening lessons.',
           color: '#AA53EE',
         },
         {
           id: 3,
           title: 'Advanced Level',
           subtitle: 'English for individuals with advanced knowledge.',
-          percentages: [{ percentage: 10 }],
           name: 'Advanced English Course',
-          courseFinished: '3/10',
+          content:
+            'In this course, we will learn basic vocabulary, simple reading and listening lessons.',
           color: '#87CF2A',
         },
         {
           id: 4,
           title: 'Grammar',
           subtitle: 'English for individuals with basic knowledge.',
-          percentages: [{ percentage: 90 }],
           name: 'Grammar English Course',
-          courseFinished: '3/10',
+          content:
+            'In this course, we will learn basic vocabulary, simple reading and listening lessons.',
           color: '#7C89CE',
         },
       ],

@@ -1,14 +1,14 @@
 <template>
   <div class="flex">
     <ul class="w-1/3">
-      <div class="text-2xl font-semibold text-left my-2">Setting</div>
+      <div class="text-2xl font-semibold text-left mt-2 mb-4">Setting</div>
       <template v-for="(menu, index) in panelMenu" :key="index">
         <li
           :class="[
-            'panel-menu hover:bg-table_header rounded-xl flex items-center cursor-pointer pl-4',
-            // { active: isActiveMenu(menu.to, menu.activeLinks) },
+            'panel-menu hover:bg-table_header rounded-xl flex items-center cursor-pointer pl-4 mt-2',
+            { active: isActive(menu.id) },
           ]"
-          @click="onCollapse"
+          @click="onMenuClick(menu)"
         >
           <img class="h-7 w-7" :src="menu.icon" alt="navIcon" />
           <p class="mb-0 h-10 leading-10 text-base ml-4 font-semibold">
@@ -17,8 +17,12 @@
         </li>
       </template>
     </ul>
-    <div class="w-full mx-5">
-      <ButtonBack title="Information Member" :hide-back="true" @back="onBack" />
+    <div v-if="activeKey == 1" class="w-full mx-5">
+      <ButtonBack
+        title="Personal information"
+        :hide-back="true"
+        @back="onBack"
+      />
       <div class="contain__member mx-auto border-t border-primary_line mt-5">
         <div class="text-primary_black mt-5">
           <div
@@ -223,6 +227,98 @@
         </div>
       </div>
     </div>
+    <div v-else class="w-full mx-5">
+      <ButtonBack title="Social network" :hide-back="true" @back="onBack" />
+      <div class="contain__member mx-auto border-t border-primary_line mt-5">
+        <!-- facebook -->
+        <div class="text-primary_black mt-5">
+          <div
+            class="member-detail__width flex items-center mx-auto justify-center"
+          >
+            <div class="mt-4 flex items-start flex-col contain__member-contain">
+              <div
+                class="text-base text-primary_black font-semibold member-name"
+              >
+                Facebook
+              </div>
+              <input
+                v-model="inputFaceBook"
+                type="text"
+                class="border-b form-control w-96"
+                :class="!editFacebook ? 'cursor-not-allowed' : ''"
+                spellcheck="false"
+                :disabled="!editFacebook"
+                placeholder="Eg.   https://www.facebook.com/"
+              />
+            </div>
+            <!-- Edit -->
+            <ButtonEdit
+              @cancel="handleCancelFacebook"
+              @edit="handleEditFacebook"
+              @update="handleUpdateFacebook"
+            />
+          </div>
+        </div>
+        <!-- instagram -->
+        <div class="text-primary_black mt-5">
+          <div
+            class="member-detail__width flex items-center mx-auto justify-center"
+          >
+            <div class="mt-4 flex items-start flex-col contain__member-contain">
+              <div
+                class="text-base text-primary_black font-semibold member-name"
+              >
+                Instagram
+              </div>
+              <input
+                v-model="inputInstagram"
+                type="text"
+                class="border-b form-control w-96"
+                :class="!editInstagram ? 'cursor-not-allowed' : ''"
+                spellcheck="false"
+                :disabled="!editInstagram"
+                placeholder="Eg.   https://www.instagram.com/"
+              />
+            </div>
+            <!-- Edit -->
+            <ButtonEdit
+              @cancel="handleCancelInstagram"
+              @edit="handleEditInstagram"
+              @update="handleUpdateInstagram"
+            />
+          </div>
+        </div>
+        <!-- linkedin -->
+        <div class="text-primary_black mt-5">
+          <div
+            class="member-detail__width flex items-center mx-auto justify-center"
+          >
+            <div class="mt-4 flex items-start flex-col contain__member-contain">
+              <div
+                class="text-base text-primary_black font-semibold member-name"
+              >
+                Linkedin
+              </div>
+              <input
+                v-model="inputLinkedin"
+                type="text"
+                class="border-b form-control w-96"
+                :class="!editLinkedin ? 'cursor-not-allowed' : ''"
+                spellcheck="false"
+                :disabled="!editLinkedin"
+                placeholder="Eg.   https://www.linkedin.com/"
+              />
+            </div>
+            <!-- Edit -->
+            <ButtonEdit
+              @cancel="handleCancelLinkedin"
+              @edit="handleEditLinkedin"
+              @update="handleUpdateLinkedin"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -262,6 +358,13 @@ export default {
     this.ARROW_LEFT = ARROW_LEFT;
   },
   methods: {
+    isActive(data) {
+      const active = data === this.activeKey;
+      return active ? 'active' : '';
+    },
+    onMenuClick(data) {
+      this.activeKey = data.id;
+    },
     onBack() {
       this.$router.push({ name: 'HomeUser' });
     },
@@ -377,12 +480,49 @@ export default {
       this.inputBlog = this.inputBlogOriginal;
       this.editBlog = data;
     },
+    // facebook
+    handleEditFacebook(data) {
+      this.editFacebook = data;
+    },
+    handleUpdateFacebook(data) {
+      this.inputFacebookOriginal = this.inputFacebook;
+      this.editFacebook = data;
+    },
+    handleCancelFacebook(data) {
+      this.inputFacebook = this.inputFacebookOriginal;
+      this.editFacebook = data;
+    },
+    // instagram
+    handleEditInstagram(data) {
+      this.editInstagram = data;
+    },
+    handleUpdateInstagram(data) {
+      this.inputInstagramOriginal = this.inputInstagram;
+      this.editInstagram = data;
+    },
+    handleCancelInstagram(data) {
+      this.inputInstagram = this.inputInstagramOriginal;
+      this.editInstagram = data;
+    },
+    // linkedin
+    handleEditLinkedin(data) {
+      this.editLinkedin = data;
+    },
+    handleUpdateLinkedin(data) {
+      this.inputLinkedinOriginal = this.inputLinkedin;
+      this.editLinkedin = data;
+    },
+    handleCancelLinkedin(data) {
+      this.inputLinkedin = this.inputLinkedinOriginal;
+      this.editLinkedin = data;
+    },
   },
   data() {
     return {
+      activeKey: 1,
       panelMenu: [
-        { icon: USER, message: 'Account Settings' },
-        { icon: SOCIAL, message: 'Social network' },
+        { id: 1, icon: USER, message: 'Account Settings', checked: false },
+        { id: 2, icon: SOCIAL, message: 'Social network', checked: false },
       ],
       avatar: AVATAR,
       avatarOriginal: null,
@@ -408,6 +548,15 @@ export default {
       inputLevel: 2,
       inputLevelOriginal: null,
       editLevel: false,
+      inputInstagram: null,
+      inputInstagramOriginal: null,
+      editInstagram: false,
+      inputFacebook: null,
+      inputFacebookOriginal: null,
+      editFacebook: false,
+      inputLinkedin: null,
+      inputLinkedinOriginal: null,
+      editLinkedin: false,
     };
   },
 };
@@ -451,5 +600,8 @@ input.form-control {
     gap: 12px;
     flex-wrap: wrap;
   }
+}
+.panel-menu.active {
+  background-color: rgba(236, 236, 236, 1);
 }
 </style>
