@@ -10,7 +10,17 @@
     />
   </div>
   <div v-else>
-    <ButtonBackUser title="My course" :hide-back="true" @back="changeBack" />
+    <ButtonBackUser title="My courses" :hide-back="true" @back="changeBack" />
+    <div class="mt-2 text-left">No courses yet</div>
+    <div class="mt-2 justify-start flex gap-1">
+      You can learn
+      <div
+        @click="handleGoToHome"
+        class="text-green-500 hover:underline cursor-pointer"
+      >
+        new courses
+      </div>
+    </div>
   </div>
   <ConfirmModal
     :showModal="modalChooseCourse"
@@ -78,50 +88,39 @@ export default {
         name: null,
       },
       listCourses: [
-        {
-          id: 1,
-          title: 'Basic Level',
-          level: 'Basic',
-          subtitle: 'English for individuals with basic knowledge.',
-          percentages: [{ percentage: 30 }],
-          name: 'Basic English Course',
-          courseFinished: '3/10',
-          color: '#0068FF',
-          status: 1,
-        },
-        {
-          id: 2,
-          title: 'Intermediate Level',
-          level: 'Intermediate',
-          subtitle: 'English for individuals with intermediate knowledge.',
-          percentages: [{ percentage: 65 }],
-          name: 'Intermediate English Course',
-          courseFinished: '3/10',
-          color: '#AA53EE',
-          status: 0,
-        },
-        {
-          id: 3,
-          title: 'Advanced Level',
-          level: 'Advanced',
-          subtitle: 'English for individuals with advanced knowledge.',
-          percentages: [{ percentage: 0 }],
-          name: 'Advanced English Course',
-          courseFinished: '0/10',
-          color: '#87CF2A',
-          status: 0,
-        },
-        {
-          id: 4,
-          title: 'Grammar',
-          level: 'All',
-          subtitle: 'English for individuals with basic knowledge.',
-          percentages: [{ percentage: 90 }],
-          name: 'Grammar English Course',
-          courseFinished: '3/10',
-          color: '#7C89CE',
-          status: 1,
-        },
+        // {
+        //   id: 1,
+        //   title: 'Basic Level',
+        //   level: 'Basic',
+        //   subtitle: 'English for individuals with basic knowledge.',
+        //   percentages: [{ percentage: 30 }],
+        //   name: 'Basic English Course',
+        //   courseFinished: '3/10',
+        //   color: '#0068FF',
+        //   status: 1,
+        // },
+        // {
+        //   id: 2,
+        //   title: 'Intermediate Level',
+        //   level: 'Intermediate',
+        //   subtitle: 'English for individuals with intermediate knowledge.',
+        //   percentages: [{ percentage: 65 }],
+        //   name: 'Intermediate English Course',
+        //   courseFinished: '3/10',
+        //   color: '#AA53EE',
+        //   status: 0,
+        // },
+        // {
+        //   id: 4,
+        //   title: 'Grammar',
+        //   level: 'All',
+        //   subtitle: 'English for individuals with basic knowledge.',
+        //   percentages: [{ percentage: 90 }],
+        //   name: 'Grammar English Course',
+        //   courseFinished: '3/10',
+        //   color: '#7C89CE',
+        //   status: 1,
+        // },
       ],
     };
   },
@@ -133,6 +132,9 @@ export default {
     },
   },
   methods: {
+    handleGoToHome() {
+      this.$router.push({ name: 'HomeUser' });
+    },
     changeBack() {
       this.$router.push({ name: 'HomeUser' });
     },

@@ -27,9 +27,14 @@ export default [
         component: () => import('../pages/user/home/Home.vue'),
       },
       {
+        path: '/blog',
+        name: 'BlogUser',
+        component: () => import('../pages/user/blog/Blog.vue'),
+      },
+      {
         path: 'member/list-course',
         name: 'ListCourse',
-        component: () => import('../pages/user/home/Home.vue'),
+        component: () => import('../pages/user/home/ListCourse.vue'),
       },
       {
         path: 'member/edit/:id',
