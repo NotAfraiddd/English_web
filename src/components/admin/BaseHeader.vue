@@ -101,7 +101,10 @@
           <div v-if="statusBlog" class="absolute w-5 h-5 right-6 header-lock">
             <img :src="LOCK" alt="" srcset="" class="w-full h-full" />
           </div>
-          <li class="text-base item leading-9 h-9 text-left pl-6">
+          <li
+            @click="handleGoToMyBlog"
+            class="text-base item leading-9 h-9 text-left pl-6"
+          >
             My article
           </li>
           <div class="spacer flex flex-growth-1 bg-gray-300 mx-6 my-1" />
@@ -173,7 +176,7 @@ export default {
   },
   data() {
     return {
-      statusBlog: true,
+      statusBlog: false,
       searchInput: this.searchInputProp,
       isHovered: false,
       titleInvite: 1,
@@ -227,10 +230,13 @@ export default {
     },
     handleGoToBlog() {
       if (!this.statusBlog) {
-        console.log('blog');
+        this.$router.push({ name: 'CreateBlog' });
       } else {
         notification.warning({ message: 'Blogging function is not open yet' });
       }
+    },
+    handleGoToMyBlog() {
+      this.$router.push({ name: 'MyBlog' });
     },
   },
 };

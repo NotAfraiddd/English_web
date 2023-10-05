@@ -36,7 +36,7 @@ export default {
         },
         {
           message: 'Blog',
-          to: '/blog',
+          to: '/list-blog',
           iconPath: USER_BLOG,
           activeLinks: [],
         },

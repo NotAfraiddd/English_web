@@ -4,7 +4,7 @@
     :key="item.id"
     :class="extendClass"
     @click="goToDetail(item.id)"
-    class="flex h-auto cursor-pointer text-base flex-1 justify-between items-start mt-3 border gap-2 py-3 px-5 rounded-lg hover:opacity-80"
+    class="flex h-auto cursor-pointer text-base flex-1 justify-between items-start mt-3 border gap-2 py-3 px-5 rounded-lg"
   >
     <div
       class="flex max-h-40 flex-col list-blog-contain w-full h-40 justify-between"
@@ -13,7 +13,7 @@
         <img :src="item.avatar" alt="" srcset="" class="h-8 w-8 rounded-full" />
         <div class="font-semibold my-auto">{{ item.author }}</div>
       </div>
-      <div class="flex flex-col items-start gap-1">
+      <div class="flex flex-col items-start gap-1 hover:opacity-70">
         <div class="font-semibold text-xl text-primary_black text-left">
           {{ item.title }}
         </div>
@@ -23,7 +23,7 @@
           {{ item.content }}
         </div>
       </div>
-      <div v-if="buttonBack" class="flex w-40 justify-between flex-wrap gap-3">
+      <div v-if="button" class="flex w-40 justify-between flex-wrap gap-3">
         <div class="text-text_red hover:text-red-600 cursor-pointer">
           Rejected
         </div>
@@ -110,7 +110,7 @@ export default {
     data: { type: Array, default: () => [] },
     icon: { type: Boolean, default: false },
     image: { type: Boolean, default: false },
-    buttonBack: { type: Boolean, default: false },
+    button: { type: Boolean, default: false },
     react: { type: Boolean, default: false },
     user: { type: Boolean, default: false },
     extendClass: { type: String, default: '' },

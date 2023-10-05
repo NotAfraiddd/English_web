@@ -1,14 +1,35 @@
 <template>
-  <div class="text-primary_black">
-    <ButtonBack title="Blog pending" @back="changeBack" :hide-back="true" />
+  <div class="mr-5">
+    <ButtonBackUser title="My Blog" :hide-back="true" />
+    <div v-if="listBlog.length == 0">
+      <div class="mt-2 text-left">No courses yet</div>
+      <div class="mt-2 justify-start flex gap-1">
+        You can write
+        <div
+          @click="handleGoToCreateBlog"
+          class="text-green-500 hover:underline cursor-pointer"
+        >
+          new articles
+        </div>
+        or
+        <div
+          @click="handleGoToListBlog"
+          class="text-green-500 hover:underline cursor-pointer"
+        >
+          read other articles
+        </div>
+      </div>
+    </div>
     <ListBlog
+      v-else
       :data="listBlog"
       :avatar="true"
-      :button="true"
       :image="true"
+      :react="true"
       @changePath="goToDetail"
+      @showComment="handleShowComment"
     />
-    <div class="mt-5 flex justify-center">
+    <div v-if="listBlog.length != 0" class="mt-5 flex justify-center">
       <a-pagination
         class="pagination"
         v-model:current="current"
@@ -19,46 +40,37 @@
       />
     </div>
   </div>
+  <!-- comment -->
+  <div class="comment fixed bg-white" :class="{ 'menu-visible': showComment }">
+    Nội dung của comment
+  </div>
+  <div
+    class="overlay fixed"
+    :class="{ 'overlay-visible': showComment }"
+    @click="handleCloseComment"
+  />
 </template>
-
 <script>
-import ButtonBack from '../../../components/common/ButtonBack.vue';
+import ButtonBackUser from '../../../components/common/ButtonBackUser.vue';
 import ListBlog from '../../../components/common/ListBlog.vue';
 import { AVATAR, TITLE } from '../../../constants/image';
-import { NOTIFY } from '../../../constants/index';
 export default {
-  name: 'BlogPending',
-  components: { ButtonBack, ListBlog },
+  name: 'MyBlog',
+  components: { ButtonBackUser, ListBlog },
   created() {
-    this.TITLE = TITLE;
     this.AVATAR = AVATAR;
-    this.NOTIFY = NOTIFY;
-  },
-  watch: {
-    pageSize(value) {},
-    current(value) {},
-  },
-  methods: {
-    onShowSizeChange(current, pageSize) {
-      console.log(current, pageSize);
-    },
-    changeBack() {
-      this.$router.push({ name: 'Dashboard' });
-    },
-    goToDetail(dataID) {
-      this.$router.push({ name: 'DetailBlogPending', params: { id: dataID } });
-    },
   },
   data() {
     return {
-      current: 6,
-      pageSize: 3,
+      showComment: false,
       listBlog: [
         {
           id: 1,
           author: 'Chi Bao',
           avatar: AVATAR,
           imageTitle: TITLE,
+          numReact: 0,
+          numComment: 2,
           title: 'Effective Methods for Improving English Language Skills.',
           content:
             "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill. When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
@@ -68,6 +80,8 @@ export default {
           author: 'Ngoc Huan',
           avatar: AVATAR,
           imageTitle: TITLE,
+          numReact: 1,
+          numComment: 2,
           title: 'Hello',
           content:
             "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
@@ -77,6 +91,8 @@ export default {
           author: 'Bao Huan',
           avatar: AVATAR,
           imageTitle: TITLE,
+          numReact: 1,
+          numComment: 2,
           title:
             'Effective Methods for Improving English Language Skills.adbjabskbdk',
           content:
@@ -84,6 +100,30 @@ export default {
         },
       ],
     };
+  },
+
+  methods: {
+    handleShowComment(data) {
+      if (data.status) {
+        this.showComment = true;
+      }
+    },
+    handleCloseComment() {
+      this.showComment = false;
+    },
+    goToDetail(dataID) {
+      // this.$router.push({ name: 'DetailBlogPending', params: { id: dataID } });
+      console.log(dataID);
+    },
+    onShowSizeChange(current, pageSize) {
+      console.log(current, pageSize);
+    },
+    handleGoToCreateBlog() {
+      this.$router.push({ name: 'CreateBlog' });
+    },
+    handleGoToListBlog() {
+      this.$router.push({ name: 'MemberListBlog' });
+    },
   },
 };
 </script>
@@ -112,6 +152,49 @@ export default {
   background-color: rgba(81, 166, 221, 0.7);
   a {
     color: #fff !important;
+  }
+}
+///comement
+.overlay {
+  background-color: rgb(170 170 170 / 40%);
+  top: 0;
+  left: 100%;
+  width: 100%;
+  height: 100%;
+  z-index: 1111;
+  opacity: 0.5;
+  transition: opacity 0.5s ease-in-out, left 0.5s ease-in-out;
+}
+
+.overlay-visible {
+  opacity: 1;
+  left: 0;
+}
+
+.comment {
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  width: 524px;
+  height: 100vh;
+  right: -512px;
+  top: 0;
+  z-index: 9997;
+}
+
+.menu-visible {
+  transform: translateX(0);
+  right: 0;
+}
+
+.input-type-course {
+  width: calc(100% - 128px);
+}
+
+.item-course {
+  width: 20rem;
+  @media screen and (max-width: 725px) {
+    width: 98%;
+    margin: 0 auto;
   }
 }
 </style>

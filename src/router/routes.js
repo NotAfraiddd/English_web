@@ -27,12 +27,22 @@ export default [
         component: () => import('../pages/user/home/Home.vue'),
       },
       {
-        path: '/blog',
-        name: 'BlogUser',
-        component: () => import('../pages/user/blog/Blog.vue'),
+        path: '/create-blog',
+        name: 'CreateBlog',
+        component: () => import('../pages/user/blog/CreateBlog.vue'),
       },
       {
-        path: 'member/list-course',
+        path: '/list-blog',
+        name: 'MemberListBlog',
+        component: () => import('../pages/user/blog/MyListBlog.vue'),
+      },
+      {
+        path: '/my-blog',
+        name: 'MyBlog',
+        component: () => import('../pages/user/blog/MyBlog.vue'),
+      },
+      {
+        path: '/list-course',
         name: 'ListCourse',
         component: () => import('../pages/user/home/ListCourse.vue'),
       },
@@ -47,28 +57,28 @@ export default [
         component: () => import('../pages/user/profile/Profile.vue'),
       },
       {
-        path: 'member/course/:name/reading',
+        path: 'course/:name/reading',
         name: 'ListCourseReading',
         component: () => import('../pages/user/course/ListCourseReading.vue'),
       },
       {
-        path: 'member/course/:name/listening',
+        path: 'course/:name/listening',
         name: 'ListCourseListening',
         component: () => import('../pages/user/course/ListCourseListening.vue'),
       },
       {
-        path: 'member/course/grammar',
+        path: 'course/grammar',
         name: 'Grammar',
         component: () => import('../pages/user/course/Grammar.vue'),
       },
       {
-        path: 'member/course/:course/reading/detail/:name',
+        path: 'course/:course/reading/detail/:name',
         name: 'MemberDetailCourseReading',
         component: () =>
           import('../pages/admin/course/DetailCourseReading.vue'),
       },
       {
-        path: 'member/course/:course/listening/detail/:name',
+        path: 'course/:course/listening/detail/:name',
         name: 'MemberDetailCourseListening',
         component: () =>
           import('../pages/admin/course/DetailCourseListening.vue'),

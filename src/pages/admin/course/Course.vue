@@ -1,16 +1,5 @@
 <template>
   <div>
-    <div
-      class="comment fixed bg-white"
-      :class="{ 'menu-visible': showComment }"
-    >
-      Nội dung của comment
-    </div>
-    <div
-      class="overlay fixed"
-      :class="{ 'overlay-visible': showComment }"
-      @click="handleCloseComment"
-    />
     <ButtonBack title="Course" :hideBack="false" />
     <BaseSearch :search="inputSearch" @update="updateValue" />
     <ListTypeCourse
@@ -490,6 +479,8 @@ export default {
           content:
             'In this course, we will learn basic vocabulary, simple reading and listening lessons.',
           color: '#0068FF',
+          numReact: 1,
+          numComment: 2,
         },
         {
           id: 2,
