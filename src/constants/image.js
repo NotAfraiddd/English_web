@@ -20,6 +20,7 @@ import HEART from '../assets/images/heart.png';
 import CHECKED from '../assets/images/checked.png';
 import CANCEL from '../assets/images/cancel.png';
 import ICON_LOGIN from '../assets/images/icon-login.png';
+import ICON_LAUGH from '../assets/images/icon-laugh.png';
 import STAR_RED from '../assets/images/start_red.png';
 import GOOGLE from '../assets/images/google.png';
 import HEART_DEFAULT from '../assets/images/heart-default.png';
@@ -46,6 +47,7 @@ import LISTENING from '../assets/images/listening.jpg';
 import MOUNTAIN_CLIMB from '../assets/images/mountain-climbing.jpg';
 
 export {
+  ICON_LAUGH,
   SOCIAL_FACEBOOK,
   SOCIAL_YOUTUBE,
   SOCIAL_INSTAGRAM,

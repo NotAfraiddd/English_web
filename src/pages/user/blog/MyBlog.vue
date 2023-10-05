@@ -41,23 +41,52 @@
     </div>
   </div>
   <!-- comment -->
-  <div class="comment fixed bg-white" :class="{ 'menu-visible': showComment }">
-    Nội dung của comment
+  <div>
+    <div
+      class="comment fixed bg-white pt-5 text-primary_black pl-5"
+      :class="{ 'menu-visible': showComment }"
+    >
+      <div class="text-xl font-semibold text-left">12 Comments</div>
+      <div class="text-sm text-left">( Report spam or bad content )</div>
+      <!-- chat -->
+      <div class="mt-5 flex">
+        <figure class="w-9 h-9 m-0">
+          <img :src="AVATAR" alt="" srcset="" class="rounded-full" />
+        </figure>
+        <div class="emoji-panel mx-2 mt-1 cursor-pointer">
+          <div id="emoji-picker">
+            <img :src="ICON_LAUGH" alt="" srcset="" />
+          </div>
+        </div>
+        <div class="c-chat__emoji"><Emoji /></div>
+        <textarea
+          class="c-chat__input-chat text-base w-full mr-2 px-3 border-b flex items-center"
+          spellcheck="false"
+          placeholder="Enter something..."
+          ref="chatContent"
+          @keydown.enter.shift.ctrl.exact.prevent="dropLine"
+          @keydown.enter.exact.prevent="sendChat"
+          @keyup="resizeInput"
+        />
+      </div>
+    </div>
+    <div
+      class="overlay fixed"
+      :class="{ 'overlay-visible': showComment }"
+      @click="handleCloseComment"
+    />
   </div>
-  <div
-    class="overlay fixed"
-    :class="{ 'overlay-visible': showComment }"
-    @click="handleCloseComment"
-  />
 </template>
 <script>
 import ButtonBackUser from '../../../components/common/ButtonBackUser.vue';
 import ListBlog from '../../../components/common/ListBlog.vue';
-import { AVATAR, TITLE } from '../../../constants/image';
+import { AVATAR, TITLE, ICON_LAUGH } from '../../../constants/image';
+import Emoji from './Emoji.vue';
 export default {
   name: 'MyBlog',
-  components: { ButtonBackUser, ListBlog },
+  components: { ButtonBackUser, ListBlog, Emoji },
   created() {
+    this.ICON_LAUGH = ICON_LAUGH;
     this.AVATAR = AVATAR;
   },
   data() {
@@ -129,72 +158,5 @@ export default {
 </script>
 
 <style lang="scss">
-.ant-pagination-item:focus-visible a,
-.ant-pagination-item-active a,
-.ant-pagination-item:hover {
-  border-color: rgba(81, 166, 221, 0.7);
-  color: rgba(81, 166, 221, 0.7);
-}
-.ant-pagination-item,
-.ant-pagination-prev .ant-pagination-item-link,
-.ant-pagination-disabled .ant-pagination-item-link,
-.ant-pagination-next .ant-pagination-item-link {
-  border-color: #fff;
-}
-.ant-pagination-next .ant-pagination-item-link,
-.ant-pagination-prev .ant-pagination-item-link {
-  border: none;
-}
-
-.ant-pagination-item-active,
-.ant-pagination-item:hover {
-  border-radius: 50%;
-  background-color: rgba(81, 166, 221, 0.7);
-  a {
-    color: #fff !important;
-  }
-}
-///comement
-.overlay {
-  background-color: rgb(170 170 170 / 40%);
-  top: 0;
-  left: 100%;
-  width: 100%;
-  height: 100%;
-  z-index: 1111;
-  opacity: 0.5;
-  transition: opacity 0.5s ease-in-out, left 0.5s ease-in-out;
-}
-
-.overlay-visible {
-  opacity: 1;
-  left: 0;
-}
-
-.comment {
-  transform: translateX(100%);
-  transition: transform 0.3s ease-in-out;
-  width: 524px;
-  height: 100vh;
-  right: -512px;
-  top: 0;
-  z-index: 9997;
-}
-
-.menu-visible {
-  transform: translateX(0);
-  right: 0;
-}
-
-.input-type-course {
-  width: calc(100% - 128px);
-}
-
-.item-course {
-  width: 20rem;
-  @media screen and (max-width: 725px) {
-    width: 98%;
-    margin: 0 auto;
-  }
-}
+@import './Blog.scss';
 </style>
