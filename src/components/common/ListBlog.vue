@@ -9,16 +9,20 @@
     <div
       class="flex max-h-40 flex-col list-blog-contain w-full h-40 justify-between"
     >
-      <div v-if="user" class="flex gap-3">
+      <div v-if="user" class="flex gap-3 items-center">
         <img :src="item.avatar" alt="" srcset="" class="h-8 w-8 rounded-full" />
-        <div class="font-semibold my-auto">{{ item.author }}</div>
+        <div class="flex flex-col items-start">
+          <div class="font-semibold text-base">{{ item.author }}</div>
+          <div class="text-xs">{{ item.date }}</div>
+        </div>
       </div>
       <div class="flex flex-col items-start gap-1 hover:opacity-70">
         <div class="font-semibold text-xl text-primary_black text-left">
           {{ item.title }}
         </div>
         <div
-          class="text-base text-primary_black text-left overflow-hidden text-sub-content"
+          class="text-base text-primary_black text-left overflow-hidden"
+          :class="!user ? 'text-sub-content' : 'text-sub-content-3'"
         >
           {{ item.content }}
         </div>
@@ -170,5 +174,12 @@ export default {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
+}
+
+.text-sub-content-3 {
+  display: block;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 </style>

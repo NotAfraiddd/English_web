@@ -32,6 +32,7 @@
       class="mt-4 text-left preview-transcript p-5"
       v-html="content"
     />
+
     <div v-else class="mt-5 transcript">
       <Editor
         api-key="no-api-key"
@@ -59,11 +60,20 @@ export default {
   computed: {
     editorConfig() {
       return {
-        selector: 'textarea',
         statusbar: false,
         notifications: false,
         height: 400,
-        images_file_types: 'jpg,svg,webp',
+        menubar: false,
+        plugins: [
+          'advlist autolink link lists charmap print preview hr anchor pagebreak',
+          'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime nonbreaking',
+          'table emoticons template paste help',
+        ],
+        toolbar:
+          'styleselect | bold italic | alignleft aligncenter alignright alignjustify | ' +
+          'bullist numlist outdent indent | link |  preview fullscreen | code' +
+          'forecolor backcolor emoticons | help | fontsize ',
+        font_size_formats: '8pt 10pt 12pt 14pt 16pt 18pt 24pt 36pt 48pt',
       };
     },
   },
