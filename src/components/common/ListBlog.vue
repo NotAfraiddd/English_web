@@ -64,12 +64,10 @@
       class="flex justify-end gap-3"
       :class="image == true ? 'w-1/4' : 'w-5'"
     >
-      <div v-if="image" class="w-40">
-        <img
-          :src="item.imageTitle"
-          alt=""
-          srcset=""
-          class="h-40 w-max rounded-md"
+      <div v-if="image" class="w-48">
+        <div
+          class="profile-background rounded-md"
+          :style="{ backgroundImage: 'url(' + item.imageTitle + ')' }"
         />
       </div>
       <div v-if="icon">
@@ -181,5 +179,13 @@ export default {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
+}
+
+.profile-background {
+  height: 150px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  border-radius: 12px;
 }
 </style>

@@ -30,7 +30,22 @@
       </div>
     </div>
     <div class="border border-primary my-4" />
-    <div class="text-lg font-semibold">Other related blogs</div>
+    <div class="text-lg font-semibold text-left">Other related blogs</div>
+    <div class="flex flex-wrap justify-around">
+      <div
+        v-for="(item, index) in 8"
+        :key="index"
+        class="flex flex-col w-72 cursor-pointer"
+      >
+        <div
+          class="profile-background mt-5 hover:opacity-50"
+          :style="{ backgroundImage: 'url(' + LISTENING + ')' }"
+        />
+        <div class="font-semibold">
+          Effective Methods for Improving English Language Skills.
+        </div>
+      </div>
+    </div>
   </div>
   <!-- comment -->
   <div class="comment fixed bg-white" :class="{ 'menu-visible': showComment }">
@@ -49,12 +64,14 @@ import {
   HEART,
   HEART_DEFAULT,
   CHAT,
+  LISTENING,
 } from '../../../constants/image';
 
 export default {
   name: 'DetailBlog',
   components: {},
   created() {
+    this.LISTENING = LISTENING;
     this.CHAT = CHAT;
     this.HEART = HEART;
     this.HEART_DEFAULT = HEART_DEFAULT;
@@ -116,6 +133,14 @@ It would take a book to list all the races and awards he's won and the mountains
 </script>
 
 <style lang="scss" scoped>
+.profile-background {
+  height: 150px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  border-radius: 12px;
+}
+
 .overlay {
   background-color: rgb(170 170 170 / 40%);
   top: 0;
@@ -145,17 +170,5 @@ It would take a book to list all the races and awards he's won and the mountains
 .menu-visible {
   transform: translateX(0);
   right: 0;
-}
-
-.input-type-course {
-  width: calc(100% - 128px);
-}
-
-.item-course {
-  width: 20rem;
-  @media screen and (max-width: 725px) {
-    width: 98%;
-    margin: 0 auto;
-  }
 }
 </style>
