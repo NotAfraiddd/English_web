@@ -111,7 +111,18 @@
   }
 }
 textarea {
+  position: relative;
   &:focus-visible {
     outline: none;
   }
+}
+
+.c-chat__input-chat::after {
+  content: attr(data-receiver-name);
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  pointer-events: none;
+  z-index: 1;
+  color: red;
 }

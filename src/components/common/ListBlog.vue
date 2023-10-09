@@ -123,7 +123,7 @@ export default {
       this.$emit('changePath', data);
     },
     showComment(data) {
-      this.$emit('showComment', { item: data, status: true });
+      this.$emit('showComment', { data, status: true });
     },
     showOptions(data) {
       this.showOption = data;

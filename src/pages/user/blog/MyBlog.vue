@@ -64,10 +64,82 @@
           spellcheck="false"
           placeholder="Enter something..."
           ref="chatContent"
+          v-model="contentChat"
           @keydown.enter.shift.ctrl.exact.prevent="dropLine"
-          @keydown.enter.exact.prevent="sendChat"
-          @keyup="resizeInput"
+          @keydown.enter.exact.prevent="handleSendChat"
+          :data-receiver-name="receiverName"
         />
+      </div>
+      <div v-for="(item, index) in listComment" :key="index" class="mr-3">
+        <!-- comment first -->
+        <div class="flex mt-6">
+          <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
+          <div
+            class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 w-full"
+          >
+            <div class="font-semibold">{{ item.name }}</div>
+            <div class="text-left">{{ item.content }}</div>
+            <div class="flex w-24 justify-between flex-wrap gap-2">
+              <div class="flex justify-center items-center cursor-pointer">
+                <div @click="handleClickReact(item)">
+                  <img
+                    :src="item.numReact > 0 ? HEART : HEART_DEFAULT"
+                    alt=""
+                    srcset=""
+                    class="w-5 h-4"
+                  />
+                </div>
+                <div class="h-5 w-5 leading-5 text-primary_black">
+                  {{ item.numReact }}
+                </div>
+              </div>
+              <div
+                class="flex justify-center items-center cursor-pointer"
+                @click="replyComment(item)"
+              >
+                <img :src="CHAT" alt="" srcset="" class="w-5 h-4" />
+                <div class="h-5 w-5 leading-5 text-primary_black">
+                  {{ item.numComment }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- reply comment -->
+        <div
+          class="flex mt-6 ml-12"
+          v-for="i in item.replyComments"
+          :key="i.id"
+        >
+          <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
+          <div
+            class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 w-full"
+          >
+            <div class="font-semibold">{{ i.name }}</div>
+            <div class="text-left">{{ i.content }}</div>
+            <div class="flex gap-4 justify-between flex-wrap">
+              <div class="flex justify-center items-center cursor-pointer">
+                <div @click="handleClickReactReply(i)">
+                  <img
+                    :src="i.numReact > 0 ? HEART : HEART_DEFAULT"
+                    alt=""
+                    srcset=""
+                    class="w-5 h-4"
+                  />
+                </div>
+                <div class="h-5 w-5 leading-5 text-primary_black">
+                  {{ i.numReact }}
+                </div>
+              </div>
+              <div
+                class="flex justify-center items-center cursor-pointer"
+                @click="replyCommentReply(i)"
+              >
+                <img :src="CHAT" alt="" srcset="" class="w-5 h-4" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div
@@ -80,18 +152,70 @@
 <script>
 import ButtonBackUser from '../../../components/common/ButtonBackUser.vue';
 import ListBlog from '../../../components/common/ListBlog.vue';
-import { AVATAR, TITLE, ICON_LAUGH } from '../../../constants/image';
+import {
+  AVATAR,
+  TITLE,
+  ICON_LAUGH,
+  CHAT,
+  HEART,
+  HEART_DEFAULT,
+} from '../../../constants/image';
 import Emoji from './Emoji.vue';
 export default {
   name: 'MyBlog',
   components: { ButtonBackUser, ListBlog, Emoji },
   created() {
+    this.CHAT = CHAT;
+    this.HEART = HEART;
+    this.HEART_DEFAULT = HEART_DEFAULT;
     this.ICON_LAUGH = ICON_LAUGH;
     this.AVATAR = AVATAR;
+  },
+  watch: {
+    receiverName(newReceiverName) {
+      const textarea = this.$refs.chatContent;
+      textarea.setAttribute('data-receiver-name', newReceiverName);
+    },
   },
   data() {
     return {
       showComment: false,
+      idFirst: null,
+      idReply: null,
+      senderName: '',
+      receiverName: '',
+      userLogin: 10,
+      contentChat: '',
+      listComment: [
+        {
+          id: 1,
+          userID: 1,
+          name: 'Chi Bao',
+          avatar: AVATAR,
+          content:
+            ' Great !!! Your post is good. I will try something like you wrote',
+          numReact: 1,
+          numComment: 2,
+          replyComments: [
+            {
+              id: 1,
+              userID: 2,
+              name: 'Ngoc Huan',
+              avatar: AVATAR,
+              content: ' Sure 😕',
+              numReact: 10,
+            },
+            {
+              id: 2,
+              userID: 1,
+              name: 'Chi Bao',
+              avatar: AVATAR,
+              content: 'Great !!!',
+              numReact: 0,
+            },
+          ],
+        },
+      ],
       listBlog: [
         {
           id: 1,
@@ -132,7 +256,40 @@ export default {
   },
 
   methods: {
+    handleClickReact(data) {
+      data.numReact += 1;
+      console.log('handleClickReact');
+    },
+    replyComment(data) {
+      this.idReply = data.userID;
+      if (this.userLogin != this.idFirst) {
+        this.receiverName = data.name;
+        // this.contentChat = this.receiverName + ' ' + this.contentChat;
+        console.log('replyComment', data);
+      }
+    },
+
+    handleClickReactReply(data) {
+      data.numReact += 1;
+      console.log('handleClickReact');
+    },
+    replyCommentReply(data) {
+      this.idReply = data.userID;
+      console.log(this.idFirst, this.idReply);
+      console.log('data reply', data);
+    },
+    /** * Line up in chat input */
+    dropLine() {
+      this.$refs.chatContent.value += '\n';
+    },
+    handleSendChat(e) {
+      !e.isComposing && this.sendChat(e.target.value);
+    },
+    sendChat(data) {
+      console.log(data);
+    },
     handleShowComment(data) {
+      this.idFirst = data.data.id;
       if (data.status) {
         this.showComment = true;
       }
