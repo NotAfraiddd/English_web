@@ -47,6 +47,11 @@ export default [
         component: () => import('../pages/user/home/ListCourse.vue'),
       },
       {
+        path: '/detail/:id',
+        name: 'DetailBlog',
+        component: () => import('../pages/user/blog/DetailBlog.vue'),
+      },
+      {
         path: 'member/edit/:id',
         name: 'SettingProfile',
         component: () => import('../pages/user/profile/SettingProfile.vue'),
