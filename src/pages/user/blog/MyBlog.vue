@@ -60,15 +60,20 @@
         </div>
         <div class="c-chat__emoji"><Emoji /></div>
         <textarea
-          class="c-chat__input-chat text-base w-full mr-2 px-3 border-b flex items-center"
+          class="c-chat__input-chat text-base w-full mr-2 pr-3 border-b flex items-center relative"
           spellcheck="false"
           placeholder="Enter something..."
           ref="chatContent"
           v-model="contentChat"
           @keydown.enter.shift.ctrl.exact.prevent="dropLine"
           @keydown.enter.exact.prevent="handleSendChat"
-          :data-receiver-name="receiverName"
         />
+        <div
+          ref="receiverNameElement"
+          class="absolute left-24 text-primary c-chat__input-name"
+        >
+          {{ receiverName }}
+        </div>
       </div>
       <div v-for="(item, index) in listComment" :key="index" class="mr-3">
         <!-- comment first -->
@@ -172,19 +177,18 @@ export default {
     this.AVATAR = AVATAR;
   },
   watch: {
-    receiverName(newReceiverName) {
-      const textarea = this.$refs.chatContent;
-      textarea.setAttribute('data-receiver-name', newReceiverName);
+    receiverName() {
+      this.setPaddingLeft();
     },
   },
   data() {
     return {
       showComment: false,
-      idFirst: null,
+      idUserBlog: null,
       idReply: null,
       senderName: '',
       receiverName: '',
-      userLogin: 10,
+      userLogin: 1,
       contentChat: '',
       listComment: [
         {
@@ -256,17 +260,33 @@ export default {
   },
 
   methods: {
+    setPaddingLeft() {
+      const receiverNameElement = this.$refs.receiverNameElement;
+      const chatContent = this.$refs.chatContent;
+      if (receiverNameElement) {
+        if (chatContent) {
+          const nameLength = receiverNameElement.clientWidth; // hoặc .clientWidth offsetWidth
+          console.log('Độ dài receiverName:', nameLength);
+          chatContent.style.paddingLeft = `${nameLength + 8}px`; // Thêm 8px
+        }
+      }
+    },
     handleClickReact(data) {
       data.numReact += 1;
       console.log('handleClickReact');
     },
     replyComment(data) {
       this.idReply = data.userID;
-      if (this.userLogin != this.idFirst) {
+      if (this.userLogin != this.idReply) {
         this.receiverName = data.name;
-        // this.contentChat = this.receiverName + ' ' + this.contentChat;
-        console.log('replyComment', data);
       }
+      // this.contentChat = this.receiverName + ' ' + this.contentChat;
+      console.log('=================');
+      console.log('this.data', data);
+      console.log('this.userLogin', this.userLogin);
+      console.log('this.idReply', this.idReply);
+      console.log('this.receiverName', this.receiverName);
+      console.log('=================');
     },
 
     handleClickReactReply(data) {
@@ -275,8 +295,15 @@ export default {
     },
     replyCommentReply(data) {
       this.idReply = data.userID;
-      console.log(this.idFirst, this.idReply);
-      console.log('data reply', data);
+      if (this.userLogin != this.idReply) {
+        this.receiverName = data.name;
+      }
+      console.log('=========222222========');
+      console.log('data', data);
+      console.log('this.userLogin', this.userLogin);
+      console.log('data reply', this.idReply);
+      console.log('this.receiverName', this.receiverName);
+      console.log('=========222222========');
     },
     /** * Line up in chat input */
     dropLine() {
@@ -289,7 +316,8 @@ export default {
       console.log(data);
     },
     handleShowComment(data) {
-      this.idFirst = data.data.id;
+      this.idUserBlog = data.data.id;
+      console.log('this.idUserBlog', this.idUserBlog);
       if (data.status) {
         this.showComment = true;
       }

@@ -117,12 +117,8 @@ textarea {
   }
 }
 
-.c-chat__input-chat::after {
-  content: attr(data-receiver-name);
-  position: absolute;
-  top: 8px;
-  left: 10px;
-  pointer-events: none;
-  z-index: 1;
-  color: red;
+.c-chat__input {
+  &-name {
+    width: fit-content;
+  }
 }

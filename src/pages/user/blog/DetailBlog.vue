@@ -31,11 +31,13 @@
     </div>
     <div class="border border-primary my-4" />
     <div class="text-lg font-semibold text-left">Other related blogs</div>
-    <div class="flex flex-wrap justify-around">
+    <div
+      class="grid grid-cols-5 md:grid-cols-2 sm:grid-cols-1 2xl:grid-cols-4 lg:grid-cols-3 detail-blog-grid"
+    >
       <div
         v-for="(item, index) in 8"
         :key="index"
-        class="flex flex-col w-72 cursor-pointer"
+        class="flex flex-col 2xl:w-96 detail-blog-item cursor-pointer hover:opacity-90"
       >
         <div
           class="profile-background mt-5 hover:opacity-50"
@@ -133,6 +135,20 @@ It would take a book to list all the races and awards he's won and the mountains
 </script>
 
 <style lang="scss" scoped>
+.detail-blog {
+  &-grid {
+    @media screen and (max-width: 639px) {
+      grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+      column-gap: 8px !important;
+    }
+  }
+  &-item {
+    width: 18rem;
+    @media screen and (max-width: 767px) {
+      width: 100%;
+    }
+  }
+}
 .profile-background {
   height: 150px;
   background-repeat: no-repeat;
