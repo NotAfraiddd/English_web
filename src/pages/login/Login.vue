@@ -104,6 +104,7 @@
         </div>
       </div>
       <div
+        @click="showModalForgetPassword"
         class="mt-3 mx-10 text-right underline text-primary_999 cursor-pointer animation-translate-y py-1"
       >
         Forget password
@@ -138,6 +139,149 @@
       </div>
     </div>
   </div>
+  <ConfirmModal
+    :showModal="modalForgetPassword"
+    @closeModal="closeModalForgetPassword"
+    @save="closeModalForgetPassword"
+    :showFooter="false"
+    :widthCustom="600"
+  >
+    <template #content>
+      <div class="text-primary_black my-5 flex gap-1">
+        Confirm
+        <div class="font-semibold">Email</div>
+        and
+        <div class="font-semibold">OTP</div>
+        ?
+      </div>
+      <div class="flex mb-5 w-full">
+        <div class="w-1/5 leading-10 text-base text-center">Email</div>
+        <div class="flex flex-col w-full">
+          <input
+            v-model="inputEmail"
+            type="text"
+            class="border-b form-control w-full"
+            spellcheck="false"
+            placeholder="Please enter your email"
+            ref="refInputEmail"
+          />
+          <div v-if="emptyInputEmail" class="text-red-500 text-base mt-1">
+            {{ ERROR_MESSAGE.emptyEmail }}
+          </div>
+          <div v-if="syntaxInputEmail" class="text-red-500 text-base mt-1">
+            {{ ERROR_MESSAGE.wrongEmail }}
+          </div>
+        </div>
+      </div>
+      <div />
+    </template>
+    <template #select>
+      <div class="flex gap-20">
+        <div
+          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="closeModalForgetPassword"
+        >
+          <span class="text-base text-primary">Cancel</span>
+        </div>
+        <div
+          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="sendEmailToChangePassword"
+        >
+          <span class="text-base text-white">Okay</span>
+        </div>
+      </div>
+    </template>
+  </ConfirmModal>
+  <ConfirmModal
+    :showModal="modalChangePassword"
+    @closeModal="closeModalChangePassword"
+    @save="closeModalChangePassword"
+    :showFooter="false"
+    :widthCustom="600"
+  >
+    <template #content>
+      <div class="text-primary_black my-5 flex gap-1">
+        Do you want to change
+        <div class="font-semibold">Password</div>
+        ?
+      </div>
+      <div class="flex mb-5 w-full">
+        <div class="w-2/5 leading-10 text-base">Code OTP</div>
+        <div class="flex flex-col w-full">
+          <input
+            v-model="inputOTP"
+            type="text"
+            class="border-b form-control w-full"
+            spellcheck="false"
+            placeholder="Please enter code OTP"
+            ref="codeOTP"
+          />
+          <div v-if="emptyInputOTP" class="text-red-500 text-base mt-1">
+            {{ ERROR_MESSAGE.emptyOTP }}
+          </div>
+          <div v-if="syntaxInputOTP" class="text-red-500 text-base mt-1">
+            {{ ERROR_MESSAGE.wrongOTP }}
+          </div>
+        </div>
+      </div>
+      <!-- password -->
+      <div class="flex mb-5 w-full">
+        <div class="w-2/5 leading-10 text-base">New password</div>
+        <div class="w-full flex flex-col">
+          <input
+            v-model="changePassword"
+            type="text"
+            class="border-b form-control w-full"
+            spellcheck="false"
+            ref="password"
+            placeholder="Please enter your new password"
+          />
+          <div v-if="emptyChangePassword" class="text-red-500 text-base mt-1">
+            {{ ERROR_MESSAGE.emptyPassword }}
+          </div>
+          <div v-if="syntaxChangePassword" class="text-red-500 text-base mt-1">
+            {{ ERROR_MESSAGE.wrongPassword }}
+          </div>
+        </div>
+      </div>
+      <!-- confirm password -->
+      <div class="flex mb-5 w-full">
+        <div class="w-2/5 leading-10 text-base">Confirm password</div>
+        <div class="w-full flex flex-col">
+          <input
+            v-model="confirmPassword"
+            type="text"
+            class="border-b form-control w-full"
+            spellcheck="false"
+            ref="confirmPassword"
+            placeholder="Please enter your confirm password"
+          />
+          <div v-if="emptyConfirmPassword" class="text-red-500 text-base mt-1">
+            {{ ERROR_MESSAGE.emptyConfirmPassword }}
+          </div>
+          <div v-if="syntaxConfirmPassword" class="text-red-500 text-base mt-1">
+            {{ ERROR_MESSAGE.wrongConfirmPassword }}
+          </div>
+        </div>
+      </div>
+    </template>
+    <template #select>
+      <div class="flex gap-20">
+        <div
+          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="closeModalChangePassword"
+        >
+          <span class="text-base text-primary">Cancel</span>
+        </div>
+        <div
+          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="saveModalChangePassword"
+        >
+          <span class="text-base text-white">Okay</span>
+        </div>
+      </div>
+    </template>
+  </ConfirmModal>
   <div>
     <!-- aimation -->
     <svg
@@ -211,7 +355,12 @@
 
 <script>
 import { ERROR_MESSAGE } from '../../constants';
-import { validEmail, validPassword } from '../../constants/function';
+import {
+  validEmail,
+  validPassword,
+  validConfirmPassword,
+} from '../../constants/function';
+import ConfirmModal from '../../components/admin/ConfirmModal.vue';
 import {
   ICON_LOGIN,
   EYE_DISABLE,
@@ -220,6 +369,7 @@ import {
 } from '../../constants/image.js';
 export default {
   name: 'Login',
+  components: { ConfirmModal },
   created() {
     this.GOOGLE = GOOGLE;
     this.EYE_DISABLE = EYE_DISABLE;
@@ -234,33 +384,148 @@ export default {
       this.syntaxEmail = false;
       this.$refs.inputEmail.classList.remove('border-red-500');
     },
+    inputEmail() {
+      this.emptyInputEmail = false;
+      this.syntaxInputEmail = false;
+      this.$refs.refInputEmail.classList.remove('border-red-500');
+    },
+    inputOTP() {
+      this.emptyInputOTP = false;
+      this.syntaxInputOTP = false;
+      this.$refs.codeOTP.classList.remove('border-red-500');
+    },
     password() {
       this.emptyPassword = false;
       this.syntaxPassword = false;
       this.$refs.inputPassword.classList.remove('border-red-500');
     },
+    changePassword() {
+      this.emptyChangePassword = false;
+      this.syntaxChangePassword = false;
+      this.$refs.password.classList.remove('border-red-500');
+    },
+    confirmPassword() {
+      this.syntaxConfirmPassword = false;
+      this.emptyConfirmPassword = false;
+      this.$refs.confirmPassword.classList.remove('border-red-500');
+    },
   },
   data() {
     return {
+      inputEmail: '',
+      inputOTP: '',
       email: '',
       password: '',
+      changePassword: '',
+      confirmPassword: '',
+      sendedOTP: '123',
       isSubmit: false,
       emptyEmail: false,
+      emptyInputEmail: false,
+      emptyInputOTP: false,
       emptyPassword: false,
+      emptyChangePassword: false,
+      emptyConfirmPassword: false,
       syntaxEmail: false,
+      syntaxInputEmail: false,
+      syntaxInputOTP: false,
       syntaxPassword: false,
+      syntaxChangePassword: false,
+      syntaxConfirmPassword: false,
       focusedEmail: false,
       ERROR_MESSAGE: {
+        emptyOTP: ERROR_MESSAGE.OTP_EMPTY,
         emptyEmail: ERROR_MESSAGE.EMAIL_EMPTY,
         emptyPassword: ERROR_MESSAGE.PASSWORD_EMPTY,
+        emptyConfirmPassword: ERROR_MESSAGE.CONFIRM_PASSWORD_EMPTY,
+        wrongOTP: ERROR_MESSAGE.OTP_SYNTAX,
         wrongEmail: ERROR_MESSAGE.EMAIL_SYNTAX,
         wrongPassword: ERROR_MESSAGE.PASSWORD_SYNTAX,
+        wrongConfirmPassword: ERROR_MESSAGE.CONFIRM_PASSWORD_SYNTAX,
       },
       focusedPassword: false,
       showPassword: false,
+      modalForgetPassword: false,
+      modalChangePassword: false,
     };
   },
   methods: {
+    showModalForgetPassword() {
+      this.modalForgetPassword = true;
+    },
+    closeModalForgetPassword() {
+      this.changePassword = '';
+      this.confirmPassword = '';
+      this.modalForgetPassword = false;
+    },
+    sendEmailToChangePassword() {
+      if (this.inputEmail) {
+        this.emptyInputEmail = false;
+        const isValidEmail = validEmail(this.inputEmail);
+        if (isValidEmail) {
+          this.syntaxInputEmail = false;
+          this.$refs.refInputEmail.classList.remove('border-red-500');
+          this.modalChangePassword = true;
+          this.modalForgetPassword = false;
+        } else {
+          this.syntaxInputEmail = true;
+          this.$refs.refInputEmail.classList.add('border-red-500');
+        }
+      } else {
+        this.emptyInputEmail = true;
+        this.$refs.refInputEmail.classList.add('border-red-500');
+      }
+    },
+    closeModalChangePassword() {
+      this.changePassword = '';
+      this.confirmPassword = '';
+      this.modalChangePassword = false;
+      this.modalForgetPassword = true;
+    },
+    saveModalChangePassword() {
+      if (this.changePassword && this.confirmPassword && this.inputOTP) {
+        this.$refs.password.classList.remove('border-red-500');
+        this.$refs.codeOTP.classList.remove('border-red-500');
+        this.$refs.confirmPassword.classList.remove('border-red-500');
+        const isValidPassword = validPassword(this.changePassword);
+        const isValidCofirmPassword = validConfirmPassword(
+          this.changePassword,
+          this.confirmPassword,
+        );
+        if (
+          isValidPassword &&
+          isValidCofirmPassword &&
+          this.sendedOTP == this.inputOTP
+        ) {
+          this.modalChangePassword = false;
+        }
+        if (!isValidPassword) {
+          this.syntaxChangePassword = true;
+          this.$refs.password.classList.add('border-red-500');
+        }
+        if (!isValidCofirmPassword) {
+          this.syntaxConfirmPassword = true;
+          this.$refs.confirmPassword.classList.add('border-red-500');
+        }
+        if (this.sendedOTP != this.inputOTP) {
+          this.syntaxInputOTP = true;
+          this.$refs.codeOTP.classList.add('border-red-500');
+        }
+      } else {
+        if (!this.inputOTP) {
+          this.emptyInputOTP = true;
+          this.$refs.codeOTP.classList.add('border-red-500');
+        }
+        if (!this.changePassword) {
+          this.emptyChangePassword = true;
+          this.$refs.password.classList.add('border-red-500');
+        }
+        if (!this.confirmPassword) {
+          this.emptyConfirmPassword = true;
+          this.$refs.confirmPassword.classList.add('border-red-500');
+        }
+      }
+    },
     validateEmail() {
       const isValidEmail = validEmail(this.email);
       if (this.email.trim() === '' && this.isSubmit) {
@@ -384,9 +649,9 @@ input:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 30px white inset !important;
 }
 
-input::placeholder {
+/* input::placeholder {
   color: #f00;
-}
+} */
 
 span > i {
   height: 100%;

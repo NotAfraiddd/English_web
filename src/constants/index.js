@@ -34,6 +34,8 @@ export const ERROR_MESSAGE = {
     'Password contains at least 1 uppercase, at least 1 number and at least 8 characters',
   CONFIRM_PASSWORD_EMPTY: 'Your confirm password is empty',
   CONFIRM_PASSWORD_SYNTAX: 'Your confirm password is not same password',
+  OTP_EMPTY: 'Your OTP is empty',
+  OTP_SYNTAX: 'Your OTP is not same OTP sended',
 };
 
 export const UI = {

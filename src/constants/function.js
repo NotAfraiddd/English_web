@@ -22,5 +22,5 @@ export const validPassword = (password) => {
 };
 
 export const validConfirmPassword = (password, confirmPassword) => {
-  return password.includes(confirmPassword);
+  return password == confirmPassword;
 };
