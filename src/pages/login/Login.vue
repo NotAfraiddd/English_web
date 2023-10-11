@@ -124,7 +124,12 @@
         class="flex justify-center items-center border mx-10 h-10 leading-10 rounded-lg text-lg font-semibold cursor-pointer hover:opacity-70"
       >
         <img :src="GOOGLE" alt="" srcset="" class="w-7 h-7" />
-        <div class="h-7 leading-7 text-primary_black">Login with Google</div>
+        <div
+          @click="handleLoginGoogle"
+          class="h-7 leading-7 text-primary_black"
+        >
+          Login with Google
+        </div>
       </div>
       <div
         class="mt-2 text-base text-primary_black flex mx-auto justify-center"
@@ -367,6 +372,7 @@ import {
   EYE_ENABLE,
   GOOGLE,
 } from '../../constants/image.js';
+import { googleTokenLogin } from 'vue3-google-login';
 export default {
   name: 'Login',
   components: { ConfirmModal },
@@ -450,6 +456,12 @@ export default {
     };
   },
   methods: {
+    handleLoginGoogle() {
+      googleTokenLogin().then((response) => {
+        console.log('Handle the response', response);
+      });
+    },
+
     showModalForgetPassword() {
       this.modalForgetPassword = true;
     },
