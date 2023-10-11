@@ -318,6 +318,12 @@
           </div>
         </div>
       </div>
+      <div
+        class="cursor-pointer rounded-lg bg-primary w-24 h-8 leading-8 hover:opacity-50 ml-auto mt-5"
+        @click="handleUpdateSocialNetwork"
+      >
+        <span class="text-base text-white">Update</span>
+      </div>
     </div>
   </div>
 </template>
@@ -331,13 +337,14 @@ import {
   USER,
   SOCIAL,
 } from '../../../constants/image';
-import ButtonBack from '../../../components/common/ButtonBack.vue';
+import ButtonBack from '../../../components/common/ButtonBackUser.vue';
 import InputCalendar from '../../../components/common/InputCalendar.vue';
 import ImageUpload from '../../../components/common/ImageUpload.vue';
 import ButtonEdit from '../../../components/common/ButtonEdit.vue';
 import InputGender from '../../../components/common/InputGender.vue';
 import InputBlog from '../../../components/common/InputBlog.vue';
 import InputLevel from '../../../components/common/InputLevel.vue';
+import { notification } from 'ant-design-vue';
 export default {
   name: 'SettingProfile',
   components: {
@@ -358,6 +365,9 @@ export default {
     this.ARROW_LEFT = ARROW_LEFT;
   },
   methods: {
+    handleUpdateSocialNetwork() {
+      notification.success({ message: 'Success!' });
+    },
     isActive(data) {
       const active = data === this.activeKey;
       return active ? 'active' : '';

@@ -46,7 +46,8 @@
       <div
         @mouseenter="isHovered = true"
         @mouseleave="isHovered = false"
-        class="list-menu relative flex items-center justify-between flex-grow cur-pointer"
+        class="relative flex items-center justify-between flex-grow cur-pointer"
+        :class="checkRoute ? 'list-menu custom-hover-effect' : 'list-menu'"
       >
         <div v-if="checkRoute == true" class="flex items-center cursor-pointer">
           <span class="name ml-5 w-48">Nguyen Huynh Chi Bao</span>
@@ -93,6 +94,7 @@
             </div>
           </li>
           <li
+            v-if="!checkRoute"
             @click="handleGoToBlog"
             class="text-base item leading-9 h-9 text-left pl-6 relative"
           >
@@ -102,6 +104,7 @@
             <img :src="LOCK" alt="" srcset="" class="w-full h-full" />
           </div>
           <li
+            v-if="!checkRoute"
             @click="handleGoToMyBlog"
             class="text-base item leading-9 h-9 text-left pl-6"
           >
@@ -109,6 +112,7 @@
           </li>
           <div class="spacer flex flex-growth-1 bg-gray-300 mx-6 my-1" />
           <li
+            v-if="!checkRoute"
             @click="handleGoToSetting"
             class="text-base item leading-9 h-9 text-left pl-6"
           >

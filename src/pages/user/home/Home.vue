@@ -5,7 +5,7 @@
       @clicked="getData"
       :hideProcessBar="true"
       :hideCourseFinished="true"
-      extendClass="grid-cols-user"
+      extendClass="grid-cols-user mt-2"
       extendItemClass="user-course mx-5"
     />
   </div>

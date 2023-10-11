@@ -72,19 +72,15 @@
       </div>
       <div v-if="icon">
         <div
-          :class="[
-            'relative cursor-pointer w-8 pb-2',
-            showOption != null && 'icon-option',
-          ]"
-          @mouseenter="showOptions(item.id)"
-          @mouseout="showOptions"
+          @click.stop="showOptions"
+          :class="['relative cursor-pointer w-8 pb-2 icon-option']"
         >
           <img :src="OPTION_ICON" alt="" srcset="" />
         </div>
         <div
           :class="[
             'w-52 rounded-lg absolute menu-option right-14 bg-white z-10 border',
-            showOption == item.id ? 'block' : 'hidden',
+            showOption ? 'block' : 'hidden',
           ]"
         >
           <div v-for="(item, index) in options" :key="index">
@@ -127,16 +123,17 @@ export default {
     showComment(data) {
       this.$emit('showComment', { data, status: true });
     },
-    showOptions(data) {
-      this.showOption = data;
+    showOptions() {
+      console.log('click nef');
+      this.showOption = true;
     },
     closeOptions() {
-      this.showOption = null;
+      this.showOption = false;
     },
   },
   data() {
     return {
-      showOption: null,
+      showOption: false,
       options: [
         { id: 1, title: 'Delete' },
         { id: 2, title: 'Edit' },

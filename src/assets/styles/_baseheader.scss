@@ -35,6 +35,10 @@
   height: 230px;
   opacity: 1;
 }
+.custom-hover-effect:hover ul {
+  height: 120px !important;
+  opacity: 1;
+}
 
 .item {
   color: #615a5a;

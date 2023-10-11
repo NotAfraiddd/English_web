@@ -202,7 +202,7 @@ import {
   LOCK_COLOR,
   GARBAGE,
 } from '../../../constants/image';
-import ButtonBack from '../../../components/common/ButtonBack.vue';
+import ButtonBack from '../../../components/common/ButtonBackUser.vue';
 import InputCalendar from '../../../components/common/InputCalendar.vue';
 import ImageUpload from '../../../components/common/ImageUpload.vue';
 import ButtonEdit from '../../../components/common/ButtonEdit.vue';

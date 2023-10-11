@@ -26,6 +26,7 @@
       :avatar="true"
       :image="true"
       :react="true"
+      :icon="true"
       @changePath="goToDetail"
       @showComment="handleShowComment"
     />
@@ -67,6 +68,7 @@
           v-model="contentChat"
           @keydown.enter.shift.ctrl.exact.prevent="dropLine"
           @keydown.enter.exact.prevent="handleSendChat"
+          @keydown.delete="handleDeleteKey"
         />
         <div
           ref="receiverNameElement"
@@ -176,11 +178,7 @@ export default {
     this.ICON_LAUGH = ICON_LAUGH;
     this.AVATAR = AVATAR;
   },
-  watch: {
-    receiverName() {
-      this.setPaddingLeft();
-    },
-  },
+  watch: {},
   data() {
     return {
       showComment: false,
@@ -190,6 +188,8 @@ export default {
       receiverName: '',
       userLogin: 1,
       contentChat: '',
+      current: 1,
+      pageSize: 10,
       listComment: [
         {
           id: 1,
@@ -258,16 +258,29 @@ export default {
       ],
     };
   },
-
   methods: {
+    handleDeleteKey(event) {
+      if (event.key === 'Delete' || event.key === 'Backspace') {
+        if (!this.contentChat.trim()) {
+          this.receiverName = '';
+          const chatContent = this.$refs.chatContent;
+          if (chatContent) {
+            chatContent.style.paddingLeft = '0px';
+          }
+        }
+      }
+    },
+
     setPaddingLeft() {
       const receiverNameElement = this.$refs.receiverNameElement;
       const chatContent = this.$refs.chatContent;
       if (receiverNameElement) {
         if (chatContent) {
-          const nameLength = receiverNameElement.clientWidth; // hoặc .clientWidth offsetWidth
-          console.log('Độ dài receiverName:', nameLength);
-          chatContent.style.paddingLeft = `${nameLength + 8}px`; // Thêm 8px
+          const nameLength = receiverNameElement.offsetWidth;
+          chatContent.style.paddingLeft = `${nameLength + 16}px`;
+        } else {
+          this.receiverName = '';
+          chatContent.style.paddingLeft = `0px`;
         }
       }
     },
@@ -279,8 +292,12 @@ export default {
       this.idReply = data.userID;
       if (this.userLogin != this.idReply) {
         this.receiverName = data.name;
+        if (this.receiverName) {
+          this.$nextTick(() => {
+            this.setPaddingLeft();
+          });
+        }
       }
-      // this.contentChat = this.receiverName + ' ' + this.contentChat;
       console.log('=================');
       console.log('this.data', data);
       console.log('this.userLogin', this.userLogin);
@@ -297,6 +314,11 @@ export default {
       this.idReply = data.userID;
       if (this.userLogin != this.idReply) {
         this.receiverName = data.name;
+        if (this.receiverName) {
+          this.$nextTick(() => {
+            this.setPaddingLeft();
+          });
+        }
       }
       console.log('=========222222========');
       console.log('data', data);
