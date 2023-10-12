@@ -1,7 +1,7 @@
 <template lang="">
   <div class="user-side-bar fixed z-10">
     <div
-      class="mt-5 sidebar-title text-2xl font-semibold h-8 flex items-center justify-center"
+      class="mt-6 sidebar-title text-2xl font-semibold h-8 flex items-center justify-center"
     >
       CircleZ
     </div>

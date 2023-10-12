@@ -103,24 +103,5 @@ export default {
 };
 </script>
 <style lang="scss">
-.tox-notifications-container {
-  display: none;
-}
-.title-text {
-  width: 90px;
-  min-width: 90px;
-  line-height: 35px;
-  letter-spacing: 2px;
-  font-weight: 500;
-}
-.transcript,
-.preview-transcript {
-  min-height: 400px;
-}
-
-.preview-transcript {
-  border-radius: 12px;
-  border: 1px solid #eae4e4;
-  box-shadow: -4px 4px 4px 0px rgba(0, 0, 0, 0.25);
-}
+@import '../../assets/styles/editor';
 </style>

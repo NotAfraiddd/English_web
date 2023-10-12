@@ -1,6 +1,6 @@
 <template>
   <div class="mr-5">
-    <ButtonBackUser title="My Blog" :hide-back="true" />
+    <ButtonBackUser title="My Blog" :hide-back="true" @back="goToHome" />
     <div v-if="listBlog.length == 0">
       <div class="mt-2 text-left">No courses yet</div>
       <div class="mt-2 justify-start flex gap-1">
@@ -270,7 +270,9 @@ export default {
         }
       }
     },
-
+    goToHome() {
+      this.$router.push({ name: 'HomeUser' });
+    },
     setPaddingLeft() {
       const receiverNameElement = this.$refs.receiverNameElement;
       const chatContent = this.$refs.chatContent;

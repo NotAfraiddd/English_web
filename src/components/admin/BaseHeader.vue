@@ -6,8 +6,25 @@
     ]"
   >
     <div
+      v-if="!checkRoute"
       class="content-header-left h-20 flex items-center"
-      :class="[!checkRoute && 'invisible content-header-left__user']"
+      :class="[!checkRoute && 'content-header-left__user']"
+    >
+      <div
+        class="flex justify-center items-center cursor-pointer"
+        :class="!showBack && 'invisible'"
+        @click="changeBack"
+        @mouseenter="hoverBack"
+        @mouseleave="resetHover"
+      >
+        <img :src="ARROW_LEFT" alt="" srcset="" class="icon-back mr-3" />
+        <div class="text-xl text-text_back">Back</div>
+      </div>
+    </div>
+    <div
+      v-else
+      class="content-header-left h-20 flex items-center"
+      :class="[!checkRoute && 'content-header-left__user']"
     >
       <div class="flex flex-col items-start w-40">
         <span class="text-primary_black">
@@ -35,12 +52,40 @@
     <div
       class="flex items-center justify-between content-header-right mr-8 right-0 h-20"
     >
-      <div class="h-6 w-6 bell-notify relative">
+      <div class="h-6 w-6 bell-notify relative" @click="handleShowNotify">
         <img :src="BELL" alt="" srcset="" class="mr-2 cursor-pointer h-full" />
         <div
           class="absolute header-notify text-xs bg-red-600 text-center text-white leading-6 h-6 w-6 rounded-full"
         >
           +99
+        </div>
+      </div>
+      <div
+        v-if="showNotify"
+        ref="notifyBox"
+        class="absolute overflow-y-auto z-10 bg-white top-16 right-10 rounded-lg header-notify__list"
+        :class="[!listNotify && 'header-notify__no-notify']"
+      >
+        <div class="text-base mt-3 text-left ml-3 font-semibold">
+          Notifications
+        </div>
+        <div
+          v-for="(item, index) in listNotify"
+          :key="index"
+          class="flex items-center hover:bg-table_border cursor-pointer h-16 header-notify__item"
+          :class="!item.seen ? '' : ' bg-table_border'"
+        >
+          <div class="ml-3 mr-2">
+            <Avatar :imgUrl="item.avatar" class="w-9 ml-3" />
+          </div>
+          <div
+            class="w-4/5 text-left text-base textpr header-notify__item-content"
+          >
+            {{ item.content }}
+          </div>
+          <div v-if="item.seen" class="mr-5">
+            <div class="w-2 h-2 rounded-lg bg-blue-400" />
+          </div>
         </div>
       </div>
       <div
@@ -131,18 +176,25 @@ import {
   AVATAR,
   BELL,
   LOCK,
+  ARROW_LEFT,
 } from '../../constants/image';
 import Avatar from '../common/Avatar.vue';
 import { formatNumber } from '../../constants/function';
 import { notification } from 'ant-design-vue';
 export default {
   created() {
+    this.ARROW_LEFT = ARROW_LEFT;
     this.BELL = BELL;
     this.ARROW_UP = ARROW_UP;
     this.ARROW_DOWN = ARROW_DOWN;
     this.LOCK = LOCK;
     this.AVATAR = AVATAR;
     this.formatNumber = formatNumber;
+    window.addEventListener('scroll', this.handleScroll);
+  },
+  emits: ['back'],
+  unmounted() {
+    window.removeEventListener('scroll', this.handleScroll);
   },
   props: {
     hideMember: { type: Boolean, default: true },
@@ -183,7 +235,10 @@ export default {
       statusBlog: false,
       searchInput: this.searchInputProp,
       isHovered: false,
+      isHoverBack: false,
+      showNotify: false,
       titleInvite: 1,
+      showBack: false,
       data: [
         {
           id: 1,
@@ -207,9 +262,62 @@ export default {
           ],
         },
       ],
+      listNotify: [
+        {
+          id: 1,
+          avatar: AVATAR,
+          content:
+            'Your comment is reported by someone Your comment is reported by someone Your comment is reported by someone Your comment is reported',
+          seen: false,
+          fullName: 'Ngoc Huan',
+        },
+        {
+          id: 2,
+          avatar: AVATAR,
+          content:
+            'Your comment is reported by someone Your comment is reported by someone Your comment is reported by someone Your comment is reported',
+          seen: true,
+          fullName: 'Chi Bao',
+        },
+      ],
     };
   },
   methods: {
+    handleShowNotify() {
+      document.addEventListener('click', this.handleDocumentClick);
+    },
+    handleDocumentClick(event) {
+      const notifyBox = this.$refs.notifyBox;
+      const target = event.target;
+      console.log(notifyBox, target);
+      if (notifyBox && !notifyBox.contains(target)) {
+        this.showNotify = false;
+      } else this.showNotify = true;
+    },
+    changeBack() {
+      this.$emit('back');
+    },
+    hoverBack() {
+      this.isHoverBack = true;
+      const imageArrow = document.querySelector('.icon-back');
+      if (this.isHoverBack) {
+        imageArrow.style.transform = 'translateX(-5px) ';
+      }
+    },
+    resetHover() {
+      this.isHoverBack = false;
+      const imageArrow = document.querySelector('.icon-back');
+      if (!this.isHoverBack) {
+        imageArrow.style.transform = 'translateX(0px)';
+      }
+    },
+    handleScroll() {
+      if (window.scrollY >= 10) {
+        this.showBack = true;
+      } else {
+        this.showBack = false;
+      }
+    },
     /**
      *  Check if the route name matches the route being displayed.
      *  @returns {boolean} - Returns true if the route name matches the current route, false otherwise.
