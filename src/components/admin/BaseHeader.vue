@@ -284,15 +284,20 @@ export default {
   },
   methods: {
     handleShowNotify() {
-      document.addEventListener('click', this.handleDocumentClick);
+      if (!this.showNotify) {
+        this.showNotify = true;
+        setTimeout(() => {
+          document.addEventListener('click', this.handleDocumentClick);
+        }, 0);
+      }
     },
     handleDocumentClick(event) {
       const notifyBox = this.$refs.notifyBox;
       const target = event.target;
-      console.log(notifyBox, target);
       if (notifyBox && !notifyBox.contains(target)) {
         this.showNotify = false;
-      } else this.showNotify = true;
+        document.removeEventListener('click', this.handleDocumentClick);
+      }
     },
     changeBack() {
       this.$emit('back');

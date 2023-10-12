@@ -109,7 +109,7 @@
     &__list{
       width: 450px;
       height: fit-content;
-      // min-height: calc(100vh - 20rem);
+      max-height: 40vh;
       animation: fadeIn ease-in 0.3s;
       box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     }
