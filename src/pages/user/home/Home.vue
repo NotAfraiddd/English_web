@@ -156,10 +156,13 @@ export default {
             this.courseObject.subtitle = data.item.subtitle;
             this.modalChooseCourse = data.status;
           }
-        } else
+        } else {
+          const path = formatSpacerIntoHyphen(data.item.title).toLowerCase();
           this.$router.push({
             name: 'Grammar',
+            params: { name: path },
           });
+        }
       } else notification.warn({ message: 'Your level is not yet achieved' });
     },
     goToListening() {

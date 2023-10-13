@@ -78,11 +78,11 @@
         <div
           class="h-10 leading-10 text-primary_black text-left font-semibold text-base"
         >
-          Content
+          Level
         </div>
         <input
           ref="errorInputName"
-          v-model="createContent"
+          v-model="createLevel"
           type="text"
           class="input-type-course border rounded-lg form-control"
           spellcheck="false"
@@ -182,10 +182,10 @@
         <div
           class="h-10 leading-10 text-primary_black text-left font-semibold text-base"
         >
-          Content
+          Level
         </div>
         <input
-          v-model="editContent"
+          v-model="editLevel"
           type="text"
           class="input-type-course border rounded-lg form-control"
           spellcheck="false"
@@ -220,7 +220,7 @@
         >
           <span class="text-base text-yellow-400">Edit</span>
         </div>
-        <div class="flex mt-4">
+        <div class="flex mt-4" v-if="checkLevel != 'All'">
           <div class="flex gap-10">
             <div
               class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
@@ -235,6 +235,13 @@
               <span class="text-base text-white">Reading</span>
             </div>
           </div>
+        </div>
+        <div
+          v-else
+          class="mt-4 cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="goToAll"
+        >
+          <span class="text-base text-white">Go</span>
         </div>
       </div>
     </template>
@@ -278,6 +285,14 @@ export default {
     handleEditUpdate(record) {
       console.log(record);
     },
+    goToAll() {
+      this.$router.push({
+        name: 'CourseGrammar',
+        params: {
+          course: formatSpacerIntoHyphen(this.editNameCourse).toLowerCase(),
+        },
+      });
+    },
     goToListening() {
       this.$router.push({
         name: 'CourseListening',
@@ -299,7 +314,7 @@ export default {
       this.createSubtitle = '';
       this.createColor = '#000000';
       this.createName = '';
-      this.createContent = '';
+      this.createLevel = '';
       this.showModalCreateCourse = false;
     },
     createTypeCourse() {
@@ -308,7 +323,7 @@ export default {
         this.createName &&
         this.createSubtitle &&
         this.createColor &&
-        this.createContent
+        this.createLevel
       ) {
         this.listCourses.push({
           id: this.listCourses.length,
@@ -316,7 +331,7 @@ export default {
           subtitle: this.createSubtitle,
           color: this.createColor,
           name: this.createName,
-          content: this.createContent,
+          level: this.createLevel,
         });
         this.cancelTypeCourse();
       } else {
@@ -379,13 +394,13 @@ export default {
       }
     },
     getData(data) {
-      console.log(data);
       this.editID = data.item.id;
       this.editTitle = data.item.title;
       this.editSubtitle = data.item.subtitle;
       this.editNameCourse = data.item.name;
       this.editColor = data.item.color;
-      this.editContent = data.item.content;
+      this.editLevel = data.item.level;
+      this.checkLevel = data.item.level;
       this.showModalChooseCourse = true;
       this.handleEditColor();
     },
@@ -448,6 +463,7 @@ export default {
   },
   data() {
     return {
+      checkLevel: null,
       showModalChooseCourse: false,
       showModalCreateCourse: false,
       createTitle: '',
@@ -456,13 +472,13 @@ export default {
       createColor: '#000000',
       createColorTemp: '',
       createColorPickerTemp: '',
-      createContent: '',
+      createLevel: '',
       editID: null,
       editTitle: '',
       editSubtitle: '',
       editNameCourse: '',
       editColor: '#000000',
-      editContent: '',
+      editLevel: '',
       editColorTemp: '',
       editColorPickerTemp: null,
       inputSearch: '',
@@ -474,40 +490,46 @@ export default {
         {
           id: 1,
           title: 'Basic Level',
+          level: 'Basic',
           subtitle: 'English for individuals with basic knowledge.',
+          percentages: [{ percentage: 30 }],
           name: 'Basic English Course',
-          content:
-            'In this course, we will learn basic vocabulary, simple reading and listening lessons.',
+          courseFinished: '3/10',
           color: '#0068FF',
-          numReact: 1,
-          numComment: 2,
+          status: 1,
         },
         {
           id: 2,
           title: 'Intermediate Level',
+          level: 'Intermediate',
           subtitle: 'English for individuals with intermediate knowledge.',
+          percentages: [{ percentage: 65 }],
           name: 'Intermediate English Course',
-          content:
-            'In this course, we will learn basic vocabulary, simple reading and listening lessons.',
+          courseFinished: '3/10',
           color: '#AA53EE',
+          status: 0,
         },
         {
           id: 3,
           title: 'Advanced Level',
+          level: 'Advanced',
           subtitle: 'English for individuals with advanced knowledge.',
+          percentages: [{ percentage: 0 }],
           name: 'Advanced English Course',
-          content:
-            'In this course, we will learn basic vocabulary, simple reading and listening lessons.',
+          courseFinished: '0/10',
           color: '#87CF2A',
+          status: 0,
         },
         {
           id: 4,
           title: 'Grammar',
+          level: 'All',
           subtitle: 'English for individuals with basic knowledge.',
+          percentages: [{ percentage: 90 }],
           name: 'Grammar English Course',
-          content:
-            'In this course, we will learn basic vocabulary, simple reading and listening lessons.',
+          courseFinished: '3/10',
           color: '#7C89CE',
+          status: 1,
         },
       ],
     };

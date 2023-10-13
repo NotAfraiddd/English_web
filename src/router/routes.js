@@ -72,7 +72,7 @@ export default [
         component: () => import('../pages/user/course/ListCourseListening.vue'),
       },
       {
-        path: 'course/grammar',
+        path: 'course/:name/grammar',
         name: 'Grammar',
         component: () => import('../pages/user/course/Grammar.vue'),
       },
@@ -87,6 +87,12 @@ export default [
         name: 'MemberDetailCourseListening',
         component: () =>
           import('../pages/admin/course/DetailCourseListening.vue'),
+      },
+      {
+        path: 'course/:course/grammar/detail/:name',
+        name: 'MemberDetailCourseGrammar',
+        component: () =>
+          import('../pages/admin/course/DetailCourseGrammar.vue'),
       },
     ],
   },
@@ -124,6 +130,11 @@ export default [
         path: 'course/:course/reading',
         name: 'CourseReading',
         component: () => import('../pages/admin/course/CourseReading.vue'),
+      },
+      {
+        path: 'course/:course/grammar',
+        name: 'CourseGrammar',
+        component: () => import('../pages/admin/course/CourseGrammar.vue'),
       },
       {
         path: 'course/:course/listening/detail/:name',
