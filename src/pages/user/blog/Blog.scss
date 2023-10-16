@@ -122,3 +122,26 @@ textarea {
     width: fit-content;
   }
 }
+
+// others blog
+.profile-background {
+  height: 150px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  border-radius: 12px;
+}
+
+.detail-blog {
+  &-item {
+    width: 20rem;
+  }
+  &-grid {
+    @media screen and (max-width: 1920px) {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+    }
+    @media screen and (max-width: 1120px) {
+      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)) !important;
+    }
+  }
+}

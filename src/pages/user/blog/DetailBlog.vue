@@ -31,13 +31,11 @@
     </div>
     <div class="border border-primary my-4" />
     <div class="text-lg font-semibold text-left">Other related blogs</div>
-    <div
-      class="grid grid-cols-5 md:grid-cols-2 sm:grid-cols-1 2xl:grid-cols-4 lg:grid-cols-3 detail-blog-grid"
-    >
+    <div class="grid grid-cols-5 detail-blog-grid">
       <div
         v-for="(item, index) in 8"
         :key="index"
-        class="flex flex-col 2xl:w-96 detail-blog-item cursor-pointer hover:opacity-90"
+        class="flex flex-col 2xl:w-80 detail-blog-item cursor-pointer hover:opacity-90"
       >
         <div
           class="profile-background mt-5 hover:opacity-50"
@@ -50,8 +48,107 @@
     </div>
   </div>
   <!-- comment -->
-  <div class="comment fixed bg-white" :class="{ 'menu-visible': showComment }">
-    Nội dung của comment
+  <div
+    class="comment fixed bg-white pt-5 text-primary_black pl-5"
+    :class="{ 'menu-visible': showComment }"
+  >
+    <div class="text-xl font-semibold text-left">12 Comments</div>
+    <div class="text-sm text-left">( Report spam or bad content )</div>
+    <!-- chat -->
+    <div class="mt-5 flex">
+      <figure class="w-9 h-9 m-0">
+        <img :src="AVATAR" alt="" srcset="" class="rounded-full" />
+      </figure>
+      <div class="emoji-panel mx-2 mt-1 cursor-pointer">
+        <div id="emoji-picker">
+          <img :src="ICON_LAUGH" alt="" srcset="" />
+        </div>
+      </div>
+      <div class="c-chat__emoji"><Emoji /></div>
+      <textarea
+        class="c-chat__input-chat text-base w-full mr-2 pr-3 border-b flex items-center relative"
+        spellcheck="false"
+        placeholder="Enter something..."
+        ref="chatContent"
+        v-model="contentChat"
+        @keydown.enter.shift.ctrl.exact.prevent="dropLine"
+        @keydown.enter.exact.prevent="handleSendChat"
+        @keydown.delete="handleDeleteKey"
+      />
+      <div
+        ref="receiverNameElement"
+        class="absolute left-20 text-primary c-chat__input-name"
+      >
+        {{ receiverName }}
+      </div>
+    </div>
+    <div v-for="(item, index) in listComment" :key="index" class="mr-3">
+      <!-- comment first -->
+      <div class="flex mt-6">
+        <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
+        <div
+          class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 w-full"
+        >
+          <div class="font-semibold">{{ item.name }}</div>
+          <div class="text-left">{{ item.content }}</div>
+          <div class="flex w-24 justify-between flex-wrap gap-2">
+            <div class="flex justify-center items-center cursor-pointer">
+              <div @click="handleClickReactReply(item)">
+                <img
+                  :src="item.numReact > 0 ? HEART : HEART_DEFAULT"
+                  alt=""
+                  srcset=""
+                  class="w-5 h-4"
+                />
+              </div>
+              <div class="h-5 w-5 leading-5 text-primary_black">
+                {{ item.numReact }}
+              </div>
+            </div>
+            <div
+              class="flex justify-center items-center cursor-pointer"
+              @click="replyComment(item)"
+            >
+              <img :src="CHAT" alt="" srcset="" class="w-5 h-4" />
+              <div class="h-5 w-5 leading-5 text-primary_black">
+                {{ item.numComment }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- reply comment -->
+      <div class="flex mt-6 ml-12" v-for="i in item.replyComments" :key="i.id">
+        <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
+        <div
+          class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 w-full"
+        >
+          <div class="font-semibold">{{ i.name }}</div>
+          <div class="text-left">{{ i.content }}</div>
+          <div class="flex gap-4 justify-between flex-wrap">
+            <div class="flex justify-center items-center cursor-pointer">
+              <div @click="handleClickReactReply(i)">
+                <img
+                  :src="i.numReact > 0 ? HEART : HEART_DEFAULT"
+                  alt=""
+                  srcset=""
+                  class="w-5 h-4"
+                />
+              </div>
+              <div class="h-5 w-5 leading-5 text-primary_black">
+                {{ i.numReact }}
+              </div>
+            </div>
+            <div
+              class="flex justify-center items-center cursor-pointer"
+              @click="replyCommentReply(i)"
+            >
+              <img :src="CHAT" alt="" srcset="" class="w-5 h-4" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <div
     class="overlay fixed"
@@ -65,14 +162,17 @@ import {
   TITLE,
   HEART,
   HEART_DEFAULT,
+  ICON_LAUGH,
   CHAT,
   LISTENING,
 } from '../../../constants/image';
+import Emoji from './Emoji.vue';
 
 export default {
   name: 'DetailBlog',
-  components: {},
+  components: { Emoji },
   created() {
+    this.ICON_LAUGH = ICON_LAUGH;
     this.LISTENING = LISTENING;
     this.CHAT = CHAT;
     this.HEART = HEART;
@@ -80,12 +180,49 @@ export default {
     this.AVATAR = AVATAR;
     this.TITLE = TITLE;
     this.removeBackslashes();
+    this.idUserBlog = this.$route.params.id;
   },
   data() {
     return {
       showComment: false,
       react: 1,
       comment: 1,
+      contentChat: '',
+      idUserBlog: null,
+      idReply: null,
+      senderName: '',
+      receiverName: '',
+      userLogin: 1,
+      listComment: [
+        {
+          id: 1,
+          userID: 1,
+          name: 'Chi Bao',
+          avatar: AVATAR,
+          content:
+            ' Great !!! Your post is good. I will try something like you wrote',
+          numReact: 1,
+          numComment: 2,
+          replyComments: [
+            {
+              id: 1,
+              userID: 2,
+              name: 'Ngoc Huan',
+              avatar: AVATAR,
+              content: ' Sure 😕',
+              numReact: 10,
+            },
+            {
+              id: 2,
+              userID: 1,
+              name: 'Chi Bao',
+              avatar: AVATAR,
+              content: 'Great !!!',
+              numReact: 0,
+            },
+          ],
+        },
+      ],
       content: `<div>When you picture mountain climbers scaling Mount Everest, what probably comes to mind are teams of climbers with Sherpa guides leading them to the summit, equipped with oxygen masks, supplies and tents. And in most cases you'd be right, as 97 per cent of climbers use oxygen to ascend to Everest's summit at 8,850 metres above sea level. The thin air at high altitudes makes most people breathless at 3,500 metres, and the vast majority of climbers use oxygen past 7,000 metres. A typical climbing group will have 8–15 people in it, with an almost equal number of guides, and they'll spend weeks to get to the top after reaching Base Camp.
 But ultra-distance and mountain runner Kilian Jornet Burgada ascended the mountain in May 2017 alone, without an oxygen mask or fixed ropes for climbing.
 Oh, and he did it in 26 hours.
@@ -124,6 +261,66 @@ It would take a book to list all the races and awards he's won and the mountains
     handleClickReact() {
       this.react++;
     },
+    handleDeleteKey(event) {
+      if (event.key === 'Delete' || event.key === 'Backspace') {
+        if (!this.contentChat.trim()) {
+          this.receiverName = '';
+          const chatContent = this.$refs.chatContent;
+          if (chatContent) {
+            chatContent.style.paddingLeft = '0px';
+          }
+        }
+      }
+    },
+    handleClickReactReply(data) {
+      data.numReact += 1;
+    },
+    setPaddingLeft() {
+      const receiverNameElement = this.$refs.receiverNameElement;
+      const chatContent = this.$refs.chatContent;
+      if (receiverNameElement) {
+        if (chatContent) {
+          const nameLength = receiverNameElement.offsetWidth;
+          chatContent.style.paddingLeft = `${nameLength + 16}px`;
+        } else {
+          this.receiverName = '';
+          chatContent.style.paddingLeft = `0px`;
+        }
+      }
+    },
+    replyComment(data) {
+      this.idReply = data.userID;
+      if (this.userLogin != this.idReply) {
+        console.log('data', data);
+        this.receiverName = data.name;
+        if (this.receiverName) {
+          this.$nextTick(() => {
+            this.setPaddingLeft();
+          });
+        }
+      }
+    },
+    replyCommentReply(data) {
+      this.idReply = data.userID;
+      if (this.userLogin != this.idReply) {
+        console.log('data', data);
+        this.receiverName = data.name;
+        if (this.receiverName) {
+          this.$nextTick(() => {
+            this.setPaddingLeft();
+          });
+        }
+      }
+    },
+    dropLine() {
+      this.$refs.chatContent.value += '\n';
+    },
+    handleSendChat(e) {
+      !e.isComposing && this.sendChat(e.target.value);
+    },
+    sendChat(data) {
+      console.log(data);
+    },
     handleShowComment() {
       this.showComment = true;
     },
@@ -135,56 +332,5 @@ It would take a book to list all the races and awards he's won and the mountains
 </script>
 
 <style lang="scss" scoped>
-.detail-blog {
-  &-grid {
-    @media screen and (max-width: 639px) {
-      grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
-      column-gap: 8px !important;
-    }
-  }
-  &-item {
-    width: 18rem;
-    @media screen and (max-width: 767px) {
-      width: 100%;
-    }
-  }
-}
-.profile-background {
-  height: 150px;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  border-radius: 12px;
-}
-
-.overlay {
-  background-color: rgb(170 170 170 / 40%);
-  top: 0;
-  left: 100%;
-  width: 100%;
-  height: 100%;
-  z-index: 1111;
-  opacity: 0.5;
-  transition: opacity 0.5s ease-in-out, left 0.5s ease-in-out;
-}
-
-.overlay-visible {
-  opacity: 1;
-  left: 0;
-}
-
-.comment {
-  transform: translateX(100%);
-  transition: transform 0.3s ease-in-out;
-  width: 524px;
-  height: 100vh;
-  right: -512px;
-  top: 0;
-  z-index: 9997;
-}
-
-.menu-visible {
-  transform: translateX(0);
-  right: 0;
-}
+@import './Blog.scss';
 </style>

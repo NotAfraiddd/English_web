@@ -300,17 +300,10 @@ export default {
           });
         }
       }
-      console.log('=================');
-      console.log('this.data', data);
-      console.log('this.userLogin', this.userLogin);
-      console.log('this.idReply', this.idReply);
-      console.log('this.receiverName', this.receiverName);
-      console.log('=================');
     },
 
     handleClickReactReply(data) {
       data.numReact += 1;
-      console.log('handleClickReact');
     },
     replyCommentReply(data) {
       this.idReply = data.userID;
@@ -322,12 +315,6 @@ export default {
           });
         }
       }
-      console.log('=========222222========');
-      console.log('data', data);
-      console.log('this.userLogin', this.userLogin);
-      console.log('data reply', this.idReply);
-      console.log('this.receiverName', this.receiverName);
-      console.log('=========222222========');
     },
     /** * Line up in chat input */
     dropLine() {
