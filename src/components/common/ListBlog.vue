@@ -51,7 +51,7 @@
         </div>
         <div
           class="flex justify-center items-center cursor-pointer"
-          @click="showComment(item)"
+          @click.stop="showComment(item)"
         >
           <img :src="CHAT" alt="" srcset="" class="w-5 h-4" />
           <div class="h-5 w-5 leading-5 text-primary_black">
@@ -72,15 +72,15 @@
       </div>
       <div v-if="icon">
         <div
-          @click.stop="showOptions"
+          @click.stop="showOptions(item.id)"
           :class="['relative cursor-pointer w-8 pb-2 icon-option']"
         >
           <img :src="OPTION_ICON" alt="" srcset="" />
         </div>
         <div
           :class="[
-            'w-52 rounded-lg absolute menu-option right-14 bg-white z-10 border',
-            showOption ? 'block' : 'hidden',
+            'w-32 rounded-lg absolute menu-option right-14 bg-white border',
+            showOption && activeId === item.id ? 'block' : 'hidden',
           ]"
         >
           <div v-for="(item, index) in options" :key="index">
@@ -123,9 +123,9 @@ export default {
     showComment(data) {
       this.$emit('showComment', { data, status: true });
     },
-    showOptions() {
-      console.log('click nef');
-      this.showOption = true;
+    showOptions(data) {
+      this.activeId = data;
+      this.showOption = !this.showOption;
     },
     closeOptions() {
       this.showOption = false;
@@ -134,6 +134,7 @@ export default {
   data() {
     return {
       showOption: false,
+      activeId: null,
       options: [
         { id: 1, title: 'Delete' },
         { id: 2, title: 'Edit' },
@@ -147,6 +148,7 @@ export default {
 .menu-option {
   height: fit-content;
   padding: 8px 0;
+  z-index: 1;
 }
 
 .icon-option {

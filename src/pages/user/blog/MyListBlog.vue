@@ -27,6 +27,7 @@
       :avatar="true"
       :image="true"
       :react="true"
+      :icon="true"
       @changePath="goToDetail"
       @showComment="handleShowComment"
     />
@@ -41,21 +42,218 @@
       />
     </div>
   </div>
+  <!-- comment -->
+  <div>
+    <div
+      class="comment fixed bg-white pt-5 text-primary_black pl-5"
+      :class="{ 'menu-visible': showComment }"
+    >
+      <div class="text-xl font-semibold text-left">12 Comments</div>
+      <div class="text-sm text-left">( Report spam or bad content )</div>
+      <!-- chat -->
+      <div class="mt-5 flex">
+        <figure class="w-9 h-9 m-0">
+          <img :src="AVATAR" alt="" srcset="" class="rounded-full" />
+        </figure>
+        <div class="emoji-panel mx-2 mt-1 cursor-pointer">
+          <div id="emoji-picker">
+            <img :src="ICON_LAUGH" alt="" srcset="" />
+          </div>
+        </div>
+        <div class="c-chat__emoji"><Emoji /></div>
+        <textarea
+          class="c-chat__input-chat text-base w-full mr-2 pr-3 border-b flex items-center relative"
+          spellcheck="false"
+          placeholder="Enter something..."
+          ref="chatContent"
+          v-model="contentChat"
+          @keydown.enter.shift.ctrl.exact.prevent="dropLine"
+          @keydown.enter.exact.prevent="handleSendChat"
+          @keydown.delete="handleDeleteKey"
+        />
+        <div
+          ref="receiverNameElement"
+          class="absolute left-24 text-primary c-chat__input-name"
+        >
+          {{ receiverName }}
+        </div>
+      </div>
+      <div v-for="(item, index) in listComment" :key="index" class="mr-3">
+        <!-- comment first -->
+        <div class="flex mt-2">
+          <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
+          <div class="flex flex-col w-full relative">
+            <div
+              class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first"
+            >
+              <div class="font-semibold">{{ item.name }}</div>
+              <div class="text-left mb-1">{{ item.content }}</div>
+              <div class="flex w-24 justify-between flex-wrap gap-2">
+                <div class="flex justify-center items-center cursor-pointer">
+                  <div @click="handleClickReact(item)">
+                    <img
+                      :src="item.numReact > 0 ? HEART : HEART_DEFAULT"
+                      alt=""
+                      srcset=""
+                      class="w-5 h-4"
+                    />
+                  </div>
+                  <div class="h-5 w-5 leading-5 text-primary_black">
+                    {{ item.numReact }}
+                  </div>
+                </div>
+                <div
+                  class="flex justify-center items-center cursor-pointer"
+                  @click="replyComment(item)"
+                >
+                  <img :src="CHAT" alt="" srcset="" class="w-5 h-4" />
+                  <div class="h-5 w-5 leading-5 text-primary_black">
+                    {{ item.numComment }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex justify-between">
+              <div class="text-sm text-left ml-5 mt-1">
+                {{ item.created_at }}
+              </div>
+              <!-- menu option -->
+              <MenuOption :id-prop="item.id" />
+            </div>
+          </div>
+        </div>
+        <!-- reply comment -->
+        <div
+          class="flex mt-2 ml-12"
+          v-for="(i, ind) in item.replyComments"
+          :key="ind"
+        >
+          <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
+          <div class="flex flex-col w-full">
+            <div
+              class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first-2"
+            >
+              <div class="font-semibold">{{ i.name }}</div>
+              <div class="text-left mb-1">
+                <b v-if="i.nameReply" class="text-primary">
+                  {{ i.nameReply }}
+                </b>
+                {{ i.content }}
+              </div>
+              <div class="flex gap-4 justify-between flex-wrap">
+                <div class="flex justify-center items-center cursor-pointer">
+                  <div @click="handleClickReactReply(i)">
+                    <img
+                      :src="i.numReact > 0 ? HEART : HEART_DEFAULT"
+                      alt=""
+                      srcset=""
+                      class="w-5 h-4"
+                    />
+                  </div>
+                  <div class="h-5 w-5 leading-5 text-primary_black">
+                    {{ i.numReact }}
+                  </div>
+                </div>
+                <div
+                  class="flex justify-center items-center cursor-pointer"
+                  @click="replyCommentReply(i, item.replyComments)"
+                >
+                  <img :src="CHAT" alt="" srcset="" class="w-5 h-4" />
+                  <div class="h-5 w-5 leading-5 text-primary_black">
+                    {{ i.numComment }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex justify-between">
+              <div class="text-sm text-left ml-7 mt-1">{{ i.created_at }}</div>
+              <!-- menu option -->
+              <MenuOption :id-prop="i.id" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="overlay fixed"
+      :class="{ 'overlay-visible': showComment }"
+      @click="handleCloseComment"
+    />
+  </div>
 </template>
 <script>
 import ButtonBackUser from '../../../components/common/ButtonBackUser.vue';
 import ListBlog from '../../../components/common/ListBlog.vue';
-import { AVATAR, TITLE } from '../../../constants/image';
+import MenuOption from '../../../components/common/MenuOption.vue';
+import {
+  AVATAR,
+  TITLE,
+  CHAT,
+  HEART,
+  HEART_DEFAULT,
+  ICON_LAUGH,
+} from '../../../constants/image';
+import moment from 'moment';
 
 export default {
   name: 'MemberListBlog',
-  components: { ButtonBackUser, ListBlog },
+  components: { ButtonBackUser, ListBlog, MenuOption },
   created() {
     this.AVATAR = AVATAR;
     this.TITLE = TITLE;
+    this.CHAT = CHAT;
+    this.HEART = HEART;
+    this.HEART_DEFAULT = HEART_DEFAULT;
+    this.ICON_LAUGH = ICON_LAUGH;
   },
   data() {
     return {
+      showComment: false,
+      idUserBlog: null,
+      idReply: null,
+      senderName: '',
+      receiverName: '',
+      userLogin: 1,
+      userNameLogin: 'Khang',
+      contentChat: '',
+      replyComments: [],
+      listComment: [
+        {
+          id: 1,
+          userID: 1,
+          name: 'Chi Bao',
+          avatar: AVATAR,
+          content:
+            ' Great !!! Your post is good. I will try something like you wrote',
+          numReact: 1,
+          numComment: 2,
+          created_at: '20/03/2023 10:43',
+          replyComments: [
+            {
+              id: 1,
+              userID: 2,
+              name: 'Ngoc Huan',
+              avatar: AVATAR,
+              content: ' Sure !!!!!!!!!! 😕',
+              nameReply: '',
+              numReact: 10,
+              numComment: 2,
+              created_at: '20/03/2023 12:43',
+            },
+            {
+              id: 2,
+              userID: 1,
+              name: 'Chi Bao',
+              avatar: AVATAR,
+              content: 'Great !!!',
+              nameReply: '',
+              numReact: 0,
+              numComment: 2,
+              created_at: '20/03/2023 14:43',
+            },
+          ],
+        },
+      ],
       listBlog: [
         {
           id: 1,
@@ -99,6 +297,111 @@ export default {
   },
 
   methods: {
+    handleDeleteKey(event) {
+      if (event.key === 'Delete' || event.key === 'Backspace') {
+        if (!this.contentChat.trim()) {
+          this.receiverName = '';
+          const chatContent = this.$refs.chatContent;
+          if (chatContent) {
+            chatContent.style.paddingLeft = '0px';
+          }
+        }
+      }
+    },
+    setPaddingLeft() {
+      const receiverNameElement = this.$refs.receiverNameElement;
+      const chatContent = this.$refs.chatContent;
+      if (receiverNameElement) {
+        if (chatContent) {
+          const nameLength = receiverNameElement.offsetWidth;
+          chatContent.style.paddingLeft = `${nameLength + 16}px`;
+        } else {
+          this.receiverName = '';
+          chatContent.style.paddingLeft = `0px`;
+        }
+      }
+    },
+    handleClickReact(data) {
+      data.numReact += 1;
+      console.log('handleClickReact');
+    },
+    replyComment(data) {
+      this.idReply = data.userID;
+      if (this.userLogin != this.idReply) {
+        this.receiverName = data.name;
+        if (this.receiverName) {
+          this.$nextTick(() => {
+            this.setPaddingLeft();
+          });
+        }
+      }
+    },
+    handleClickReactReply(data) {
+      data.numReact += 1;
+    },
+    replyCommentReply(data, secondComment) {
+      this.replyComments = secondComment;
+      this.idReply = data.userID;
+      if (this.userLogin != this.idReply) {
+        this.receiverName = data.name;
+        if (this.receiverName) {
+          this.$nextTick(() => {
+            this.setPaddingLeft();
+          });
+        }
+      }
+    },
+    /** * Line up in chat input */
+    dropLine() {
+      this.$refs.chatContent.value += '\n';
+    },
+    handleSendChat(e) {
+      !e.isComposing && this.sendChat(e.target.value);
+    },
+    sendChat(data) {
+      const chatContent = this.$refs.chatContent;
+      if (data) {
+        if (this.receiverName) {
+          const commentDetail = {
+            userID: this.userLogin,
+            name: this.userNameLogin,
+            avatar: AVATAR,
+            nameReply: this.receiverName,
+            content: this.contentChat,
+            numReact: 0,
+            numComment: 0,
+            created_at: moment().format('YYYY/MM/DD HH:mm'),
+          };
+          this.replyComments.push(commentDetail);
+        } else {
+          const commentDetail = {
+            userID: this.userLogin,
+            name: this.userNameLogin,
+            avatar: AVATAR,
+            nameReply: this.receiverName,
+            content: this.contentChat,
+            numReact: 0,
+            numComment: 0,
+            created_at: moment().format('YYYY/MM/DD HH:mm'),
+          };
+          this.listComment.push(commentDetail);
+          this.listComment.reverse();
+        }
+        this.receiverName = '';
+        this.contentChat = '';
+        chatContent.style.paddingLeft = `0px`;
+      }
+    },
+    handleShowComment(data) {
+      this.idUserBlog = data.data.id;
+      console.log('this.idUserBlog', this.idUserBlog);
+      if (data.status) {
+        this.showComment = true;
+      }
+    },
+    handleCloseComment() {
+      this.showComment = false;
+    },
     goToDetail(dataID) {
       this.$router.push({ name: 'DetailBlog', params: { id: dataID } });
     },
@@ -106,4 +409,6 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+@import './Blog.scss';
+</style>
