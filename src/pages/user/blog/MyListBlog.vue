@@ -84,7 +84,7 @@
           <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
           <div class="flex flex-col w-full relative">
             <div
-              class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first"
+              class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first relative"
             >
               <div class="font-semibold">{{ item.name }}</div>
               <div class="text-left mb-1">{{ item.content }}</div>
@@ -113,7 +113,7 @@
                 </div>
               </div>
             </div>
-            <div class="flex justify-between">
+            <div class="flex justify-between relative">
               <div class="text-sm text-left ml-5 mt-1">
                 {{ item.created_at }}
               </div>
@@ -323,7 +323,6 @@ export default {
     },
     handleClickReact(data) {
       data.numReact += 1;
-      console.log('handleClickReact');
     },
     replyComment(data) {
       this.idReply = data.userID;
@@ -370,7 +369,7 @@ export default {
             content: this.contentChat,
             numReact: 0,
             numComment: 0,
-            created_at: moment().format('YYYY/MM/DD HH:mm'),
+            created_at: moment().format('DD/MM/YYYY HH:mm'),
           };
           this.replyComments.push(commentDetail);
         } else {
@@ -382,7 +381,7 @@ export default {
             content: this.contentChat,
             numReact: 0,
             numComment: 0,
-            created_at: moment().format('YYYY/MM/DD HH:mm'),
+            created_at: moment().format('DD/MM/YYYY HH:mm'),
           };
           this.listComment.push(commentDetail);
           this.listComment.reverse();

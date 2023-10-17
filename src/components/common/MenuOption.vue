@@ -1,10 +1,15 @@
 <template>
   <div
     @click.stop="showOptions(id)"
-    :class="['relative cursor-pointer px-2 py-1 icon-option']"
+    :class="['cursor-pointer icon-option']"
     ref="notifyBox"
   >
-    <img :src="OPTION_ICON" alt="" srcset="" />
+    <img
+      :src="OPTION_ICON"
+      alt=""
+      srcset=""
+      class="px-2 py-1 hover:opacity-70"
+    />
   </div>
   <div
     :class="[
@@ -12,10 +17,23 @@
       showOption && activeId === id ? 'block' : 'hidden',
     ]"
   >
-    <div v-for="(item, index) in options" :key="index">
-      <div class="h-7 leading-7 hover:bg-table_border cursor-pointer">
-        {{ item.title }}
-      </div>
+    <div
+      class="h-7 leading-7 hover:bg-table_border cursor-pointer"
+      @click="handleDelete"
+    >
+      Delete
+    </div>
+    <div
+      class="h-7 leading-7 hover:bg-table_border cursor-pointer"
+      @click="handleEdit"
+    >
+      Edit
+    </div>
+    <div
+      class="h-7 leading-7 hover:bg-table_border cursor-pointer"
+      @click="handleReport"
+    >
+      Report
     </div>
   </div>
 </template>
@@ -35,10 +53,6 @@ export default {
       showOption: false,
       activeId: null,
       id: this.idProp,
-      options: [
-        { id: 1, title: 'Delete' },
-        { id: 2, title: 'Edit' },
-      ],
     };
   },
   watch: {
@@ -47,8 +61,13 @@ export default {
     },
   },
   methods: {
+    handleDelete() {
+      console.log('Delete method');
+    },
+    handleEdit() {
+      console.log('Edit method');
+    },
     showOptions(data) {
-      console.log('id ne', data);
       this.activeId = data;
       if (!this.showOption) {
         this.showOption = true;

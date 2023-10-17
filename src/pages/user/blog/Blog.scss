@@ -39,7 +39,7 @@
   opacity: 1;
   left: 0;
 }
-.icon-option{
+.icon-option {
   display: none;
 }
 .comment {
@@ -50,33 +50,22 @@
   right: -512px;
   top: 0;
   z-index: 9997;
-  &-first{
-    &::after{
-      content: "";
-      position: absolute;
-      width: 50px;
-      height: 25px;
-      right: 0px;
-      top: 82%;
-    }
-  }
-  &-first-2{
-    &::after{
-      content: "";
-      position: absolute;
-      width: 50px;
-      height: 25px;
-      right: 10px;
-    }
-  }
   &-first:hover,
-  &-first-2:hover{
+  &-first-2:hover {
     cursor: pointer;
   }
 
   &-first:hover + div > .icon-option,
-  &-first-2:hover + div > .icon-option{
+  &-first-2:hover + div > .icon-option {
     display: block !important;
+    right: 0;
+  }
+
+  // icon-option without hide when hover
+  &-first:hover + .icon-option,
+  .icon-option:hover {
+    display: block !important;
+    right: 0;
   }
 }
 
