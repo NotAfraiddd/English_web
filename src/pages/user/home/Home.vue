@@ -1,4 +1,5 @@
 <template>
+  <Slider />
   <div v-if="listCourses.length != 0">
     <ListTypeCourse
       :data="listCourses"
@@ -56,10 +57,10 @@ import ListTypeCourse from '../../../components/common/ListTypeCourse.vue';
 import { formatSpacerIntoHyphen } from '../../../constants/function';
 import { LEARN } from '../../../constants/image';
 import ButtonBackUser from '../../../components/common/ButtonBackUser.vue';
-
+import Slider from '../../../components/common/Slider.vue';
 export default {
   name: 'HomeUser',
-  components: { ListTypeCourse, ConfirmModal, ButtonBackUser },
+  components: { ListTypeCourse, ConfirmModal, ButtonBackUser, Slider },
   created() {
     this.LEARN = LEARN;
     this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;

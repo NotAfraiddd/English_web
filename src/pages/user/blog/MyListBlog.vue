@@ -124,51 +124,69 @@
         </div>
         <!-- reply comment -->
         <div
-          class="flex mt-2 ml-12"
-          v-for="(i, ind) in item.replyComments"
-          :key="ind"
+          @click="handleShowAllComment"
+          v-if="!showAllComment && item.replyComments.length > 0"
+          class="text-left ml-14 text-primary cursor-pointer"
         >
-          <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
-          <div class="flex flex-col w-full">
-            <div
-              class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first-2"
-            >
-              <div class="font-semibold">{{ i.name }}</div>
-              <div class="text-left mb-1">
-                <b v-if="i.nameReply" class="text-primary">
-                  {{ i.nameReply }}
-                </b>
-                {{ i.content }}
-              </div>
-              <div class="flex gap-4 justify-between flex-wrap">
-                <div class="flex justify-center items-center cursor-pointer">
-                  <div @click="handleClickReactReply(i)">
-                    <img
-                      :src="i.numReact > 0 ? HEART : HEART_DEFAULT"
-                      alt=""
-                      srcset=""
-                      class="w-5 h-4"
-                    />
+          Show {{ item.replyComments.length }} comments
+        </div>
+        <div
+          v-if="showAllComment"
+          @click="handleShowAllComment"
+          class="text-left ml-14 text-primary cursor-pointer"
+        >
+          Collapse comments
+        </div>
+        <div v-if="showAllComment">
+          <div
+            class="flex mt-2 ml-12"
+            v-for="(i, ind) in item.replyComments"
+            :key="ind"
+          >
+            <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
+            <div class="flex flex-col w-full relative">
+              <div
+                class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first-2"
+              >
+                <div class="font-semibold">{{ i.name }}</div>
+                <div class="text-left mb-1">
+                  <b v-if="i.nameReply" class="text-primary">
+                    {{ i.nameReply }}
+                  </b>
+                  {{ i.content }}
+                </div>
+                <div class="flex gap-4 justify-between flex-wrap">
+                  <div class="flex justify-center items-center cursor-pointer">
+                    <div @click="handleClickReactReply(i)">
+                      <img
+                        :src="i.numReact > 0 ? HEART : HEART_DEFAULT"
+                        alt=""
+                        srcset=""
+                        class="w-5 h-4"
+                      />
+                    </div>
+                    <div class="h-5 w-5 leading-5 text-primary_black">
+                      {{ i.numReact }}
+                    </div>
                   </div>
-                  <div class="h-5 w-5 leading-5 text-primary_black">
-                    {{ i.numReact }}
+                  <div
+                    class="flex justify-center items-center cursor-pointer"
+                    @click="replyCommentReply(i, item.replyComments)"
+                  >
+                    <img :src="CHAT" alt="" srcset="" class="w-5 h-4" />
+                    <div class="h-5 w-5 leading-5 text-primary_black">
+                      {{ i.numComment }}
+                    </div>
                   </div>
                 </div>
-                <div
-                  class="flex justify-center items-center cursor-pointer"
-                  @click="replyCommentReply(i, item.replyComments)"
-                >
-                  <img :src="CHAT" alt="" srcset="" class="w-5 h-4" />
-                  <div class="h-5 w-5 leading-5 text-primary_black">
-                    {{ i.numComment }}
-                  </div>
-                </div>
               </div>
-            </div>
-            <div class="flex justify-between">
-              <div class="text-sm text-left ml-7 mt-1">{{ i.created_at }}</div>
-              <!-- menu option -->
-              <MenuOption :id-prop="i.id" />
+              <div class="flex justify-between">
+                <div class="text-sm text-left ml-7 mt-1">
+                  {{ i.created_at }}
+                </div>
+                <!-- menu option -->
+                <MenuOption :id-prop="i.id" />
+              </div>
             </div>
           </div>
         </div>
@@ -216,6 +234,7 @@ export default {
       userLogin: 1,
       userNameLogin: 'Khang',
       contentChat: '',
+      showAllComment: false,
       replyComments: [],
       listComment: [
         {
@@ -297,6 +316,9 @@ export default {
   },
 
   methods: {
+    handleShowAllComment() {
+      this.showAllComment = !this.showAllComment;
+    },
     handleDeleteKey(event) {
       if (event.key === 'Delete' || event.key === 'Backspace') {
         if (!this.contentChat.trim()) {

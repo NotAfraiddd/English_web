@@ -69,6 +69,10 @@
   }
 }
 
+.menu-option {
+  z-index: 1;
+}
+
 .menu-visible {
   transform: translateX(0);
   right: 0;

@@ -42,7 +42,7 @@ export default {
         },
         {
           message: 'Learn',
-          to: '/learn',
+          to: '/list-course',
           iconPath: USER_LEARN,
           activeLinks: [],
         },

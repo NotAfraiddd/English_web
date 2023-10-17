@@ -18,34 +18,24 @@
     ]"
   >
     <div
-      class="h-7 leading-7 hover:bg-table_border cursor-pointer"
-      @click="handleDelete"
-    >
-      Delete
-    </div>
-    <div
-      class="h-7 leading-7 hover:bg-table_border cursor-pointer"
-      @click="handleEdit"
-    >
-      Edit
-    </div>
-    <div
-      class="h-7 leading-7 hover:bg-table_border cursor-pointer"
+      class="hover:bg-table_border cursor-pointer flex px-3 py-1"
       @click="handleReport"
     >
+      <img :src="REPORT" alt="" class="h-6 leading-6 mr-3" />
       Report
     </div>
   </div>
 </template>
 
 <script>
-import { OPTION_ICON } from '../../constants/image';
+import { OPTION_ICON, REPORT } from '../../constants/image';
 
 export default {
   props: {
     idProp: { type: String, default: '' },
   },
   created() {
+    this.REPORT = REPORT;
     this.OPTION_ICON = OPTION_ICON;
   },
   data() {
@@ -61,10 +51,7 @@ export default {
     },
   },
   methods: {
-    handleDelete() {
-      console.log('Delete method');
-    },
-    handleEdit() {
+    handleReport() {
       console.log('Edit method');
     },
     showOptions(data) {
