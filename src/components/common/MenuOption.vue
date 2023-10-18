@@ -32,7 +32,7 @@ import { OPTION_ICON, REPORT } from '../../constants/image';
 
 export default {
   props: {
-    idProp: { type: String, default: '' },
+    idProp: { type: Number, default: null },
   },
   created() {
     this.REPORT = REPORT;

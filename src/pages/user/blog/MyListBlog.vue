@@ -1,6 +1,6 @@
 <template>
   <div class="mr-5">
-    <ButtonBackUser title="List Blog" :hide-back="true" />
+    <ButtonBackUser title="Blog" :hide-back="true" />
     <div v-if="listBlog.length == 0">
       <div class="mt-2 text-left">No courses yet</div>
       <div class="mt-2 justify-start flex gap-1">
@@ -125,19 +125,19 @@
         <!-- reply comment -->
         <div
           @click="handleShowAllComment"
-          v-if="!showAllComment && item.replyComments.length > 0"
+          v-if="!showAllComment && item.replyComments"
           class="text-left ml-14 text-primary cursor-pointer"
         >
           Show {{ item.replyComments.length }} comments
         </div>
         <div
-          v-if="showAllComment"
+          v-if="showAllComment && item.replyComments"
           @click="handleShowAllComment"
           class="text-left ml-14 text-primary cursor-pointer"
         >
-          Collapse comments
+          Collapse {{ item.replyComments.length }} comments
         </div>
-        <div v-if="showAllComment">
+        <div v-if="showAllComment && item.replyComments">
           <div
             class="flex mt-2 ml-12"
             v-for="(i, ind) in item.replyComments"
@@ -228,10 +228,10 @@ export default {
     return {
       showComment: false,
       idUserBlog: null,
-      idReply: null,
+      idCommentFirst: null,
       senderName: '',
       receiverName: '',
-      userLogin: 1,
+      userLogin: 3,
       userNameLogin: 'Khang',
       contentChat: '',
       showAllComment: false,
@@ -347,14 +347,11 @@ export default {
       data.numReact += 1;
     },
     replyComment(data) {
-      this.idReply = data.userID;
-      if (this.userLogin != this.idReply) {
-        this.receiverName = data.name;
-        if (this.receiverName) {
-          this.$nextTick(() => {
-            this.setPaddingLeft();
-          });
-        }
+      this.receiverName = data.name;
+      if (this.receiverName) {
+        this.$nextTick(() => {
+          this.setPaddingLeft();
+        });
       }
     },
     handleClickReactReply(data) {
@@ -362,14 +359,11 @@ export default {
     },
     replyCommentReply(data, secondComment) {
       this.replyComments = secondComment;
-      this.idReply = data.userID;
-      if (this.userLogin != this.idReply) {
-        this.receiverName = data.name;
-        if (this.receiverName) {
-          this.$nextTick(() => {
-            this.setPaddingLeft();
-          });
-        }
+      this.receiverName = data.name;
+      if (this.receiverName) {
+        this.$nextTick(() => {
+          this.setPaddingLeft();
+        });
       }
     },
     /** * Line up in chat input */
@@ -415,7 +409,6 @@ export default {
     },
     handleShowComment(data) {
       this.idUserBlog = data.data.id;
-      console.log('this.idUserBlog', this.idUserBlog);
       if (data.status) {
         this.showComment = true;
       }
