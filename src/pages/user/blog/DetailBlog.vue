@@ -77,73 +77,119 @@
       />
       <div
         ref="receiverNameElement"
-        class="absolute left-20 text-primary c-chat__input-name"
+        class="absolute left-24 text-primary c-chat__input-name"
       >
         {{ receiverName }}
       </div>
     </div>
     <div v-for="(item, index) in listComment" :key="index" class="mr-3">
       <!-- comment first -->
-      <div class="flex mt-6">
+      <div class="flex mt-2">
         <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
-        <div
-          class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 w-full"
-        >
-          <div class="font-semibold">{{ item.name }}</div>
-          <div class="text-left">{{ item.content }}</div>
-          <div class="flex w-24 justify-between flex-wrap gap-2">
-            <div class="flex justify-center items-center cursor-pointer">
-              <div @click="handleClickReactReply(item)">
-                <img
-                  :src="item.numReact > 0 ? HEART : HEART_DEFAULT"
-                  alt=""
-                  srcset=""
-                  class="w-5 h-4"
-                />
+        <div class="flex flex-col w-full relative">
+          <div
+            class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first relative"
+          >
+            <div class="font-semibold">{{ item.name }}</div>
+            <div class="text-left mb-1">{{ item.content }}</div>
+            <div class="flex w-24 justify-between flex-wrap gap-2">
+              <div class="flex justify-center items-center cursor-pointer">
+                <div @click="handleClickReact(item)">
+                  <img
+                    :src="item.numReact > 0 ? HEART : HEART_DEFAULT"
+                    alt=""
+                    srcset=""
+                    class="w-5 h-4"
+                  />
+                </div>
+                <div class="h-5 w-5 leading-5 text-primary_black">
+                  {{ item.numReact }}
+                </div>
               </div>
-              <div class="h-5 w-5 leading-5 text-primary_black">
-                {{ item.numReact }}
+              <div
+                class="flex justify-center items-center cursor-pointer"
+                @click="replyComment(item)"
+              >
+                <img :src="CHAT" alt="" srcset="" class="w-5 h-4" />
+                <div class="h-5 w-5 leading-5 text-primary_black">
+                  {{ item.numComment }}
+                </div>
               </div>
             </div>
-            <div
-              class="flex justify-center items-center cursor-pointer"
-              @click="replyComment(item)"
-            >
-              <img :src="CHAT" alt="" srcset="" class="w-5 h-4" />
-              <div class="h-5 w-5 leading-5 text-primary_black">
-                {{ item.numComment }}
-              </div>
+          </div>
+          <div class="flex justify-between relative">
+            <div class="text-sm text-left ml-5 mt-1">
+              {{ item.created_at }}
             </div>
+            <!-- menu option -->
+            <MenuOption :id-prop="item.id" />
           </div>
         </div>
       </div>
       <!-- reply comment -->
-      <div class="flex mt-6 ml-12" v-for="i in item.replyComments" :key="i.id">
-        <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
+      <div
+        @click="handleShowAllComment"
+        v-if="!showAllComment && item.replyComments"
+        class="text-left ml-14 text-primary cursor-pointer"
+      >
+        Show {{ item.replyComments.length }} comments
+      </div>
+      <div
+        v-if="showAllComment && item.replyComments"
+        @click="handleShowAllComment"
+        class="text-left ml-14 text-primary cursor-pointer"
+      >
+        Collapse {{ item.replyComments.length }} comments
+      </div>
+      <div v-if="showAllComment && item.replyComments">
         <div
-          class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 w-full"
+          class="flex mt-2 ml-12"
+          v-for="(i, ind) in item.replyComments"
+          :key="ind"
         >
-          <div class="font-semibold">{{ i.name }}</div>
-          <div class="text-left">{{ i.content }}</div>
-          <div class="flex gap-4 justify-between flex-wrap">
-            <div class="flex justify-center items-center cursor-pointer">
-              <div @click="handleClickReactReply(i)">
-                <img
-                  :src="i.numReact > 0 ? HEART : HEART_DEFAULT"
-                  alt=""
-                  srcset=""
-                  class="w-5 h-4"
-                />
+          <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
+          <div class="flex flex-col w-full relative">
+            <div
+              class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first-2"
+            >
+              <div class="font-semibold">{{ i.name }}</div>
+              <div class="text-left mb-1">
+                <b v-if="i.nameReply" class="text-primary">
+                  {{ i.nameReply }}
+                </b>
+                {{ i.content }}
               </div>
-              <div class="h-5 w-5 leading-5 text-primary_black">
-                {{ i.numReact }}
+              <div class="flex gap-4 justify-between flex-wrap">
+                <div class="flex justify-center items-center cursor-pointer">
+                  <div @click="handleClickReactReply(i)">
+                    <img
+                      :src="i.numReact > 0 ? HEART : HEART_DEFAULT"
+                      alt=""
+                      srcset=""
+                      class="w-5 h-4"
+                    />
+                  </div>
+                  <div class="h-5 w-5 leading-5 text-primary_black">
+                    {{ i.numReact }}
+                  </div>
+                </div>
+                <div
+                  class="flex justify-center items-center cursor-pointer"
+                  @click="replyCommentReply(i, item.replyComments)"
+                >
+                  <img :src="CHAT" alt="" srcset="" class="w-5 h-4" />
+                  <div class="h-5 w-5 leading-5 text-primary_black">
+                    {{ i.numComment }}
+                  </div>
+                </div>
               </div>
             </div>
-            <div
-              class="flex justify-center items-center cursor-pointer"
-              @click="replyCommentReply(i)"
-            >
-              <img :src="CHAT" alt="" srcset="" class="w-5 h-4" />
+            <div class="flex justify-between">
+              <div class="text-sm text-left ml-7 mt-1">
+                {{ i.created_at }}
+              </div>
+              <!-- menu option -->
+              <MenuOption :id-prop="i.id" />
             </div>
           </div>
         </div>
@@ -167,10 +213,12 @@ import {
   LISTENING,
 } from '../../../constants/image';
 import Emoji from './Emoji.vue';
+import moment from 'moment';
+import MenuOption from '../../../components/common/MenuOption.vue';
 
 export default {
   name: 'DetailBlog',
-  components: { Emoji },
+  components: { Emoji, MenuOption },
   created() {
     this.ICON_LAUGH = ICON_LAUGH;
     this.LISTENING = LISTENING;
@@ -185,14 +233,18 @@ export default {
   data() {
     return {
       showComment: false,
+      idUserBlog: null,
+      idCommentFirst: null,
       react: 1,
       comment: 1,
       contentChat: '',
-      idUserBlog: null,
       idReply: null,
       senderName: '',
       receiverName: '',
-      userLogin: 1,
+      userLogin: 3,
+      userNameLogin: 'Khang',
+      showAllComment: false,
+      replyComments: [],
       listComment: [
         {
           id: 1,
@@ -203,14 +255,18 @@ export default {
             ' Great !!! Your post is good. I will try something like you wrote',
           numReact: 1,
           numComment: 2,
+          created_at: '20/03/2023 10:43',
           replyComments: [
             {
               id: 1,
               userID: 2,
               name: 'Ngoc Huan',
               avatar: AVATAR,
-              content: ' Sure 😕',
+              content: ' Sure !!!!!!!!!! 😕',
+              nameReply: '',
               numReact: 10,
+              numComment: 2,
+              created_at: '20/03/2023 12:43',
             },
             {
               id: 2,
@@ -218,7 +274,10 @@ export default {
               name: 'Chi Bao',
               avatar: AVATAR,
               content: 'Great !!!',
+              nameReply: '',
               numReact: 0,
+              numComment: 2,
+              created_at: '20/03/2023 14:43',
             },
           ],
         },
@@ -252,6 +311,9 @@ It would take a book to list all the races and awards he's won and the mountains
   },
 
   methods: {
+    handleShowAllComment() {
+      this.showAllComment = !this.showAllComment;
+    },
     goToDetail(data) {
       // this.$router.push({ name: 'DetailBlogPending', params: { id: dataID } });
     },
@@ -289,27 +351,20 @@ It would take a book to list all the races and awards he's won and the mountains
       }
     },
     replyComment(data) {
-      this.idReply = data.userID;
-      if (this.userLogin != this.idReply) {
-        console.log('data', data);
-        this.receiverName = data.name;
-        if (this.receiverName) {
-          this.$nextTick(() => {
-            this.setPaddingLeft();
-          });
-        }
+      this.receiverName = data.name;
+      if (this.receiverName) {
+        this.$nextTick(() => {
+          this.setPaddingLeft();
+        });
       }
     },
-    replyCommentReply(data) {
-      this.idReply = data.userID;
-      if (this.userLogin != this.idReply) {
-        console.log('data', data);
-        this.receiverName = data.name;
-        if (this.receiverName) {
-          this.$nextTick(() => {
-            this.setPaddingLeft();
-          });
-        }
+    replyCommentReply(data, secondComment) {
+      this.replyComments = secondComment;
+      this.receiverName = data.name;
+      if (this.receiverName) {
+        this.$nextTick(() => {
+          this.setPaddingLeft();
+        });
       }
     },
     dropLine() {
@@ -319,7 +374,38 @@ It would take a book to list all the races and awards he's won and the mountains
       !e.isComposing && this.sendChat(e.target.value);
     },
     sendChat(data) {
-      console.log(data);
+      const chatContent = this.$refs.chatContent;
+      if (data) {
+        if (this.receiverName) {
+          const commentDetail = {
+            userID: this.userLogin,
+            name: this.userNameLogin,
+            avatar: AVATAR,
+            nameReply: this.receiverName,
+            content: this.contentChat,
+            numReact: 0,
+            numComment: 0,
+            created_at: moment().format('DD/MM/YYYY HH:mm'),
+          };
+          this.replyComments.push(commentDetail);
+        } else {
+          const commentDetail = {
+            userID: this.userLogin,
+            name: this.userNameLogin,
+            avatar: AVATAR,
+            nameReply: this.receiverName,
+            content: this.contentChat,
+            numReact: 0,
+            numComment: 0,
+            created_at: moment().format('DD/MM/YYYY HH:mm'),
+          };
+          this.listComment.push(commentDetail);
+          this.listComment.reverse();
+        }
+        this.receiverName = '';
+        this.contentChat = '';
+        chatContent.style.paddingLeft = `0px`;
+      }
     },
     handleShowComment() {
       this.showComment = true;

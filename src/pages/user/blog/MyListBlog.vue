@@ -212,7 +212,6 @@ import {
   ICON_LAUGH,
 } from '../../../constants/image';
 import moment from 'moment';
-
 export default {
   name: 'MemberListBlog',
   components: { ButtonBackUser, ListBlog, MenuOption },
