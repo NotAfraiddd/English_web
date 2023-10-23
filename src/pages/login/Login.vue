@@ -374,6 +374,7 @@ import {
 } from '../../constants/image.js';
 import { googleTokenLogin } from 'vue3-google-login';
 import authUser from '../../apis/auth';
+
 export default {
   name: 'Login',
   components: { ConfirmModal },
