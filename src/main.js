@@ -8,7 +8,13 @@ import 'ant-design-vue/dist/antd.css';
 import Antd from 'ant-design-vue';
 import mitt from 'mitt';
 import vue3GoogleLogin from 'vue3-google-login';
+import VueSocketIO from 'vue-3-socket.io';
+import socketio from 'socket.io-client';
+
 const emitter = mitt();
+var socketIOLocation = process.env.MIX_BASE_SOCKETIO_URL;
+
+const SocketInstance = socketio.connect(socketIOLocation);
 
 const app = createApp(App)
   .component('confirm-modal', ConfirmModal)
@@ -18,7 +24,13 @@ const app = createApp(App)
     clientId:
       '50385097493-mcao4pi81kmo58or518pd6rdk0kkppp8.apps.googleusercontent.com',
   })
-  .use(Antd);
+  .use(Antd)
+  .use(
+    new VueSocketIO({
+      connection: SocketInstance,
+      debug: true,
+    }),
+  );
 
 app.config.globalProperties.emitter = emitter;
 store.emitter = emitter;

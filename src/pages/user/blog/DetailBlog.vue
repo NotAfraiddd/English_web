@@ -309,7 +309,16 @@ It would take a book to list all the races and awards he's won and the mountains
       ],
     };
   },
-
+  mounted() {
+    this.sockets.subscribe('signal', (data) => {
+      console.log('receiver', data);
+    });
+    const data = {
+      room: 1,
+      kind: 1,
+    };
+    this.$socket.emit('joinRoom', data);
+  },
   methods: {
     handleShowAllComment() {
       this.showAllComment = !this.showAllComment;
@@ -374,6 +383,13 @@ It would take a book to list all the races and awards he's won and the mountains
       !e.isComposing && this.sendChat(e.target.value);
     },
     sendChat(data) {
+      // join socket
+      const dataSocket = {
+        room: 1,
+        kind: 1,
+      };
+      this.$socket.emit('joinRoom', dataSocket);
+      //
       const chatContent = this.$refs.chatContent;
       if (data) {
         if (this.receiverName) {
@@ -387,6 +403,12 @@ It would take a book to list all the races and awards he's won and the mountains
             numComment: 0,
             created_at: moment().format('DD/MM/YYYY HH:mm'),
           };
+          const comment = {
+            data: commentDetail,
+            kind: 1,
+          };
+          console.log('comment', comment);
+          this.$socket.emit('sendSignal', comment);
           this.replyComments.push(commentDetail);
         } else {
           const commentDetail = {
@@ -399,6 +421,11 @@ It would take a book to list all the races and awards he's won and the mountains
             numComment: 0,
             created_at: moment().format('DD/MM/YYYY HH:mm'),
           };
+          const comment = {
+            data: commentDetail,
+            kind: 1,
+          };
+          this.$socket.emit('sendSignal', comment);
           this.listComment.push(commentDetail);
           this.listComment.reverse();
         }
