@@ -373,6 +373,7 @@ import {
   GOOGLE,
 } from '../../constants/image.js';
 import { googleTokenLogin } from 'vue3-google-login';
+import authUser from '../../apis/auth';
 export default {
   name: 'Login',
   components: { ConfirmModal },
@@ -546,7 +547,7 @@ export default {
       } else if (!isValidEmail && this.isSubmit) {
         this.$refs.inputEmail.classList.add('border-red-500');
         this.syntaxEmail = true;
-      } else return;
+      } else return true;
     },
     validatePassword() {
       const isValidPassword = validPassword(this.password);
@@ -556,7 +557,7 @@ export default {
       } else if (!isValidPassword && this.isSubmit) {
         this.$refs.inputPassword.classList.add('border-red-500');
         this.syntaxPassword = true;
-      } else return;
+      } else return true;
     },
     goToRegister() {
       this.$router.push({ name: 'Register' });
@@ -566,15 +567,24 @@ export default {
         this.handleLogin();
       }
     },
-    handleLogin() {
+    async handleLogin() {
       this.isSubmit = true;
       const validEmail = this.validateEmail();
       const validPassword = this.validatePassword();
       if (validEmail && validPassword) {
-        this.$gAuth.signIn().then((GoogleUser) => {
-          console.log('GoogleUser', GoogleUser);
-          this.isSignIn = this.$gAuth.isAuthorized;
-        });
+        try {
+          await authUser.login({
+            userName: this.email,
+            password: this.password,
+          });
+          // Đăng nhập thành công
+          this.emitter.emit('isShowLoading', false);
+          this.$router.push({ name: 'BlogPending' });
+        } catch (error) {
+          // Xử lý lỗi đăng nhập
+          console.error('Lỗi đăng nhập:', error);
+          this.emitter.emit('isShowLoading', false);
+        }
       }
     },
     toggleShowPassword() {
