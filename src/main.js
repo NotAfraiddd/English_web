@@ -10,13 +10,6 @@ import mitt from 'mitt';
 import vue3GoogleLogin from 'vue3-google-login';
 const emitter = mitt();
 
-// const gauthOption = {
-//   clientId:
-//     '50385097493-mcao4pi81kmo58or518pd6rdk0kkppp8.apps.googleusercontent.com',
-//   scope: 'profile email',
-//   prompt: 'consent',
-//   fetch_basic_profile: false,
-// };
 const app = createApp(App)
   .component('confirm-modal', ConfirmModal)
   .use(router)

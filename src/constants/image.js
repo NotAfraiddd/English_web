@@ -22,7 +22,7 @@ import CANCEL from '../assets/images/cancel.png';
 import ICON_LOGIN from '../assets/images/icon-login.png';
 import ICON_LAUGH from '../assets/images/icon-laugh.png';
 import STAR_RED from '../assets/images/start_red.png';
-import GOOGLE from '../assets/images/google.png';
+import GOOGLE from '../assets/images/google.svg';
 import HEART_DEFAULT from '../assets/images/heart-default.png';
 import ERROR_GIF from '../assets/images/gifError.gif';
 import MENU from '../assets/images/menu.svg';

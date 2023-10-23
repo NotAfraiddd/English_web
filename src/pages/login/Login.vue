@@ -123,7 +123,7 @@
       <div
         class="flex justify-center items-center border mx-10 h-10 leading-10 rounded-lg text-lg font-semibold cursor-pointer hover:opacity-70"
       >
-        <img :src="GOOGLE" alt="" srcset="" class="w-7 h-7" />
+        <img :src="GOOGLE" alt="" srcset="" class="w-5 h-5 mr-2" />
         <div
           @click="handleLoginGoogle"
           class="h-7 leading-7 text-primary_black"

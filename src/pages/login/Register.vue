@@ -263,6 +263,7 @@ import {
   EYE_ENABLE,
   GOOGLE,
 } from '../../constants/image.js';
+import authUser from '../../apis/auth';
 export default {
   name: 'Register',
   created() {
@@ -326,7 +327,7 @@ export default {
       } else if (!isValidEmail && this.isSubmit) {
         this.$refs.inputEmail.classList.add('border-red-500');
         this.syntaxEmail = true;
-      } else return;
+      } else return true;
     },
     validatePassword() {
       const isValidPassword = validPassword(this.password);
@@ -336,7 +337,7 @@ export default {
       } else if (!isValidPassword && this.isSubmit) {
         this.$refs.inputPassword.classList.add('border-red-500');
         this.syntaxPassword = true;
-      } else return;
+      } else return true;
     },
     validateConfirmPassword() {
       const isValidConfirmPassword = validConfirmPassword(
@@ -349,7 +350,7 @@ export default {
       } else if (!isValidConfirmPassword && this.isSubmit) {
         this.$refs.inputConfirmPassword.classList.add('border-red-500');
         this.syntaxConfirmPassword = true;
-      } else return;
+      } else return true;
     },
 
     goToLogin() {
@@ -360,13 +361,30 @@ export default {
         this.handleLogin();
       }
     },
-    handleLogin() {
+    async handleLogin() {
       this.isSubmit = true;
       const validEmail = this.validateEmail();
       const validPassword = this.validatePassword();
       const validateConfirmPassword = this.validateConfirmPassword();
       if (validEmail && validPassword && validateConfirmPassword) {
-        console.log('Login successful!');
+        this.emitter.emit('isShowLoading', true);
+        await authUser.register({
+          userName: this.email,
+          password: this.confirmPassword,
+          uid: {
+            uid: this.email,
+            fullName: '',
+            bio: '',
+            avtURL: '',
+            email: this.email,
+            registrationDate: '',
+            gender: true,
+            level: 'PENDING',
+            role: 'USER',
+            accountStatus: 'ONLINE',
+          },
+        });
+        this.emitter.emit('isShowLoading', false);
       }
     },
     toggleShowPassword() {

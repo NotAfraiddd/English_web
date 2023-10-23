@@ -47,3 +47,5 @@ export const REGEX = {
   emailPattern: /^[^ ]+@[^ ]+\.[a-z]{2,3}$/,
   passwordPattern: /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$/,
 };
+
+export const URL = `localhost:9090`;
