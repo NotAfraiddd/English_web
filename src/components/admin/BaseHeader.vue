@@ -163,7 +163,12 @@
           >
             Setting
           </li>
-          <li class="text-base item leading-9 h-9 text-left pl-6">Logout</li>
+          <li
+            @click="handleLogout"
+            class="text-base item leading-9 h-9 text-left pl-6"
+          >
+            Logout
+          </li>
         </ul>
       </div>
     </div>
@@ -181,6 +186,9 @@ import {
 import Avatar from '../common/Avatar.vue';
 import { formatNumber } from '../../constants/function';
 import { notification } from 'ant-design-vue';
+import authUserInstance from '../../apis/auth';
+import { mapState } from 'vuex';
+
 export default {
   created() {
     this.ARROW_LEFT = ARROW_LEFT;
@@ -210,6 +218,7 @@ export default {
     },
   },
   computed: {
+    ...mapState('auth', ['email', 'password']),
     checkRoute() {
       if (
         this.isMatchedRoute('Dashboard') ||
@@ -283,6 +292,20 @@ export default {
     };
   },
   methods: {
+    async handleLogout() {
+      try {
+        await authUserInstance.logout({
+          userName: this.email,
+          password: this.password,
+        });
+        this.emitter.emit('isShowLoading', false);
+        this.$router.push({ name: 'Login' });
+      } catch (error) {
+        console.error('Lỗi logout:', error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
+
     handleShowNotify() {
       if (!this.showNotify) {
         this.showNotify = true;

@@ -165,7 +165,7 @@
           <input
             v-model="inputEmail"
             type="text"
-            class="border-b form-control w-full"
+            class="border-b form-control w-full leading-10"
             spellcheck="false"
             placeholder="Please enter your email"
             ref="refInputEmail"
@@ -374,6 +374,7 @@ import {
 } from '../../constants/image.js';
 import { googleTokenLogin } from 'vue3-google-login';
 import authUser from '../../apis/auth';
+import { mapMutations } from 'vuex';
 
 export default {
   name: 'Login',
@@ -458,6 +459,7 @@ export default {
     };
   },
   methods: {
+    ...mapMutations('auth', ['setEmail', 'setPassword']),
     handleLoginGoogle() {
       googleTokenLogin().then((response) => {
         console.log('Handle the response', response);
@@ -472,15 +474,24 @@ export default {
       this.confirmPassword = '';
       this.modalForgetPassword = false;
     },
-    sendEmailToChangePassword() {
+    async sendEmailToChangePassword() {
       if (this.inputEmail) {
         this.emptyInputEmail = false;
         const isValidEmail = validEmail(this.inputEmail);
         if (isValidEmail) {
-          this.syntaxInputEmail = false;
-          this.$refs.refInputEmail.classList.remove('border-red-500');
-          this.modalChangePassword = true;
-          this.modalForgetPassword = false;
+          try {
+            await authUser.sendOTP(this.inputEmail);
+            // Đăng nhập thành công
+            this.syntaxInputEmail = false;
+            this.$refs.refInputEmail.classList.remove('border-red-500');
+            this.modalChangePassword = true;
+            this.modalForgetPassword = false;
+            this.emitter.emit('isShowLoading', false);
+          } catch (error) {
+            // Xử lý lỗi đăng nhập
+            console.error('Lỗi', error);
+            this.emitter.emit('isShowLoading', false);
+          }
         } else {
           this.syntaxInputEmail = true;
           this.$refs.refInputEmail.classList.add('border-red-500');
@@ -496,7 +507,7 @@ export default {
       this.modalChangePassword = false;
       this.modalForgetPassword = true;
     },
-    saveModalChangePassword() {
+    async saveModalChangePassword() {
       if (this.changePassword && this.confirmPassword && this.inputOTP) {
         this.$refs.password.classList.remove('border-red-500');
         this.$refs.codeOTP.classList.remove('border-red-500');
@@ -511,6 +522,19 @@ export default {
           isValidCofirmPassword &&
           this.sendedOTP == this.inputOTP
         ) {
+          try {
+            await authUser.sendOTP(this.inputEmail);
+            // Đăng nhập thành công
+            this.syntaxInputEmail = false;
+            this.$refs.refInputEmail.classList.remove('border-red-500');
+            this.modalChangePassword = true;
+            this.modalForgetPassword = false;
+            this.emitter.emit('isShowLoading', false);
+          } catch (error) {
+            // Xử lý lỗi đăng nhập
+            console.error('Lỗi', error);
+            this.emitter.emit('isShowLoading', false);
+          }
           this.modalChangePassword = false;
         }
         if (!isValidPassword) {
@@ -572,8 +596,11 @@ export default {
       this.isSubmit = true;
       const validEmail = this.validateEmail();
       const validPassword = this.validatePassword();
+      this.emitter.emit('isShowLoading', true);
       if (validEmail && validPassword) {
         try {
+          this.setEmail(this.email);
+          this.setPassword(this.password);
           await authUser.login({
             userName: this.email,
             password: this.password,
