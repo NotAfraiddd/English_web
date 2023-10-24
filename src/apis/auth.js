@@ -6,7 +6,7 @@ class authUser {
   }
 
   async login(data) {
-    const res = await http.get(`account/login`, data);
+    const res = await http.post(`account/login`, data);
     return res.data;
   }
 }
