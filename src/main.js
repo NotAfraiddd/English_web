@@ -12,8 +12,7 @@ import VueSocketIO from 'vue-3-socket.io';
 import socketio from 'socket.io-client';
 
 const emitter = mitt();
-var socketIOLocation = process.env.MIX_BASE_SOCKETIO_URL;
-
+var socketIOLocation = process.env.VUE_APP_SOCKETIO_PORT;
 const SocketInstance = socketio.connect(socketIOLocation);
 
 const app = createApp(App)
