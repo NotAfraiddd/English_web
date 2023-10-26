@@ -1,6 +1,7 @@
 <template>
   <div class="absolute z-10 text-black min-h-full w-full">
     <div
+      :style="!email && !password ? { height: '550px' } : { height: '500px' }"
       class="absolute top-0 bottom-0 left-0 right-0 border mx-auto login rounded-xl my-auto"
     >
       <div class="flex justify-center items-center mt-2 gap-1">
@@ -356,6 +357,7 @@
       </g>
     </svg>
   </div>
+  <LoadingScreen v-if="isLoading" />
 </template>
 
 <script>
@@ -375,10 +377,13 @@ import {
 import { googleTokenLogin } from 'vue3-google-login';
 import authUser from '../../apis/auth';
 import { mapMutations } from 'vuex';
+import { LoadingMixins } from '../../mixins/Loading';
+import LoadingScreen from '../../components/common/LoadingScreen.vue';
 
 export default {
   name: 'Login',
-  components: { ConfirmModal },
+  components: { ConfirmModal, LoadingScreen },
+  mixins: [LoadingMixins],
   created() {
     this.GOOGLE = GOOGLE;
     this.EYE_DISABLE = EYE_DISABLE;
@@ -421,6 +426,7 @@ export default {
   },
   data() {
     return {
+      isLoading: false,
       inputEmail: '',
       inputOTP: '',
       email: '',
@@ -479,6 +485,7 @@ export default {
         this.emptyInputEmail = false;
         const isValidEmail = validEmail(this.inputEmail);
         if (isValidEmail) {
+          this.emitter.emit('isShowLoading', true);
           try {
             await authUser.sendOTP(this.inputEmail);
             // Đăng nhập thành công
@@ -596,9 +603,9 @@ export default {
       this.isSubmit = true;
       const validEmail = this.validateEmail();
       const validPassword = this.validatePassword();
-      this.emitter.emit('isShowLoading', true);
       if (validEmail && validPassword) {
         try {
+          this.emitter.emit('isShowLoading', true);
           this.setEmail(this.email);
           this.setPassword(this.password);
           await authUser.login({

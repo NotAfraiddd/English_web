@@ -73,7 +73,7 @@
       <div v-if="icon">
         <div
           @click.stop="showOptions(item.id)"
-          :class="['relative cursor-pointer w-8 pb-2 icon-option']"
+          :class="['relative cursor-pointer w-8 pb-2 icon']"
         >
           <img :src="OPTION_ICON" alt="" srcset="" />
         </div>
@@ -151,7 +151,7 @@ export default {
   z-index: 1;
 }
 
-.icon-option {
+.icon {
   transform: translateY(3px);
   transition: transform 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
   &::after {
