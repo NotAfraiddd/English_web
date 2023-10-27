@@ -1,36 +1,49 @@
 <template>
   <router-view />
+  <notifications position="top right" />
 </template>
 <script>
-import { HEART } from './constants/image';
+import { mapState } from 'vuex';
+import { HOME_ICON } from './constants/image';
+
 export default {
-  name: 'UserLayout',
   created() {
-    this.HEART = HEART;
+    this.HOME_ICON = HOME_ICON;
   },
   data() {
-    return {
-      numberNotifications: 0,
-    };
+    return {};
   },
-  mounted() {
-    this.$notification.open({
-      message: 'Notification',
-      description: 'You have a new notification',
-      style: {
-        width: '400px',
-      },
-    });
+  computed: {
+    ...mapState('notify', ['inforComment']),
+  },
+  watch: {
+    inforComment(newVal, oldVal) {
+      if (newVal.numberNotifications > 0)
+        if (newVal.numberNotifications == 1)
+          this.$notify({
+            title: 'Notification',
+            text: `You have ${newVal.numberNotifications} new notification`,
+          });
+        else
+          this.$notify({
+            title: 'Notification',
+            text: `You have ${newVal.numberNotifications} new notifications`,
+          });
+    },
   },
 };
 </script>
 <style lang="scss">
-.ant-notification-notice-message {
-  font-weight: 600;
-  font-size: 18px !important;
-}
-.ant-notification-notice-description {
+.vue-notification {
   font-size: 16px !important;
+  padding: 10px 20px !important;
+  color: #615a5a !important;
+  background: #fff !important;
+  border: 1px solid #d4e8fd !important;
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  width: 300px;
 }
 body {
   ::selection {

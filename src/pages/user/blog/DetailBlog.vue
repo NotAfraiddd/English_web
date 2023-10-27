@@ -215,7 +215,7 @@ import {
 import Emoji from './Emoji.vue';
 import moment from 'moment';
 import MenuOption from '../../../components/common/MenuOption.vue';
-
+import { mapMutations } from 'vuex';
 export default {
   name: 'DetailBlog',
   components: { Emoji, MenuOption },
@@ -307,11 +307,16 @@ It would take a book to list all the races and awards he's won and the mountains
             "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill. When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
         },
       ],
+      numNotify: 0,
     };
   },
   mounted() {
     this.sockets.subscribe('signal', (data) => {
-      console.log('receiver', data);
+      if (data.kind == 1) {
+        this.numNotify++;
+        this.setNotify({ id: 1, numberNotifications: this.numNotify });
+        console.log('receiver', data);
+      }
     });
     const data = {
       room: 1,
@@ -320,6 +325,7 @@ It would take a book to list all the races and awards he's won and the mountains
     this.$socket.emit('joinRoom', data);
   },
   methods: {
+    ...mapMutations('notify', ['setNotify']),
     handleShowAllComment() {
       this.showAllComment = !this.showAllComment;
     },
@@ -407,7 +413,6 @@ It would take a book to list all the races and awards he's won and the mountains
             data: commentDetail,
             kind: 1,
           };
-          console.log('comment', comment);
           this.$socket.emit('sendSignal', comment);
           this.replyComments.push(commentDetail);
         } else {

@@ -55,9 +55,11 @@
       <div class="h-6 w-6 bell-notify relative" @click="handleShowNotify">
         <img :src="BELL" alt="" srcset="" class="mr-2 cursor-pointer h-full" />
         <div
+          v-if="inforComment.numberNotifications > 0"
           class="absolute header-notify text-xs bg-red-600 text-center text-white leading-6 h-6 w-6 rounded-full"
         >
-          +99
+          <p v-if="inforComment.numberNotifications > 99">+</p>
+          {{ inforComment.numberNotifications }}
         </div>
       </div>
       <div
@@ -218,6 +220,7 @@ export default {
     },
   },
   computed: {
+    ...mapState('notify', ['inforComment']),
     ...mapState('auth', ['email', 'password']),
     checkRoute() {
       if (
