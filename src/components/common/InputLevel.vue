@@ -1,45 +1,47 @@
-<template lang="">
-  <a-radio-group
+<template>
+  <a-select
     :disabled="disabled"
-    v-model:value="radio"
+    v-model:value="selectedValue"
     :class="externalClass"
-    @change="updateGender"
+    @change="updateLevel"
   >
-    <a-radio :value="0">Basic</a-radio>
-    <a-radio :value="1">Intermediate</a-radio>
-    <a-radio :value="2">Advanced</a-radio>
-  </a-radio-group>
+    <a-select-option :value="0" />
+    <a-select-option :value="1">Basic</a-select-option>
+    <a-select-option :value="2">Intermediate</a-select-option>
+    <a-select-option :value="3">Advanced</a-select-option>
+  </a-select>
 </template>
+
 <script>
 export default {
   props: {
     externalClass: { type: String, default: '' },
-    radioProp: { type: Number, default: 0 },
+    selectedValueProp: { type: Number, default: 0 },
     disabled: { type: Boolean, default: false },
   },
   created() {
-    this.radio = this.radioProp;
-  },
-  watch: {
-    radioProp(newVal) {
-      this.radio = newVal;
-    },
+    this.selectedValue = this.selectedValueProp;
   },
   data() {
     return {
-      radio: this.radioProp,
+      selectedValue: this.selectedValueProp,
     };
   },
+  watch: {
+    selectedValueProp(newVal) {
+      this.selectedValue = newVal;
+    },
+  },
   methods: {
-    updateGender(e) {
-      this.$emit('update', e.target.value);
+    updateLevel(value) {
+      this.selectedValue = value;
+      this.$emit('update', value);
     },
   },
 };
 </script>
 <style lang="scss">
-.ant-radio + span,
-.ant-radio-disabled + span {
-  color: #615a5a;
+.ant-select-selector {
+  border-radius: 8px !important;
 }
 </style>

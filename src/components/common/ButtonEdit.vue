@@ -65,6 +65,7 @@ export default {
 }
 
 .button-gap {
-  gap: 1.75rem !important;
+  gap: 0.75rem !important;
+  justify-content: flex-end;
 }
 </style>

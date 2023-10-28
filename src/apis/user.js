@@ -1,42 +1,17 @@
+import http from './http';
 import axios from 'axios';
 
 class UserApi {
-  async getAllCategories() {
-    const res = await axios.get(`https://dummyjson.com/products/categories`);
+  async getUser(data) {
+    const axiosInstance = axios.create({
+      baseURL: 'http://localhost:9090/',
+      headers: {
+        'Content-type': 'text/plain',
+      },
+    });
+    const res = await axiosInstance.post(`user/getUser`, data);
     return res.data;
   }
-
-  // async addNewCart(params) {
-  //   const headers = { "Content-Type": "application/json" };
-  //   const res = await axios.post(`https://dummyjson.com/carts/add`, {
-  //     params,
-  //     headers,
-  //   });
-  //   return res.data;
-  // }
-  // async laravelPaginateProducts(params) {
-  //   const userToken = sessionStorage.getItem("token");
-  //   const headers = {
-  //     "Content-Type": "application/json",
-  //     Authorization: "Bearer " + userToken,
-  //   };
-  //   const res = await axios.get(`http://localhost:8081/api/admin/products`, {
-  //     params,
-  //     headers,
-  //   });
-  //   return res.data;
-  // }
-  // async checkoutLaravel(productID, data) {
-  //   const userToken = sessionStorage.getItem("token");
-  //   const headers = userToken ? { Authorization: "Bearer " + userToken } : {};
-  //   // post với put dugnf cia snayf
-  //   const res = await axios.put(
-  //     `http://localhost:8081/api/admin/orders/state/${productID}`,
-  //     data,
-  //     { headers }
-  //   );
-  //   return res.data;
-  // }
 }
 
 const userApi = new UserApi();

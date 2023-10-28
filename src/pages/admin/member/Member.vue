@@ -152,6 +152,8 @@ import {
 import { NOTIFY, SCREEN } from '../../../constants/index';
 import { RENDER_TYPE } from '../../../constants/table';
 import ButtonBack from '../../../components/common/ButtonBack.vue';
+import userApi from '../../../apis/user';
+
 export default {
   name: 'Member',
   components: { BaseTable, ConfirmModal, ButtonBack },
@@ -206,6 +208,7 @@ export default {
       modalDeleteId: null,
       statusBlog: null,
       modalEdit: false,
+      memberAPI: [],
       listMember: [
         {
           id: 1,

@@ -13,23 +13,26 @@
         />
       </figure>
       <div class="absolute left-56 font-semibold text-xl mt-3">
-        Nguyen Huynh Chi Bao
+        {{ fullName }}
       </div>
     </div>
     <div class="mt-20 text-left flex mr-10">
       <div class="w-2/5 profile-introduce px-5 py-3 flex flex-col">
         <div class="font-semibold">Introduce</div>
-        <div class="mx-auto">hello</div>
+        <div class="mx-auto">{{ bio }}</div>
         <div class="border-t border-primary_line my-2" />
         <div class="flex items-center gap-3">
           <img :src="USERS" alt="" srcset="" class="w-7 h-7" />
           <div class="leading-6">
             Member of
             <b>CircleZ</b>
-            from 18/06/2023
+            from {{ registrationDate }}
           </div>
         </div>
-        <div class="flex items-center gap-3 mt-2">
+        <div
+          v-if="socialMediaConnection"
+          class="flex items-center gap-3 mt-3 break-all"
+        >
           <img :src="SOCIAL_FACEBOOK" alt="" srcset="" class="w-6 h-6" />
           <div class="leading-6 text-primary_blue cursor-pointer">
             <a
@@ -41,7 +44,10 @@
             </a>
           </div>
         </div>
-        <div class="flex items-center gap-3 mt-3">
+        <div
+          v-if="socialMediaConnection"
+          class="flex items-center gap-3 mt-3 break-all"
+        >
           <img :src="SOCIAL_INSTAGRAM" alt="" srcset="" class="w-6 h-6" />
           <div class="leading-6 text-primary_blue cursor-pointer">
             <a
@@ -53,7 +59,10 @@
             </a>
           </div>
         </div>
-        <div class="flex items-center gap-3 mt-3">
+        <div
+          v-if="socialMediaConnection"
+          class="flex items-center gap-3 mt-3 break-all"
+        >
           <img :src="SOCIAL_LINKEDIN" alt="" srcset="" class="w-6 h-6" />
           <div class="leading-6 text-primary_blue cursor-pointer">
             <a
@@ -76,10 +85,12 @@
           <div class="flex">
             <div class="w-1/2">
               <div
-                class="text-white rounded-2xl flex flex-col items-center h-36 justify-center mx-4 hover:opacity-50 cursor-pointer"
+                class="text-white rounded-2xl flex flex-col items-center h-36 justify-center hover:opacity-50 cursor-pointer"
                 :style="{ background: item.color }"
               >
-                <div class="text-2xl font-semibold">{{ item.title }}</div>
+                <div class="text-2xl font-semibold text-center">
+                  {{ item.title }}
+                </div>
                 <div class="text-base text-center">{{ item.subtitle }}</div>
               </div>
             </div>
@@ -96,6 +107,7 @@
 </template>
 
 <script>
+import userApi from '../../../apis/user';
 import {
   AVATAR,
   BACKGROUND,
@@ -104,6 +116,8 @@ import {
   SOCIAL_INSTAGRAM,
   SOCIAL_LINKEDIN,
 } from '../../../constants/image';
+import moment from 'moment';
+
 export default {
   name: 'Profile',
   components: {},
@@ -114,10 +128,14 @@ export default {
     this.SOCIAL_LINKEDIN = SOCIAL_LINKEDIN;
     this.BACKGROUND = BACKGROUND;
     this.AVATAR = AVATAR;
+    this.getDetail();
   },
   data() {
     return {
       BACKGROUND: BACKGROUND,
+      fullName: null,
+      bio: null,
+      registrationDate: null,
       listCourses: [
         {
           id: 1,
@@ -157,7 +175,20 @@ export default {
           color: '#7C89CE',
         },
       ],
+      socialMediaConnection: null,
     };
+  },
+  methods: {
+    async getDetail() {
+      const email = localStorage.getItem('email');
+      const res = await userApi.getUser(email);
+      this.fullName = res?.fullName;
+      this.bio = res?.bio;
+      this.registrationDate = moment(res?.registrationDate).format(
+        'DD/MM/YYYY',
+      );
+      this.socialMediaConnection = res?.socialMediaConnection;
+    },
   },
 };
 </script>

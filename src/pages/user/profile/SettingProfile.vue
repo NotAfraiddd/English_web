@@ -191,8 +191,9 @@
             <div class="flex w-96 items-center justify-start gap-5">
               <!-- Edit -->
               <InputLevel
+                :external-class="'w-full'"
                 :disabled="!editLevel"
-                :radio-prop="inputLevel"
+                :selectedValueProp="inputLevel"
                 @update="updateLevel"
               />
             </div>
@@ -204,27 +205,12 @@
             />
           </div>
         </div>
-        <!-- blog -->
-        <div class="mx-auto member-detail__width">
-          <div
-            class="text-primary_black mt-5 flex items-center justify-center button-radio"
-          >
-            <div class="flex w-96 items-center justify-start gap-5">
-              <!-- Edit -->
-              <InputBlog
-                :disabled="!editBlog"
-                :radio-prop="inputBlog"
-                @update="updateBlog"
-              />
-            </div>
-
-            <ButtonEdit
-              @cancel="handleCancelBlog"
-              @edit="handleEditBlog"
-              @update="handleUpdateBlog"
-            />
-          </div>
-        </div>
+      </div>
+      <div
+        class="cursor-pointer rounded-lg bg-green-500 w-24 h-8 leading-8 hover:opacity-50 ml-auto my-5"
+        @click="handleUpdateProfile"
+      >
+        <span class="text-base text-white">Update</span>
       </div>
     </div>
     <div v-else class="w-full mx-5">
@@ -319,7 +305,7 @@
         </div>
       </div>
       <div
-        class="cursor-pointer rounded-lg bg-primary w-24 h-8 leading-8 hover:opacity-50 ml-auto mt-5"
+        class="cursor-pointer rounded-lg bg-green-500 w-24 h-8 leading-8 hover:opacity-50 ml-auto mt-5"
         @click="handleUpdateSocialNetwork"
       >
         <span class="text-base text-white">Update</span>
@@ -342,9 +328,10 @@ import InputCalendar from '../../../components/common/InputCalendar.vue';
 import ImageUpload from '../../../components/common/ImageUpload.vue';
 import ButtonEdit from '../../../components/common/ButtonEdit.vue';
 import InputGender from '../../../components/common/InputGender.vue';
-import InputBlog from '../../../components/common/InputBlog.vue';
 import InputLevel from '../../../components/common/InputLevel.vue';
 import { notification } from 'ant-design-vue';
+import userApi from '../../../apis/user';
+
 export default {
   name: 'SettingProfile',
   components: {
@@ -353,7 +340,6 @@ export default {
     ButtonEdit,
     InputCalendar,
     InputGender,
-    InputBlog,
     InputLevel,
   },
   created() {
@@ -363,8 +349,24 @@ export default {
     this.LOCK_COLOR = LOCK_COLOR;
     this.AVATAR = AVATAR;
     this.ARROW_LEFT = ARROW_LEFT;
+    this.getDetail();
   },
   methods: {
+    /**
+     * get detail user
+     */
+    async getDetail() {
+      const email = localStorage.getItem('email');
+      const res = await userApi.getUser(email);
+      this.inputFullname = res?.fullName;
+      this.inputBio = res?.bio;
+      this.avatar = res?.avtURL;
+      this.inputEmail = res?.email;
+      this.inputDate = res?.registrationDate;
+      res.gender ? (this.inputGender = 0) : (this.inputGender = 1);
+      res.this.socialMediaConnection = res?.socialMediaConnection;
+    },
+    handleUpdateProfile() {},
     handleUpdateSocialNetwork() {
       notification.success({ message: 'Success!' });
     },
@@ -393,6 +395,7 @@ export default {
     },
     // name
     handleEditFullName(data) {
+      this.inputFullnameOriginal = this.inputFullname;
       this.editFullname = data;
     },
     handleUpdateFullName(data) {
@@ -405,6 +408,7 @@ export default {
     },
     // bio
     handleEditBio(data) {
+      this.inputBioOriginal = this.inputBio;
       this.editBio = data;
     },
     handleUpdateBio(data) {
@@ -417,6 +421,7 @@ export default {
     },
     // email
     handleEditEmail(data) {
+      this.inputEmailOriginal = this.inputEmail;
       this.editEmail = data;
     },
     handleUpdateEmail(data) {
@@ -429,9 +434,11 @@ export default {
     },
     // Date
     updateCalendar(newValue) {
+      this.inputDateOriginal = this.inputDate;
       this.inputDate = newValue;
     },
     handleEditDate(data) {
+      this.inputDateOriginal = this.inputDate;
       this.editDate = data;
     },
     handleUpdateDate(data) {
@@ -474,22 +481,7 @@ export default {
       this.inputLevel = this.inputLevelOriginal;
       this.editLevel = data;
     },
-    // blog
-    updateBlog(e) {
-      this.inputBlog = e;
-    },
-    handleEditBlog(data) {
-      this.inputBlogOriginal = this.inputBlog;
-      this.editBlog = data;
-    },
-    handleUpdateBlog(data) {
-      this.inputBlogOriginal = this.inputBlog;
-      this.editBlog = data;
-    },
-    handleCancelBlog(data) {
-      this.inputBlog = this.inputBlogOriginal;
-      this.editBlog = data;
-    },
+
     // facebook
     handleEditFacebook(data) {
       this.editFacebook = data;
@@ -552,7 +544,6 @@ export default {
       inputGender: 0,
       inputGenderOriginal: null,
       editGender: false,
-      inputBlog: 1,
       inputBlogOriginal: null,
       editBlog: false,
       inputLevel: 2,
