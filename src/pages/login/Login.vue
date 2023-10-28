@@ -40,6 +40,7 @@
             role="presentation"
             autocomplete="new-password"
             ref="inputEmail"
+            spellcheck="false"
           />
           <div
             class="text-red-500 mt-1 text-base text-left w-full"
@@ -82,6 +83,7 @@
             role="presentation"
             autocomplete="new-password"
             ref="inputPassword"
+            spellcheck="false"
           />
           <div
             class="text-red-500 mt-1 text-base text-left w-full"
@@ -216,7 +218,6 @@
         <div class="flex flex-col w-full">
           <input
             v-model="inputOTP"
-            type="text"
             class="border-b form-control w-full"
             spellcheck="false"
             placeholder="Please enter code OTP"
@@ -231,12 +232,12 @@
         </div>
       </div>
       <!-- password -->
-      <div class="flex mb-5 w-full">
+      <div class="flex mb-5 w-full relative">
         <div class="w-2/5 leading-10 text-base">New password</div>
         <div class="w-full flex flex-col">
           <input
             v-model="changePassword"
-            type="text"
+            :type="showResetPassword ? 'text' : 'password'"
             class="border-b form-control w-full"
             spellcheck="false"
             ref="password"
@@ -248,15 +249,22 @@
           <div v-if="syntaxChangePassword" class="text-red-500 text-base mt-1">
             {{ ERROR_MESSAGE.wrongPassword }}
           </div>
+          <span
+            class="h-10 w-6 absolute z-20 top-2 right-2 cursor-pointer"
+            @click="toggleShowResetPassword"
+          >
+            <img :src="EYE_DISABLE" alt="" srcset="" v-if="showResetPassword" />
+            <img :src="EYE_ENABLE" alt="" srcset="" v-else />
+          </span>
         </div>
       </div>
       <!-- confirm password -->
-      <div class="flex mb-5 w-full">
+      <div class="flex mb-5 w-full relative">
         <div class="w-2/5 leading-10 text-base">Confirm password</div>
         <div class="w-full flex flex-col">
           <input
             v-model="confirmPassword"
-            type="text"
+            :type="showConfirmResetPassword ? 'text' : 'password'"
             class="border-b form-control w-full"
             spellcheck="false"
             ref="confirmPassword"
@@ -268,6 +276,13 @@
           <div v-if="syntaxConfirmPassword" class="text-red-500 text-base mt-1">
             {{ ERROR_MESSAGE.wrongConfirmPassword }}
           </div>
+          <span
+            class="h-10 w-6 absolute z-20 top-2 right-2 cursor-pointer"
+            @click="toggleShowConfirmResetPassword"
+          >
+            <img :src="EYE_DISABLE" alt="" v-if="showConfirmResetPassword" />
+            <img :src="EYE_ENABLE" alt="" srcset="" v-else />
+          </span>
         </div>
       </div>
     </template>
@@ -426,6 +441,8 @@ export default {
   },
   data() {
     return {
+      showConfirmResetPassword: false,
+      showResetPassword: false,
       isLoading: false,
       inputEmail: '',
       inputOTP: '',
@@ -524,13 +541,14 @@ export default {
           this.changePassword,
           this.confirmPassword,
         );
-        if (
-          isValidPassword &&
-          isValidCofirmPassword &&
-          this.sendedOTP == this.inputOTP
-        ) {
+        if (isValidPassword && isValidCofirmPassword) {
           try {
-            await authUser.sendOTP(this.inputEmail);
+            this.emitter.emit('isShowLoading', true);
+            await authUser.updatePassword({
+              email: this.inputEmail,
+              otp: this.inputOTP,
+              newPassword: this.changePassword,
+            });
             // Đăng nhập thành công
             this.syntaxInputEmail = false;
             this.$refs.refInputEmail.classList.remove('border-red-500');
@@ -552,10 +570,6 @@ export default {
           this.syntaxConfirmPassword = true;
           this.$refs.confirmPassword.classList.add('border-red-500');
         }
-        if (this.sendedOTP != this.inputOTP) {
-          this.syntaxInputOTP = true;
-          this.$refs.codeOTP.classList.add('border-red-500');
-        }
       } else {
         if (!this.inputOTP) {
           this.emptyInputOTP = true;
@@ -573,23 +587,31 @@ export default {
     },
     validateEmail() {
       const isValidEmail = validEmail(this.email);
-      if (this.email.trim() === '' && this.isSubmit) {
+      if (this.email.trim() == '' && this.isSubmit) {
         this.$refs.inputEmail.classList.add('border-red-500');
         this.emptyEmail = true;
       } else if (!isValidEmail && this.isSubmit) {
         this.$refs.inputEmail.classList.add('border-red-500');
         this.syntaxEmail = true;
-      } else return true;
+      } else if (this.email.trim() != '' && this.isSubmit && isValidEmail) {
+        return true;
+      }
     },
     validatePassword() {
       const isValidPassword = validPassword(this.password);
-      if (this.password.trim() === '' && this.isSubmit) {
+      if (this.password.trim() == '' && this.isSubmit) {
         this.$refs.inputPassword.classList.add('border-red-500');
         this.emptyPassword = true;
       } else if (!isValidPassword && this.isSubmit) {
         this.$refs.inputPassword.classList.add('border-red-500');
         this.syntaxPassword = true;
-      } else return true;
+      } else if (
+        this.password.trim() != '' &&
+        this.isSubmit &&
+        isValidPassword
+      ) {
+        return true;
+      }
     },
     goToRegister() {
       this.$router.push({ name: 'Register' });
@@ -606,14 +628,13 @@ export default {
       if (validEmail && validPassword) {
         try {
           this.emitter.emit('isShowLoading', true);
-          this.setEmail(this.email);
-          this.setPassword(this.password);
           await authUser.login({
             userName: this.email,
             password: this.password,
           });
           // Đăng nhập thành công
           this.emitter.emit('isShowLoading', false);
+          localStorage.setItem('email', this.email);
           this.$router.push({ name: 'BlogPending' });
         } catch (error) {
           // Xử lý lỗi đăng nhập
@@ -624,6 +645,12 @@ export default {
     },
     toggleShowPassword() {
       this.showPassword = !this.showPassword;
+    },
+    toggleShowResetPassword() {
+      this.showResetPassword = !this.showResetPassword;
+    },
+    toggleShowConfirmResetPassword() {
+      this.showConfirmResetPassword = !this.showConfirmResetPassword;
     },
     onFocusEmail() {
       this.focusedEmail = true;

@@ -8,8 +8,8 @@ var cors = require('./config/cors');
 
 const io = new Server(server, cors);
 
-server.listen(process.env.SOCKET_SERVER_PORT, () => {
-  console.log('sever start', process.env.SOCKET_SERVER_PORT);
+server.listen(process.env.VUE_APP_SOCKETIO_PORT, () => {
+  console.log('sever start', process.env.VUE_APP_SOCKETIO_PORT);
 });
 
 const getClientRoom = () => {

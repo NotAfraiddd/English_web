@@ -189,7 +189,7 @@ import Avatar from '../common/Avatar.vue';
 import { formatNumber } from '../../constants/function';
 import { notification } from 'ant-design-vue';
 import authUserInstance from '../../apis/auth';
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
   created() {
@@ -295,13 +295,16 @@ export default {
     };
   },
   methods: {
+    ...mapMutations('auth', ['setEmail', 'setPassword']),
     async handleLogout() {
       try {
+        this.emitter.emit('isShowLoading', true);
+        const email = localStorage.getItem('email');
         await authUserInstance.logout({
-          userName: this.email,
-          password: this.password,
+          userName: email,
         });
         this.emitter.emit('isShowLoading', false);
+        localStorage.removeItem('email');
         this.$router.push({ name: 'Login' });
       } catch (error) {
         console.error('Lỗi logout:', error);

@@ -1,6 +1,6 @@
 <template lang="">
-  <div class="loading-screen-overlay fixed z-50" />
-  <div class="lds-dual-ring inline-block w-20 h-20 fixed z-50" />
+  <div class="loading-screen-overlay fixed" />
+  <div class="lds-dual-ring inline-block w-20 h-20 fixed" />
 </template>
 <script>
 export default {
