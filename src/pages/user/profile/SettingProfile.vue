@@ -186,23 +186,20 @@
         <!-- level -->
         <div class="mx-auto member-detail__width">
           <div
-            class="text-primary_black mt-5 flex items-center justify-center button-radio"
+            class="text-primary_black mt-5 flex items-center justify-start button-radio"
           >
-            <div class="flex w-96 items-center justify-start gap-5">
-              <!-- Edit -->
-              <InputLevel
-                :external-class="'w-full'"
-                :disabled="!editLevel"
-                :selectedValueProp="inputLevel"
-                @update="updateLevel"
-              />
-            </div>
-
-            <ButtonEdit
-              @cancel="handleCancelLevel"
-              @edit="handleEditLevel"
-              @update="handleUpdateLevel"
+            <InputLevel
+              :disabled="!editLevel"
+              :selectedValueProp="inputLevel"
             />
+          </div>
+        </div>
+        <!-- blog -->
+        <div class="mx-auto member-detail__width">
+          <div
+            class="text-primary_black mt-5 flex items-center justify-start button-radio"
+          >
+            <InputBlog :disabled="!editBlog" :radio-prop="inputBlog" />
           </div>
         </div>
       </div>
@@ -329,6 +326,7 @@ import ImageUpload from '../../../components/common/ImageUpload.vue';
 import ButtonEdit from '../../../components/common/ButtonEdit.vue';
 import InputGender from '../../../components/common/InputGender.vue';
 import InputLevel from '../../../components/common/InputLevel.vue';
+import InputBlog from '../../../components/common/InputBlog.vue';
 import { notification } from 'ant-design-vue';
 import userApi from '../../../apis/user';
 
@@ -341,6 +339,7 @@ export default {
     InputCalendar,
     InputGender,
     InputLevel,
+    InputBlog,
   },
   created() {
     this.SOCIAL = SOCIAL;
@@ -356,17 +355,42 @@ export default {
      * get detail user
      */
     async getDetail() {
-      const email = localStorage.getItem('email');
-      const res = await userApi.getUser(email);
+      this.emailLocalStorage = localStorage.getItem('email');
+      const res = await userApi.getUser(this.emailLocalStorage);
       this.inputFullname = res?.fullName;
       this.inputBio = res?.bio;
       this.avatar = res?.avtURL;
       this.inputEmail = res?.email;
       this.inputDate = res?.registrationDate;
       res.gender ? (this.inputGender = 0) : (this.inputGender = 1);
-      res.this.socialMediaConnection = res?.socialMediaConnection;
+      this.socialMediaConnection = res?.socialMediaConnection;
+      if (res.level == 'PENDING') this.inputLevel = 0;
+      else if (res.level == 'BASIC') this.inputLevel = 1;
+      else if (res.level == 'INTERMIDATE') this.inputLevel = 2;
+      else if (res.level == 'ADVANCED') this.inputLevel = 3;
     },
-    handleUpdateProfile() {},
+    async handleUpdateProfile() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        await userApi.updateUser({
+          uid: this.emailLocalStorage,
+          fullName: this.inputFullname,
+          bio: this.inputBio,
+          avtURL: null,
+          email: this.inputEmail,
+          registrationDate: this.inputDate,
+          gender: true,
+          level: 'PENDING',
+          role: 'USER',
+          accountStatus: 'ONLINE',
+          socialMediaConnection: null,
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.error('Lỗi đăng nhập:', error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
     handleUpdateSocialNetwork() {
       notification.success({ message: 'Success!' });
     },
@@ -465,22 +489,6 @@ export default {
       this.inputGender = this.inputGenderOriginal;
       this.editGender = data;
     },
-    // level
-    updateLevel(e) {
-      this.inputLevel = e;
-    },
-    handleEditLevel(data) {
-      this.inputLevelOriginal = this.inputLevel;
-      this.editLevel = data;
-    },
-    handleUpdateLevel(data) {
-      this.inputLevelOriginal = this.inputLevel;
-      this.editLevel = data;
-    },
-    handleCancelLevel(data) {
-      this.inputLevel = this.inputLevelOriginal;
-      this.editLevel = data;
-    },
 
     // facebook
     handleEditFacebook(data) {
@@ -521,6 +529,7 @@ export default {
   },
   data() {
     return {
+      emailLocalStorage: null,
       activeKey: 1,
       panelMenu: [
         { id: 1, icon: USER, message: 'Account Settings', checked: false },
@@ -546,6 +555,7 @@ export default {
       editGender: false,
       inputBlogOriginal: null,
       editBlog: false,
+      inputBlog: 0,
       inputLevel: 2,
       inputLevelOriginal: null,
       editLevel: false,

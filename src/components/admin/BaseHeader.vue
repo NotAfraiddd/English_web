@@ -30,14 +30,14 @@
         <span class="text-primary_black">
           Total
           <span class="text-base font-semibold text-primary_black">
-            {{ formatNumber(10000) }}
+            {{ formatNumber(totalUser) }}
           </span>
           members
         </span>
         <span class="text-primary_black">
           Members online
           <span class="text-base font-semibold text-primary_black">
-            {{ formatNumber(150) }}
+            {{ formatNumber(totalOnline) }}
           </span>
         </span>
       </div>
@@ -190,6 +190,7 @@ import { formatNumber } from '../../constants/function';
 import { notification } from 'ant-design-vue';
 import authUserInstance from '../../apis/auth';
 import { mapState, mapMutations } from 'vuex';
+import userApi from '../../apis/user';
 
 export default {
   created() {
@@ -200,6 +201,7 @@ export default {
     this.LOCK = LOCK;
     this.AVATAR = AVATAR;
     this.formatNumber = formatNumber;
+    this.getTotalUser();
     window.addEventListener('scroll', this.handleScroll);
   },
   emits: ['back'],
@@ -244,6 +246,8 @@ export default {
   },
   data() {
     return {
+      totalOnline: 0,
+      totalUser: 0,
       statusBlog: false,
       searchInput: this.searchInputProp,
       isHovered: false,
@@ -296,6 +300,20 @@ export default {
   },
   methods: {
     ...mapMutations('auth', ['setEmail', 'setPassword']),
+    async getTotalUser() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        this.totalUser = await userApi.getTotalUser();
+        this.totalOnline = await userApi.getTotalUserOnline();
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.error('Lỗi logout:', error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
+    /**
+     * logout
+     */
     async handleLogout() {
       try {
         this.emitter.emit('isShowLoading', true);
