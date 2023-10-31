@@ -156,7 +156,7 @@ export default [
       },
       {
         path: 'course/:course/reading/detail/:name/update',
-        name: 'CreateCourseReading',
+        name: 'UpdateCourseReading',
         component: () =>
           import('../pages/admin/course/CreateCourseReading.vue'),
       },
@@ -168,7 +168,7 @@ export default [
       },
       {
         path: 'course/:course/listening/detail/:name/update',
-        name: 'CreateCourseListening',
+        name: 'UpdateCourseListening',
         component: () =>
           import('../pages/admin/course/CreateCourseListening.vue'),
       },

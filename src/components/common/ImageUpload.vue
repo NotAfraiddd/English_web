@@ -1,10 +1,17 @@
 <template>
   <div
     :class="[
-      'personal-image text-left mt-5 flex items-center',
+      'personal-image text-left mt-5 flex items-center justify-center relative',
       avatar ? '' : 'gap-10',
     ]"
   >
+    <div
+      v-if="remove"
+      @click="handleRemoveImage"
+      class="icon-remove text-center bg-red-600 cursor-pointer absolute leading-5 h-5 w-5 text-white text-xs rounded-full"
+    >
+      X
+    </div>
     <div class="text-base text-primary_black font-semibold">{{ title }}</div>
     <label class="label">
       <input
@@ -14,10 +21,13 @@
         :disabled="disabled"
         @change="handleImageChange"
       />
-      <figure class="personal-figure relative w-28 h-28 my-0 mr-0 ml-7">
+      <figure
+        class="personal-figure relative my-0 mr-0 ml-7"
+        :class="extendClass"
+      >
         <img
           :src="imageURL || AVATAR"
-          class="personal-avatar w-28 h-28"
+          class="personal-avatar w-full h-full"
           :class="avatar ? 'rounded-full' : ''"
           alt="avatar"
         />
@@ -29,7 +39,7 @@
           ]"
         >
           <img
-            class="mx-auto"
+            class="w-32 h-32 m-0"
             src="https://raw.githubusercontent.com/ThiagoLuizNunes/angular-boilerplate/master/src/assets/imgs/camera-white.png"
           />
         </figcaption>
@@ -44,8 +54,10 @@ export default {
   props: {
     srcImg: { type: String, default: '' },
     title: { type: String, default: '' },
+    extendClass: { type: String, default: '' },
     avatar: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
+    remove: { type: Boolean, default: false },
   },
   watch: {
     srcImg(newValue) {
@@ -61,6 +73,9 @@ export default {
     };
   },
   methods: {
+    handleRemoveImage() {
+      this.imageURL = '';
+    },
     handleImageChange(event) {
       const imageFile = event.target.files[0];
       if (imageFile) {
@@ -73,6 +88,11 @@ export default {
 </script>
 
 <style scoped>
+.icon-remove {
+  top: 2%;
+  right: 36%;
+  z-index: 1;
+}
 .personal-image input[type='file'] {
   display: none;
 }
@@ -96,8 +116,8 @@ export default {
   background-color: rgba(0, 0, 0, 0.5);
 }
 .personal-figcaption > img {
-  margin-top: 32.5px;
-  width: 50px;
-  height: 50px;
+  position: absolute;
+  top: 35% !important;
+  transform: translateX(125px) !important;
 }
 </style>

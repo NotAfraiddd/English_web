@@ -36,7 +36,7 @@
   opacity: 1;
 }
 .custom-hover-effect:hover ul {
-  height: 120px !important;
+  height: 160px !important;
   opacity: 1;
 }
 
@@ -106,24 +106,24 @@
   &-notify {
     top: -12px;
     left: 12px;
-    &__list{
+    &__list {
       width: 450px;
       height: fit-content;
       max-height: 40vh;
       animation: fadeIn ease-in 0.3s;
       box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     }
-    &__no-notify{
-      min-height:10rem;
+    &__no-notify {
+      min-height: 10rem;
     }
-    &__item{
-      &:first-child{
+    &__item {
+      &:first-child {
         margin-top: 12px;
       }
-      &:last-child{
+      &:last-child {
         margin-bottom: 12px;
       }
-      &-content{
+      &-content {
         overflow: hidden;
         display: -webkit-box;
         -webkit-box-orient: vertical;
@@ -158,18 +158,18 @@
 // animations
 @keyframes fadeIn {
   from {
-      opacity: 0;
+    opacity: 0;
   }
   to {
-      opacity: 1;
+    opacity: 1;
   }
 }
 
 @keyframes growth {
   from {
-      transform: scale(var(--growth-from));
+    transform: scale(var(--growth-from));
   }
   to {
-      transform: scale(var(--growth-to));
+    transform: scale(var(--growth-to));
   }
 }

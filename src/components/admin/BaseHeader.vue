@@ -141,6 +141,20 @@
             </div>
           </li>
           <li
+            v-if="!checkRoute && role == 'ADMIN'"
+            @click="handleGoToAdmin"
+            class="text-base item leading-9 h-9 text-left pl-6 relative"
+          >
+            Admin
+          </li>
+          <li
+            v-if="checkRoute && role == 'ADMIN'"
+            @click="handleGoToUser"
+            class="text-base item leading-9 h-9 text-left pl-6 relative"
+          >
+            User
+          </li>
+          <li
             v-if="!checkRoute"
             @click="handleGoToBlog"
             class="text-base item leading-9 h-9 text-left pl-6 relative"
@@ -231,10 +245,11 @@ export default {
         this.isMatchedRoute('Course') ||
         this.isMatchedRoute('CreateCourse') ||
         this.isMatchedRoute('Member') ||
+        this.isMatchedRoute('CourseListening') ||
         this.isMatchedRoute('CourseReading') ||
         this.isMatchedRoute('DetailCourseListening') ||
-        this.isMatchedRoute('CreateCourseListening') ||
         this.isMatchedRoute('DetailCourseReading') ||
+        this.isMatchedRoute('CreateCourseListening') ||
         this.isMatchedRoute('CreateCourseReading') ||
         this.isMatchedRoute('AdminDetail') ||
         this.isMatchedRoute('MemberDetail') ||
@@ -255,6 +270,7 @@ export default {
       showNotify: false,
       titleInvite: 1,
       showBack: false,
+      role: 'ADMIN',
       data: [
         {
           id: 1,
@@ -300,6 +316,12 @@ export default {
   },
   methods: {
     ...mapMutations('auth', ['setEmail', 'setPassword']),
+    handleGoToUser() {
+      this.$router.push({ name: 'HomeUser' });
+    },
+    handleGoToAdmin() {
+      this.$router.push({ name: 'Dashboard' });
+    },
     async getTotalUser() {
       try {
         this.emitter.emit('isShowLoading', true);

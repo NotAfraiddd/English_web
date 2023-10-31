@@ -34,7 +34,7 @@
     </div>
     <!-- listening -->
     <ButtonBack title="Listening" extend-class="mt-5" />
-    <ImageUpload :src-img="AVATAR" />
+    <ImageUpload :src-img="AVATAR" extend-class="w-96 h-96" :remove="true" />
     <Audio
       :data-prop="selectedAudio"
       :hide-choose="true"
@@ -105,13 +105,13 @@
     <div class="flex justify-center gap-20 mt-5 text-base">
       <div
         @click="cancelCreate"
-        class="border border-primary w-24 text-center text-primary h-8 leading-8 hover:opacity-70 rounded-lg cursor-pointer"
+        class="font-semibold border border-primary w-24 text-center text-primary h-8 leading-8 hover:opacity-70 rounded-lg cursor-pointer"
       >
         Cancel
       </div>
       <div
         @click="createCourse"
-        class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+        class="font-semibold cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
       >
         Create
       </div>

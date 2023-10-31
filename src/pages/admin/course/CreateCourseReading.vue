@@ -3,7 +3,7 @@
     <!-- Reading -->
     <div>
       <ButtonBack title="Reading" hide-back="true" @back="changeBack" />
-      <ImageUpload :src-img="STAR_RED" title="" />
+      <ImageUpload :src-img="AVATAR" extend-class="w-96 h-96" :remove="true" />
       <ButtonBack title="Reading text" extend-class="mt-5" />
       <Word :contentProp="contentReading" @update="updateContentReading" />
       <ButtonBack

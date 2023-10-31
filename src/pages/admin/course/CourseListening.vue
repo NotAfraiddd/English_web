@@ -11,7 +11,9 @@
       >
         +
       </div>
-      <div class="text-primary_black font-semibold">Add new course</div>
+      <div class="text-primary_black font-semibold" @click="goToCreateCourse">
+        Add new course
+      </div>
     </div>
   </div>
 </template>
@@ -26,13 +28,17 @@ export default {
   created() {
     this.EXAMPLE = EXAMPLE;
     this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
+    if (this.$route.params.course) this.pathCourse = this.$route.params.course;
   },
   methods: {
     onBack() {
       this.$router.push({ name: 'Course' });
     },
     goToCreateCourse() {
-      this.$router.push({ name: 'CreateCourseListening' });
+      this.$router.push({
+        name: 'CreateCourseListening',
+        params: { name: this.pathCourse },
+      });
     },
     goToDetailCourse(data) {
       const path = formatSpacerIntoHyphen(data.item.title);
@@ -44,6 +50,7 @@ export default {
   },
   data() {
     return {
+      pathCourse: null,
       listListening: [
         { id: 1, title: 'Message to new friend', image: EXAMPLE },
         { id: 2, title: 'Message to new friend', image: EXAMPLE },

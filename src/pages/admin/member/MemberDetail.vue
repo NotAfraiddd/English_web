@@ -16,6 +16,7 @@
             :src-img="avatar"
             :avatar="true"
             :disabled="!editAvatar"
+            extend-class="w-28 h-28"
           />
           <div />
         </div>
