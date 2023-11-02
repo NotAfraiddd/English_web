@@ -31,18 +31,26 @@
     </div>
     <div class="border border-primary my-4" />
     <div class="text-lg font-semibold text-left">Other related blogs</div>
-    <div class="grid grid-cols-5 detail-blog-grid">
+    <div class="grid grid-cols-5 detail-blog-grid gap-4">
       <div
         v-for="(item, index) in 8"
         :key="index"
-        class="flex flex-col 2xl:w-80 detail-blog-item cursor-pointer hover:opacity-90"
+        class="flex flex-col detail-blog-item cursor-pointer hover:opacity-90"
       >
         <div
           class="profile-background mt-5 hover:opacity-50"
           :style="{ backgroundImage: 'url(' + LISTENING + ')' }"
         />
-        <div class="font-semibold">
+        <div class="font-semibold my-3 item-title">
           Effective Methods for Improving English Language Skills.
+        </div>
+        <div class="flex">
+          <img :src="AVATAR" alt="" class="w-5 h-5 rounded-full" />
+          <div class="ml-3 flex justify-between items-center gap-2">
+            <div class="text-sm font-semibold">Chi Bao</div>
+            ·
+            <div class="text-sm text-primary_grey_time">{{ delayMinutes }}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -216,6 +224,7 @@ import Emoji from './Emoji.vue';
 import moment from 'moment';
 import MenuOption from '../../../components/common/MenuOption.vue';
 import { mapMutations } from 'vuex';
+
 export default {
   name: 'DetailBlog',
   components: { Emoji, MenuOption },
@@ -232,6 +241,8 @@ export default {
   },
   data() {
     return {
+      inputTime: '2023-11-02 01:08:00',
+      delayMinutes: null,
       showComment: false,
       idUserBlog: null,
       idCommentFirst: null,
@@ -311,6 +322,10 @@ It would take a book to list all the races and awards he's won and the mountains
     };
   },
   mounted() {
+    // set render history time
+    this.updateCurrentTime();
+    setInterval(this.updateCurrentTime, 1000);
+    // listeing socket
     this.sockets.subscribe('signal', (data) => {
       if (data.kind == 1) {
         this.numNotify++;
@@ -326,18 +341,61 @@ It would take a book to list all the races and awards he's won and the mountains
   },
   methods: {
     ...mapMutations('notify', ['setNotify']),
+    /**
+     * set time to show history time of blog
+     */
+    updateCurrentTime() {
+      const currentTime = moment();
+      const inputTimeMoment = moment(this.inputTime, 'YYYY-MM-DD HH:mm:ss');
+      const delayInSeconds = currentTime.diff(inputTimeMoment, 'seconds');
+      let timeSeconds = delayInSeconds;
+      if (timeSeconds < 60) this.delayMinutes = timeSeconds + ` seconds ago`;
+      else if (timeSeconds < 60 * 60 && timeSeconds >= 60) {
+        if (timeSeconds < 60 * 2)
+          this.delayMinutes = Math.floor(timeSeconds / 60) + ` min ago`;
+        else this.delayMinutes = Math.floor(timeSeconds / 60) + ` mins ago`;
+      } else if (timeSeconds < 60 * 60 * 24 && timeSeconds >= 60 * 60) {
+        if (timeSeconds < 60 * 60 * 2)
+          this.delayMinutes = Math.floor(timeSeconds / 3600) + ` hour ago`;
+        else this.delayMinutes = Math.floor(timeSeconds / 3600) + ` hours ago`;
+      } else if (timeSeconds < 86400 * 24 && timeSeconds >= 86400) {
+        if (timeSeconds < 86400 * 2)
+          this.delayMinutes = Math.floor(timeSeconds / 86400) + ` day ago`;
+        else if (86400 * 2 <= timeSeconds && timeSeconds <= 86400 * 8) {
+          this.delayMinutes = Math.floor(timeSeconds / 86400) + ` days ago`;
+        } else this.delayMinutes = inputTimeMoment.format('YYYY-MM-DD');
+      }
+    },
+    /**
+     * show all comment
+     */
     handleShowAllComment() {
       this.showAllComment = !this.showAllComment;
     },
+    /**
+     * go to detail
+     */
     goToDetail(data) {
       // this.$router.push({ name: 'DetailBlogPending', params: { id: dataID } });
     },
     removeBackslashes() {
       this.content = this.content.replace(/\\"/g, '"');
     },
+    /**
+     * handle click react
+     */
     handleClickReact() {
       this.react++;
     },
+    /**
+     * handle click react of reply comment
+     */
+    handleClickReactReply(data) {
+      data.numReact += 1;
+    },
+    /**
+     * logic delete when user reply
+     */
     handleDeleteKey(event) {
       if (event.key === 'Delete' || event.key === 'Backspace') {
         if (!this.contentChat.trim()) {
@@ -349,9 +407,9 @@ It would take a book to list all the races and awards he's won and the mountains
         }
       }
     },
-    handleClickReactReply(data) {
-      data.numReact += 1;
-    },
+    /**
+     * set padding left
+     */
     setPaddingLeft() {
       const receiverNameElement = this.$refs.receiverNameElement;
       const chatContent = this.$refs.chatContent;

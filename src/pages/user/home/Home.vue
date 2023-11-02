@@ -13,6 +13,30 @@
   <div v-else>
     <ButtonBackUser title="My course" :hide-back="true" @back="changeBack" />
   </div>
+  <div class="text-left font-semibold text-xl mt-10">Featured blogs</div>
+  <div class="grid grid-cols-5 detail-blog-grid gap-4">
+    <div
+      v-for="(item, index) in 8"
+      :key="index"
+      class="flex flex-col detail-blog-item cursor-pointer hover:opacity-90"
+    >
+      <div
+        class="profile-background mt-5 hover:opacity-50"
+        :style="{ backgroundImage: 'url(' + LISTENING + ')' }"
+      />
+      <div class="font-semibold my-3 item-title">
+        Effective Methods for Improving English Language Skills.
+      </div>
+      <div class="flex">
+        <img :src="AVATAR" alt="" class="w-5 h-5 rounded-full" />
+        <div class="ml-3 flex justify-between items-center gap-2">
+          <div class="text-sm font-semibold">Chi Bao</div>
+          ·
+          <div class="text-sm text-primary_grey_time">{{ delayMinutes }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
   <ConfirmModal
     :showModal="modalChooseCourse"
     @closeModal="closeModalChoose"
@@ -55,18 +79,24 @@ import { notification } from 'ant-design-vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import ListTypeCourse from '../../../components/common/ListTypeCourse.vue';
 import { formatSpacerIntoHyphen } from '../../../constants/function';
-import { LEARN } from '../../../constants/image';
+import { AVATAR, LEARN, LISTENING } from '../../../constants/image';
 import ButtonBackUser from '../../../components/common/ButtonBackUser.vue';
 import Slider from '../../../components/common/Slider.vue';
+import moment from 'moment';
+
 export default {
   name: 'HomeUser',
   components: { ListTypeCourse, ConfirmModal, ButtonBackUser, Slider },
   created() {
+    this.AVATAR = AVATAR;
+    this.LISTENING = LISTENING;
     this.LEARN = LEARN;
     this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
   },
   data() {
     return {
+      inputTime: '2023-10-25 01:08:00',
+      delayMinutes: null,
       modalChooseCourse: false,
       userLevel: [
         { id: 1, level: 'Basic', status: 1 },
@@ -133,7 +163,36 @@ export default {
       );
     },
   },
+  mounted() {
+    this.updateCurrentTime();
+    setInterval(this.updateCurrentTime, 1000);
+  },
   methods: {
+    /**
+     * set time to show history time of blog
+     */
+    updateCurrentTime() {
+      const currentTime = moment();
+      const inputTimeMoment = moment(this.inputTime, 'YYYY-MM-DD HH:mm:ss');
+      const delayInSeconds = currentTime.diff(inputTimeMoment, 'seconds');
+      let timeSeconds = delayInSeconds;
+      if (timeSeconds < 60) this.delayMinutes = timeSeconds + ` seconds ago`;
+      else if (timeSeconds < 60 * 60 && timeSeconds >= 60) {
+        if (timeSeconds < 60 * 2)
+          this.delayMinutes = Math.floor(timeSeconds / 60) + ` min ago`;
+        else this.delayMinutes = Math.floor(timeSeconds / 60) + ` mins ago`;
+      } else if (timeSeconds < 60 * 60 * 24 && timeSeconds >= 60 * 60) {
+        if (timeSeconds < 60 * 60 * 2)
+          this.delayMinutes = Math.floor(timeSeconds / 3600) + ` hour ago`;
+        else this.delayMinutes = Math.floor(timeSeconds / 3600) + ` hours ago`;
+      } else if (timeSeconds < 86400 * 24 && timeSeconds >= 86400) {
+        if (timeSeconds < 86400 * 2)
+          this.delayMinutes = Math.floor(timeSeconds / 86400) + ` day ago`;
+        else if (86400 * 2 <= timeSeconds && timeSeconds <= 86400 * 8) {
+          this.delayMinutes = Math.floor(timeSeconds / 86400) + ` days ago`;
+        } else this.delayMinutes = inputTimeMoment.format('YYYY-MM-DD');
+      }
+    },
     changeBack() {
       this.$router.push({ name: 'HomeUser' });
     },
@@ -208,4 +267,5 @@ export default {
     width: 98%;
   }
 }
+@import '../../user/blog/Blog.scss';
 </style>

@@ -25,6 +25,7 @@
         </div>
       </div>
       <div
+        v-if="checkTranscript"
         ref="transcript"
         :class="[
           'detail-transcript absolute text-left ',
@@ -84,25 +85,41 @@
       @update4="setValuePriority4"
     />
     <div class="flex justify-center gap-20 items-center py-5 text-base">
-      <div class="flex gap-7">
+      <div v-if="!isMatchedRoute('MemberDetailCourseListening')">
+        <div class="flex gap-20">
+          <div
+            class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+            @click="onBack"
+          >
+            <span class="text-base text-primary">Back</span>
+          </div>
+          <div
+            class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+            @click="handleUpdate"
+          >
+            <span class="text-base text-white">Edit</span>
+          </div>
+          <div
+            @click="handleSubmit"
+            class="cursor-pointer rounded-lg bg-yellow-300 text-white w-24 text-center h-8 leading-8 hover:opacity-50"
+          >
+            Test
+          </div>
+        </div>
+      </div>
+      <div v-else class="flex gap-20">
         <div
-          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
-          @click="handleBack"
+          class="cursor-pointer font-semibold rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="onBack"
         >
           <span class="text-base text-primary">Back</span>
         </div>
         <div
-          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
-          @click="handleUpdate"
+          @click="handleSubmit"
+          class="cursor-pointer font-semibold rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
         >
-          <span class="text-base text-white">Edit</span>
+          Submit
         </div>
-      </div>
-      <div
-        @click="handleSubmit"
-        class="cursor-pointer rounded-lg bg-yellow-300 text-white w-24 text-center h-8 leading-8 hover:opacity-50"
-      >
-        Test
       </div>
     </div>
   </div>
@@ -198,6 +215,7 @@ export default {
             type: 2,
           });
       }
+      this.checkTranscript = true;
     },
     checkHeight() {
       const heightTranscript = this.$refs.transcript;
@@ -218,7 +236,7 @@ export default {
     },
     handleUpdate() {
       this.$router.push({
-        name: 'CreateCourseListening',
+        name: 'UpdateCourseReading',
         params: { name: this.paramName },
       });
     },
@@ -246,6 +264,7 @@ export default {
   },
   data() {
     return {
+      checkTranscript: false,
       paramName: null,
       drag: false,
       inputPriority1: null,

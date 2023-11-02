@@ -1,5 +1,5 @@
 <template lang="">
-  <div
+  <header
     :class="[
       'h-20 flex justify-between items-center w-full bg-white z-10 sticky top-0',
       !checkRoute ? 'border-b-0 border-l-0' : 'border-b border-l header',
@@ -188,7 +188,7 @@
         </ul>
       </div>
     </div>
-  </div>
+  </header>
 </template>
 <script>
 import {

@@ -157,14 +157,18 @@ textarea {
 
 .detail-blog {
   &-item {
-    width: 20rem;
+    width: fit-content;
+    margin: 0 auto;
+    .item-title {
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+    }
   }
   &-grid {
-    @media screen and (max-width: 1920px) {
+    @media screen and (max-width: 1800px) {
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
-    }
-    @media screen and (max-width: 1120px) {
-      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)) !important;
     }
   }
 }

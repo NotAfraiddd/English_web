@@ -6,6 +6,7 @@ module.exports = {
     extend: {
       colors: {
         primary: 'rgba(81, 166, 221, 0.70)',
+        primary_grey_time: '#757575',
         primary_blue: '#0056D6',
         primary_comment: 'rgba(240, 240, 240, 1)',
         primary_line: 'rgba(153, 153, 153, 0.60)',

@@ -8,17 +8,19 @@
       </div>
     </div>
   </div>
+  <BaseFooter />
   <LoadingScreen v-if="isLoading" />
 </template>
 
 <script>
 import BaseSideBar from '../components/User/BaseSideBar.vue';
 import BaseHeader from '../components/admin/BaseHeader';
+import BaseFooter from '../components/admin/BaseFooter';
 import LoadingScreen from '../components/common/LoadingScreen';
 import { LoadingMixins } from '../mixins/Loading';
 export default {
   name: 'UserLayout',
-  components: { BaseSideBar, BaseHeader, LoadingScreen },
+  components: { BaseSideBar, BaseHeader, LoadingScreen, BaseFooter },
   mixins: [LoadingMixins],
   data() {
     return {

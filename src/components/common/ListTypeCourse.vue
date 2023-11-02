@@ -5,21 +5,28 @@
       :key="index"
       class="h-auto min-h-max"
       :class="extendItemClass"
-      @click="handleClick(item)"
     >
-      <div
-        class="course flex justify-center border flex-col w-full px-4 gap-1 rounded-2xl h-40 cursor-pointer hover:opacity-80"
-        :style="`background-color: ${item.color};`"
-      >
+      <div class="course relative">
         <div
-          class="font-semibold text-2xl text-white flex flex-wrap justify-center"
+          class="course-learn__detail flex justify-center border flex-col w-full px-4 gap-1 rounded-2xl h-40"
+          :style="`background-color: ${item.color};`"
         >
-          {{ item.title }}
+          <div
+            class="font-semibold text-2xl text-white flex flex-wrap justify-center"
+          >
+            {{ item.title }}
+          </div>
+          <div class="text-base text-white flex flex-wrap justify-center">
+            {{ item.subtitle }}
+          </div>
+          <Processbar v-if="hideProcessBar" :percentages="item.percentages" />
         </div>
-        <div class="text-base text-white flex flex-wrap justify-center">
-          {{ item.subtitle }}
-        </div>
-        <Processbar v-if="hideProcessBar" :percentages="item.percentages" />
+        <button
+          class="course-learn__button cursor-pointer"
+          @click="handleClick(item)"
+        >
+          Learn
+        </button>
       </div>
       <div class="w-full mt-3 flex flex-col gap-1 my-4 items-center">
         <div class="font-semibold text-xl w-full">{{ item.name }}</div>
@@ -61,6 +68,36 @@ export default {
   &:hover {
     transform: translateY(-2px);
   }
+  &-learn__button {
+    background-color: #fff;
+    border-color: #fff;
+    left: 50%;
+    opacity: 0;
+    font-weight: 600;
+    position: absolute;
+    top: 55%;
+    border-radius: 12px;
+    padding: 9px 16px;
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease 0s;
+    visibility: hidden;
+    z-index: 1;
+  }
+  &-learn__detail::after {
+    border-radius: 16px;
+    content: '';
+    inset: 0;
+    opacity: 0;
+    position: absolute;
+    transition: all 0.3s ease 0s;
+    visibility: hidden;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+}
+.course:hover .course-learn__detail::after,
+.course:hover .course-learn__button {
+  opacity: 1;
+  visibility: visible;
 }
 
 .list-course {
