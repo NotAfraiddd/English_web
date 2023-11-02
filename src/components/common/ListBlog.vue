@@ -83,10 +83,17 @@
             showOption && activeId === item.id ? 'block' : 'hidden',
           ]"
         >
-          <div v-for="(item, index) in options" :key="index">
-            <div class="h-7 leading-7 hover:bg-table_border cursor-pointer">
-              {{ item.title }}
-            </div>
+          <div class="h-7 leading-7 hover:bg-table_border cursor-pointer">
+            Delete
+          </div>
+          <div class="h-7 leading-7 hover:bg-table_border cursor-pointer">
+            Edit
+          </div>
+          <div
+            @click="shareOnFacebook"
+            class="h-7 leading-7 hover:bg-table_border cursor-pointer"
+          >
+            Sharing
           </div>
         </div>
       </div>
@@ -114,6 +121,18 @@ export default {
     extendClass: { type: String, default: '' },
   },
   methods: {
+    shareOnFacebook() {
+      // Lấy URL hiện tại của trang
+      const currentURL = window.location.href;
+
+      // Tạo một URL chia sẻ cho Facebook
+      const facebookShareURL = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        currentURL,
+      )}`;
+
+      // Mở cửa sổ mới hoặc tab để chia sẻ URL lên Facebook
+      window.open(facebookShareURL, '_blank');
+    },
     handleClickReact(data) {
       data.numReact += 1;
     },
