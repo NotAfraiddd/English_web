@@ -5,7 +5,6 @@ const course = {
   },
   mutations: {
     setSubmit(state, submit) {
-      console.log(submit);
       state.submit = submit;
     },
   },

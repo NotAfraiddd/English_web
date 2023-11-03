@@ -14,6 +14,16 @@ export default [
         name: 'Register',
         component: () => import('../pages/login/Register.vue'),
       },
+      {
+        path: '/test-level/listening',
+        name: 'ListeningTest',
+        component: () => import('../pages/test/Listening.vue'),
+      },
+      {
+        path: '/test-level/reading',
+        name: 'ReadingTest',
+        component: () => import('../pages/test/Reading.vue'),
+      },
     ],
   },
   {

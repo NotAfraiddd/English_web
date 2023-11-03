@@ -18,7 +18,7 @@
             maxlength="1"
           />
           <div
-            v-if="hasError(inputPriority1)"
+            v-if="hasError1(inputPriority1)"
             class="text-text_red font-semibold"
           >
             x
@@ -35,7 +35,7 @@
             maxlength="1"
           />
           <div
-            v-if="hasError(inputPriority2)"
+            v-if="hasError2(inputPriority2)"
             class="text-text_red font-semibold"
           >
             x
@@ -52,7 +52,7 @@
             maxlength="1"
           />
           <div
-            v-if="hasError(inputPriority3)"
+            v-if="hasError3(inputPriority3)"
             class="text-text_red font-semibold"
           >
             x
@@ -69,7 +69,7 @@
             maxlength="1"
           />
           <div
-            v-if="hasError(inputPriority4)"
+            v-if="hasError4(inputPriority4)"
             class="text-text_red font-semibold"
           >
             x
@@ -121,20 +121,48 @@ export default {
   },
   computed: {
     ...mapState('course', ['submit']),
+    ...mapState('auth', ['error']),
   },
   methods: {
     ...mapMutations('course', ['setSubmit']),
-    hasError(data) {
+    ...mapMutations('auth', ['setError']),
+    hasError1(data) {
       if (this.submit == true) {
-        console.log(this.submit);
-        console.log(data);
-        this.correctPriority.forEach((item) => {
-          console.log(item, data);
-          if (item == data) return true;
-          else return false;
-        });
+        console.log('log', data, this.correctPriority[0]);
+        if (data == this.correctPriority[0] && data) {
+          console.log('1');
+        } else {
+          this.setError(1);
+          this.setSubmit(false);
+        }
       }
     },
+    hasError2(data) {
+      // if (this.submit == true) {
+      //   console.log('log 1', data, this.correctPriority[1]);
+      //   if (data == this.correctPriority[1] && data) {
+      //     console.log('2');
+      //   } else {
+      //     this.setError(1);
+      //     this.setSubmit(false);
+      //   }
+      // }
+    },
+    hasError3(data) {
+      // if (this.submit == true) {
+      //   if (data == this.correctPriority[0]) {
+      //     console.log('1');
+      //   }
+      // }
+    },
+    hasError4(data) {
+      // if (this.submit == true) {
+      //   if (data == this.correctPriority[0]) {
+      //     console.log('1');
+      //   }
+      // }
+    },
+
     handleChangeInput1(event) {
       this.$emit('update1', event.target.value);
     },

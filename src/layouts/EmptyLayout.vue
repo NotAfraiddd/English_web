@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="px-10">
     <router-view />
   </div>
   <LoadingScreen v-if="isLoading" />
@@ -29,4 +29,36 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+html *::-webkit-scrollbar {
+  border-radius: 0;
+  height: 12px;
+  width: 8px;
+}
+
+html *::-webkit-scrollbar {
+  border-radius: 0;
+  height: 12px;
+  width: 8px;
+}
+
+html *::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+html *::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+html *::-webkit-scrollbar-track {
+  border-radius: 0;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+html *::-webkit-scrollbar-track {
+  border-radius: 0;
+  background-color: rgba(0, 0, 0, 0);
+}
+</style>
