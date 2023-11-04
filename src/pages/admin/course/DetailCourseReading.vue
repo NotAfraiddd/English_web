@@ -119,7 +119,7 @@ export default {
       return JSON.stringify(valueA) === JSON.stringify(valueB);
     },
     handleSubmit() {
-      this.setSubmit(true);
+      // this.setSubmit(true);
       // MultipleChoice
       this.errorsMultiple = [];
       for (let i = 0; i < this.dataMultipleChoice.length; i++) {

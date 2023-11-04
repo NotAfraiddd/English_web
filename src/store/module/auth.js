@@ -13,8 +13,7 @@ const auth = {
       state.password = password;
     },
     setError(state, error) {
-      console.log(state, error);
-      state.error += error;
+      state.error = error;
     },
   },
 };

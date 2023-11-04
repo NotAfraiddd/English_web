@@ -92,6 +92,7 @@ import Draggable from 'vuedraggable';
 export default {
   components: { Draggable },
   props: {
+    submitProp: { type: Boolean, default: false },
     listQuestions: { type: Array, default: () => [] },
     listAnswers: { type: Array, default: () => [] },
     dataListWords: { type: Array, default: () => [] },
@@ -99,6 +100,7 @@ export default {
   },
   data() {
     return {
+      submit: false,
       lastClickTime: 0,
       questions: this.listQuestions,
       answers: this.listAnswers,
@@ -110,11 +112,11 @@ export default {
     '$refs.matchWord.scrollHeight'(newValue) {
       console.log(newValue);
     },
+    submitProp(newVal) {
+      this.submit = newVal;
+    },
   },
 
-  computed: {
-    ...mapState('course', ['submit']),
-  },
   methods: {
     handleDoubleClick(data) {
       const currentTime = new Date().getTime();

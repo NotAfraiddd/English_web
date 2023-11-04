@@ -7,71 +7,21 @@
         </div>
       </div>
       <div class="flex flex-col justify-between gap-1">
-        <div class="flex gap-2 items-center">
+        <div
+          class="flex gap-2 items-center"
+          v-for="(item, index) in dataPriority.length"
+          :key="index"
+        >
           <input
             type="text"
             class="border text-center border-primary w-40 h-8 rounded-lg form-control"
-            @change="handleChangeInput1"
-            v-model="inputPriority1"
+            @change="handleChangeInput($event, index)"
+            v-model="inputPriority[index]"
             spellcheck="false"
             :placeholder="placeholder"
             maxlength="1"
           />
-          <div
-            v-if="hasError1(inputPriority1)"
-            class="text-text_red font-semibold"
-          >
-            x
-          </div>
-        </div>
-        <div class="flex gap-2 items-center">
-          <input
-            type="text"
-            class="border text-center border-primary w-40 h-8 rounded-lg form-control"
-            @change="handleChangeInput2"
-            v-model="inputPriority2"
-            spellcheck="false"
-            :placeholder="placeholder"
-            maxlength="1"
-          />
-          <div
-            v-if="hasError2(inputPriority2)"
-            class="text-text_red font-semibold"
-          >
-            x
-          </div>
-        </div>
-        <div class="flex gap-2 items-center">
-          <input
-            type="text"
-            class="border text-center border-primary w-40 h-8 rounded-lg form-control"
-            @change="handleChangeInput3"
-            v-model="inputPriority3"
-            spellcheck="false"
-            :placeholder="placeholder"
-            maxlength="1"
-          />
-          <div
-            v-if="hasError3(inputPriority3)"
-            class="text-text_red font-semibold"
-          >
-            x
-          </div>
-        </div>
-        <div class="flex gap-2 items-center">
-          <input
-            type="text"
-            class="border text-center border-primary w-40 h-8 rounded-lg form-control"
-            @change="handleChangeInput4"
-            v-model="inputPriority4"
-            spellcheck="false"
-            :placeholder="placeholder"
-            maxlength="1"
-          />
-          <div
-            v-if="hasError4(inputPriority4)"
-            class="text-text_red font-semibold"
-          >
+          <div v-if="hasError(index)" class="text-text_red font-semibold">
             x
           </div>
         </div>
@@ -84,96 +34,71 @@
 import { mapMutations, mapState } from 'vuex';
 export default {
   props: {
-    dataPriority: { type: Array, default: () => [] },
-    listCorrectPriority: { type: Array, default: () => [] },
+    submitProp: { type: Boolean, default: false },
     placeholder: { type: String, default: null },
-    inputPriorityProp1: { type: String, default: null },
-    inputPriorityProp2: { type: String, default: null },
-    inputPriorityProp3: { type: String, default: null },
-    inputPriorityProp4: { type: String, default: null },
+    dataPriority: { type: Array, default: () => [] },
+    errorPriority: { type: Array, default: () => [] },
+    inputPriorityProp: { type: Array, default: () => [] },
+    listCorrectPriority: { type: Array, default: () => [] },
   },
   watch: {
     dataPriority(newValue) {
       this.priority = newValue;
     },
-    inputPriorityProp1(newValue) {
-      this.inputPriority1 = newValue;
+    inputPriorityProp(newValue) {
+      this.inputPriority = newValue;
     },
-    inputPriorityProp2(newValue) {
-      this.inputPriority2 = newValue;
-    },
-    inputPriorityProp3(newValue) {
-      this.inputPriority3 = newValue;
-    },
-    inputPriorityProp4(newValue) {
-      this.inputPriority4 = newValue;
+    submitProp(newVal) {
+      this.submit = newVal;
     },
   },
   data() {
     return {
+      error: 0,
+      submit: false,
       priority: this.dataPriority,
       correctPriority: this.listCorrectPriority,
-      inputPriority1: this.inputPriorityProp1,
-      inputPriority2: this.inputPriorityProp2,
-      inputPriority3: this.inputPriorityProp3,
-      inputPriority4: this.inputPriorityProp4,
+      errors: this.errorPriority,
+      inputPriority: [],
     };
   },
-  computed: {
-    ...mapState('course', ['submit']),
-    ...mapState('auth', ['error']),
-  },
   methods: {
-    ...mapMutations('course', ['setSubmit']),
     ...mapMutations('auth', ['setError']),
-    hasError1(data) {
-      if (this.submit == true) {
-        console.log('log', data, this.correctPriority[0]);
-        if (data == this.correctPriority[0] && data) {
-          console.log('1');
+    /**
+     *  Check if the route name matches the route being displayed.
+     *  @returns {boolean} - Returns true if the route name matches the current route, false otherwise.
+     */
+    isMatchedRoute(routeName) {
+      return this.$route.name === routeName;
+    },
+    hasError(dataIndex) {
+      if (this.submit) {
+        if (this.inputPriority.length == 0) {
+          if (!this.isMatchedRoute('ListeningTest')) return true;
+          else this.error = 4;
         } else {
-          this.setError(1);
-          this.setSubmit(false);
+          let check = this.errors.some(
+            (item) => item.index == dataIndex && !item.status,
+          );
+          if (!this.isMatchedRoute('ListeningTest')) {
+            return check;
+          } else {
+            this.errors.forEach((item) => {
+              if (!item.status) {
+                this.error++;
+              }
+            });
+          }
         }
+        this.correctPriority.forEach((item, i) => {
+          if (i == 3) {
+            this.submit = false;
+          }
+        });
       }
     },
-    hasError2(data) {
-      // if (this.submit == true) {
-      //   console.log('log 1', data, this.correctPriority[1]);
-      //   if (data == this.correctPriority[1] && data) {
-      //     console.log('2');
-      //   } else {
-      //     this.setError(1);
-      //     this.setSubmit(false);
-      //   }
-      // }
-    },
-    hasError3(data) {
-      // if (this.submit == true) {
-      //   if (data == this.correctPriority[0]) {
-      //     console.log('1');
-      //   }
-      // }
-    },
-    hasError4(data) {
-      // if (this.submit == true) {
-      //   if (data == this.correctPriority[0]) {
-      //     console.log('1');
-      //   }
-      // }
-    },
-
-    handleChangeInput1(event) {
-      this.$emit('update1', event.target.value);
-    },
-    handleChangeInput2(event) {
-      this.$emit('update2', event.target.value);
-    },
-    handleChangeInput3(event) {
-      this.$emit('update3', event.target.value);
-    },
-    handleChangeInput4(event) {
-      this.$emit('update4', event.target.value);
+    handleChangeInput(event, index) {
+      this.$emit('update', { value: event.target.value, i: index });
     },
   },
 };

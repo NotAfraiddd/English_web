@@ -35,9 +35,9 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex';
 export default {
   props: {
+    submitProp: { type: Boolean, default: false },
     data: {
       type: Array,
       required: true,
@@ -51,18 +51,19 @@ export default {
       required: true,
     },
   },
+  watch: {
+    submitProp(newVal) {
+      this.submit = newVal;
+    },
+  },
   data() {
     return {
       selected: [],
+      submit: false,
     };
   },
-  computed: {
-    ...mapState('course', ['submit']),
-  },
   methods: {
-    ...mapMutations('course', ['setSubmit']),
     isSelected(id, key) {
-      // this.setSubmit(false);
       return this.selected[id] === key;
     },
     handleChange(id, key) {
