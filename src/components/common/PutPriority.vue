@@ -90,6 +90,7 @@ export default {
             });
           }
         }
+        this.setError(this.error);
         this.correctPriority.forEach((item, i) => {
           if (i == 3) {
             this.submit = false;

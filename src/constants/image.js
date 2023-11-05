@@ -45,12 +45,14 @@ import USER_LEARN from '../assets/images/user-learn.png';
 import LEARN from '../assets/images/learn.png';
 import LISTENING from '../assets/images/listening.jpg';
 import REPORT from '../assets/images/report.svg';
+import CONGRATULATION from '../assets/images/git-congratulation.gif';
 import GROUP_STUDENT_1 from '../assets/images/group-student-1.jpg';
 import GROUP_STUDENT_2 from '../assets/images/group-student-2.jpg';
 import GROUP_STUDENT_3 from '../assets/images/group-student-3.jpg';
 import MOUNTAIN_CLIMB from '../assets/images/mountain-climbing.jpg';
 
 export {
+  CONGRATULATION,
   GROUP_STUDENT_1,
   GROUP_STUDENT_2,
   GROUP_STUDENT_3,

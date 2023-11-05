@@ -35,7 +35,12 @@
 </template>
 
 <script>
+import { mapMutations, mapState } from 'vuex';
 export default {
+  created() {
+    this.paramName = this.$route.name;
+    this.error == 0 ? this.setError(+localStorage.getItem('error')) : 0;
+  },
   props: {
     submitProp: { type: Boolean, default: false },
     data: {
@@ -54,15 +59,32 @@ export default {
   watch: {
     submitProp(newVal) {
       this.submit = newVal;
+      if (this.submit) {
+        this.numError = this.errors.length;
+        this.setError(this.numError);
+      }
     },
+  },
+  computed: {
+    ...mapState('auth', ['error']),
   },
   data() {
     return {
+      paramName: null,
+      numError: 0,
       selected: [],
       submit: false,
     };
   },
   methods: {
+    ...mapMutations('auth', ['setError']),
+    /**
+     *  Check if the route name matches the route being displayed.
+     *  @returns {boolean} - Returns true if the route name matches the current route, false otherwise.
+     */
+    isMatchedRoute(routeName) {
+      return this.$route.name === routeName;
+    },
     isSelected(id, key) {
       return this.selected[id] === key;
     },
@@ -71,7 +93,13 @@ export default {
       this.$emit('setValue', this.selected);
     },
     hasError(id) {
-      return this.errors.includes(id);
+      if (!this.isMatchedRoute(`${this.paramName}`))
+        return this.errors.includes(id);
+      else {
+        if (this.submit) {
+          this.submit = false;
+        }
+      }
     },
   },
 };

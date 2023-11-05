@@ -67,20 +67,38 @@ import { ARROW_LEFT, MOUNTAIN_CLIMB } from '../../constants/image';
 import MultipleChoice from '../../components/common/MultipleChoice.vue';
 import MatchWord from '../../components/common/MatchWord.vue';
 import PutPriority from '../../components/common/PutPriority.vue';
+import { mapState, mapMutations } from 'vuex';
 export default {
   name: 'ListeningTest',
   components: { ButtonBack, Audio, MultipleChoice, MatchWord, PutPriority },
   created() {
     this.ARROW_LEFT = ARROW_LEFT;
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
-    this.paramName = this.$route.params.name;
+    localStorage.removeItem('error');
+    if (this.isMatchedRoute('ListeningTest')) {
+      this.setDefaultError(0);
+      console.log(this.$route.name, this.error);
+    }
   },
   watch: {
     listAnswers() {
       this.errorsMatching = [];
     },
   },
+  computed: {
+    ...mapState('auth', ['error']),
+  },
   methods: {
+    ...mapMutations('auth', ['setError', 'setDefaultError']),
+    /**
+     *  Check if the route name matches the route being displayed.
+     *  @returns {boolean} - Returns true if the route name matches the current route, false otherwise.
+     */
+    isMatchedRoute(routeName) {
+      return this.$route.matched.some(({ name }) => {
+        return name == routeName;
+      });
+    },
     setValuePriority(data) {
       this.inputPriority = this.listCorrectPriority.map((element, index) => {
         if (index === data.i) {
@@ -151,7 +169,16 @@ export default {
         }
         this.submitPriority = true;
       }
-      this.checkTranscript = true;
+      if (
+        this.submitMatching &&
+        this.submitMultipleChoice &&
+        this.submitPriority
+      ) {
+        setTimeout(() => {
+          localStorage.setItem('error', this.error);
+        }, 0);
+        this.$router.push({ name: 'ReadingTest' });
+      }
     },
     checkHeight() {
       const heightTranscript = this.$refs.transcript;
@@ -170,23 +197,13 @@ export default {
         }
       }
     },
-    handleUpdate() {
-      this.$router.push({
-        name: 'UpdateCourseReading',
-        params: { name: this.paramName },
-      });
-    },
-    goToDetailCourse(data) {
-      console.log(data);
-    },
   },
   data() {
     return {
+      numberErrorTemp: 0,
       submitPriority: false,
       submitMatching: false,
       submitMultipleChoice: false,
-      checkTranscript: false,
-      paramName: null,
       drag: false,
       errorPriority: [],
       inputPriority: [],

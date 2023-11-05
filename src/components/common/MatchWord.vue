@@ -15,12 +15,13 @@
           justify-content: space-around;
           flex-grow: 1;
           flex-wrap: wrap;
-          margin-bottom: 8px;
+          gap: 5px;
+          align-items: center;
         "
       >
         <template #item="{ element }">
           <div
-            class="w-max px-3 bg-white text-primary h-10 leading-10 rounded-xl text-base cursor-pointer mt-2"
+            class="w-max px-3 bg-white text-primary h-8 leading-8 rounded-xl text-base cursor-pointer detail-match-word__item"
           >
             {{ element.word }}
           </div>
@@ -71,13 +72,17 @@
         </Draggable>
         <div class="flex flex-col gap-2 items-center justify-center">
           <div v-for="item in errorsMatching" :key="item.id" class="h-7">
-            <div class="text-text_red font-semibold" v-if="item.type == 0">
-              x
+            <div v-if="!isMatchedRoute('ListeningTest')">
+              <div class="text-text_red font-semibold" v-if="item.type == 0">
+                x
+              </div>
+              <div
+                class="text-text_red font-semibold"
+                v-else-if="item.type == 1"
+              >
+                x
+              </div>
             </div>
-            <div class="text-text_red font-semibold" v-else-if="item.type == 1">
-              x
-            </div>
-            <div v-else />
           </div>
         </div>
       </div>
@@ -86,7 +91,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapMutations } from 'vuex';
 import Draggable from 'vuedraggable';
 
 export default {
@@ -101,6 +106,7 @@ export default {
   data() {
     return {
       submit: false,
+      numError: 0,
       lastClickTime: 0,
       questions: this.listQuestions,
       answers: this.listAnswers,
@@ -114,10 +120,29 @@ export default {
     },
     submitProp(newVal) {
       this.submit = newVal;
+      if (this.submit) {
+        this.setError(this.numError);
+      }
+    },
+    errorsMatching(newVal) {
+      if (this.isMatchedRoute('ListeningTest'))
+        newVal.forEach((item) => {
+          if (item.type != 2) {
+            this.numError++;
+          }
+        });
     },
   },
 
   methods: {
+    ...mapMutations('auth', ['setError']),
+    /**
+     *  Check if the route name matches the route being displayed.
+     *  @returns {boolean} - Returns true if the route name matches the current route, false otherwise.
+     */
+    isMatchedRoute(routeName) {
+      return this.$route.name === routeName;
+    },
     handleDoubleClick(data) {
       const currentTime = new Date().getTime();
       if (currentTime - this.lastClickTime < 300) {
@@ -196,8 +221,20 @@ export default {
   background: #fff;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   &__container {
-    height: 80px;
+    height: 60px;
     gap: 8px;
+    @media screen and (max-width: 740px) {
+      height: 80px;
+    }
+  }
+  &__item:first-child {
+    margin-left: 5px;
+  }
+  &__item:last-child {
+    margin-right: 5px;
+  }
+  &__item {
+    margin: 0px 2px;
   }
   &__drag,
   &__answers,

@@ -13,6 +13,9 @@ const auth = {
       state.password = password;
     },
     setError(state, error) {
+      state.error += error;
+    },
+    setDefaultError(state, error) {
       state.error = error;
     },
   },

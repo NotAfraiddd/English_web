@@ -52,6 +52,7 @@
           @setValue="getAnswerMultichoice"
           :correctAnswer="correctAnswer"
           :errors="errorsMultiple"
+          :submit-prop="submitMultipleChoice"
         />
       </div>
     </div>
@@ -64,6 +65,7 @@
       :list-answers="listAnswers"
       :list-questions="listQuestions"
       :errorsMatching="errorsMatching"
+      :submit-prop="submitMatching"
       @setAnswers="setAnswers"
       @setQuetions="setQuetions"
     />
@@ -72,17 +74,13 @@
       extend-class="mt-5"
     />
     <PutPriority
+      placeholder="Priority sequence"
       :data-priority="listPriority"
       :list-correct-priority="listCorrectPriority"
-      placeholder="Priority sequence"
-      :input-priority-prop1="inputPriority1"
-      :input-priority-prop2="inputPriority2"
-      :input-priority-prop3="inputPriority3"
-      :input-priority-prop4="inputPriority4"
-      @update1="setValuePriority1"
-      @update2="setValuePriority2"
-      @update3="setValuePriority3"
-      @update4="setValuePriority4"
+      :input-priority-prop="inputPriority"
+      :error-priority="errorPriority"
+      :submit-prop="submitPriority"
+      @update="setValuePriority"
     />
     <div class="flex justify-center gap-20 items-center py-5 text-base">
       <div v-if="!isMatchedRoute('MemberDetailCourseListening')">
@@ -146,23 +144,13 @@ export default {
     },
   },
   methods: {
-    ...mapMutations('course', ['setSubmit']),
     isMatchedRoute(routeName) {
       return this.$route.matched.some(({ name }) => {
         return name == routeName;
       });
     },
-    setValuePriority1(data) {
-      this.inputPriority1 = data;
-    },
-    setValuePriority2(data) {
-      this.inputPriority2 = data;
-    },
-    setValuePriority3(data) {
-      this.inputPriority3 = data;
-    },
-    setValuePriority4(data) {
-      this.inputPriority4 = data;
+    setValuePriority(data) {
+      this.inputPriority = data;
     },
     onBack() {
       if (this.isMatchedRoute('MemberDetailCourseListening'))
@@ -184,36 +172,54 @@ export default {
     compareMultiple(valueA, valueB) {
       return JSON.stringify(valueA) === JSON.stringify(valueB);
     },
+    comparePriority(valueA, valueB) {
+      return valueA == valueB;
+    },
     compareMatch(quetions, answers) {
       if (quetions.word == answers.word) return true;
       else return false;
     },
     handleSubmit() {
-      // this.setSubmit(true);
       // MultipleChoice
-      this.errorsMultiple = [];
-      for (let i = 0; i < this.dataMultipleChoice.length; i++) {
-        if (
-          this.compareMultiple(this.correctAnswer[i], this.myAnswer[i]) == false
-        ) {
-          this.errorsMultiple.push(this.dataMultipleChoice[i].id + 1);
+      if (!this.submitMultipleChoice) {
+        this.errorsMultiple = [];
+        for (let i = 0; i < this.dataMultipleChoice.length; i++) {
+          if (
+            this.compareMultiple(this.correctAnswer[i], this.myAnswer[i]) ==
+            false
+          ) {
+            this.errorsMultiple.push(this.dataMultipleChoice[i].id + 1);
+          }
         }
+        this.submitMultipleChoice = true;
       }
       // matching
-      this.errorsMatching = [];
-      for (let i = 0; i < this.listAnswers.length; i++) {
-        if (
-          this.compareMatch(this.listQuestions[i], this.listAnswers[i]) == false
-        ) {
-          this.errorsMatching.push({
-            id: this.listAnswers[i].id,
-            type: this.listAnswers[i].word == null ? 0 : 1,
-          });
-        } else
-          this.errorsMatching.push({
-            id: this.listAnswers[i].id,
-            type: 2,
-          });
+      if (!this.submitMatching) {
+        this.errorsMatching = [];
+        for (let i = 0; i < this.listAnswers.length; i++) {
+          if (!this.compareMatch(this.listQuestions[i], this.listAnswers[i])) {
+            this.errorsMatching.push({
+              id: this.listAnswers[i].id,
+              type: this.listAnswers[i].word == null ? 0 : 1,
+            });
+          } else
+            this.errorsMatching.push({
+              id: this.listAnswers[i].id,
+              type: 2,
+            });
+        }
+        this.submitMatching = true;
+      }
+      // priority
+      if (!this.submitPriority) {
+        for (let i = 0; i < this.listCorrectPriority.length; i++) {
+          let checkPriority = this.comparePriority(
+            this.listCorrectPriority[i],
+            this.inputPriority[i],
+          );
+          this.errorPriority.push({ index: i, status: checkPriority });
+        }
+        this.submitPriority = true;
       }
       this.checkTranscript = true;
     },
@@ -264,13 +270,14 @@ export default {
   },
   data() {
     return {
+      submitPriority: false,
+      submitMatching: false,
+      submitMultipleChoice: false,
       checkTranscript: false,
       paramName: null,
       drag: false,
-      inputPriority1: null,
-      inputPriority2: null,
-      inputPriority3: null,
-      inputPriority4: null,
+      errorPriority: [],
+      inputPriority: [],
       listPriority: [
         { id: 1, question: 'I have an apple in my bag.' },
         { id: 2, question: 'I have an apple in my bag.' },

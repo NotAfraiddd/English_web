@@ -1,6 +1,12 @@
 <template>
   <div class="mx-2">
-    <ButtonBack title="Detail Reading" :hide-back="true" @back="onBack" />
+    <div class="flex items-center w-full">
+      <div class="bg-primary_line course-line w-full" />
+      <div class="text-lg text-primary_black font-semibold w-full">
+        Reading Test
+      </div>
+      <div class="bg-primary_line course-line w-full" />
+    </div>
     <div class="detail-field mx-auto mt-5">
       <div
         class="detail-image border-gray-100 border-t-0 border ml-2 mr-10"
@@ -33,32 +39,11 @@
         @setValue="getAnswerMultichoice"
         :correctAnswer="correctAnswer"
         :errors="errorsMultiple"
+        :submit-prop="submitMultipleChoice"
       />
     </div>
     <div class="flex justify-center gap-20 items-center py-5 text-base">
-      <div v-if="!isMatchedRoute('MemberDetailCourseReading')">
-        <div class="flex gap-20">
-          <div
-            class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
-            @click="onBack"
-          >
-            <span class="text-base text-primary">Back</span>
-          </div>
-          <div
-            class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
-            @click="handleUpdate"
-          >
-            <span class="text-base text-white">Edit</span>
-          </div>
-          <div
-            @click="handleSubmit"
-            class="cursor-pointer rounded-lg bg-yellow-300 text-white w-24 text-center h-8 leading-8 hover:opacity-50"
-          >
-            Test
-          </div>
-        </div>
-      </div>
-      <div v-else class="flex gap-20">
+      <div class="flex gap-20">
         <div
           class="cursor-pointer font-semibold rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
           @click="onBack"
@@ -74,42 +59,93 @@
       </div>
     </div>
   </div>
+  <ConfirmModal
+    :showModal="modalNotifyLevel"
+    @closeModal="closeModalNotifyLevel"
+    @save="closeModalNotifyLevel"
+    :showFooter="false"
+    :widthCustom="500"
+  >
+    <template #icon>
+      <img :src="CONGRATULATION" alt="" srcset="" class="h-10 w-10" />
+    </template>
+    <template #content>
+      <div class="text-base flex">
+        You scored
+        <div class="font-medium">&nbsp;{{ 25 - error }}&nbsp;</div>
+        of 25 answers
+      </div>
+      <div class="text-base flex">
+        You have reached
+        <div class="font-medium">&nbsp;{{ checkLevel() }}&nbsp;</div>
+        level
+      </div>
+    </template>
+    <template #select>
+      <div class="flex gap-10 mt-2">
+        <div
+          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="cancelHideModal"
+        >
+          <span class="text-base text-primary">Cancel</span>
+        </div>
+        <div
+          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="acceptShowModal"
+        >
+          <span class="text-base text-white">OK</span>
+        </div>
+      </div>
+    </template>
+  </ConfirmModal>
 </template>
 <script>
+import ConfirmModal from '../../components/admin/ConfirmModal.vue';
 import ButtonBack from '../../components/common/ButtonBack.vue';
 import MultipleChoice from '../../components/common/MultipleChoice.vue';
-import { ARROW_LEFT, MOUNTAIN_CLIMB } from '../../constants/image';
-import { mapMutations, mapState } from 'vuex';
+import {
+  ARROW_LEFT,
+  MOUNTAIN_CLIMB,
+  CONGRATULATION,
+} from '../../constants/image';
+import { mapState, mapMutations } from 'vuex';
 export default {
   name: 'ReadingTest',
-  components: { ButtonBack, MultipleChoice },
+  components: { ButtonBack, MultipleChoice, ConfirmModal },
   created() {
+    this.CONGRATULATION = CONGRATULATION;
     this.ARROW_LEFT = ARROW_LEFT;
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
-    this.paramName = this.$route.params.name;
+    setTimeout(() => {
+      this.numberErrors = +localStorage.getItem('error');
+    }, 0);
   },
   watch: {
     listAnswers() {
       this.errorsMatching = [];
     },
   },
+  computed: {
+    ...mapState('auth', ['error']),
+  },
   methods: {
-    ...mapMutations('course', ['setSubmit']),
-    isMatchedRoute(routeName) {
-      return this.$route.matched.some(({ name }) => {
-        return name == routeName;
-      });
+    checkLevel() {
+      if (this.error < 10) return 'Basic';
+      else if (10 <= this.error && this.error < 20) return 'Intermediate';
+      else if (this.error >= 20) return 'Advanced';
+    },
+    acceptShowModal() {
+      this.modalNotifyLevel = false;
+      this.$router.push({ name: 'HomeUser' });
+    },
+    cancelHideModal() {
+      this.modalNotifyLevel = false;
+    },
+    closeModalNotifyLevel() {
+      this.modalNotifyLevel = false;
     },
     onBack() {
-      if (this.isMatchedRoute('MemberDetailCourseReading'))
-        this.$router.push({ name: 'ListCourseReading' });
-      else this.$router.push({ name: 'CourseReading' });
-    },
-    handleUpdate() {
-      this.$router.push({
-        name: 'CreateCourseReading',
-        params: { name: this.paramName },
-      });
+      this.$router.push({ name: 'ListeningTest' });
     },
     getAnswerMultichoice(data) {
       this.myAnswer = data;
@@ -118,24 +154,35 @@ export default {
       return JSON.stringify(valueA) === JSON.stringify(valueB);
     },
     handleSubmit() {
-      // this.setSubmit(true);
       // MultipleChoice
-      this.errorsMultiple = [];
-      for (let i = 0; i < this.dataMultipleChoice.length; i++) {
-        if (
-          this.compareMultiple(this.correctAnswer[i], this.myAnswer[i]) == false
-        ) {
-          this.errorsMultiple.push(this.dataMultipleChoice[i].id + 1);
+      if (!this.submitMultipleChoice) {
+        this.errorsMultiple = [];
+        for (let i = 0; i < this.dataMultipleChoice.length; i++) {
+          if (
+            this.compareMultiple(this.correctAnswer[i], this.myAnswer[i]) ==
+            false
+          ) {
+            this.errorsMultiple.push(this.dataMultipleChoice[i].id + 1);
+          }
         }
+        this.submitMultipleChoice = true;
+      }
+      if (this.submitMultipleChoice) {
+        this.$nextTick(() => {
+          this.numberErrors = +localStorage.getItem('error');
+          this.modalNotifyLevel = true;
+        });
       }
     },
   },
   data() {
     return {
-      paramName: null,
+      modalNotifyLevel: false,
+      numberErrors: 0,
+      submitMultipleChoice: false,
       errorsMultiple: [],
       myAnswer: [],
-      correctAnswer: [1, 2, 3, 4, 1, 2, 1, 2, 3],
+      correctAnswer: [1, 2, 3, 4, 1, 2, 1, 2, 3, 4],
       dataMultipleChoice: [
         {
           id: 0,
@@ -228,6 +275,16 @@ export default {
             'I’m hungry all day.',
           ],
         },
+        {
+          id: 9,
+          title: 'Mary ask :',
+          question: [
+            'Do you have breakfast? Do you have breakfast? Do you have breakfast?',
+            'Do you have lunch?',
+            'Do you have dinner?',
+            'I’m hungry all day.',
+          ],
+        },
       ],
     };
   },
@@ -235,6 +292,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.course-line {
+  height: 1px;
+}
 .detail {
   &-field {
     height: 510px;
