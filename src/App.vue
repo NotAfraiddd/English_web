@@ -1,6 +1,6 @@
 <template>
   <router-view />
-  <notifications position="top right" />
+  <notifications position="bottom left" />
 </template>
 <script>
 import { mapState } from 'vuex';
@@ -41,8 +41,8 @@ export default {
   background: #fff !important;
   border: 1px solid #d4e8fd !important;
   position: absolute;
-  top: 50px;
-  right: 10px;
+  bottom: 50px;
+  left: 15px;
   width: 300px;
 }
 body {
