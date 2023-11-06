@@ -75,7 +75,6 @@
           v-for="(item, index) in listNotify"
           :key="index"
           class="flex items-center hover:bg-table_border cursor-pointer h-16 header-notify__item"
-          :class="!item.seen ? '' : ' bg-table_border'"
         >
           <div class="ml-3 mr-2">
             <Avatar :imgUrl="item.avatar" class="w-9 ml-3" />
@@ -85,7 +84,7 @@
           >
             {{ item.content }}
           </div>
-          <div v-if="item.seen" class="mr-5">
+          <div v-if="!item.seen" class="mr-5">
             <div class="w-2 h-2 rounded-lg bg-blue-400" />
           </div>
         </div>
@@ -233,6 +232,15 @@ export default {
   watch: {
     searchInputProp(newValue) {
       this.searchInput = newValue;
+    },
+    inforComment(newVal, oldVal) {
+      this.listNotify.push({
+        avatar: newVal.content.avatar,
+        content: newVal.content.content,
+        seen: false,
+        fullName: newVal.content.name,
+      });
+      console.log('inforComment', newVal);
     },
   },
   computed: {

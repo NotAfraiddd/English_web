@@ -1,7 +1,5 @@
 <template>
   <div>
-    <ButtonBack title="Course" :hideBack="false" />
-    <BaseSearch :search="inputSearch" @update="updateValue" />
     <ListTypeCourse
       :data="listCourses"
       @clicked="getData"
@@ -248,8 +246,6 @@
   </ConfirmModal>
 </template>
 <script>
-import BaseSearch from '../../../components/common/BaseSearch.vue';
-import ButtonBack from '../../../components/common/ButtonBack.vue';
 import ListTypeCourse from '../../../components/common/ListTypeCourse.vue';
 import jscolor from '@eastdesire/jscolor';
 import { NOTIFY, NOTIFY_MESSAGE } from '../../../constants';
@@ -259,7 +255,7 @@ import { notification } from 'ant-design-vue';
 import { formatSpacerIntoHyphen } from '../../../constants/function';
 export default {
   name: 'Course',
-  components: { BaseSearch, ListTypeCourse, ButtonBack, ConfirmModal },
+  components: { ListTypeCourse, ConfirmModal },
   created() {
     this.NOTIFY_MESSAGE = NOTIFY_MESSAGE;
     this.ADMIN_COURSE = ADMIN_COURSE;

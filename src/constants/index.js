@@ -49,3 +49,10 @@ export const REGEX = {
 };
 
 export const URL = `localhost:9090`;
+
+export const SOCKET = {
+  COMMENT: 1,
+  REPLY_COMMENT: 2,
+  REPORT: 3,
+  NOTIFY_BLOG: 4,
+};

@@ -5,6 +5,7 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 require('dotenv').config();
 var cors = require('./config/cors');
+const { SOCKET } = require('./config/constant');
 
 const io = new Server(server, cors);
 
@@ -14,7 +15,6 @@ server.listen(process.env.VUE_APP_SOCKETIO_PORT, () => {
 
 const getClientRoom = () => {
   let index = 0;
-  console.log('getClientRoom', index);
   // eslint-disable-next-line no-constant-condition
   while (true) {
     if (
@@ -28,25 +28,34 @@ const getClientRoom = () => {
 };
 
 io.on('connection', (socket) => {
-  console.log('A client connected');
   /**
    * Receive room from client -> create room in socket
    */
   socket.on('joinRoom', function (data) {
-    console.log('joinRoom', data);
     const clientRoom = getClientRoom();
     socket.join(clientRoom);
-    if (data.kind == 1) {
-      socket.chatRoom = clientRoom;
+    if (data.kind == SOCKET.COMMENT) {
+      socket.commentRoom = clientRoom;
+    } else if (data.kind == SOCKET.REPLY_COMMENT) {
+      socket.replyCommentRoom = clientRoom;
+    } else if (data.kind == SOCKET.NOTIFY_BLOG) {
+      socket.notifyBlog = clientRoom;
+    } else if (data.kind == SOCKET.REPORT) {
+      socket.report = clientRoom;
     }
   });
   /**
    * Listen signal from client
    */
   socket.on('sendSignal', function (data) {
-    console.log('sendSignal', data);
-    if (data.kind == 1) {
-      io.to(socket.chatRoom).emit('signal', data);
+    if (data.kind == SOCKET.COMMENT) {
+      io.to(socket.commentRoom).emit('signal', data);
+    } else if (data.kind == SOCKET.REPLY_COMMENT) {
+      io.to(socket.replyCommentRoom).emit('reply', data);
+    } else if (data.kind == SOCKET.REPLY_COMMENT) {
+      io.to(socket.notifyBlog).emit('notify', data);
+    } else if (data.kind == SOCKET.REPORT) {
+      io.to(socket.report).emit('report', data);
     }
   });
   /**

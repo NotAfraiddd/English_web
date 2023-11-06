@@ -224,6 +224,7 @@ import Emoji from './Emoji.vue';
 import moment from 'moment';
 import MenuOption from '../../../components/common/MenuOption.vue';
 import { mapMutations } from 'vuex';
+import { SOCKET } from '../../../../socket_server/config/constant';
 
 export default {
   name: 'DetailBlog',
@@ -327,17 +328,38 @@ It would take a book to list all the races and awards he's won and the mountains
     setInterval(this.updateCurrentTime, 1000);
     // listeing socket
     this.sockets.subscribe('signal', (data) => {
-      if (data.kind == 1) {
+      if (data.kind == SOCKET.COMMENT) {
         this.numNotify++;
-        this.setNotify({ id: 1, numberNotifications: this.numNotify });
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+        });
         console.log('receiver', data);
       }
     });
     const data = {
-      room: 1,
-      kind: 1,
+      room: +this.idUserBlog,
+      kind: SOCKET.COMMENT,
     };
     this.$socket.emit('joinRoom', data);
+    // ------------------ reply comment ------------------
+    this.sockets.subscribe('reply', (data) => {
+      if (data.kind == SOCKET.REPLY_COMMENT) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+        });
+        console.log('receiver', data);
+      }
+    });
+    const dataReply = {
+      room: +this.idUserBlog + `REPLY`,
+      kind: SOCKET.REPLY_COMMENT,
+    };
+    this.$socket.emit('joinRoom', dataReply);
   },
   methods: {
     ...mapMutations('notify', ['setNotify']),
@@ -447,16 +469,16 @@ It would take a book to list all the races and awards he's won and the mountains
       !e.isComposing && this.sendChat(e.target.value);
     },
     sendChat(data) {
-      // join socket
-      const dataSocket = {
-        room: 1,
-        kind: 1,
-      };
-      this.$socket.emit('joinRoom', dataSocket);
       //
       const chatContent = this.$refs.chatContent;
       if (data) {
         if (this.receiverName) {
+          // join socket
+          const dataSocket = {
+            room: +this.idUserBlog + `REPLY`,
+            kind: SOCKET.REPLY_COMMENT,
+          };
+          this.$socket.emit('joinRoom', dataSocket);
           const commentDetail = {
             userID: this.userLogin,
             name: this.userNameLogin,
@@ -469,11 +491,16 @@ It would take a book to list all the races and awards he's won and the mountains
           };
           const comment = {
             data: commentDetail,
-            kind: 1,
+            kind: SOCKET.REPLY_COMMENT,
           };
           this.$socket.emit('sendSignal', comment);
           this.replyComments.push(commentDetail);
         } else {
+          const dataSocket = {
+            room: +this.idUserBlog,
+            kind: SOCKET.COMMENT,
+          };
+          this.$socket.emit('joinRoom', dataSocket);
           const commentDetail = {
             userID: this.userLogin,
             name: this.userNameLogin,
