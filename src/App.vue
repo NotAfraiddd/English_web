@@ -1,50 +1,84 @@
 <template>
   <router-view />
-  <notifications position="bottom left" />
+  <div class="flex justify-content-center">
+    <Toast
+      position="bottom-left"
+      v-model:visible="visible"
+      @close="visible = false"
+      style="left: 25px; width: 400px; border-radius: 6px"
+    >
+      <template #message="slotProps">
+        <div class="flex items-center bg-white w-full gap-4">
+          <img
+            class="w-12 h-12 rounded-full"
+            :src="inforComment.content.avatar"
+          />
+          <div class="w-full">
+            <div class="text-base font-semibold">
+              {{ slotProps.message.summary }}
+            </div>
+            <div>{{ slotProps.message.detail }}</div>
+          </div>
+        </div>
+      </template>
+    </Toast>
+  </div>
 </template>
+
 <script>
 import { mapState } from 'vuex';
 import { HOME_ICON } from './constants/image';
+import Toast from 'primevue/toast';
+import { SOCKET } from '../socket_server/config/constant';
 
 export default {
+  components: { Toast },
   created() {
     this.HOME_ICON = HOME_ICON;
   },
   data() {
-    return {};
+    return {
+      visible: false,
+    };
   },
   computed: {
     ...mapState('notify', ['inforComment']),
   },
   watch: {
     inforComment(newVal, oldVal) {
-      if (newVal.numberNotifications > 0)
-        if (newVal.numberNotifications == 1)
-          this.$notify({
-            title: 'Notification',
-            text: `You have ${newVal.numberNotifications} new notification`,
-          });
-        else
-          this.$notify({
-            title: 'Notification',
-            text: `You have ${newVal.numberNotifications} new notifications`,
-          });
+      if (newVal.numberNotifications > 0) {
+        this.showToast(newVal);
+      }
+    },
+  },
+  methods: {
+    showToast(data) {
+      if (data.kind == SOCKET.COMMENT)
+        this.$toast.add({
+          severity: 'success',
+          summary: `${data.content.name} `,
+          detail: 'mentioned you in a comment.',
+          life: 3000,
+        });
+      else if (data.kind == SOCKET.REPLY_COMMENT) {
+        this.$toast.add({
+          severity: 'success',
+          summary: `${data.content.name} `,
+          detail: 'replied to your comment on your post.',
+          life: 3000,
+        });
+      }
     },
   },
 };
 </script>
+
 <style lang="scss">
-.vue-notification {
-  font-size: 16px !important;
-  padding: 10px 20px !important;
-  color: #615a5a !important;
-  background: #fff !important;
-  border: 1px solid #d4e8fd !important;
-  position: absolute;
-  bottom: 50px;
-  left: 15px;
-  width: 300px;
+.p-toast-message-content {
+  background: #fff;
+  border-radius: 6px;
 }
+
 body {
   ::selection {
     background-color: #f05123;

@@ -82,6 +82,7 @@
           <div
             class="w-4/5 text-left text-base textpr header-notify__item-content"
           >
+            <strong>{{ item.fullName }}</strong>
             {{ item.content }}
           </div>
           <div v-if="!item.seen" class="mr-5">
@@ -204,6 +205,7 @@ import { notification } from 'ant-design-vue';
 import authUserInstance from '../../apis/auth';
 import { mapState, mapMutations } from 'vuex';
 import userApi from '../../apis/user';
+import { SOCKET } from '../../../socket_server/config/constant';
 
 export default {
   created() {
@@ -234,12 +236,21 @@ export default {
       this.searchInput = newValue;
     },
     inforComment(newVal, oldVal) {
-      this.listNotify.push({
-        avatar: newVal.content.avatar,
-        content: newVal.content.content,
-        seen: false,
-        fullName: newVal.content.name,
-      });
+      if (newVal.kind == SOCKET.COMMENT)
+        this.listNotify.push({
+          avatar: newVal.content.avatar,
+          content: `mentioned you in a comment.`,
+          seen: false,
+          fullName: newVal.content.name,
+        });
+      else if (newVal.kind == SOCKET.REPLY_COMMENT) {
+        this.listNotify.push({
+          avatar: newVal.content.avatar,
+          content: `replied to your comment on your post.`,
+          seen: false,
+          fullName: newVal.content.name,
+        });
+      }
       console.log('inforComment', newVal);
     },
   },

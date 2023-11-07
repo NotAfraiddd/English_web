@@ -334,6 +334,7 @@ It would take a book to list all the races and awards he's won and the mountains
           id: 1,
           numberNotifications: this.numNotify,
           content: data.data,
+          kind: SOCKET.COMMENT,
         });
         console.log('receiver', data);
       }
@@ -351,6 +352,7 @@ It would take a book to list all the races and awards he's won and the mountains
           id: 1,
           numberNotifications: this.numNotify,
           content: data.data,
+          kind: SOCKET.REPLY_COMMENT,
         });
         console.log('receiver', data);
       }

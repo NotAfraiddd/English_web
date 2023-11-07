@@ -11,6 +11,10 @@ import vue3GoogleLogin from 'vue3-google-login';
 import VueSocketIO from 'vue-3-socket.io';
 import socketio from 'socket.io-client';
 import Notifications from '@kyvg/vue3-notification';
+import ToastService from 'primevue/toastservice';
+import PrimeVue from 'primevue/config';
+import 'primevue/resources/themes/lara-light-teal/theme.css';
+
 const emitter = mitt();
 var socketIOLocation = process.env.VUE_APP_SOCKETIO_PORT;
 const SocketInstance = socketio.connect(socketIOLocation);
@@ -23,6 +27,8 @@ const app = createApp(App)
     clientId:
       '50385097493-mcao4pi81kmo58or518pd6rdk0kkppp8.apps.googleusercontent.com',
   })
+  .use(ToastService)
+  .use(PrimeVue)
   .use(Antd)
   .use(Notifications)
   .use(

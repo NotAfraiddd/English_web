@@ -1,11 +1,11 @@
 const notify = {
   namespaced: true,
   state: {
-    inforComment: { id: null, numberNotifications: 0, content: {} },
+    inforComment: { id: null, numberNotifications: 0, content: {}, kind: null },
   },
   mutations: {
-    setNotify(state, { id, numberNotifications, content }) {
-      state.inforComment = { id, numberNotifications, content };
+    setNotify(state, { id, numberNotifications, content, kind }) {
+      state.inforComment = { id, numberNotifications, content, kind };
     },
   },
 };
