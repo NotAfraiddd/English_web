@@ -33,23 +33,23 @@
     <div class="text-lg font-semibold text-left">Other related blogs</div>
     <div class="grid grid-cols-5 detail-blog-grid gap-4 mr-4">
       <div
-        v-for="(item, index) in 8"
-        :key="index"
+        v-for="item in listOtherBlog"
+        :key="item.id"
         class="flex flex-col detail-blog-item cursor-pointer hover:opacity-90"
       >
         <div
           class="profile-background mt-5 hover:opacity-50"
-          :style="{ backgroundImage: 'url(' + LISTENING + ')' }"
+          :style="{ backgroundImage: 'url(' + item.background + ')' }"
         />
-        <div class="font-semibold my-3 item-title">
-          Effective Methods for Improving English Language Skills.
-        </div>
+        <div class="font-semibold my-3 item-title">{{ item.title }}</div>
         <div class="flex">
-          <img :src="AVATAR" alt="" class="w-5 h-5 rounded-full" />
+          <img :src="item.avatar" alt="" class="w-5 h-5 rounded-full" />
           <div class="ml-3 flex justify-between items-center gap-2">
-            <div class="text-sm font-semibold">Chi Bao</div>
+            <div class="text-sm font-semibold">{{ item.name }}</div>
             ·
-            <div class="text-sm text-primary_grey_time">{{ delayMinutes }}</div>
+            <div class="text-sm text-primary_grey_time">
+              {{ updateCurrentTime(item.created_at) }}
+            </div>
           </div>
         </div>
       </div>
@@ -228,6 +228,10 @@ import {
   ICON_LAUGH,
   CHAT,
   LISTENING,
+  GROUP_STUDENT_1,
+  GROUP_STUDENT_2,
+  GROUP_STUDENT_3,
+  GROUP_STUDENT_4,
 } from '../../../constants/image';
 import Emoji from './Emoji.vue';
 import moment from 'moment';
@@ -239,6 +243,10 @@ export default {
   name: 'DetailBlog',
   components: { Emoji, MenuOption },
   created() {
+    this.GROUP_STUDENT_1 = GROUP_STUDENT_1;
+    this.GROUP_STUDENT_2 = GROUP_STUDENT_2;
+    this.GROUP_STUDENT_3 = GROUP_STUDENT_3;
+    this.GROUP_STUDENT_4 = GROUP_STUDENT_4;
     this.ICON_LAUGH = ICON_LAUGH;
     this.LISTENING = LISTENING;
     this.CHAT = CHAT;
@@ -334,13 +342,97 @@ It would take a book to list all the races and awards he's won and the mountains
             "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill. When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
         },
       ],
+      listOtherBlog: [
+        {
+          id: uuidv4(),
+          avatar: AVATAR,
+          name: 'Chi Bao',
+          background: LISTENING,
+          title: 'Effective Methods for Improving English Language Skills.',
+          created_at: '2023-11-07 16:10:00',
+        },
+        {
+          id: uuidv4(),
+          avatar: AVATAR,
+          name: 'Chi Bao',
+          background: GROUP_STUDENT_1,
+          title: 'Effective Methods for Improving English Language Skills.',
+          created_at: '2023-11-07 15:19:00',
+        },
+        {
+          id: uuidv4(),
+          avatar: AVATAR,
+          name: 'Chi Bao',
+          background: GROUP_STUDENT_2,
+          title: 'Effective Methods for Improving English Language Skills.',
+          created_at: '2023-11-07 01:13:00',
+        },
+        {
+          id: uuidv4(),
+          avatar: AVATAR,
+          name: 'Chi Huan',
+          background: GROUP_STUDENT_3,
+          title: 'Effective Methods for Improving English Language Skills.',
+          created_at: '2023-11-02 01:08:00',
+        },
+        {
+          id: uuidv4(),
+          avatar: AVATAR,
+          name: 'Ngoc Bao',
+          background: GROUP_STUDENT_4,
+          title: 'Effective Methods for Improving English Language Skills.',
+          created_at: '2023-11-03 01:08:00',
+        },
+        {
+          id: uuidv4(),
+          avatar: AVATAR,
+          name: 'Ngoc Huan',
+          background: GROUP_STUDENT_1,
+          title: 'Effective Methods for Improving English Language Skills.',
+          created_at: '2023-11-04 01:08:00',
+        },
+        {
+          id: uuidv4(),
+          avatar: AVATAR,
+          name: 'Huan Huan',
+          background: LISTENING,
+          title: 'Effective Methods for Improving English Language Skills.',
+          created_at: '2023-11-05 01:08:00',
+        },
+        {
+          id: uuidv4(),
+          avatar: AVATAR,
+          name: 'Trong Dat',
+          background: GROUP_STUDENT_2,
+          title: 'Effective Methods for Improving English Language Skills.',
+          created_at: '2023-11-06 01:08:00',
+        },
+        {
+          id: uuidv4(),
+          avatar: AVATAR,
+          name: 'Tao Thao',
+          background: LISTENING,
+          title: 'Effective Methods for Improving English Language Skills.',
+          created_at: '2023-11-07 01:08:00',
+        },
+        {
+          id: uuidv4(),
+          avatar: AVATAR,
+          name: 'Huan Huan',
+          background: GROUP_STUDENT_3,
+          title: 'Effective Methods for Improving English Language Skills.',
+          created_at: '2023-11-02 01:08:00',
+        },
+      ],
       numNotify: 0,
     };
   },
   mounted() {
     // set render history time
     this.updateCurrentTime();
-    setInterval(this.updateCurrentTime, 1000);
+    setInterval(() => {
+      this.updateCurrentTime();
+    }, 1000);
     // listeing socket
     this.sockets.subscribe('signal', (data) => {
       if (data.kind == SOCKET.COMMENT) {
@@ -383,26 +475,26 @@ It would take a book to list all the races and awards he's won and the mountains
     /**
      * set time to show history time of blog
      */
-    updateCurrentTime() {
+    updateCurrentTime(data) {
       const currentTime = moment();
-      const inputTimeMoment = moment(this.inputTime, 'YYYY-MM-DD HH:mm:ss');
+      const inputTimeMoment = moment(data, 'YYYY-MM-DD HH:mm:ss');
       const delayInSeconds = currentTime.diff(inputTimeMoment, 'seconds');
       let timeSeconds = delayInSeconds;
-      if (timeSeconds < 60) this.delayMinutes = timeSeconds + ` seconds ago`;
+      if (timeSeconds < 60) return timeSeconds + ` seconds ago`;
       else if (timeSeconds < 60 * 60 && timeSeconds >= 60) {
         if (timeSeconds < 60 * 2)
-          this.delayMinutes = Math.floor(timeSeconds / 60) + ` min ago`;
-        else this.delayMinutes = Math.floor(timeSeconds / 60) + ` mins ago`;
+          return Math.floor(timeSeconds / 60) + ` min ago`;
+        else return Math.floor(timeSeconds / 60) + ` mins ago`;
       } else if (timeSeconds < 60 * 60 * 24 && timeSeconds >= 60 * 60) {
         if (timeSeconds < 60 * 60 * 2)
-          this.delayMinutes = Math.floor(timeSeconds / 3600) + ` hour ago`;
-        else this.delayMinutes = Math.floor(timeSeconds / 3600) + ` hours ago`;
+          return Math.floor(timeSeconds / 3600) + ` hour ago`;
+        else return Math.floor(timeSeconds / 3600) + ` hours ago`;
       } else if (timeSeconds < 86400 * 24 && timeSeconds >= 86400) {
         if (timeSeconds < 86400 * 2)
-          this.delayMinutes = Math.floor(timeSeconds / 86400) + ` day ago`;
+          return Math.floor(timeSeconds / 86400) + ` day ago`;
         else if (86400 * 2 <= timeSeconds && timeSeconds <= 86400 * 8) {
-          this.delayMinutes = Math.floor(timeSeconds / 86400) + ` days ago`;
-        } else this.delayMinutes = inputTimeMoment.format('YYYY-MM-DD');
+          return Math.floor(timeSeconds / 86400) + ` days ago`;
+        } else return inputTimeMoment.format('YYYY-MM-DD');
       }
     },
     /**
