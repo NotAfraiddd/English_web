@@ -1,7 +1,7 @@
 <template lang="">
   <footer class="footer-wrapper mt-32 flex">
-    <div class="flex justify-between mx-auto gap-52">
-      <section class="flex flex-col items-start text-white">
+    <div class="flex justify-between mx-auto gap-52 footer-detail">
+      <section class="flex flex-col items-start text-white w-full">
         <div class="font-semibold text-2xl footer-wrapper__name mb-2">
           CircleZ
         </div>
@@ -9,7 +9,7 @@
         <div>Email: circlez@english.edu.vn</div>
         <div>12 Nguyen Van Bao, Ward 4, Go Vap, Ho Chi Minh City</div>
       </section>
-      <section class="flex flex-col items-start text-white">
+      <section class="flex flex-col items-start text-white w-full">
         <div class="font-semibold text-2xl footer-wrapper__name mb-2">
           About
         </div>
@@ -41,6 +41,12 @@ export default {
   padding: 40px;
   &__name {
     color: #fff;
+  }
+}
+
+.footer-detail {
+  @media screen and (max-width: 1000px) {
+    gap: 3rem !important;
   }
 }
 </style>

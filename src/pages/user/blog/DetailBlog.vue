@@ -31,7 +31,7 @@
     </div>
     <div class="border border-primary my-4" />
     <div class="text-lg font-semibold text-left">Other related blogs</div>
-    <div class="grid grid-cols-5 detail-blog-grid gap-4">
+    <div class="grid grid-cols-5 detail-blog-grid gap-4 mr-4">
       <div
         v-for="(item, index) in 8"
         :key="index"
@@ -146,6 +146,7 @@
       >
         Show {{ item.replyComments.length }} comments
       </div>
+      <!-- Collapse comment -->
       <div
         v-if="
           showAllComment[index] &&
@@ -496,7 +497,6 @@ It would take a book to list all the races and awards he's won and the mountains
       const chatContent = this.$refs.chatContent;
       if (data) {
         if (this.receiverName) {
-          console.log('reply comment');
           // join socket
           const dataSocket = {
             room: +this.idUserBlog + `REPLY`,
@@ -521,7 +521,6 @@ It would take a book to list all the races and awards he's won and the mountains
           this.replyComments.push(commentDetail);
           console.log(this.replyComments);
         } else {
-          console.log('comment');
           const dataSocket = {
             room: +this.idUserBlog,
             kind: SOCKET.COMMENT,

@@ -212,6 +212,7 @@ import authUserInstance from '../../apis/auth';
 import { mapState, mapMutations } from 'vuex';
 import userApi from '../../apis/user';
 import { SOCKET } from '../../../socket_server/config/constant';
+import { v4 as uuidv4 } from 'uuid';
 
 export default {
   created() {
@@ -244,6 +245,7 @@ export default {
     inforComment(newVal, oldVal) {
       if (newVal.kind == SOCKET.COMMENT)
         this.listNotify.push({
+          id: uuidv4(),
           avatar: newVal.content.avatar,
           content: `mentioned you in a comment.`,
           seen: false,
@@ -251,6 +253,7 @@ export default {
         });
       else if (newVal.kind == SOCKET.REPLY_COMMENT) {
         this.listNotify.push({
+          id: uuidv4(),
           avatar: newVal.content.avatar,
           content: `replied to your comment on your post.`,
           seen: false,

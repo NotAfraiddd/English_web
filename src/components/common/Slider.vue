@@ -31,6 +31,7 @@ import {
   GROUP_STUDENT_1,
   GROUP_STUDENT_2,
   GROUP_STUDENT_3,
+  GROUP_STUDENT_4,
 } from '../../constants/image';
 
 export default {
@@ -47,6 +48,10 @@ export default {
         },
         {
           src: GROUP_STUDENT_3,
+          alt: 'lake surrounded by mountains',
+        },
+        {
+          src: GROUP_STUDENT_4,
           alt: 'lake surrounded by mountains',
         },
       ],

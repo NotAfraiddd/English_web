@@ -49,6 +49,7 @@ import CONGRATULATION from '../assets/images/git-congratulation.gif';
 import GROUP_STUDENT_1 from '../assets/images/group-student-1.jpg';
 import GROUP_STUDENT_2 from '../assets/images/group-student-2.jpg';
 import GROUP_STUDENT_3 from '../assets/images/group-student-3.jpg';
+import GROUP_STUDENT_4 from '../assets/images/group-student-4.jpg';
 import MOUNTAIN_CLIMB from '../assets/images/mountain-climbing.jpg';
 
 export {
@@ -56,6 +57,7 @@ export {
   GROUP_STUDENT_1,
   GROUP_STUDENT_2,
   GROUP_STUDENT_3,
+  GROUP_STUDENT_4,
   REPORT,
   ICON_LAUGH,
   SOCIAL_FACEBOOK,

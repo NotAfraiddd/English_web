@@ -14,7 +14,7 @@
     <ButtonBackUser title="My course" :hide-back="true" @back="changeBack" />
   </div>
   <div class="text-left font-semibold text-xl mt-10">Featured blogs</div>
-  <div class="grid grid-cols-5 detail-blog-grid gap-4">
+  <div class="grid grid-cols-5 detail-blog-grid gap-4 mr-4">
     <div
       v-for="(item, index) in 8"
       :key="index"

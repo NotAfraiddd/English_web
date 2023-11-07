@@ -104,11 +104,11 @@
                 </div>
                 <div
                   class="flex justify-center items-center cursor-pointer"
-                  @click="replyComment(item)"
+                  @click="replyComment(item, item.replyComments)"
                 >
                   <img :src="CHAT" alt="" srcset="" class="w-5 h-4" />
                   <div class="h-5 w-5 leading-5 text-primary_black">
-                    {{ item.numComment }}
+                    {{ item.replyComments.length }}
                   </div>
                 </div>
               </div>
@@ -124,20 +124,29 @@
         </div>
         <!-- reply comment -->
         <div
-          @click="handleShowAllComment"
-          v-if="!showAllComment && item.replyComments"
+          @click="handleShowAllComment(index)"
+          v-if="
+            !showAllComment[index] &&
+            item.replyComments &&
+            item.replyComments.length >= 1
+          "
           class="text-left ml-14 text-primary cursor-pointer"
         >
           Show {{ item.replyComments.length }} comments
         </div>
+        <!-- Collapse comment -->
         <div
-          v-if="showAllComment && item.replyComments"
-          @click="handleShowAllComment"
+          v-if="
+            showAllComment[index] &&
+            item.replyComments &&
+            item.replyComments.length >= 1
+          "
+          @click="handleCloseAllComment(index)"
           class="text-left ml-14 text-primary cursor-pointer"
         >
           Collapse {{ item.replyComments.length }} comments
         </div>
-        <div v-if="showAllComment && item.replyComments">
+        <div v-if="showAllComment[index] && item.replyComments">
           <div
             class="flex mt-2 ml-12"
             v-for="(i, ind) in item.replyComments"
@@ -212,6 +221,10 @@ import {
   ICON_LAUGH,
 } from '../../../constants/image';
 import moment from 'moment';
+import { v4 as uuidv4 } from 'uuid';
+import { SOCKET } from '../../../constants';
+import { mapMutations } from 'vuex';
+
 export default {
   name: 'MemberListBlog',
   components: { ButtonBackUser, ListBlog, MenuOption },
@@ -223,8 +236,14 @@ export default {
     this.HEART_DEFAULT = HEART_DEFAULT;
     this.ICON_LAUGH = ICON_LAUGH;
   },
+  watch: {
+    showComment(newValue) {
+      document.body.style.overflow = newValue ? 'hidden' : 'unset';
+    },
+  },
   data() {
     return {
+      numNotify: 0,
       showComment: false,
       idUserBlog: null,
       idCommentFirst: null,
@@ -233,11 +252,11 @@ export default {
       userLogin: 3,
       userNameLogin: 'Khang',
       contentChat: '',
-      showAllComment: false,
+      showAllComment: [],
       replyComments: [],
       listComment: [
         {
-          id: 1,
+          id: uuidv4(),
           userID: 1,
           name: 'Chi Bao',
           avatar: AVATAR,
@@ -313,10 +332,55 @@ export default {
       ],
     };
   },
-
+  mounted() {
+    // listeing socket
+    this.sockets.subscribe('signal', (data) => {
+      if (data.kind == SOCKET.COMMENT) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.COMMENT,
+        });
+      }
+    });
+    const data = {
+      room: +this.idUserBlog,
+      kind: SOCKET.COMMENT,
+    };
+    this.$socket.emit('joinRoom', data);
+    // ------------------ reply comment ------------------
+    this.sockets.subscribe('reply', (data) => {
+      if (data.kind == SOCKET.REPLY_COMMENT) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.REPLY_COMMENT,
+        });
+      }
+    });
+    const dataReply = {
+      room: +this.idUserBlog + `REPLY`,
+      kind: SOCKET.REPLY_COMMENT,
+    };
+    this.$socket.emit('joinRoom', dataReply);
+  },
   methods: {
-    handleShowAllComment() {
-      this.showAllComment = !this.showAllComment;
+    ...mapMutations('notify', ['setNotify']),
+    /**
+     * show all comment
+     */
+    handleShowAllComment(data) {
+      this.showAllComment[data] = !this.showAllComment[data];
+    },
+    /**
+     * show all comment
+     */
+    handleCloseAllComment(data) {
+      this.showAllComment[data] = !this.showAllComment[data];
     },
     handleDeleteKey(event) {
       if (event.key === 'Delete' || event.key === 'Backspace') {
@@ -345,7 +409,8 @@ export default {
     handleClickReact(data) {
       data.numReact += 1;
     },
-    replyComment(data) {
+    replyComment(data, secondComment) {
+      this.replyComments = secondComment;
       this.receiverName = data.name;
       if (this.receiverName) {
         this.$nextTick(() => {
@@ -373,9 +438,16 @@ export default {
       !e.isComposing && this.sendChat(e.target.value);
     },
     sendChat(data) {
+      //
       const chatContent = this.$refs.chatContent;
       if (data) {
         if (this.receiverName) {
+          // join socket
+          const dataSocket = {
+            room: +this.idUserBlog + `REPLY`,
+            kind: SOCKET.REPLY_COMMENT,
+          };
+          this.$socket.emit('joinRoom', dataSocket);
           const commentDetail = {
             userID: this.userLogin,
             name: this.userNameLogin,
@@ -386,9 +458,21 @@ export default {
             numComment: 0,
             created_at: moment().format('DD/MM/YYYY HH:mm'),
           };
+          const comment = {
+            data: commentDetail,
+            kind: SOCKET.REPLY_COMMENT,
+          };
+          this.$socket.emit('sendSignal', comment);
           this.replyComments.push(commentDetail);
+          console.log(this.replyComments);
         } else {
+          const dataSocket = {
+            room: +this.idUserBlog,
+            kind: SOCKET.COMMENT,
+          };
+          this.$socket.emit('joinRoom', dataSocket);
           const commentDetail = {
+            id: uuidv4(),
             userID: this.userLogin,
             name: this.userNameLogin,
             avatar: AVATAR,
@@ -396,10 +480,18 @@ export default {
             content: this.contentChat,
             numReact: 0,
             numComment: 0,
+            replyComments: [],
             created_at: moment().format('DD/MM/YYYY HH:mm'),
           };
-          this.listComment.push(commentDetail);
-          this.listComment.reverse();
+          const comment = {
+            data: commentDetail,
+            kind: SOCKET.COMMENT,
+          };
+          this.$socket.emit('sendSignal', comment);
+          this.listComment.unshift(commentDetail);
+          // this.listComment.push(commentDetail);
+          // this.listComment.reverse();
+          this.comment++;
         }
         this.receiverName = '';
         this.contentChat = '';
