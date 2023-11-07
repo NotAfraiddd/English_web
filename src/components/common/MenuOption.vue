@@ -13,7 +13,7 @@
   </div>
   <div
     :class="[
-      'w-32 rounded-lg absolute menu-option right-14 bg-white border py-2',
+      'w-28 rounded-lg absolute menu-option right-11 bg-white border z-10',
       showOption && activeId === id ? 'block' : 'hidden',
     ]"
   >
@@ -21,7 +21,7 @@
       class="hover:bg-table_border cursor-pointer flex px-3 py-1"
       @click="handleReport"
     >
-      <img :src="REPORT" alt="" class="h-6 leading-6 mr-3" />
+      <img :src="REPORT" alt="" class="h-6 leading-6 mr-3 text-sm" />
       Report
     </div>
   </div>

@@ -68,8 +68,13 @@
         class="absolute overflow-y-auto z-10 bg-white top-16 right-10 rounded-lg header-notify__list"
         :class="[!listNotify && 'header-notify__no-notify']"
       >
-        <div class="text-base mt-3 text-left ml-3 font-semibold">
-          Notifications
+        <div class="flex items-center justify-between mt-3 text-primary_black">
+          <div class="text-base text-left ml-3 font-semibold">
+            Notifications
+          </div>
+          <div class="mr-3 cursor-pointer hover:underline">
+            Mark all as read
+          </div>
         </div>
         <div
           v-for="(item, index) in listNotify"
@@ -81,6 +86,7 @@
           </div>
           <div
             class="w-4/5 text-left text-base textpr header-notify__item-content"
+            :class="[item.seen && 'opacity-50']"
           >
             <strong>{{ item.fullName }}</strong>
             {{ item.content }}

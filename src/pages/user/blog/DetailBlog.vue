@@ -57,7 +57,7 @@
   </div>
   <!-- comment -->
   <div
-    class="comment fixed bg-white pt-5 text-primary_black pl-5"
+    class="comment fixed bg-white pt-5 text-primary_black pl-5 overflow-y-auto"
     :class="{ 'menu-visible': showComment }"
   >
     <div class="text-xl font-semibold text-left">12 Comments</div>
@@ -90,13 +90,13 @@
         {{ receiverName }}
       </div>
     </div>
-    <div v-for="(item, index) in listComment" :key="index" class="mr-3">
+    <div v-for="(item, index) in listComment" :key="item.id" class="mr-3">
       <!-- comment first -->
       <div class="flex mt-2">
         <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
         <div class="flex flex-col w-full relative">
           <div
-            class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first relative"
+            class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first relative mb-1"
           >
             <div class="font-semibold">{{ item.name }}</div>
             <div class="text-left mb-1">{{ item.content }}</div>
@@ -116,11 +116,11 @@
               </div>
               <div
                 class="flex justify-center items-center cursor-pointer"
-                @click="replyComment(item)"
+                @click="replyComment(item, item.replyComments)"
               >
                 <img :src="CHAT" alt="" srcset="" class="w-5 h-4" />
                 <div class="h-5 w-5 leading-5 text-primary_black">
-                  {{ item.numComment }}
+                  {{ item.replyComments.length }}
                 </div>
               </div>
             </div>
@@ -136,20 +136,28 @@
       </div>
       <!-- reply comment -->
       <div
-        @click="handleShowAllComment"
-        v-if="!showAllComment && item.replyComments"
+        @click="handleShowAllComment(index)"
+        v-if="
+          !showAllComment[index] &&
+          item.replyComments &&
+          item.replyComments.length >= 1
+        "
         class="text-left ml-14 text-primary cursor-pointer"
       >
         Show {{ item.replyComments.length }} comments
       </div>
       <div
-        v-if="showAllComment && item.replyComments"
-        @click="handleShowAllComment"
+        v-if="
+          showAllComment[index] &&
+          item.replyComments &&
+          item.replyComments.length >= 1
+        "
+        @click="handleCloseAllComment(index)"
         class="text-left ml-14 text-primary cursor-pointer"
       >
         Collapse {{ item.replyComments.length }} comments
       </div>
-      <div v-if="showAllComment && item.replyComments">
+      <div v-if="showAllComment[index] && item.replyComments">
         <div
           class="flex mt-2 ml-12"
           v-for="(i, ind) in item.replyComments"
@@ -158,7 +166,7 @@
           <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
           <div class="flex flex-col w-full relative">
             <div
-              class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first-2"
+              class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first-2 mb-1"
             >
               <div class="font-semibold">{{ i.name }}</div>
               <div class="text-left mb-1">
@@ -225,7 +233,7 @@ import moment from 'moment';
 import MenuOption from '../../../components/common/MenuOption.vue';
 import { mapMutations } from 'vuex';
 import { SOCKET } from '../../../../socket_server/config/constant';
-
+import { v4 as uuidv4 } from 'uuid';
 export default {
   name: 'DetailBlog',
   components: { Emoji, MenuOption },
@@ -240,8 +248,14 @@ export default {
     this.removeBackslashes();
     this.idUserBlog = this.$route.params.id;
   },
+  watch: {
+    showComment(newValue) {
+      document.body.style.overflow = newValue ? 'hidden' : 'unset';
+    },
+  },
   data() {
     return {
+      idUserShowComment: 0,
       inputTime: '2023-11-02 01:08:00',
       delayMinutes: null,
       showComment: false,
@@ -255,11 +269,11 @@ export default {
       receiverName: '',
       userLogin: 3,
       userNameLogin: 'Khang',
-      showAllComment: false,
+      showAllComment: [],
       replyComments: [],
       listComment: [
         {
-          id: 1,
+          id: uuidv4(),
           userID: 1,
           name: 'Chi Bao',
           avatar: AVATAR,
@@ -393,8 +407,14 @@ It would take a book to list all the races and awards he's won and the mountains
     /**
      * show all comment
      */
-    handleShowAllComment() {
-      this.showAllComment = !this.showAllComment;
+    handleShowAllComment(data) {
+      this.showAllComment[data] = !this.showAllComment[data];
+    },
+    /**
+     * show all comment
+     */
+    handleCloseAllComment(data) {
+      this.showAllComment[data] = !this.showAllComment[data];
     },
     /**
      * go to detail
@@ -447,7 +467,8 @@ It would take a book to list all the races and awards he's won and the mountains
         }
       }
     },
-    replyComment(data) {
+    replyComment(data, secondComment) {
+      this.replyComments = secondComment;
       this.receiverName = data.name;
       if (this.receiverName) {
         this.$nextTick(() => {
@@ -475,6 +496,7 @@ It would take a book to list all the races and awards he's won and the mountains
       const chatContent = this.$refs.chatContent;
       if (data) {
         if (this.receiverName) {
+          console.log('reply comment');
           // join socket
           const dataSocket = {
             room: +this.idUserBlog + `REPLY`,
@@ -497,13 +519,16 @@ It would take a book to list all the races and awards he's won and the mountains
           };
           this.$socket.emit('sendSignal', comment);
           this.replyComments.push(commentDetail);
+          console.log(this.replyComments);
         } else {
+          console.log('comment');
           const dataSocket = {
             room: +this.idUserBlog,
             kind: SOCKET.COMMENT,
           };
           this.$socket.emit('joinRoom', dataSocket);
           const commentDetail = {
+            id: uuidv4(),
             userID: this.userLogin,
             name: this.userNameLogin,
             avatar: AVATAR,
@@ -511,6 +536,7 @@ It would take a book to list all the races and awards he's won and the mountains
             content: this.contentChat,
             numReact: 0,
             numComment: 0,
+            replyComments: [],
             created_at: moment().format('DD/MM/YYYY HH:mm'),
           };
           const comment = {
@@ -518,8 +544,10 @@ It would take a book to list all the races and awards he's won and the mountains
             kind: 1,
           };
           this.$socket.emit('sendSignal', comment);
-          this.listComment.push(commentDetail);
-          this.listComment.reverse();
+          this.listComment.unshift(commentDetail);
+          // this.listComment.push(commentDetail);
+          // this.listComment.reverse();
+          this.comment++;
         }
         this.receiverName = '';
         this.contentChat = '';
