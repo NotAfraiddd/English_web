@@ -53,6 +53,7 @@ export default {
   },
   methods: {
     showToast(data) {
+      console.log(data);
       if (data.kind == SOCKET.COMMENT)
         this.$toast.add({
           severity: 'success',
@@ -65,6 +66,27 @@ export default {
           severity: 'success',
           summary: `${data.content.name} `,
           detail: 'replied to your comment on your post.',
+          life: 3000,
+        });
+      } else if (data.kind == SOCKET.REACT) {
+        this.$toast.add({
+          severity: 'success',
+          summary: `${data.content.name}`,
+          detail: 'reacts your blog.',
+          life: 3000,
+        });
+      } else if (data.kind == SOCKET.REACT_COMMENT) {
+        this.$toast.add({
+          severity: 'success',
+          summary: `${data.content.name}`,
+          detail: 'reacts to your comment on your post.',
+          life: 3000,
+        });
+      } else if (data.kind == SOCKET.REACT_COMMENT_REPLY) {
+        this.$toast.add({
+          severity: 'success',
+          summary: `${data.content.name}`,
+          detail: 'reacts to your comment on your post.',
           life: 3000,
         });
       }

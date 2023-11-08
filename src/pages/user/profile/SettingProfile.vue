@@ -33,11 +33,12 @@
                 <div class="text-base text-primary_black font-semibold">
                   Avatar
                 </div>
-                <div class="text-base text-primary_black">
+                <div class="text-base text-primary_black text-left h-">
                   Accepting files: JPG, PNG or GIF.
                 </div>
               </div>
               <ImageUpload
+                extend-class="h-32 w-32"
                 :src-img="avatar"
                 :avatar="true"
                 :disabled="!editAvatar"
@@ -168,12 +169,19 @@
             class="text-primary_black mt-5 flex items-center justify-center button-radio"
           >
             <div class="flex w-96 items-center justify-start gap-5">
-              <!-- Edit -->
-              <InputGender
-                :disabled="!editGender"
-                :radio-prop="inputGender"
-                @update="updateGender"
-              />
+              <div
+                class="flex items-start flex-col contain__member-contain gap-4 mt-4"
+              >
+                <div class="text-base text-primary_black font-semibold">
+                  Gender
+                </div>
+                <!-- Edit -->
+                <InputGender
+                  :disabled="!editGender"
+                  :radio-prop="inputGender"
+                  @update="updateGender"
+                />
+              </div>
             </div>
 
             <ButtonEdit
@@ -184,10 +192,11 @@
           </div>
         </div>
         <!-- level -->
-        <div class="mx-auto member-detail__width">
+        <div class="mx-auto member-detail__width pl-80">
           <div
             class="text-primary_black mt-5 flex items-center justify-start button-radio"
           >
+            <div class="font-semibold">Level</div>
             <InputLevel
               :disabled="!editLevel"
               :selectedValueProp="inputLevel"
@@ -195,10 +204,11 @@
           </div>
         </div>
         <!-- blog -->
-        <div class="mx-auto member-detail__width">
+        <div class="mx-auto member-detail__width pl-80">
           <div
             class="text-primary_black mt-5 flex items-center justify-start button-radio"
           >
+            <div class="font-semibold">Blog</div>
             <InputBlog :disabled="!editBlog" :radio-prop="inputBlog" />
           </div>
         </div>

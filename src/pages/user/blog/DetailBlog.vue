@@ -11,9 +11,9 @@
     <!-- react -->
     <div class="flex w-24 justify-between flex-wrap gap-2 mt-5">
       <div class="flex justify-center items-center cursor-pointer">
-        <div @click="handleClickReact">
+        <div @click="clickReact">
           <img
-            :src="react > 0 ? HEART : HEART_DEFAULT"
+            :src="checkReact ? HEART : HEART_DEFAULT"
             alt=""
             srcset=""
             class="w-5 h-4"
@@ -102,9 +102,9 @@
             <div class="text-left mb-1">{{ item.content }}</div>
             <div class="flex w-24 justify-between flex-wrap gap-2">
               <div class="flex justify-center items-center cursor-pointer">
-                <div @click="handleClickReact(item)">
+                <div @click="handleClickReact(listComment, item, index)">
                   <img
-                    :src="item.numReact > 0 ? HEART : HEART_DEFAULT"
+                    :src="checkListReactComment[index] ? HEART : HEART_DEFAULT"
                     alt=""
                     srcset=""
                     class="w-5 h-4"
@@ -178,9 +178,13 @@
               </div>
               <div class="flex gap-4 justify-between flex-wrap">
                 <div class="flex justify-center items-center cursor-pointer">
-                  <div @click="handleClickReactReply(i)">
+                  <div
+                    @click="handleClickReactReply(item.replyComments, i, ind)"
+                  >
                     <img
-                      :src="i.numReact > 0 ? HEART : HEART_DEFAULT"
+                      :src="
+                        checkListReactReplyComment[ind] ? HEART : HEART_DEFAULT
+                      "
                       alt=""
                       srcset=""
                       class="w-5 h-4"
@@ -237,7 +241,7 @@ import Emoji from './Emoji.vue';
 import moment from 'moment';
 import MenuOption from '../../../components/common/MenuOption.vue';
 import { mapMutations } from 'vuex';
-import { SOCKET } from '../../../../socket_server/config/constant';
+import { SOCKET } from '../../../constants';
 import { v4 as uuidv4 } from 'uuid';
 export default {
   name: 'DetailBlog',
@@ -264,6 +268,9 @@ export default {
   },
   data() {
     return {
+      checkReact: false,
+      checkListReactComment: [],
+      checkListReactReplyComment: [],
       idUserShowComment: 0,
       inputTime: '2023-11-02 01:08:00',
       delayMinutes: null,
@@ -443,7 +450,6 @@ It would take a book to list all the races and awards he's won and the mountains
           content: data.data,
           kind: SOCKET.COMMENT,
         });
-        console.log('receiver', data);
       }
     });
     const data = {
@@ -461,7 +467,6 @@ It would take a book to list all the races and awards he's won and the mountains
           content: data.data,
           kind: SOCKET.REPLY_COMMENT,
         });
-        console.log('receiver', data);
       }
     });
     const dataReply = {
@@ -469,6 +474,58 @@ It would take a book to list all the races and awards he's won and the mountains
       kind: SOCKET.REPLY_COMMENT,
     };
     this.$socket.emit('joinRoom', dataReply);
+    // ------------------ react ------------------
+    this.sockets.subscribe('react', (data) => {
+      console.log('react', data);
+      if (data.kind == SOCKET.REACT) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.REACT,
+        });
+      }
+    });
+    const dataReact = {
+      room: +this.idUserBlog,
+      kind: SOCKET.REACT,
+    };
+    this.$socket.emit('joinRoom', dataReact);
+    // ------------------ react comment ------------------
+    this.sockets.subscribe('reactComment', (data) => {
+      if (data.kind == SOCKET.REACT_COMMENT) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.REACT_COMMENT,
+        });
+      }
+    });
+    const dataReactComment = {
+      room: +this.idUserBlog,
+      kind: SOCKET.REACT_COMMENT,
+    };
+    this.$socket.emit('joinRoom', dataReactComment);
+    // ------------------ react reply comment ------------------
+    this.sockets.subscribe('reactCommentReply', (data) => {
+      if (data.kind == SOCKET.REACT_COMMENT_REPLY) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.REACT_COMMENT_REPLY,
+        });
+      }
+    });
+    const dataReactCommentReply = {
+      room: +this.idUserBlog,
+      kind: SOCKET.REACT_COMMENT_REPLY,
+    };
+    this.$socket.emit('joinRoom', dataReactCommentReply);
   },
   methods: {
     ...mapMutations('notify', ['setNotify']),
@@ -521,14 +578,88 @@ It would take a book to list all the races and awards he's won and the mountains
     /**
      * handle click react
      */
-    handleClickReact() {
-      this.react++;
+    clickReact() {
+      // join socket react
+      const dataSocket = {
+        room: +this.idUserBlog,
+        kind: SOCKET.REACT,
+      };
+      this.$socket.emit('joinRoom', dataSocket);
+      // per user will be able to click once
+      if (!this.checkReact) {
+        this.react++;
+        let content = {
+          react: this.react,
+          name: this.userNameLogin,
+          avatar: AVATAR,
+        };
+        const react = {
+          data: content,
+          kind: SOCKET.REACT,
+        };
+        this.$socket.emit('sendSignal', react);
+        this.checkReact = true;
+      }
+    },
+    /**
+     * handle click react
+     */
+    handleClickReact(arr, data, index) {
+      const isDuplicate = arr.some((p) => p.index === index);
+      const dataSocket = {
+        room: +this.idUserBlog,
+        kind: SOCKET.REACT_COMMENT,
+      };
+      this.$socket.emit('joinRoom', dataSocket);
+      if (!isDuplicate) {
+        data.numReact++;
+        let content = {
+          react: data.numReact,
+          name: this.userNameLogin,
+          avatar: AVATAR,
+        };
+        const react = {
+          data: content,
+          kind: SOCKET.REACT_COMMENT,
+        };
+        this.checkListReactComment[index] = true;
+        this.$socket.emit('sendSignal', react);
+      }
     },
     /**
      * handle click react of reply comment
      */
-    handleClickReactReply(data) {
-      data.numReact += 1;
+    handleClickReactReply(arr, data, index) {
+      const isDuplicate = arr.some((p) => p.index === index);
+      const dataSocket = {
+        room: +this.idUserBlog,
+        kind: SOCKET.REACT_COMMENT_REPLY,
+      };
+      this.$socket.emit('joinRoom', dataSocket);
+      if (!isDuplicate) {
+        data.numReact++;
+        let content = {
+          react: data.numReact,
+          name: this.userNameLogin,
+          avatar: AVATAR,
+        };
+        const react = {
+          data: content,
+          kind: SOCKET.REACT_COMMENT_REPLY,
+        };
+        this.checkListReactReplyComment[index] = true;
+        this.$socket.emit('sendSignal', react);
+      }
+    },
+    /**
+     * check index to return true or false
+     * @param {*} arr
+     * @param {*} position
+     */
+    checkPositionReact(arr, position) {
+      return arr.some(
+        (p) => p.index === position.index && p.subIndex === position.subIndex,
+      );
     },
     /**
      * logic delete when user reply
@@ -611,7 +742,6 @@ It would take a book to list all the races and awards he's won and the mountains
           };
           this.$socket.emit('sendSignal', comment);
           this.replyComments.push(commentDetail);
-          console.log(this.replyComments);
         } else {
           const dataSocket = {
             room: +this.idUserBlog,

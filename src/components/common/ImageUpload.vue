@@ -31,18 +31,6 @@
           :class="avatar ? 'rounded-full' : ''"
           alt="avatar"
         />
-        <figcaption
-          :class="[
-            'personal-figcaption absolute top-0 opacity-0 ',
-            avatar ? 'rounded-full' : '',
-            disabled ? 'cursor-not-allowed' : 'hover:opacity-100',
-          ]"
-        >
-          <img
-            class="w-32 h-32 m-0"
-            src="https://raw.githubusercontent.com/ThiagoLuizNunes/angular-boilerplate/master/src/assets/imgs/camera-white.png"
-          />
-        </figcaption>
       </figure>
     </label>
   </div>

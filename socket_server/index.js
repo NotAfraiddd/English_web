@@ -42,6 +42,12 @@ io.on('connection', (socket) => {
       socket.notifyBlog = clientRoom;
     } else if (data.kind == SOCKET.REPORT) {
       socket.report = clientRoom;
+    } else if (data.kind == SOCKET.REACT) {
+      socket.react = clientRoom;
+    } else if (data.kind == SOCKET.REACT_COMMENT) {
+      socket.reactComment = clientRoom;
+    } else if (data.kind == SOCKET.REACT_COMMENT_REPLY) {
+      socket.reactCommentReply = clientRoom;
     }
   });
   /**
@@ -56,6 +62,12 @@ io.on('connection', (socket) => {
       io.to(socket.notifyBlog).emit('notify', data);
     } else if (data.kind == SOCKET.REPORT) {
       io.to(socket.report).emit('report', data);
+    } else if (data.kind == SOCKET.REACT) {
+      io.to(socket.react).emit('react', data);
+    } else if (data.kind == SOCKET.REACT_COMMENT) {
+      io.to(socket.reactComment).emit('reactComment', data);
+    } else if (data.kind == SOCKET.REACT_COMMENT_REPLY) {
+      io.to(socket.reactCommentReply).emit('reactCommentReply', data);
     }
   });
   /**

@@ -211,7 +211,7 @@ import { notification } from 'ant-design-vue';
 import authUserInstance from '../../apis/auth';
 import { mapState, mapMutations } from 'vuex';
 import userApi from '../../apis/user';
-import { SOCKET } from '../../../socket_server/config/constant';
+import { SOCKET } from '../../constants';
 import { v4 as uuidv4 } from 'uuid';
 
 export default {
@@ -259,8 +259,31 @@ export default {
           seen: false,
           fullName: newVal.content.name,
         });
+      } else if (newVal.kind == SOCKET.REACT) {
+        this.listNotify.push({
+          id: uuidv4(),
+          avatar: newVal.content.avatar,
+          content: `reacts your blog.`,
+          seen: false,
+          fullName: newVal.content.name,
+        });
+      } else if (newVal.kind == SOCKET.REACT_COMMENT) {
+        this.listNotify.push({
+          id: uuidv4(),
+          avatar: newVal.content.avatar,
+          content: `reacts your comment.`,
+          seen: false,
+          fullName: newVal.content.name,
+        });
+      } else if (newVal.kind == SOCKET.REACT_COMMENT_REPLY) {
+        this.listNotify.push({
+          id: uuidv4(),
+          avatar: newVal.content.avatar,
+          content: `reacts to your comment on your post.`,
+          seen: false,
+          fullName: newVal.content.name,
+        });
       }
-      console.log('inforComment', newVal);
     },
   },
   computed: {

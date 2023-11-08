@@ -41,4 +41,8 @@ export default {
 .ant-radio-disabled + span {
   color: #615a5a;
 }
+
+.ant-radio + span {
+  font-weight: normal;
+}
 </style>

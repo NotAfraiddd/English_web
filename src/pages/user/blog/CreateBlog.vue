@@ -2,7 +2,7 @@
   <div class="mr-5">
     <ButtonBackUser title="Write blog" />
     <div class="flex items-center gap-20 w-full">
-      <div class="flex flex-col items-start justify-center w-1/2 gap-2">
+      <div class="flex flex-col items-start justify-center w-2/5 gap-2">
         <div class="font-semibold mr-4">Title Blog</div>
         <input
           type="text"
@@ -13,13 +13,13 @@
         />
       </div>
       <div class="flex items-center">
-        <div class="font-semibold">Image Blog</div>
-        <ImageUpload :src-img="AVATAR" />
+        <div class="font-semibold">Profile Blog</div>
+        <ImageUpload :src-img="AVATAR" extend-class="h-96 w-full" />
       </div>
     </div>
     <Word :contentProp="contentListening" @update="updateContentListening" />
     <div
-      class="bg-primary w-24 h-9 leading-9 rounded-md cursor-pointer ml-auto mt-5 hover:opacity-50"
+      class="bg-primary font-semibold w-24 h-9 leading-9 rounded-md cursor-pointer ml-auto mt-5 hover:opacity-50"
     >
       Create
     </div>
