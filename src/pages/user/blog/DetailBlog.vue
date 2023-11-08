@@ -102,9 +102,11 @@
             <div class="text-left mb-1">{{ item.content }}</div>
             <div class="flex w-24 justify-between flex-wrap gap-2">
               <div class="flex justify-center items-center cursor-pointer">
-                <div @click="handleClickReact(listComment, item, index)">
+                <div @click="handleClickReact(listComment, item, item.id)">
                   <img
-                    :src="checkListReactComment[index] ? HEART : HEART_DEFAULT"
+                    :src="
+                      checkListReactComment[item.id] ? HEART : HEART_DEFAULT
+                    "
                     alt=""
                     srcset=""
                     class="w-5 h-4"
@@ -179,11 +181,11 @@
               <div class="flex gap-4 justify-between flex-wrap">
                 <div class="flex justify-center items-center cursor-pointer">
                   <div
-                    @click="handleClickReactReply(item.replyComments, i, ind)"
+                    @click="handleClickReactReply(item.replyComments, i, i.id)"
                   >
                     <img
                       :src="
-                        checkListReactReplyComment[ind] ? HEART : HEART_DEFAULT
+                        checkListReactReplyComment[i.id] ? HEART : HEART_DEFAULT
                       "
                       alt=""
                       srcset=""
@@ -604,14 +606,14 @@ It would take a book to list all the races and awards he's won and the mountains
     /**
      * handle click react
      */
-    handleClickReact(arr, data, index) {
-      const isDuplicate = arr.some((p) => p.index === index);
+    handleClickReact(arr, data, id) {
+      const isDuplicate = arr.some((p) => p.id == id);
       const dataSocket = {
         room: +this.idUserBlog,
         kind: SOCKET.REACT_COMMENT,
       };
       this.$socket.emit('joinRoom', dataSocket);
-      if (!isDuplicate) {
+      if (isDuplicate) {
         data.numReact++;
         let content = {
           react: data.numReact,
@@ -622,21 +624,21 @@ It would take a book to list all the races and awards he's won and the mountains
           data: content,
           kind: SOCKET.REACT_COMMENT,
         };
-        this.checkListReactComment[index] = true;
+        this.checkListReactComment[id] = true;
         this.$socket.emit('sendSignal', react);
       }
     },
     /**
      * handle click react of reply comment
      */
-    handleClickReactReply(arr, data, index) {
-      const isDuplicate = arr.some((p) => p.index === index);
+    handleClickReactReply(arr, data, id) {
+      const isDuplicate = arr.some((p) => p.id == id);
       const dataSocket = {
         room: +this.idUserBlog,
         kind: SOCKET.REACT_COMMENT_REPLY,
       };
       this.$socket.emit('joinRoom', dataSocket);
-      if (!isDuplicate) {
+      if (isDuplicate) {
         data.numReact++;
         let content = {
           react: data.numReact,
@@ -647,7 +649,7 @@ It would take a book to list all the races and awards he's won and the mountains
           data: content,
           kind: SOCKET.REACT_COMMENT_REPLY,
         };
-        this.checkListReactReplyComment[index] = true;
+        this.checkListReactReplyComment[id] = true;
         this.$socket.emit('sendSignal', react);
       }
     },

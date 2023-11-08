@@ -1,6 +1,6 @@
 <template>
   <div
-    v-for="item in data"
+    v-for="(item, index) in data"
     :key="item.id"
     :class="extendClass"
     @click="goToDetail(item.id)"
@@ -37,9 +37,9 @@
       </div>
       <div v-if="react" class="flex w-24 justify-between flex-wrap gap-2">
         <div class="flex justify-center items-center cursor-pointer">
-          <div @click="handleClickReact(item)">
+          <div @click.stop="handleClickReact(item, index)">
             <img
-              :src="item.numReact > 0 ? HEART : HEART_DEFAULT"
+              :src="checkReact[index] ? HEART : HEART_DEFAULT"
               alt=""
               srcset=""
               class="w-5 h-4"
@@ -110,13 +110,14 @@ export default {
     this.HEART_DEFAULT = HEART_DEFAULT;
     this.OPTION_ICON = OPTION_ICON;
   },
-  emits: ['showComment', 'changePath'],
+  emits: ['showComment', 'changePath', 'clickReact'],
   props: {
     data: { type: Array, default: () => [] },
     icon: { type: Boolean, default: false },
     image: { type: Boolean, default: false },
     button: { type: Boolean, default: false },
     react: { type: Boolean, default: false },
+    checkReact: { type: Array, default: () => [] },
     user: { type: Boolean, default: false },
     extendClass: { type: String, default: '' },
   },
@@ -133,8 +134,10 @@ export default {
       // Mở cửa sổ mới hoặc tab để chia sẻ URL lên Facebook
       window.open(facebookShareURL, '_blank');
     },
-    handleClickReact(data) {
+    handleClickReact(data, index) {
       data.numReact += 1;
+      const event = { data, index };
+      this.$emit('clickReact', event);
     },
     goToDetail(data) {
       this.$emit('changePath', data);

@@ -28,6 +28,8 @@
       :image="true"
       :react="true"
       :icon="true"
+      :check-react="checkReact"
+      @click-react="clickReact"
       @changePath="goToDetail"
       @showComment="handleShowComment"
     />
@@ -78,7 +80,7 @@
           {{ receiverName }}
         </div>
       </div>
-      <div v-for="(item, index) in listComment" :key="index" class="mr-3">
+      <div v-for="(item, index) in listComment" :key="item.id" class="mr-3">
         <!-- comment first -->
         <div class="flex mt-2">
           <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
@@ -90,9 +92,11 @@
               <div class="text-left mb-1">{{ item.content }}</div>
               <div class="flex w-24 justify-between flex-wrap gap-2">
                 <div class="flex justify-center items-center cursor-pointer">
-                  <div @click="handleClickReact(item)">
+                  <div @click="handleClickReact(listComment, item, item.id)">
                     <img
-                      :src="item.numReact > 0 ? HEART : HEART_DEFAULT"
+                      :src="
+                        checkListReactComment[item.id] ? HEART : HEART_DEFAULT
+                      "
                       alt=""
                       srcset=""
                       class="w-5 h-4"
@@ -166,9 +170,17 @@
                 </div>
                 <div class="flex gap-4 justify-between flex-wrap">
                   <div class="flex justify-center items-center cursor-pointer">
-                    <div @click="handleClickReactReply(i)">
+                    <div
+                      @click="
+                        handleClickReactReply(item.replyComments, i, i.id)
+                      "
+                    >
                       <img
-                        :src="i.numReact > 0 ? HEART : HEART_DEFAULT"
+                        :src="
+                          checkListReactReplyComment[i.id]
+                            ? HEART
+                            : HEART_DEFAULT
+                        "
                         alt=""
                         srcset=""
                         class="w-5 h-4"
@@ -243,6 +255,9 @@ export default {
   },
   data() {
     return {
+      checkReact: [],
+      checkListReactComment: [],
+      checkListReactReplyComment: [],
       numNotify: 0,
       showComment: false,
       idUserBlog: null,
@@ -367,6 +382,57 @@ export default {
       kind: SOCKET.REPLY_COMMENT,
     };
     this.$socket.emit('joinRoom', dataReply);
+    // ------------------ react ------------------
+    this.sockets.subscribe('react', (data) => {
+      if (data.kind == SOCKET.REACT) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.REACT,
+        });
+      }
+    });
+    const dataReact = {
+      room: +this.idUserBlog,
+      kind: SOCKET.REACT,
+    };
+    this.$socket.emit('joinRoom', dataReact);
+    // ------------------ react comment ------------------
+    this.sockets.subscribe('reactComment', (data) => {
+      if (data.kind == SOCKET.REACT_COMMENT) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.REACT_COMMENT,
+        });
+      }
+    });
+    const dataReactComment = {
+      room: +this.idUserBlog,
+      kind: SOCKET.REACT_COMMENT,
+    };
+    this.$socket.emit('joinRoom', dataReactComment);
+    // ------------------ react reply comment ------------------
+    this.sockets.subscribe('reactCommentReply', (data) => {
+      if (data.kind == SOCKET.REACT_COMMENT_REPLY) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.REACT_COMMENT_REPLY,
+        });
+      }
+    });
+    const dataReactCommentReply = {
+      room: +this.idUserBlog,
+      kind: SOCKET.REACT_COMMENT_REPLY,
+    };
+    this.$socket.emit('joinRoom', dataReactCommentReply);
   },
   methods: {
     ...mapMutations('notify', ['setNotify']),
@@ -406,8 +472,51 @@ export default {
         }
       }
     },
-    handleClickReact(data) {
-      data.numReact += 1;
+    clickReact(data) {
+      const isDuplicate = this.listBlog.some((p) => p.index === data.index);
+      // join socket react
+      const dataSocket = {
+        room: +this.idUserBlog,
+        kind: SOCKET.REACT,
+      };
+      this.$socket.emit('joinRoom', dataSocket);
+      // per user will be able to click once
+      if (!isDuplicate) {
+        let content = {
+          react: data.numReact,
+          name: this.userNameLogin,
+          avatar: AVATAR,
+        };
+        const react = {
+          data: content,
+          kind: SOCKET.REACT,
+        };
+        this.checkReact[data.index] = true;
+        this.$socket.emit('sendSignal', react);
+      }
+    },
+
+    handleClickReact(arr, data, id) {
+      const isDuplicate = arr.some((p) => p.id == id);
+      const dataSocket = {
+        room: +this.idUserBlog,
+        kind: SOCKET.REACT_COMMENT,
+      };
+      this.$socket.emit('joinRoom', dataSocket);
+      if (isDuplicate) {
+        data.numReact++;
+        let content = {
+          react: data.numReact,
+          name: this.userNameLogin,
+          avatar: AVATAR,
+        };
+        const react = {
+          data: content,
+          kind: SOCKET.REACT_COMMENT,
+        };
+        this.checkListReactComment[id] = true;
+        this.$socket.emit('sendSignal', react);
+      }
     },
     replyComment(data, secondComment) {
       this.replyComments = secondComment;
@@ -418,8 +527,27 @@ export default {
         });
       }
     },
-    handleClickReactReply(data) {
-      data.numReact += 1;
+    handleClickReactReply(arr, data, id) {
+      const isDuplicate = arr.some((p) => p.id == id);
+      const dataSocket = {
+        room: +this.idUserBlog,
+        kind: SOCKET.REACT_COMMENT_REPLY,
+      };
+      this.$socket.emit('joinRoom', dataSocket);
+      if (isDuplicate) {
+        data.numReact++;
+        let content = {
+          react: data.numReact,
+          name: this.userNameLogin,
+          avatar: AVATAR,
+        };
+        const react = {
+          data: content,
+          kind: SOCKET.REACT_COMMENT_REPLY,
+        };
+        this.checkListReactReplyComment[id] = true;
+        this.$socket.emit('sendSignal', react);
+      }
     },
     replyCommentReply(data, secondComment) {
       this.replyComments = secondComment;
