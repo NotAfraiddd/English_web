@@ -167,7 +167,7 @@ export default {
   },
   methods: {
     goToDetail(dataID) {
-      this.$router.push({ name: 'MemberDetail', params: { id: dataID } });
+      this.$router.push({ name: 'AdminDetail', params: { id: dataID } });
     },
     // modal edit
     handleEdit(data) {

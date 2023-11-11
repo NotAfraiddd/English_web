@@ -26,7 +26,7 @@
         :class="extendClass"
       >
         <img
-          :src="imageURL || AVATAR"
+          :src="!checkCancel ? imageURL : AVATAR"
           class="personal-avatar w-full h-full"
           :class="avatar ? 'rounded-full' : ''"
           alt="avatar"
@@ -46,8 +46,17 @@ export default {
     avatar: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
     remove: { type: Boolean, default: false },
+    cancel: { type: Boolean, default: false },
   },
   watch: {
+    cancel(newValue) {
+      this.checkCancel = newValue;
+      if (this.checkCancel == true) {
+        this.$refs.imageInput.value = '';
+      } else {
+        this.imageURL = '' || AVATAR;
+      }
+    },
     srcImg(newValue) {
       this.imageURL = newValue;
     },
@@ -58,6 +67,7 @@ export default {
   data() {
     return {
       imageURL: this.srcImg,
+      checkCancel: false,
     };
   },
   methods: {

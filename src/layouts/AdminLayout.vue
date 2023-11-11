@@ -101,6 +101,7 @@ export default {
   min-height: 100vh;
   padding-left: 2rem;
   padding-right: 2rem;
+  padding-bottom: 2rem;
   border-left: 1px solid #eee;
   background-color: #fff;
 

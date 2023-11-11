@@ -1,5 +1,5 @@
 <template>
-  <div class="create-course pb-5">
+  <div class="create-course">
     <ButtonBack title="Create Course" @back="changeBack" :hide-back="true" />
     <!-- title -->
     <div class="flex gap-10">

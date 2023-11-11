@@ -13,6 +13,7 @@
             </div>
           </div>
           <ImageUpload
+            :cancel="cancelAvatar"
             :src-img="avatar"
             :avatar="true"
             :disabled="!editAvatar"
@@ -233,15 +234,14 @@ export default {
     },
     // AVATAR
     handleEditAvatar(data) {
-      this.avatarOriginal = this.avatar;
+      this.cancelAvatar = false;
       this.editAvatar = data;
     },
     handleUpdateAvatar(data) {
-      this.avatarOriginal = this.avatar;
       this.editAvatar = data;
     },
     handleCancelAvatar(data) {
-      this.avatar = this.avatarOriginal;
+      this.cancelAvatar = true;
       this.editAvatar = data;
     },
     // name
@@ -346,6 +346,7 @@ export default {
   },
   data() {
     return {
+      cancelAvatar: false,
       avatar: AVATAR,
       avatarOriginal: null,
       editAvatar: false,

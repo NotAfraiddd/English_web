@@ -1,5 +1,5 @@
 <template>
-  <div class="create-course pb-5">
+  <div class="create-course">
     <!-- Reading -->
     <div>
       <ButtonBack title="Reading" hide-back="true" @back="changeBack" />
@@ -24,7 +24,7 @@
       </div>
     </div>
     <div class="border-t border-primary_line mt-5" />
-    <div class="flex text-base gap-20 justify-center mt-5">
+    <div class="flex text-base gap-20 justify-center mt-10">
       <div
         @click="cancelCreate"
         class="border border-primary w-24 text-center h-8 leading-8 text-primary hover:opacity-70 rounded-lg font-semibold cursor-pointer"
