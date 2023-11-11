@@ -44,7 +44,7 @@
   <!-- comment -->
   <div>
     <div
-      class="comment fixed bg-white pt-5 text-primary_black pl-5"
+      class="comment fixed bg-white pt-5 text-primary_black pl-5 overflow-y-auto"
       :class="{ 'menu-visible': showComment }"
     >
       <div class="text-xl font-semibold text-left">12 Comments</div>
@@ -222,7 +222,11 @@ export default {
     this.ICON_LAUGH = ICON_LAUGH;
     this.AVATAR = AVATAR;
   },
-  watch: {},
+  watch: {
+    showComment(newValue) {
+      document.body.style.overflow = newValue ? 'hidden' : 'unset';
+    },
+  },
   data() {
     return {
       showComment: false,

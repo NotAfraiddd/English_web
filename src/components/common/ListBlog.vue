@@ -17,7 +17,9 @@
         </div>
       </div>
       <div class="flex flex-col items-start gap-1 hover:opacity-70">
-        <div class="font-semibold text-xl text-primary_black text-left">
+        <div
+          class="font-semibold text-xl text-primary_black text-left text-title overflow-hidden"
+        >
           {{ item.title }}
         </div>
         <div
@@ -193,6 +195,13 @@ export default {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
+}
+
+.text-title {
+  display: block;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
 }
 
 .text-sub-content-3 {

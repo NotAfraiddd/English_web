@@ -102,6 +102,7 @@ export default {
 }
 
 body {
+  overflow-x: hidden;
   ::selection {
     background-color: #f05123;
   }

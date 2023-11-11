@@ -1,11 +1,24 @@
 import * as VueRouter from 'vue-router';
-
 import routes from './routes';
 
 const router = VueRouter.createRouter({
-  // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
   history: VueRouter.createWebHistory(),
-  routes, // short for `routes: routes`
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    }
+
+    return { top: 0, behavior: 'smooth' };
+  },
 });
 
+router.beforeEach((to, from) => {
+  // let isLogin = JSON.parse(localStorage.getItem('isLogin'));
+  // if (to.meta.requiresAuth && !isLogin) {
+  //   return {
+  //     path: '/login',
+  //   };
+  // }
+});
 export default router;

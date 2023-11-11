@@ -85,13 +85,17 @@
           <div class="flex">
             <div class="w-1/2">
               <div
-                class="text-white rounded-2xl flex flex-col items-center h-36 justify-center hover:opacity-50 cursor-pointer"
+                class="text-white rounded-2xl flex flex-col items-center h-36 justify-center hover:opacity-50 cursor-pointer p-2"
                 :style="{ background: item.color }"
               >
                 <div class="text-2xl font-semibold text-center">
                   {{ item.title }}
                 </div>
-                <div class="text-base text-center">{{ item.subtitle }}</div>
+                <div
+                  class="text-base text-center text-subtitle overflow-hidden"
+                >
+                  {{ item.subtitle }}
+                </div>
               </div>
             </div>
             <div class="w-1/2 ml-4">
@@ -194,6 +198,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.text-subtitle {
+  display: block;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 .profile {
   &-background {
     height: 350px;

@@ -53,10 +53,6 @@ export default {
   padding-left: 121px;
 }
 
-.user-content-wrap {
-  /* margin-top: 15px; */
-}
-
 html *::-webkit-scrollbar {
   border-radius: 0;
   height: 12px;

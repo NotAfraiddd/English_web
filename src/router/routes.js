@@ -1,4 +1,4 @@
-export default [
+const routes = [
   {
     path: '/auth',
     name: 'EmptyLayout',
@@ -30,6 +30,7 @@ export default [
     path: '',
     name: 'UserLayout',
     component: () => import('../layouts/UserLayout.vue'),
+    meta: { requiresAuth: true },
     children: [
       {
         path: '',
@@ -110,6 +111,7 @@ export default [
     path: '/admin',
     name: 'AdminLayout',
     component: () => import('../layouts/AdminLayout.vue'),
+    meta: { requiresAuth: true },
     children: [
       {
         path: '',
@@ -205,3 +207,4 @@ export default [
     component: () => import('../pages/error/index.vue'),
   },
 ];
+export default routes;

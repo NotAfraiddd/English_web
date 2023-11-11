@@ -47,7 +47,7 @@
   <!-- comment -->
   <div>
     <div
-      class="comment fixed bg-white pt-5 text-primary_black pl-5"
+      class="comment fixed bg-white pt-5 text-primary_black pl-5 overflow-y-auto"
       :class="{ 'menu-visible': showComment }"
     >
       <div class="text-xl font-semibold text-left">12 Comments</div>

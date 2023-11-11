@@ -98,6 +98,39 @@
       </div>
     </template>
   </ConfirmModal>
+  <!-- back -->
+  <ConfirmModal
+    :showModal="modalBack"
+    @closeModal="closeModalBack"
+    @save="closeModalBack"
+    :showFooter="false"
+    :widthCustom="500"
+  >
+    <template #icon>
+      <img :src="WARNING" alt="" srcset="" class="h-10 w-10" />
+    </template>
+    <template #content>
+      <div class="text-primary_black my-2">
+        Previous answers will be deleted
+      </div>
+    </template>
+    <template #select>
+      <div class="flex gap-10 mt-2">
+        <div
+          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="cancelHideModalBack"
+        >
+          <span class="text-base text-primary">Cancel</span>
+        </div>
+        <div
+          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="acceptShowModalBack"
+        >
+          <span class="text-base text-white">OK</span>
+        </div>
+      </div>
+    </template>
+  </ConfirmModal>
 </template>
 <script>
 import ConfirmModal from '../../components/admin/ConfirmModal.vue';
@@ -107,12 +140,14 @@ import {
   ARROW_LEFT,
   MOUNTAIN_CLIMB,
   CONGRATULATION,
+  WARNING,
 } from '../../constants/image';
 import { mapState, mapMutations } from 'vuex';
 export default {
   name: 'ReadingTest',
   components: { ButtonBack, MultipleChoice, ConfirmModal },
   created() {
+    this.WARNING = WARNING;
     this.CONGRATULATION = CONGRATULATION;
     this.ARROW_LEFT = ARROW_LEFT;
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
@@ -141,11 +176,20 @@ export default {
     cancelHideModal() {
       this.modalNotifyLevel = false;
     },
+    acceptShowModalBack() {
+      if (this.modalBack) {
+        this.$router.push({ name: 'ListeningTest' });
+        this.modalBack = false;
+      }
+    },
+    cancelHideModalBack() {
+      this.modalBack = false;
+    },
     closeModalNotifyLevel() {
       this.modalNotifyLevel = false;
     },
     onBack() {
-      this.$router.push({ name: 'ListeningTest' });
+      this.modalBack = true;
     },
     getAnswerMultichoice(data) {
       this.myAnswer = data;
@@ -177,6 +221,7 @@ export default {
   },
   data() {
     return {
+      modalBack: false,
       modalNotifyLevel: false,
       numberErrors: 0,
       submitMultipleChoice: false,
