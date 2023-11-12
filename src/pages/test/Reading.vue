@@ -77,7 +77,7 @@
       </div>
       <div class="text-base flex">
         You have reached
-        <div class="font-medium">&nbsp;{{ checkLevel() }}&nbsp;</div>
+        <div class="font-medium">&nbsp;{{ level }}&nbsp;</div>
         level
       </div>
     </template>
@@ -143,6 +143,7 @@ import {
   WARNING,
 } from '../../constants/image';
 import { mapState, mapMutations } from 'vuex';
+import userApi from '../../apis/user';
 export default {
   name: 'ReadingTest',
   components: { ButtonBack, MultipleChoice, ConfirmModal },
@@ -151,6 +152,7 @@ export default {
     this.CONGRATULATION = CONGRATULATION;
     this.ARROW_LEFT = ARROW_LEFT;
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
     setTimeout(() => {
       this.numberErrors = +localStorage.getItem('error');
     }, 0);
@@ -162,12 +164,36 @@ export default {
   },
   computed: {
     ...mapState('auth', ['error']),
+    level() {
+      if (this.error >= 20) return 'Basic';
+      else if (10 <= this.error && this.error < 20) return 'Intermedia';
+      else return 'Advanced';
+    },
   },
   methods: {
-    checkLevel() {
-      if (this.error < 10) return 'Basic';
-      else if (10 <= this.error && this.error < 20) return 'Intermediate';
-      else if (this.error >= 20) return 'Advanced';
+    async checkLevel() {
+      if (this.error >= 20) {
+        await userApi.updateLevel({
+          user: {
+            uid: this.userInfor.email,
+          },
+          level: 1,
+        });
+      } else if (10 <= this.error && this.error < 20) {
+        await userApi.updateLevel({
+          user: {
+            uid: this.userInfor.email,
+          },
+          level: 2,
+        });
+      } else if (this.error < 10) {
+        await userApi.updateLevel({
+          user: {
+            uid: this.userInfor.email,
+          },
+          level: 3,
+        });
+      }
     },
     acceptShowModal() {
       this.modalNotifyLevel = false;
@@ -215,12 +241,14 @@ export default {
         this.$nextTick(() => {
           this.numberErrors = +localStorage.getItem('error');
           this.modalNotifyLevel = true;
+          this.checkLevel();
         });
       }
     },
   },
   data() {
     return {
+      userInfor: null,
       modalBack: false,
       modalNotifyLevel: false,
       numberErrors: 0,

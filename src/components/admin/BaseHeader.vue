@@ -100,7 +100,11 @@
         @mouseenter="isHovered = true"
         @mouseleave="isHovered = false"
         class="relative flex items-center justify-between flex-grow cur-pointer"
-        :class="checkRoute ? 'list-menu custom-hover-effect' : 'list-menu'"
+        :class="{
+          'list-menu': true,
+          'custom-hover-effect': checkRoute,
+          'custom-admin': userInfor.role === 'ADMIN',
+        }"
       >
         <div v-if="checkRoute == true" class="flex items-center cursor-pointer">
           <span class="name ml-5 w-48">Nguyen Huynh Chi Bao</span>
@@ -138,23 +142,23 @@
                 @click="handleGoProfile"
               >
                 <div class="text-lg font-semibold text-primary_black">
-                  Nguyen Huynh Chi Bao
+                  {{ userInfor.fullName || userInfor.email }}
                 </div>
                 <div class="text-sm font-normal text-primary_black opacity-50">
-                  nguyenhuynhchibao@gmail.com
+                  {{ userInfor.email }}
                 </div>
               </div>
             </div>
           </li>
           <li
-            v-if="!checkRoute && role == 'ADMIN'"
+            v-if="!checkRoute && userInfor.role == 'ADMIN'"
             @click="handleGoToAdmin"
             class="text-base item leading-9 h-9 text-left pl-6 relative"
           >
             Admin
           </li>
           <li
-            v-if="checkRoute && role == 'ADMIN'"
+            v-if="checkRoute && userInfor.role == 'ADMIN'"
             @click="handleGoToUser"
             class="text-base item leading-9 h-9 text-left pl-6 relative"
           >
@@ -222,6 +226,7 @@ export default {
     this.ARROW_DOWN = ARROW_DOWN;
     this.LOCK = LOCK;
     this.AVATAR = AVATAR;
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
     this.formatNumber = formatNumber;
     this.getTotalUser();
     window.addEventListener('scroll', this.handleScroll);
@@ -312,6 +317,7 @@ export default {
   },
   data() {
     return {
+      userInfor: null,
       totalOnline: 0,
       totalUser: 0,
       statusBlog: false,
@@ -321,7 +327,6 @@ export default {
       showNotify: false,
       titleInvite: 1,
       showBack: false,
-      role: 'ADMIN',
       data: [
         {
           id: 1,
@@ -396,6 +401,9 @@ export default {
         });
         this.emitter.emit('isShowLoading', false);
         localStorage.removeItem('email');
+        localStorage.removeItem('isLogin');
+        localStorage.removeItem('user');
+        localStorage.removeItem('error');
         this.$router.push({ name: 'Login' });
       } catch (error) {
         console.error('Lỗi logout:', error);

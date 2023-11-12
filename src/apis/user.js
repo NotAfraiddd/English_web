@@ -20,6 +20,10 @@ class UserApi {
     const res = await http.get(`user/totalMember`);
     return res.data;
   }
+  async updateLevel(data) {
+    const res = await http.post(`user/levelChange`, data);
+    return res.data;
+  }
   async getTotalUserOnline() {
     const res = await http.get(`user/getTotalOnlineMember`);
     return res.data;

@@ -394,6 +394,7 @@ import authUser from '../../apis/auth';
 import { mapMutations } from 'vuex';
 import { LoadingMixins } from '../../mixins/Loading';
 import LoadingScreen from '../../components/common/LoadingScreen.vue';
+import axios from 'axios';
 
 export default {
   name: 'Login',
@@ -486,9 +487,22 @@ export default {
     handleLoginGoogle() {
       googleTokenLogin().then((response) => {
         console.log('Handle the response', response);
+        this.fetchData(response.access_token);
       });
     },
-
+    async fetchData(data) {
+      const accessToken = data;
+      const url = `https://oauth2.googleapis.com/tokeninfo?access_token=${accessToken}`;
+      //www.googleapis.com/oauth2/v1/userinfo?access_token=ya29.a0AfB_byB-MXOE1-KVy22h5kMS2aULyqOrFjuU9oYdoyO2Zg_rirOcNw6PJEbMocZu28R5R7Iia058EArKwr904T292JTGPVk14JOQxe0jpNHwP5-34fs3hBiEyHEIaZtT23f0qHYjDmOehZNIUWAiEK5siHYdXpUh8VGVaCgYKATQSARESFQHGX2Mi_FSjzG94uLkCAcorIg7YlA0171
+      try {
+        const response = await axios.get(url);
+        console.log(response);
+        // Handle the response data as needed
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        // Handle the error
+      }
+    },
     showModalForgetPassword() {
       this.modalForgetPassword = true;
     },
@@ -628,14 +642,20 @@ export default {
       if (validEmail && validPassword) {
         try {
           this.emitter.emit('isShowLoading', true);
-          await authUser.login({
+          const user = await authUser.login({
             userName: this.email,
             password: this.password,
           });
+          localStorage.setItem('user', JSON.stringify(user));
           // Đăng nhập thành công
           this.emitter.emit('isShowLoading', false);
           localStorage.setItem('email', this.email);
-          this.$router.push({ name: 'BlogPending' });
+          localStorage.setItem('isLogin', true);
+          if (user?.level == 'PENDING') {
+            this.$router.push({ name: 'ListeningTest' });
+          } else {
+            this.$router.push({ name: 'HomeUser' });
+          }
         } catch (error) {
           // Xử lý lỗi đăng nhập
           console.error('Lỗi đăng nhập:', error);

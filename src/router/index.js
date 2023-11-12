@@ -14,11 +14,11 @@ const router = VueRouter.createRouter({
 });
 
 router.beforeEach((to, from) => {
-  // let isLogin = JSON.parse(localStorage.getItem('isLogin'));
-  // if (to.meta.requiresAuth && !isLogin) {
-  //   return {
-  //     path: '/login',
-  //   };
-  // }
+  let isLogin = JSON.parse(localStorage.getItem('isLogin'));
+  if (to.meta.requiresAuth && !isLogin) {
+    return {
+      path: '/login',
+    };
+  }
 });
 export default router;

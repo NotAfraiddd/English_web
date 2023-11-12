@@ -83,6 +83,8 @@ import { AVATAR, LEARN, LISTENING } from '../../../constants/image';
 import ButtonBackUser from '../../../components/common/ButtonBackUser.vue';
 import Slider from '../../../components/common/Slider.vue';
 import moment from 'moment';
+import userApi from '../../../apis/user';
+import CourseApi from '../../../apis/course';
 
 export default {
   name: 'HomeUser',
@@ -92,82 +94,105 @@ export default {
     this.LISTENING = LISTENING;
     this.LEARN = LEARN;
     this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
+    this.getAllCourse();
+    this.getDetail();
   },
   data() {
     return {
+      userInfor: null,
       inputTime: '2023-10-25 01:08:00',
       delayMinutes: null,
       modalChooseCourse: false,
       userLevel: [
-        { id: 1, level: 'Basic', status: 1 },
-        { id: 2, level: 'Intermediate', status: 0 },
-        { id: 3, level: 'All', status: 1 },
+        // { id: 1, level: 'Basic', status: 1 },
+        // { id: 2, level: 'Intermediate', status: 0 },
+        // { id: 3, level: 'All', status: 1 },
       ],
       courseObject: {
         id: null,
         title: null,
         name: null,
       },
-      listCourses: [
-        {
-          id: 1,
-          title: 'Basic Level',
-          level: 'Basic',
-          subtitle: 'English for individuals with basic knowledge.',
-          percentages: [{ percentage: 30 }],
-          name: 'Basic English Course',
-          courseFinished: '3/10',
-          color: '#0068FF',
-          status: 1,
-        },
-        {
-          id: 2,
-          title: 'Intermediate Level',
-          level: 'Intermediate',
-          subtitle: 'English for individuals with intermediate knowledge.',
-          percentages: [{ percentage: 65 }],
-          name: 'Intermediate English Course',
-          courseFinished: '3/10',
-          color: '#AA53EE',
-          status: 0,
-        },
-        {
-          id: 3,
-          title: 'Advanced Level',
-          level: 'Advanced',
-          subtitle: 'English for individuals with advanced knowledge.',
-          percentages: [{ percentage: 0 }],
-          name: 'Advanced English Course',
-          courseFinished: '0/10',
-          color: '#87CF2A',
-          status: 0,
-        },
-        {
-          id: 4,
-          title: 'Grammar',
-          level: 'All',
-          subtitle: 'English for individuals with basic knowledge.',
-          percentages: [{ percentage: 90 }],
-          name: 'Grammar English Course',
-          courseFinished: '3/10',
-          color: '#7C89CE',
-          status: 1,
-        },
-      ],
+      listCourses: [],
     };
-  },
-  computed: {
-    listCoursesLearned() {
-      return this.listCourses.filter(
-        (course) => course.percentages[0].percentage !== 0,
-      );
-    },
   },
   mounted() {
     this.updateCurrentTime();
     setInterval(this.updateCurrentTime, 1000);
   },
   methods: {
+    /**
+     * get all course
+     */
+    async getAllCourse() {
+      try {
+        const data = await CourseApi.allCourse();
+        data.forEach((item) => {
+          let modifiedLevel =
+            item?.courseLevel.charAt(0).toUpperCase() +
+            item?.courseLevel.slice(1).toLowerCase();
+          this.listCourses.push({
+            id: item?.id,
+            title: modifiedLevel + ' Level',
+            level: modifiedLevel,
+            subtitle: item?.description,
+            percentages: [{ percentage: 0 }],
+            name: item?.name,
+            courseFinished: 0,
+            color: item?.colorCode,
+            status: 0,
+          });
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    /**
+     * get detail user
+     */
+    async getDetail() {
+      try {
+        const email = this.userInfor.email;
+        const data = await userApi.getUser(email);
+        localStorage.setItem('user', JSON.stringify(data));
+        const user = JSON.parse(localStorage.getItem('user'));
+        console.log(
+          user.level == 'BEGINNER',
+          user.level == 'INTERMEDIATE',
+          user.level == 'ADVANCED',
+        );
+        this.listCourses.forEach((item) => {
+          console.log(' item', item);
+          if (user.level == 'BEGINNER') {
+            this.userLevel.push({
+              id: item.id,
+              level: item.level,
+              status: 1,
+            });
+          } else if (user.level == 'Intermediate') {
+            this.userLevel.push({
+              id: item.id,
+              level: item.level,
+              status: 1,
+            });
+          } else if (user.level == 'ADVANCED') {
+            this.userLevel.push({
+              id: item.id,
+              level: item.level,
+              status: 1,
+            });
+          } else
+            this.userLevel.push({
+              id: item.id,
+              level: item.level,
+              status: 0,
+            });
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
     /**
      * set time to show history time of blog
      */
@@ -205,23 +230,13 @@ export default {
         (item) =>
           item.level == data.item.level && item.status == data.item.status,
       );
-      const resultCourseAll = this.userLevel.some(
-        (item) => data.item.level == 'All' && item.status == data.item.status,
-      );
+      console.log(data, result);
       if (result) {
-        if (!resultCourseAll) {
-          if (data.status) {
-            this.courseObject.id = data.item.id;
-            this.courseObject.title = data.item.title;
-            this.courseObject.subtitle = data.item.subtitle;
-            this.modalChooseCourse = data.status;
-          }
-        } else {
-          const path = formatSpacerIntoHyphen(data.item.title).toLowerCase();
-          this.$router.push({
-            name: 'Grammar',
-            params: { name: path },
-          });
+        if (data.status) {
+          this.courseObject.id = data.item.id;
+          this.courseObject.title = data.item.title;
+          this.courseObject.subtitle = data.item.subtitle;
+          this.modalChooseCourse = data.status;
         }
       } else notification.warn({ message: 'Your level is not yet achieved' });
     },

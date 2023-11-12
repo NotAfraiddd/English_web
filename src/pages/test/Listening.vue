@@ -77,7 +77,6 @@ export default {
     localStorage.removeItem('error');
     if (this.isMatchedRoute('ListeningTest')) {
       this.setDefaultError(0);
-      console.log(this.$route.name, this.error);
     }
   },
   watch: {
