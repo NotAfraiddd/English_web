@@ -5,15 +5,8 @@
       avatar ? '' : 'gap-10',
     ]"
   >
-    <div
-      v-if="remove"
-      @click="handleRemoveImage"
-      class="icon-remove text-center bg-red-600 cursor-pointer absolute leading-5 h-5 w-5 text-white text-xs rounded-full"
-    >
-      X
-    </div>
     <div class="text-base text-primary_black font-semibold">{{ title }}</div>
-    <label class="label">
+    <label class="label relative">
       <input
         type="file"
         ref="imageInput"
@@ -33,6 +26,13 @@
         />
       </figure>
     </label>
+    <div
+      v-if="remove"
+      @click.stop="handleRemoveImage"
+      class="icon-remove text-center bg-red-600 cursor-pointer absolute leading-5 h-5 w-5 text-white text-xs rounded-full"
+    >
+      X
+    </div>
   </div>
 </template>
 
@@ -72,13 +72,14 @@ export default {
   },
   methods: {
     handleRemoveImage() {
-      this.imageURL = '';
+      this.imageURL = AVATAR;
     },
     handleImageChange(event) {
       const imageFile = event.target.files[0];
       if (imageFile) {
         const imageURL = URL.createObjectURL(imageFile);
         this.imageURL = imageURL;
+        event.target.value = '';
       }
     },
   },
@@ -88,7 +89,7 @@ export default {
 <style scoped>
 .icon-remove {
   top: 2%;
-  right: 36%;
+  right: 24%;
   z-index: 1;
 }
 .personal-image input[type='file'] {

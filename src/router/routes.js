@@ -63,6 +63,18 @@ const routes = [
         component: () => import('../pages/user/blog/DetailBlog.vue'),
       },
       {
+        path: '/create-course/listening',
+        name: 'CreateCourseForAdvancedListening',
+        component: () =>
+          import('../pages/admin/course/CreateCourseListening.vue'),
+      },
+      {
+        path: '/create-course/reading',
+        name: 'CreateCourseForAdvancedReading',
+        component: () =>
+          import('../pages/admin/course/CreateCourseReading.vue'),
+      },
+      {
         path: 'member/edit/:id',
         name: 'SettingProfile',
         component: () => import('../pages/user/profile/SettingProfile.vue'),

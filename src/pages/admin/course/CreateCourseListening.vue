@@ -3,10 +3,10 @@
     <ButtonBack title="Create Course" @back="changeBack" :hide-back="true" />
     <!-- title -->
     <div class="flex gap-10">
-      <div class="flex mt-5 w-full">
+      <div class="flex mt-5 w-full items-center">
         <div class="flex create-course__title">
           <div
-            class="h-10 leading-10 text-primary_black text-left font-semibold text-base mr-2"
+            class="my-auto text-primary_black text-left font-semibold text-base mr-2"
           >
             Title
           </div>
@@ -20,9 +20,9 @@
         />
       </div>
     </div>
-    <div class="flex mt-5">
+    <div class="flex mt-5 items-center">
       <div
-        class="h-10 leading-10 text-primary_black text-left font-semibold text-base create-course__subtitle"
+        class="my-auto text-primary_black text-left font-semibold text-base create-course__subtitle"
       >
         Subtitle
       </div>
@@ -30,6 +30,18 @@
         type="text"
         class="w-full border rounded-lg form-control"
         spellcheck="false"
+      />
+    </div>
+    <div class="flex mt-5 items-center">
+      <div
+        class="my-auto text-primary_black text-left font-semibold text-base create-course__subtitle"
+      >
+        Level
+      </div>
+      <Inputlevel
+        external-class="w-52 flex mr-auto"
+        :selectedValueProp="inputLevel"
+        @update="updateLevel"
       />
     </div>
     <!-- listening -->
@@ -46,7 +58,11 @@
       title="Listen to the dialogue above and choose the correct answer ( only 6 questions )"
       extend-class="mt-5"
     />
-    <AddAnswer :data-questions="dataQuestion" @subtract="subtractQuestion" />
+    <AddAnswer
+      :data-questions="dataQuestion"
+      @subtract="subtractQuestion"
+      :correct-answers="dataQuestionCorrect"
+    />
     <div class="flex items-center gap-5">
       <div
         @click="addQuestion"
@@ -102,21 +118,65 @@
     />
     <PutTask :data-put-tasks="dataPutTasks" />
     <div class="border-t border-primary_line mt-5" />
-    <div class="flex justify-center gap-20 mt-5 text-base">
+    <div v-if="!checkName" class="flex justify-center gap-20 mt-5 text-base">
       <div
         @click="cancelCreate"
-        class="font-semibold border border-primary w-24 text-center text-primary h-8 leading-8 hover:opacity-70 rounded-lg cursor-pointer"
+        class="border border-primary w-24 text-center text-primary h-8 leading-8 hover:opacity-70 rounded-lg cursor-pointer"
       >
         Cancel
       </div>
       <div
         @click="createCourse"
-        class="font-semibold cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+        class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
       >
         Create
       </div>
     </div>
+    <div v-else class="flex justify-center gap-20 mt-5 text-base">
+      <div
+        @click="showModalCreate"
+        class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+      >
+        Next
+      </div>
+    </div>
   </div>
+  <!-- modal create -->
+  <ConfirmModal
+    :showModal="showModalCreateCourse"
+    @closeModal="closeModalCreate"
+    @save="closeModalCreate"
+    :showFooter="false"
+    :widthCustom="850"
+  >
+    <template #content>
+      <div class="w-full text-center text-xl opacity-90">
+        Are you sure you created this
+        <b>Listening course</b>
+        and will move on to creating
+        <b>Reading course</b>
+        ?
+      </div>
+    </template>
+    <template #select>
+      <div class="flex justify-between items-center mt-3 gap-40">
+        <div class="flex gap-10 mt-4">
+          <div
+            class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+            @click="closeModalCreate"
+          >
+            <span class="text-base text-primary">Cancel</span>
+          </div>
+          <div
+            class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+            @click="createCourseNext"
+          >
+            <span class="text-base text-white">Create</span>
+          </div>
+        </div>
+      </div>
+    </template>
+  </ConfirmModal>
 </template>
 <script>
 import ButtonBack from '../../../components/common/ButtonBack.vue';
@@ -129,10 +189,12 @@ import PutTask from '../../../components/common/PutTask.vue';
 import { STAR_RED, AVATAR } from '../../../constants/image';
 import { NOTIFY_MESSAGE, UI } from '../../../constants/index';
 import { notification } from 'ant-design-vue';
-
+import Inputlevel from '../../../components/common/InputLevel2.vue';
+import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 export default {
   name: 'CreateCourseListening',
   components: {
+    ConfirmModal,
     ButtonBack,
     Audio,
     Word,
@@ -140,15 +202,22 @@ export default {
     FillWord,
     PutTask,
     ImageUpload,
+    Inputlevel,
   },
   created() {
     this.UI = UI;
     this.NOTIFY_MESSAGE = NOTIFY_MESSAGE;
     this.AVATAR = AVATAR;
     this.STAR_RED = STAR_RED;
+    if (this.$route.name == 'CreateCourseForAdvancedListening')
+      this.checkName = true;
   },
 
   methods: {
+    // level
+    updateLevel(e) {
+      this.inputLevel = e;
+    },
     handleGetValueAuio(data) {
       this.selectedAudio = data;
     },
@@ -169,6 +238,16 @@ export default {
     },
     cancelCreate() {
       this.$router.push({ name: 'CourseListening' });
+    },
+    showModalCreate() {
+      this.showModalCreateCourse = true;
+    },
+    closeModalCreate() {
+      this.showModalCreateCourse = false;
+    },
+    createCourseNext() {
+      notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
+      this.$router.push({ name: 'CreateCourseForAdvancedReading' });
     },
     changeBack() {
       this.$router.push({ name: 'CourseListening' });
@@ -202,6 +281,9 @@ export default {
 
   data() {
     return {
+      showModalCreateCourse: false,
+      checkName: false,
+      inputLevel: null,
       contentListening: '',
       screen: UI.UI_LISTENING,
       title: '',
@@ -210,8 +292,12 @@ export default {
       word: [],
       dataQuestion: [
         {
-          title: '',
-          answers: [],
+          title: 'ababa',
+          answers: ['ABCABABAAB', 'CHIBAO'],
+        },
+        {
+          title: 'ababa',
+          answers: ['ABCABABAAB', 'CHIBAO'],
         },
       ],
       dataQuestionReading: [
@@ -234,6 +320,7 @@ export default {
         { id: 4, content: '' },
       ],
       selectedAudio: null,
+      dataQuestionCorrect: [1, 2], // example
     };
   },
 };

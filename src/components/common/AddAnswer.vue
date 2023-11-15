@@ -41,13 +41,16 @@
         :key="subIndex"
         class="flex flex-col items-start w-full justify-center mt-3 gap-3"
       >
-        <input
-          v-model="item.answers[subIndex]"
-          :placeholder="`Answer ${subIndex + 1}`"
-          type="text"
-          class="w-full border rounded-lg form-control"
-          spellcheck="false"
-        />
+        <div class="flex w-full gap-3">
+          <input type="radio" :value="subIndex" v-model="correct[index]" />
+          <input
+            v-model="item.answers[subIndex]"
+            :placeholder="`Answer ${subIndex + 1}`"
+            type="text"
+            class="w-full border rounded-lg form-control"
+            spellcheck="false"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -59,15 +62,28 @@ export default {
   emits: ['subtract'],
   props: {
     dataQuestions: { type: Array, default: () => [] },
+    correctAnswers: { type: Array, default: () => [] },
   },
-  watch: {},
+  watch: {
+    correctAnswers: {
+      handler(newVal, oldVal) {
+        this.correct = newVal;
+      },
+      immediate: true,
+    },
+  },
   methods: {
     subtract(index) {
       this.$emit('subtract', index);
     },
+    updateCorrect($event) {
+      this.correct.push($event);
+    },
   },
   data() {
-    return {};
+    return {
+      correct: [],
+    };
   },
 };
 </script>

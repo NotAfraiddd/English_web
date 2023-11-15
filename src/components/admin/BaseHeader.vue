@@ -104,6 +104,7 @@
           'list-menu': true,
           'custom-hover-effect': checkRoute,
           'custom-admin': userInfor.role === 'ADMIN',
+          'custom-advanced': userInfor.level === checkLevel,
         }"
       >
         <div v-if="checkRoute == true" class="flex items-center cursor-pointer">
@@ -182,6 +183,13 @@
             My article
           </li>
           <div class="spacer flex flex-growth-1 bg-gray-300 mx-6 my-1" />
+          <li
+            v-if="!checkRoute && userInfor.level == checkLevel"
+            @click="handleGoToCreateCourse"
+            class="text-base item leading-9 h-9 text-left pl-6"
+          >
+            Create course
+          </li>
           <li
             v-if="!checkRoute"
             @click="handleGoToSetting"
@@ -317,6 +325,7 @@ export default {
   },
   data() {
     return {
+      checkLevel: 'ADVANCED',
       userInfor: null,
       totalOnline: 0,
       totalUser: 0,
@@ -372,6 +381,9 @@ export default {
   },
   methods: {
     ...mapMutations('auth', ['setEmail', 'setPassword']),
+    handleGoToCreateCourse() {
+      this.$router.push({ name: 'CreateCourseForAdvancedListening' });
+    },
     handleGoToUser() {
       this.$router.push({ name: 'HomeUser' });
     },
