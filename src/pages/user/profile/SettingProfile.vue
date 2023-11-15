@@ -11,9 +11,11 @@
           @click="onMenuClick(menu)"
         >
           <img class="h-7 w-7" :src="menu.icon" alt="navIcon" />
-          <p class="mb-0 h-10 leading-10 text-base ml-4 font-semibold">
+          <div
+            class="mb-0 h-10 leading-10 text-base ml-4 font-semibold text-overflow text-left"
+          >
             {{ menu.message }}
-          </p>
+          </div>
         </li>
       </template>
     </ul>
@@ -192,24 +194,54 @@
           </div>
         </div>
         <!-- level -->
-        <div class="mx-auto member-detail__width pl-80">
+        <div class="mx-auto member-detail__width">
           <div
-            class="text-primary_black mt-5 flex items-center justify-start button-radio"
+            class="text-primary_black mt-5 flex items-center justify-center button-radio"
           >
-            <div class="font-semibold">Level</div>
-            <InputLevel
-              :disabled="!editLevel"
-              :selectedValueProp="inputLevel"
+            <div class="flex w-96 items-center justify-start gap-5">
+              <div
+                class="flex items-start flex-col contain__member-contain gap-4 mt-4"
+              >
+                <div class="font-semibold">Level</div>
+                <InputLevel
+                  :disabled="!editLevel"
+                  :selectedValueProp="inputLevel"
+                  @update="updateLevel"
+                />
+              </div>
+            </div>
+            <ButtonEdit
+              extend-class="invisible"
+              @cancel="handleCancelLevel"
+              @edit="handleEditLevel"
+              @update="handleUpdateLevel"
             />
           </div>
         </div>
         <!-- blog -->
-        <div class="mx-auto member-detail__width pl-80">
+        <div class="mx-auto member-detail__width">
           <div
-            class="text-primary_black mt-5 flex items-center justify-start button-radio"
+            class="text-primary_black mt-5 flex items-center justify-center button-radio"
           >
-            <div class="font-semibold">Blog</div>
-            <InputBlog :disabled="!editBlog" :radio-prop="inputBlog" />
+            <div class="flex w-96 items-center justify-start gap-5">
+              <div
+                class="flex items-start flex-col contain__member-contain gap-4 mt-4"
+              >
+                <div class="font-semibold">Blog</div>
+                <InputBlog
+                  :disabled="!editBlog"
+                  :radio-prop="inputBlog"
+                  @update="updateBlog"
+                />
+              </div>
+            </div>
+
+            <ButtonEdit
+              extend-class="invisible"
+              @cancel="handleCancelBlog"
+              @edit="handleEditBlog"
+              @update="handleUpdateBlog"
+            />
           </div>
         </div>
       </div>
@@ -483,6 +515,23 @@ export default {
       this.inputDate = this.inputDateOriginal;
       this.editDate = data;
     },
+
+    // level
+    updateLevel(e) {
+      this.inputLevel = e;
+    },
+    handleEditLevel(data) {
+      this.inputLevelOriginal = this.inputLevel;
+      this.editLevel = data;
+    },
+    handleUpdateLevel(data) {
+      this.inputLevelOriginal = this.inputLevel;
+      this.editLevel = data;
+    },
+    handleCancelLevel(data) {
+      this.inputLevel = this.inputLevelOriginal;
+      this.editLevel = data;
+    },
     // gender
     updateGender(e) {
       this.inputGender = e;
@@ -498,6 +547,23 @@ export default {
     handleCancelGender(data) {
       this.inputGender = this.inputGenderOriginal;
       this.editGender = data;
+    },
+    // blog
+    updateBlog(e) {
+      console.log(e);
+      this.inputBlog = e;
+    },
+    handleEditBlog(data) {
+      this.inputBlogOriginal = this.inputBlog;
+      this.editBlog = data;
+    },
+    handleUpdateBlog(data) {
+      this.inputBlogOriginal = this.inputBlog;
+      this.editBlog = data;
+    },
+    handleCancelBlog(data) {
+      this.inputBlog = this.inputBlogOriginal;
+      this.editBlog = data;
     },
 
     // facebook
@@ -624,5 +690,12 @@ input.form-control {
 }
 .panel-menu.active {
   background-color: rgba(236, 236, 236, 1);
+}
+
+.text-overflow {
+  flex: auto;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>
