@@ -1,5 +1,5 @@
 <template>
-  <div class="flex gap-5">
+  <div class="flex gap-5" :class="extendClass">
     <div v-if="!edit" class="flex gap-7 mt-4 flex-wrap button-gap">
       <div
         :class="[
@@ -36,6 +36,9 @@ export default {
   name: 'ButtonEdit',
   emits: ['edit', 'update', 'cancel'],
   created() {},
+  props: {
+    extendClass: { type: String, default: '' },
+  },
   data() {
     return {
       edit: false,
