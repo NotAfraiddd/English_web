@@ -5,7 +5,7 @@
     :class="externalClass"
     @change="updateLevel"
   >
-    <a-select-option :value="1">Basic</a-select-option>
+    <a-select-option :value="1">Beginner</a-select-option>
     <a-select-option :value="2">Intermediate</a-select-option>
     <a-select-option :value="3">Advanced</a-select-option>
   </a-select>
