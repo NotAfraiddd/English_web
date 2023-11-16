@@ -6,7 +6,7 @@
     ]"
   >
     <div class="text-base text-primary_black font-semibold">{{ title }}</div>
-    <label class="label relative">
+    <label class="label">
       <input
         type="file"
         ref="imageInput"
@@ -89,7 +89,7 @@ export default {
 <style scoped>
 .icon-remove {
   top: 2%;
-  right: 24%;
+  right: 35%;
   z-index: 1;
 }
 .personal-image input[type='file'] {
