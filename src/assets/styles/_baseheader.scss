@@ -32,21 +32,26 @@
 }
 
 .list-menu:hover ul {
+  height: 160px;
+  opacity: 1;
+}
+.custom-user:hover ul {
   height: 230px;
   opacity: 1;
 }
-.custom-hover-effect:hover ul {
-  height: 160px !important;
+
+.custom-user-advanced:hover ul {
+  height: 270px;
   opacity: 1;
 }
 
 .custom-advanced:hover ul {
-  height: 270px !important;
+  height: 310px;
   opacity: 1;
 }
 
 .custom-admin:hover ul {
-  height: 305px !important;
+  height: 310px;
   opacity: 1;
 }
 

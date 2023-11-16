@@ -102,9 +102,12 @@
         class="relative flex items-center justify-between flex-grow cur-pointer"
         :class="{
           'list-menu': true,
-          'custom-hover-effect': checkRoute,
-          'custom-admin': userInfor.role === 'ADMIN',
-          'custom-advanced': userInfor.level === checkLevel,
+          'custom-admin':
+            userInfor.role == 'ADMIN' &&
+            userInfor.level == checkLevel &&
+            !checkRoute,
+          'custom-user-advanced': userInfor.level == checkLevel && !checkRoute,
+          'custom-user': userInfor.level != checkLevel && !checkRoute,
         }"
       >
         <div v-if="checkRoute == true" class="flex items-center cursor-pointer">
@@ -306,6 +309,7 @@ export default {
       if (
         this.isMatchedRoute('Dashboard') ||
         this.isMatchedRoute('BlogPending') ||
+        this.isMatchedRoute('CoursePending') ||
         this.isMatchedRoute('Course') ||
         this.isMatchedRoute('CreateCourse') ||
         this.isMatchedRoute('Member') ||
@@ -313,6 +317,7 @@ export default {
         this.isMatchedRoute('CourseReading') ||
         this.isMatchedRoute('DetailCourseListening') ||
         this.isMatchedRoute('DetailCourseReading') ||
+        this.isMatchedRoute('DetailCoursePending') ||
         this.isMatchedRoute('CreateCourseListening') ||
         this.isMatchedRoute('CreateCourseReading') ||
         this.isMatchedRoute('AdminDetail') ||
