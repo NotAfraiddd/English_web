@@ -157,13 +157,7 @@ export default {
         const data = await userApi.getUser(email);
         localStorage.setItem('user', JSON.stringify(data));
         const user = JSON.parse(localStorage.getItem('user'));
-        console.log(
-          user.level == 'BEGINNER',
-          user.level == 'INTERMEDIATE',
-          user.level == 'ADVANCED',
-        );
         this.listCourses.forEach((item) => {
-          console.log(' item', item);
           if (user.level == 'BEGINNER') {
             this.userLevel.push({
               id: item.id,

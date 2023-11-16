@@ -1,8 +1,9 @@
 <template>
   <div class="text-primary_black">
-    <div class="flex justify-between flex-wrap gap-4 mb-10">
-      <Notify :data="report" @clicked="changeUI" />
-      <Notify :data="blog" @clicked="changeUI" />
+    <div class="flex justify-around flex-wrap gap-4 mb-10">
+      <Notify :data="report" :num-notify="numReport" @clicked="changeUI" />
+      <Notify :data="blog" :num-notify="numBlog" @clicked="changeUI" />
+      <Notify :data="course" :num-notify="numCourse" @clicked="changeUI" />
     </div>
     <BaseTable
       :columns="columns"
@@ -29,7 +30,6 @@ export default {
   mounted() {
     if (this.screenUI == SCREEN.comment) {
       const containWidthElement = this.$refs.containWidth;
-      console.log('containWidthElement');
     }
   },
   methods: {
@@ -37,6 +37,8 @@ export default {
       if (data == NOTIFY.comment)
         this.$router.push({ name: 'CommentReported' });
       else if (data == NOTIFY.blog) this.$router.push({ name: 'BlogPending' });
+      else if (data == NOTIFY.course)
+        this.$router.push({ name: 'CoursePending' });
       else this.screenUI = SCREEN.dashboard;
     },
     changeBack() {
@@ -47,6 +49,9 @@ export default {
     return {
       isHover: false,
       screenUI: SCREEN.dashboard,
+      numReport: 0,
+      numBlog: 1,
+      numCourse: 100,
       report: {
         id: NOTIFY.comment,
         subtitle: 'Report',
@@ -56,6 +61,11 @@ export default {
         id: NOTIFY.blog,
         subtitle: 'Blog',
         title: 'Blog pending',
+      },
+      course: {
+        id: NOTIFY.course,
+        subtitle: 'Course',
+        title: 'Course pending',
       },
       listReported: [
         {

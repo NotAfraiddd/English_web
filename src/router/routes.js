@@ -207,9 +207,20 @@ const routes = [
         component: () => import('../pages/admin/blog/DetailBlogPending.vue'),
       },
       {
-        path: 'comment/reported',
+        path: 'comment-reported',
         name: 'CommentReported',
         component: () => import('../pages/admin/comment/CommentReported.vue'),
+      },
+      {
+        path: 'course-pending',
+        name: 'CoursePending',
+        component: () => import('../pages/admin/course/CoursePending.vue'),
+      },
+      {
+        path: 'course-pending/detail/:name/:type/:id',
+        name: 'DetailCoursePending',
+        component: () =>
+          import('../pages/admin/course/DetailCoursePending.vue'),
       },
     ],
   },

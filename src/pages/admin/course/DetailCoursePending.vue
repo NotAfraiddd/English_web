@@ -65,7 +65,6 @@
         />
       </div>
     </div>
-    <!-- match -->
     <div class="flex items-center flex-wrap mt-5 gap-5">
       <ButtonBack
         title="Listen to the dialogue above and match the beginnings and endings of the phrases"
@@ -88,7 +87,6 @@
       @setAnswers="setAnswers"
       @setQuetions="setQuetions"
     />
-    <!-- put priority -->
     <div class="flex items-center flex-wrap mt-5 gap-5">
       <ButtonBack title="Put the tasks in order of priority." />
       <div class="h-6 border-orange border rounded-xl flex items-center">
@@ -110,41 +108,32 @@
       @update="setValuePriority"
     />
     <div class="flex justify-center gap-20 items-center py-5 text-base">
-      <div v-if="!isMatchedRoute('MemberDetailCourseListening')">
-        <div class="flex gap-20">
-          <div
-            class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
-            @click="onBack"
-          >
-            <span class="text-base text-primary">Back</span>
-          </div>
-          <div
-            class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
-            @click="handleUpdate"
-          >
-            <span class="text-base text-white">Edit</span>
-          </div>
-          <div
-            @click="handleSubmit"
-            class="cursor-pointer rounded-lg bg-yellow-300 text-white w-24 text-center h-8 leading-8 hover:opacity-50"
-          >
-            Test
-          </div>
-        </div>
-      </div>
-      <div v-else class="flex gap-20">
+      <div class="flex items-center justify-around w-full">
         <div
-          class="cursor-pointer font-semibold rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
           @click="onBack"
         >
           <span class="text-base text-primary">Back</span>
         </div>
         <div
-          @click="handleSubmit"
-          class="cursor-pointer font-semibold rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="handleUpdate"
         >
-          Submit
+          <span class="text-base text-white">Edit</span>
         </div>
+        <div
+          @click="handleSubmit"
+          class="cursor-pointer rounded-lg bg-yellow-300 text-white w-24 text-center h-8 leading-8 hover:opacity-50"
+        >
+          Test
+        </div>
+        <img
+          :src="RELOAD"
+          alt=""
+          class="w-5 h-5 rotate-transition"
+          @click="resetResult"
+          :style="{ transform: 'rotate(' + rotation + 'deg)' }"
+        />
       </div>
     </div>
   </div>
@@ -214,12 +203,12 @@ import MatchWord from '../../../components/common/MatchWord.vue';
 import PutPriority from '../../../components/common/PutPriority.vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 export default {
-  name: 'DetailCourseListening',
+  name: 'DetailCoursePending',
   components: {
     ButtonBack,
     Audio,
-    ConfirmModal,
     MultipleChoice,
+    ConfirmModal,
     MatchWord,
     PutPriority,
   },
@@ -415,7 +404,6 @@ export default {
         },
         { id: 4, question: 'I have an apple in my bag.' },
       ],
-      listCorrectPriority: [1, 3, 2, 4],
       listQuestions: [
         {
           id: 1,
@@ -526,6 +514,7 @@ export default {
         },
       ],
       correctAnswer: [1, 2, 3, 4, 1, 2],
+      listCorrectPriority: [1, 3, 2, 4],
       myAnswer: [],
       errorsMultiple: [],
       errorsMatching: [],
@@ -580,5 +569,8 @@ export default {
   &__answers {
     width: 14rem;
   }
+}
+.rotate-transition {
+  transition: transform 0.5s ease-in-out;
 }
 </style>

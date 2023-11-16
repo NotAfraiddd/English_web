@@ -283,7 +283,7 @@ export default {
     return {
       showModalCreateCourse: false,
       checkName: false,
-      inputLevel: null,
+      inputLevel: 1,
       contentListening: '',
       screen: UI.UI_LISTENING,
       title: '',

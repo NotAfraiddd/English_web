@@ -15,11 +15,15 @@
         </div>
         <div class="flex justify-center items-start">
           <div
-            class="text-xs bg-red-600 text-white text-center leading-6 h-6 w-6 rounded-full"
+            class="text-xs bg-red-600 text-white text-center leading-6 h-6 w-6 rounded-full flex justify-center"
+            v-if="numNotify > 0"
           >
-            +99
+            <div v-if="numNotify > 99">+</div>
+            {{ numNotify > 99 ? 99 : numNotify }}
           </div>
-          <div class="ml-2">notifications</div>
+          <div v-if="numNotify > 0" class="ml-2">
+            {{ numNotify > 1 ? 'notifications' : 'notification' }}
+          </div>
         </div>
       </div>
     </div>
@@ -32,6 +36,7 @@ export default {
   emits: ['clicked'],
   props: {
     data: { type: Object, default: () => {} },
+    numNotify: { type: Number, default: 0 },
   },
   data() {
     return {};

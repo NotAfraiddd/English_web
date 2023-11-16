@@ -62,6 +62,8 @@ export default {
       if (this.submit) {
         this.numError = this.errors.length;
         this.setError(this.numError);
+      } else {
+        this.selected = [];
       }
     },
   },
@@ -83,7 +85,7 @@ export default {
      *  @returns {boolean} - Returns true if the route name matches the current route, false otherwise.
      */
     isMatchedRoute(routeName) {
-      return this.$route.name === routeName;
+      return this.$route.name == routeName;
     },
     isSelected(id, key) {
       return this.selected[id] === key;
@@ -93,9 +95,12 @@ export default {
       this.$emit('setValue', this.selected);
     },
     hasError(id) {
-      if (!this.isMatchedRoute(`${this.paramName}`))
+      if (
+        this.isMatchedRoute(`ReadingTest`) == false ||
+        !this.isMatchedRoute(`ListeningTest`) == false
+      ) {
         return this.errors.includes(id);
-      else {
+      } else {
         if (this.submit) {
           this.submit = false;
         }
