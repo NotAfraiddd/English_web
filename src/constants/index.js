@@ -1,6 +1,7 @@
 export const NOTIFY = {
   blog: 1,
   comment: 2,
+  course: 3,
 };
 
 export const ACTIVE_TAB = {
@@ -58,4 +59,15 @@ export const SOCKET = {
   REACT: 5,
   REACT_COMMENT: 6,
   REACT_COMMENT_REPLY: 7,
+};
+
+export const LEVEL = {
+  BEGINNER: 1,
+  INTERMEDIATE: 2,
+  ADVANCED: 3,
+};
+
+export const TYPE_COURSE = {
+  LISTENING: 1,
+  READING: 2,
 };
