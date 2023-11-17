@@ -53,7 +53,6 @@ export default {
   },
   methods: {
     showToast(data) {
-      console.log(data);
       if (data.kind == SOCKET.COMMENT)
         this.$toast.add({
           severity: 'success',
@@ -87,6 +86,42 @@ export default {
           severity: 'success',
           summary: `${data.content.name}`,
           detail: 'reacts to your comment on your post.',
+          life: 3000,
+        });
+      } else if (data.kind == SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN) {
+        this.$toast.add({
+          severity: 'success',
+          detail: 'Admin have approved reported comment of you.',
+          life: 3000,
+        });
+      } else if (data.kind == SOCKET.NOTIFY_BLOG_PENDING) {
+        this.$toast.add({
+          severity: 'success',
+          detail: 'Admin have approved blog of you.',
+          life: 3000,
+        });
+      } else if (data.kind == SOCKET.NOTIFY_COURSE_PENDING) {
+        this.$toast.add({
+          severity: 'success',
+          detail: 'Admin have approved course of you.',
+          life: 3000,
+        });
+      } else if (data.kind == SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN) {
+        this.$toast.add({
+          severity: 'warn',
+          detail: 'Admin have rejected comment of you.',
+          life: 3000,
+        });
+      } else if (data.kind == SOCKET.REJECTED_BLOG_PENDING) {
+        this.$toast.add({
+          severity: 'warn',
+          detail: 'Admin have rejected blog of you.',
+          life: 3000,
+        });
+      } else if (data.kind == SOCKET.NOTIFY_COURSE_PENDING) {
+        this.$toast.add({
+          severity: 'warn',
+          detail: 'Admin have rejected course of you.',
           life: 3000,
         });
       }

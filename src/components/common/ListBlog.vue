@@ -30,10 +30,16 @@
         </div>
       </div>
       <div v-if="button" class="flex w-40 justify-between flex-wrap gap-3">
-        <div class="text-text_red hover:text-red-600 cursor-pointer">
+        <div
+          @click.stop="handleRejected(item)"
+          class="text-text_red hover:text-red-600 cursor-pointer"
+        >
           Rejected
         </div>
-        <div class="text-text_green hover:text-green-600 cursor-pointer">
+        <div
+          @click.stop="handleApproved(item)"
+          class="text-text_green hover:text-green-600 cursor-pointer"
+        >
           Approved
         </div>
       </div>
@@ -112,7 +118,7 @@ export default {
     this.HEART_DEFAULT = HEART_DEFAULT;
     this.OPTION_ICON = OPTION_ICON;
   },
-  emits: ['showComment', 'changePath', 'clickReact'],
+  emits: ['showComment', 'changePath', 'clickReact', 'rejected', 'approved'],
   props: {
     data: { type: Array, default: () => [] },
     icon: { type: Boolean, default: false },
@@ -124,6 +130,12 @@ export default {
     extendClass: { type: String, default: '' },
   },
   methods: {
+    handleRejected(data) {
+      this.$emit('rejected', data);
+    },
+    handleApproved(data) {
+      this.$emit('approved', data);
+    },
     shareOnFacebook() {
       // Lấy URL hiện tại của trang
       const currentURL = window.location.href;

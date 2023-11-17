@@ -12,15 +12,13 @@
         <div class="flex-1 flex items-start ml-3 flex-col">
           <div class="font-semibold">{{ item.name }} &nbsp;</div>
           <div class="flex items-end">
-            <b>Course</b>
-            &nbsp;
+            Course: &nbsp;
             <div class="">
               {{ item.nameCourse }}
             </div>
           </div>
           <div class="flex items-end">
-            <b>Level</b>
-            &nbsp;
+            Level: &nbsp;
             <div class="">
               {{
                 item.level == LEVEL.BEGINNER
@@ -32,8 +30,7 @@
             </div>
           </div>
           <div class="flex items-end">
-            <b>Type</b>
-            &nbsp;
+            Type: &nbsp;
             <div class="">
               {{ item.type == TYPE_COURSE.LISTENING ? 'Listening' : 'Reading' }}
             </div>
@@ -67,7 +64,7 @@ import { AVATAR } from '../../../constants/image';
 import { LEVEL, TYPE_COURSE } from '../../../constants';
 import { formatSpacerIntoHyphen } from '../../../constants/function';
 export default {
-  name: 'CoursePending',
+  name: 'CourseListeningPending',
   components: { ButtonBack },
   created() {
     this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
@@ -87,7 +84,7 @@ export default {
       const path = formatSpacerIntoHyphen(data.nameCourse);
       const type = data.type == TYPE_COURSE.LISTENING ? 'Listening' : 'Reading';
       this.$router.push({
-        name: 'DetailCoursePending',
+        name: 'DetailCourseListeningPending',
         params: { name: path, type: type, id: data.id },
       });
     },

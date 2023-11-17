@@ -88,7 +88,9 @@
             class="w-4/5 text-left text-base textpr header-notify__item-content"
             :class="[item.seen && 'opacity-50']"
           >
-            <strong>{{ item.fullName }}</strong>
+            <strong>
+              {{ !item.nameCourse ? item.fullName : item.nameCourse }}
+            </strong>
             {{ item.content }}
           </div>
           <div v-if="!item.seen" class="mr-5">
@@ -263,6 +265,7 @@ export default {
         this.listNotify.push({
           id: uuidv4(),
           avatar: newVal.content.avatar,
+          nameCourse: null,
           content: `mentioned you in a comment.`,
           seen: false,
           fullName: newVal.content.name,
@@ -271,6 +274,7 @@ export default {
         this.listNotify.push({
           id: uuidv4(),
           avatar: newVal.content.avatar,
+          nameCourse: null,
           content: `replied to your comment on your post.`,
           seen: false,
           fullName: newVal.content.name,
@@ -279,6 +283,7 @@ export default {
         this.listNotify.push({
           id: uuidv4(),
           avatar: newVal.content.avatar,
+          nameCourse: null,
           content: `reacts your blog.`,
           seen: false,
           fullName: newVal.content.name,
@@ -287,6 +292,7 @@ export default {
         this.listNotify.push({
           id: uuidv4(),
           avatar: newVal.content.avatar,
+          nameCourse: null,
           content: `reacts your comment.`,
           seen: false,
           fullName: newVal.content.name,
@@ -295,7 +301,63 @@ export default {
         this.listNotify.push({
           id: uuidv4(),
           avatar: newVal.content.avatar,
+          nameCourse: null,
           content: `reacts to your comment on your post.`,
+          seen: false,
+          fullName: newVal.content.name,
+        });
+      } else if (newVal.kind == SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN) {
+        this.listNotify.push({
+          id: uuidv4(),
+          avatar: newVal.content.avatar,
+          nameCourse: null,
+          content: 'Admin have approved reported comment of you.',
+          seen: false,
+          fullName: newVal.content.name,
+        });
+      } else if (newVal.kind == SOCKET.NOTIFY_BLOG_PENDING) {
+        this.listNotify.push({
+          id: uuidv4(),
+          avatar: newVal.content.avatar,
+          nameCourse: null,
+          content: 'Admin have approved blog of you.',
+          seen: false,
+          fullName: newVal.content.name,
+        });
+      } else if (newVal.kind == SOCKET.NOTIFY_COURSE_PENDING) {
+        console.log(newVal);
+        this.listNotify.push({
+          id: uuidv4(),
+          avatar: newVal.content.avatar, // avatar admin
+          nameCourse: `Course ${newVal.content.courseName || ''}`,
+          content: 'has been approved by admin',
+          seen: false,
+          fullName: newVal.content.name,
+        });
+      } else if (newVal.kind == SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN) {
+        this.listNotify.push({
+          id: uuidv4(),
+          avatar: newVal.content.avatar,
+          nameCourse: `${newVal.content.courseName || ''}`,
+          content: 'has been rejected by admin',
+          seen: false,
+          fullName: newVal.content.name,
+        });
+      } else if (newVal.kind == SOCKET.REJECTED_BLOG_PENDING) {
+        this.listNotify.push({
+          id: uuidv4(),
+          avatar: newVal.content.avatar,
+          nameCourse: `${newVal.content.courseName || ''}`,
+          content: 'has been rejected by admin',
+          seen: false,
+          fullName: newVal.content.name,
+        });
+      } else if (newVal.kind == SOCKET.REJECTED_COURSE_PENDING) {
+        this.listNotify.push({
+          id: uuidv4(),
+          avatar: newVal.content.avatar,
+          nameCourse: `${newVal.content.courseName || ''}`,
+          content: 'has been rejected by admin',
           seen: false,
           fullName: newVal.content.name,
         });
@@ -309,7 +371,8 @@ export default {
       if (
         this.isMatchedRoute('Dashboard') ||
         this.isMatchedRoute('BlogPending') ||
-        this.isMatchedRoute('CoursePending') ||
+        this.isMatchedRoute('DetailBlogPending') ||
+        this.isMatchedRoute('CourseListeningPending') ||
         this.isMatchedRoute('Course') ||
         this.isMatchedRoute('CreateCourse') ||
         this.isMatchedRoute('Member') ||
@@ -317,7 +380,7 @@ export default {
         this.isMatchedRoute('CourseReading') ||
         this.isMatchedRoute('DetailCourseListening') ||
         this.isMatchedRoute('DetailCourseReading') ||
-        this.isMatchedRoute('DetailCoursePending') ||
+        this.isMatchedRoute('DetailCourseListeningPending') ||
         this.isMatchedRoute('CreateCourseListening') ||
         this.isMatchedRoute('CreateCourseReading') ||
         this.isMatchedRoute('AdminDetail') ||
@@ -368,6 +431,7 @@ export default {
         {
           id: 1,
           avatar: AVATAR,
+          nameCourse: null,
           content:
             'Your comment is reported by someone Your comment is reported by someone Your comment is reported by someone Your comment is reported',
           seen: false,
@@ -376,6 +440,7 @@ export default {
         {
           id: 2,
           avatar: AVATAR,
+          nameCourse: null,
           content:
             'Your comment is reported by someone Your comment is reported by someone Your comment is reported by someone Your comment is reported',
           seen: true,

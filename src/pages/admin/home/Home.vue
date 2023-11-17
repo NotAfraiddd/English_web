@@ -38,7 +38,7 @@ export default {
         this.$router.push({ name: 'CommentReported' });
       else if (data == NOTIFY.blog) this.$router.push({ name: 'BlogPending' });
       else if (data == NOTIFY.course)
-        this.$router.push({ name: 'CoursePending' });
+        this.$router.push({ name: 'CourseListeningPending' });
       else this.screenUI = SCREEN.dashboard;
     },
     changeBack() {

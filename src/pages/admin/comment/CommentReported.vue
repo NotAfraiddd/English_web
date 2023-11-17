@@ -6,17 +6,23 @@
     class="flex text-base flex-1 justify-between items-center mt-3 border px-5 rounded-lg h-auto"
   >
     <div class="flex items-center py-2 total-width mr-3">
-      <img :src="AVATAR" alt="" srcset="" class="h-10 w-10 rounded-full" />
+      <img :src="item.avatar" alt="" srcset="" class="h-10 w-10 rounded-full" />
       <div class="flex-1 flex items-start ml-3 flex-col">
         <div>{{ item.comment }} &nbsp;</div>
         <div class="font-semibold text-left">'{{ item.offense }}'</div>
       </div>
     </div>
     <div class="flex w-40 justify-between flex-wrap gap-2 group-button">
-      <div class="text-text_red hover:text-red-600 cursor-pointer">
+      <div
+        @click="handleRejected(item)"
+        class="text-text_red hover:text-red-600 cursor-pointer"
+      >
         Rejected
       </div>
-      <div class="text-text_green hover:text-green-600 cursor-pointer">
+      <div
+        @click="handleApproved(item)"
+        class="text-text_green hover:text-green-600 cursor-pointer"
+      >
         Approved
       </div>
     </div>
@@ -36,7 +42,8 @@
 <script>
 import ButtonBack from '../../../components/common/ButtonBack.vue';
 import { ARROW_LEFT, AVATAR } from '../../../constants/image';
-import { NOTIFY } from '../../../constants/index';
+import { NOTIFY, SOCKET } from '../../../constants/index';
+import { mapMutations } from 'vuex';
 export default {
   name: 'CommentReported',
   components: { ButtonBack },
@@ -45,35 +52,132 @@ export default {
     this.ARROW_LEFT = ARROW_LEFT;
     this.NOTIFY = NOTIFY;
   },
+  mounted() {
+    // reject comment
+    this.sockets.subscribe('rejectCommentReported', (data) => {
+      if (data.kind == SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN,
+        });
+      }
+    });
+    const rejectContent = {
+      room: this.idUserReportComment,
+      kind: SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN,
+    };
+    this.$socket.emit('joinRoom', rejectContent);
+    // comment
+    this.sockets.subscribe('commentReported', (data) => {
+      if (data.kind == SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN,
+        });
+      }
+    });
+    const content = {
+      room: this.idUserReportComment,
+      kind: SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN,
+    };
+    this.$socket.emit('joinRoom', content);
+  },
   methods: {
+    ...mapMutations('notify', ['setNotify']),
+    handleRejected(data) {
+      if (!data.status) {
+        this.idUserReportComment = +data.userID;
+        // join socket rejectcomment
+        const dataSocket = {
+          room: this.idUserReportComment,
+          kind: SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN,
+        };
+        this.$socket.emit('joinRoom', dataSocket);
+        let content = {
+          data: data,
+          kind: SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN,
+        };
+        this.$socket.emit('sendSignal', content);
+        // remove item out list( call api)
+        this.listReported = this.listReported.filter(
+          (item) => item.userID !== this.idUserReportComment,
+        );
+      }
+    },
+    handleApproved(data) {
+      if (!data.status) {
+        this.idUserReportComment = +data.userID;
+        // join socket react
+        const dataSocket = {
+          room: this.idUserReportComment,
+          kind: SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN,
+        };
+        this.$socket.emit('joinRoom', dataSocket);
+        let content = {
+          data: data,
+          kind: SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN,
+        };
+        this.$socket.emit('sendSignal', content);
+        // remove item out list( call api)
+        this.listReported = this.listReported.filter(
+          (item) => item.userID !== this.idUserReportComment,
+        );
+      }
+    },
     changeBack() {
       this.$router.push(`/admin`);
     },
   },
   data() {
     return {
+      idUserReportComment: null,
+      numNotify: 0,
       listReported: [
         {
+          userID: 1,
+          avatar: AVATAR,
+          status: false,
           comment: 'John was reported for calling a comment',
           offense: 'stupid',
         },
         {
+          userID: 2,
+          avatar: AVATAR,
+          status: false,
           comment: 'John was reported for calling a comment',
           offense: 'shut up !!! bitch',
         },
         {
+          userID: 3,
+          avatar: AVATAR,
+          status: false,
           comment: 'John was reported for calling a comment',
-          offense: 'stupid',
+          offense: 'stupid 2',
         },
         {
+          userID: 4,
+          avatar: AVATAR,
+          status: false,
           comment: 'John was reported for calling a comment',
           offense: 'shut up !!! bitch',
         },
         {
+          userID: 5,
+          avatar: AVATAR,
+          status: false,
           comment: 'John was reported for calling a comment',
-          offense: 'stupid',
+          offense: 'stupid 3',
         },
         {
+          userID: 6,
+          avatar: AVATAR,
+          status: false,
           comment: 'John was reported for calling a comment',
           offense:
             'shut up !!! bitch John was reported for calling a comment John was reported for calling a comment John was reported for calling a comment ch John was reported for calling a comment John was reported for calling a comment John was reported for calling a comment',

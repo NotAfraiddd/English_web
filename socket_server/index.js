@@ -48,6 +48,18 @@ io.on('connection', (socket) => {
       socket.reactComment = clientRoom;
     } else if (data.kind == SOCKET.REACT_COMMENT_REPLY) {
       socket.reactCommentReply = clientRoom;
+    } else if (data.kind == SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN) {
+      socket.commentReported = clientRoom;
+    } else if (data.kind == SOCKET.NOTIFY_BLOG_PENDING) {
+      socket.blogPending = clientRoom;
+    } else if (data.kind == SOCKET.NOTIFY_COURSE_PENDING) {
+      socket.coursePending = clientRoom;
+    } else if (data.kind == SOCKET.REJECTED_BLOG_PENDING) {
+      socket.rejectBlogPending = clientRoom;
+    } else if (data.kind == SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN) {
+      socket.rejectCommentReported = clientRoom;
+    } else if (data.kind == SOCKET.REJECTED_COURSE_PENDING) {
+      socket.rejectCoursePending = clientRoom;
     }
   });
   /**
@@ -68,6 +80,18 @@ io.on('connection', (socket) => {
       io.to(socket.reactComment).emit('reactComment', data);
     } else if (data.kind == SOCKET.REACT_COMMENT_REPLY) {
       io.to(socket.reactCommentReply).emit('reactCommentReply', data);
+    } else if (data.kind == SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN) {
+      io.to(socket.commentReported).emit('commentReported', data);
+    } else if (data.kind == SOCKET.NOTIFY_BLOG_PENDING) {
+      io.to(socket.blogPending).emit('blogPending', data);
+    } else if (data.kind == SOCKET.NOTIFY_COURSE_PENDING) {
+      io.to(socket.coursePending).emit('coursePending', data);
+    } else if (data.kind == SOCKET.REJECTED_BLOG_PENDING) {
+      io.to(socket.rejectBlogPending).emit('rejectBlogPending', data);
+    } else if (data.kind == SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN) {
+      io.to(socket.rejectCommentReported).emit('rejectCommentReported', data);
+    } else if (data.kind == SOCKET.REJECTED_COURSE_PENDING) {
+      io.to(socket.rejectCoursePending).emit('rejectCoursePending', data);
     }
   });
   /**

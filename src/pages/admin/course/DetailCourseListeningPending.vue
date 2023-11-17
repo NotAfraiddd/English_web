@@ -1,6 +1,10 @@
 <template>
   <div class="mx-2">
-    <ButtonBack title="Detail Listening" :hide-back="true" @back="onBack" />
+    <ButtonBack
+      title="Detail Listening Pending"
+      :hide-back="true"
+      @back="onBack"
+    />
     <div class="detail-field mx-auto mt-5">
       <img :src="MOUNTAIN_CLIMB" alt="" srcset="" class="detail-image" />
     </div>
@@ -117,9 +121,9 @@
         </div>
         <div
           class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
-          @click="handleUpdate"
+          @click="handleAcceptCourse"
         >
-          <span class="text-base text-white">Edit</span>
+          <span class="text-base text-white">Accept</span>
         </div>
         <div
           @click="handleSubmit"
@@ -197,13 +201,21 @@
 <script>
 import ButtonBack from '../../../components/common/ButtonBack.vue';
 import Audio from '../../../components/common/Audio.vue';
-import { ARROW_LEFT, MOUNTAIN_CLIMB, RELOAD } from '../../../constants/image';
+import {
+  ARROW_LEFT,
+  AVATAR,
+  MOUNTAIN_CLIMB,
+  RELOAD,
+} from '../../../constants/image';
 import MultipleChoice from '../../../components/common/MultipleChoice.vue';
 import MatchWord from '../../../components/common/MatchWord.vue';
 import PutPriority from '../../../components/common/PutPriority.vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
+import { SOCKET } from '../../../constants';
+import { mapMutations } from 'vuex';
+
 export default {
-  name: 'DetailCoursePending',
+  name: 'DetailCourseListeningPending',
   components: {
     ButtonBack,
     Audio,
@@ -213,17 +225,60 @@ export default {
     PutPriority,
   },
   created() {
+    this.AVATAR = AVATAR;
     this.RELOAD = RELOAD;
     this.ARROW_LEFT = ARROW_LEFT;
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
     this.paramName = this.$route.params.name;
+    this.userID = this.$route.params.id;
   },
   watch: {
     listAnswers() {
       this.errorsMatching = [];
     },
+    paramName(newVal) {
+      this.courseName = newVal.split('-').join(' ');
+    },
+  },
+  mounted() {
+    // reject comment
+    // this.sockets.subscribe('rejectBlogPending', (data) => {
+    //   console.log('rejectBlogPending', data);
+    //   if (data.kind == SOCKET.REJECTED_BLOG_PENDING) {
+    //     this.numNotify++;
+    //     this.setNotify({
+    //       id: 1,
+    //       numberNotifications: this.numNotify,
+    //       content: data.data,
+    //       kind: SOCKET.REJECTED_BLOG_PENDING,
+    //     });
+    //   }
+    // });
+    // const rejectContent = {
+    //   room: this.userID,
+    //   kind: SOCKET.REJECTED_BLOG_PENDING,
+    // };
+    // this.$socket.emit('joinRoom', rejectContent);
+    // comment
+    this.sockets.subscribe('coursePending', (data) => {
+      if (data.kind == SOCKET.NOTIFY_COURSE_PENDING) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.NOTIFY_COURSE_PENDING,
+        });
+      }
+    });
+    const content = {
+      room: this.userID,
+      kind: SOCKET.NOTIFY_COURSE_PENDING,
+    };
+    this.$socket.emit('joinRoom', content);
   },
   methods: {
+    ...mapMutations('notify', ['setNotify']),
     resetResult() {
       this.submitMultipleChoice = false;
       this.submitMatching = false;
@@ -270,12 +325,10 @@ export default {
       this.inputPriority.push(+data.value);
     },
     onBack() {
-      if (this.isMatchedRoute('MemberDetailCourseListening'))
-        this.$router.push({ name: 'ListCourseListening' });
-      else this.$router.push({ name: 'CourseListening' });
+      this.$router.push({ name: 'CourseListeningPending' });
     },
     handleBack() {
-      this.$router.push({ name: 'CourseListening' });
+      this.$router.push({ name: 'CourseListeningPending' });
     },
     setQuetions(data) {
       this.dataListWords = data;
@@ -354,11 +407,24 @@ export default {
         }
       }
     },
-    handleUpdate() {
-      this.$router.push({
-        name: 'UpdateCourseReading',
-        params: { name: this.paramName },
-      });
+    handleAcceptCourse() {
+      // join socket rejectcomment
+      const dataSocket = {
+        room: this.userID,
+        kind: SOCKET.NOTIFY_COURSE_PENDING,
+      };
+      this.$socket.emit('joinRoom', dataSocket);
+      let course = {
+        userID: this.userID,
+        avatar: AVATAR,
+        courseName: this.courseName,
+      };
+      let data = {
+        data: course,
+        kind: SOCKET.NOTIFY_COURSE_PENDING,
+      };
+      this.$socket.emit('sendSignal', data);
+      // ( call api)
     },
     goToDetailCourse(data) {
       console.log(data);
@@ -384,6 +450,9 @@ export default {
   },
   data() {
     return {
+      numNotify: 0,
+      userID: null,
+      courseName: null,
       modalMuilti: false,
       modalMatch: false,
       modalFillin: false,
