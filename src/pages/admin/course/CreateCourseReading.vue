@@ -14,7 +14,7 @@
           </div>
         </div>
         <InputLevel
-          external-class="w-52 flex mr-auto"
+          external-class="w-52 flex mr-auto w-full"
           :selectedValueProp="inputLevel"
           @update="updateLevel"
         />

@@ -5,10 +5,10 @@
     :class="externalClass"
     @change="updateLevel"
   >
-    <a-select-option :value="0">Pending</a-select-option>
-    <a-select-option :value="1">Basic</a-select-option>
-    <a-select-option :value="2">Intermediate</a-select-option>
-    <a-select-option :value="3">Advanced</a-select-option>
+    <a-select-option :value="0">PENDING</a-select-option>
+    <a-select-option :value="1">BEGINNER</a-select-option>
+    <a-select-option :value="2">INTERMEDIATE</a-select-option>
+    <a-select-option :value="3">ADVANCED</a-select-option>
   </a-select>
 </template>
 
@@ -43,5 +43,11 @@ export default {
 <style lang="scss">
 .ant-select-selector {
   border-radius: 8px !important;
+}
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  height: 100%;
+}
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  align-items: center;
 }
 </style>

@@ -36,6 +36,19 @@
         </div>
       </div>
     </div>
+    <div class="course relative">
+      <div
+        @click="handleAdd"
+        class="flex justify-center cursor-pointer border-dashed border-4 border-primary_black_opacity-600 flex-col w-full px-4 gap-1 rounded-2xl h-40"
+      >
+        <div
+          class="bg-text_back mx-auto w-7 h-7 rounded-full text-xl font-semibold text-gray-400"
+        >
+          +
+        </div>
+        <div class="text-primary_black font-semibold">Add new course</div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -44,17 +57,21 @@ export default {
   name: 'ListTypeCourse',
   components: { Processbar },
   created() {},
-  emits: ['clicked'],
+  emits: ['clicked', 'add'],
   props: {
     data: { type: Array, default: () => [] },
     extendClass: { type: String, default: '' },
     extendItemClass: { type: String, default: '' },
     hideProcessBar: { type: Boolean, default: false },
     hideCourseFinished: { type: Boolean, default: false },
+    showAddCourse: { type: Boolean, default: false },
   },
   methods: {
     handleClick(data) {
       this.$emit('clicked', { item: data, status: true });
+    },
+    handleAdd() {
+      this.$emit('add');
     },
   },
   data() {

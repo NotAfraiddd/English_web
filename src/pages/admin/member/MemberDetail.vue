@@ -160,6 +160,7 @@
         <div class="flex w-96 items-center justify-start gap-5">
           <!-- Edit -->
           <InputLevel
+            external-class="w-full"
             :disabled="!editLevel"
             :radio-prop="inputLevel"
             @update="updateLevel"

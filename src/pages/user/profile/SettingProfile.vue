@@ -204,6 +204,7 @@
               >
                 <div class="font-semibold">Level</div>
                 <InputLevel
+                  external-class="w-full"
                   :disabled="!editLevel"
                   :selectedValueProp="inputLevel"
                   @update="updateLevel"

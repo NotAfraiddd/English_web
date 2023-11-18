@@ -4,6 +4,7 @@
     <ListTypeCourse
       :data="listCourses"
       @clicked="getData"
+      @add="handleAdd"
       :hideProcessBar="true"
       :hideCourseFinished="true"
       extendClass="grid-cols-user mt-2"
@@ -73,6 +74,115 @@
       </div>
     </template>
   </ConfirmModal>
+  <!-- modal create -->
+  <ConfirmModal
+    :showModal="showModalCreateCourse"
+    @closeModal="closeModalCreateCourse"
+    @save="closeModalCreateCourse"
+    :showFooter="false"
+    :widthCustom="850"
+  >
+    <template #content>
+      <div class="w-full font-bold text-center text-xl text-primary opacity-90">
+        New Course
+      </div>
+      <div class="flex w-full mt-5 justify-between">
+        <div
+          class="h-10 leading-10 text-primary_black text-left font-semibold text-base mr-20"
+        >
+          Title
+        </div>
+        <input
+          v-model="createTitle"
+          type="text"
+          class="input-type-course border rounded-lg form-control"
+          spellcheck="false"
+          ref="errorInputTitle"
+        />
+      </div>
+      <div class="flex w-full mt-5 justify-between">
+        <div
+          class="h-10 leading-10 text-primary_black text-left font-semibold text-base"
+        >
+          Subtitle
+        </div>
+        <input
+          ref="errorInputSubtitle"
+          v-model="createSubtitle"
+          type="text"
+          class="input-type-course border rounded-lg form-control"
+          spellcheck="false"
+        />
+      </div>
+      <div class="flex w-full mt-5 justify-between">
+        <div
+          class="h-10 leading-10 text-primary_black text-left font-semibold text-base"
+        >
+          Name course
+        </div>
+        <input
+          ref="errorInputName"
+          v-model="createName"
+          type="text"
+          class="input-type-course border rounded-lg form-control"
+          spellcheck="false"
+        />
+      </div>
+      <div class="flex w-full mt-5 justify-between">
+        <div
+          class="h-10 leading-10 text-primary_black text-left font-semibold text-base"
+        >
+          Level
+        </div>
+        <!-- <input
+          ref="errorInputLevel"
+          v-model="createLevel"
+          type="text"
+          class="input-type-course border rounded-lg form-control"
+          spellcheck="false"
+        /> -->
+        <InputLevel
+          external-class="input-type-course h-10"
+          :selectedValueProp="createLevel"
+          @update="updateLevel"
+        />
+      </div>
+      <div class="flex w-full mt-5 justify-between">
+        <div
+          class="h-10 leading-10 text-primary_black text-left font-semibold text-base"
+        >
+          Background
+        </div>
+        <input
+          v-model="createColor"
+          class="input-type-course form-control h-10 text-left px-2 py-1 border cursor-pointer rounded-lg"
+          ref="colorPicker"
+          data-jscolor=""
+          @input="
+            createColorTemp?.length < 3 ? (createColorTemp = createColor) : null
+          "
+        />
+      </div>
+    </template>
+    <template #select>
+      <div class="flex justify-between items-center mt-3 gap-40">
+        <div class="flex gap-10 mt-4">
+          <div
+            class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+            @click="cancelTypeCourse"
+          >
+            <span class="text-base text-primary">Cancel</span>
+          </div>
+          <div
+            class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+            @click="createTypeCourse"
+          >
+            <span class="text-base text-white">Create</span>
+          </div>
+        </div>
+      </div>
+    </template>
+  </ConfirmModal>
 </template>
 <script>
 import { notification } from 'ant-design-vue';
@@ -85,10 +195,18 @@ import Slider from '../../../components/common/Slider.vue';
 import moment from 'moment';
 import userApi from '../../../apis/user';
 import CourseApi from '../../../apis/course';
-
+import jscolor from '@eastdesire/jscolor';
+import { NOTIFY_MESSAGE } from '../../../constants';
+import InputLevel from '../../../components/common/InputLevel.vue';
 export default {
   name: 'HomeUser',
-  components: { ListTypeCourse, ConfirmModal, ButtonBackUser, Slider },
+  components: {
+    ListTypeCourse,
+    ConfirmModal,
+    InputLevel,
+    ButtonBackUser,
+    Slider,
+  },
   created() {
     this.AVATAR = AVATAR;
     this.LISTENING = LISTENING;
@@ -100,6 +218,15 @@ export default {
   },
   data() {
     return {
+      showModalChooseCourse: false,
+      showModalCreateCourse: false,
+      createTitle: '',
+      createSubtitle: '',
+      createName: '',
+      createColor: '#000000',
+      createColorTemp: '',
+      createColorPickerTemp: '',
+      createLevel: 1,
       userInfor: null,
       inputTime: '2023-10-25 01:08:00',
       delayMinutes: null,
@@ -117,11 +244,99 @@ export default {
       listCourses: [],
     };
   },
+
+  watch: {
+    createTitle() {
+      this.$refs.errorInputTitle.classList.remove('border-red-500');
+    },
+    createSubtitle() {
+      this.$refs.errorInputSubtitle.classList.remove('border-red-500');
+    },
+    createName() {
+      this.$refs.errorInputName.classList.remove('border-red-500');
+    },
+  },
   mounted() {
     this.updateCurrentTime();
     setInterval(this.updateCurrentTime, 1000);
   },
   methods: {
+    handleAdd() {
+      this.showModalCreateCourse = true;
+      this.handleCreateColor();
+    },
+    cancelTypeCourse() {
+      this.createTitle = '';
+      this.createSubtitle = '';
+      this.createColor = '#000000';
+      this.createName = '';
+      this.createLevel = 1;
+      this.showModalCreateCourse = false;
+    },
+    createTypeCourse() {
+      if (
+        this.createTitle &&
+        this.createName &&
+        this.createSubtitle &&
+        this.createColor &&
+        this.createLevel
+      ) {
+        this.listCourses.push({
+          id: this.listCourses.length,
+          title: this.createTitle,
+          subtitle: this.createSubtitle,
+          color: this.createColor,
+          name: this.createName,
+          level: this.createLevel,
+        });
+        this.cancelTypeCourse();
+      } else {
+        notification.error({ message: NOTIFY_MESSAGE.CREATE_FAILED });
+      }
+      if (!this.createTitle) {
+        this.$refs.errorInputTitle.classList.remove('border');
+        this.$refs.errorInputTitle.classList.add('border-red-500');
+      }
+      if (!this.createSubtitle) {
+        this.$refs.errorInputSubtitle.classList.remove('border');
+        this.$refs.errorInputSubtitle.classList.add('border-red-500');
+      }
+      if (!this.createName) {
+        this.$refs.errorInputName.classList.remove('border');
+        this.$refs.errorInputName.classList.add('border-red-500');
+      }
+      if (!this.createColor) {
+        this.$refs.colorPicker.classList.remove('border');
+        this.$refs.colorPicker.classList.add('border-red-500');
+      }
+    },
+    showModalCreate() {
+      this.showModalCreateCourse = true;
+      this.handleCreateColor();
+    },
+    closeModalCreateCourse() {
+      this.showModalCreateCourse = false;
+    },
+    /**
+     * @description show colorPicker and resolve value color when user choose any color
+     * @returns {void}
+     */
+    handleCreateColor() {
+      this.createColorTemp = this.createColor;
+      // NOTE: Waitting DOM is updated before we access into DOM
+      this.$nextTick(() => {
+        this.createColorPickerTemp = new jscolor(this.$refs.colorPicker, {
+          width: 120,
+          position: 'top',
+        });
+        // NOTE: always set jscolor.init() before always show to set changing color
+        jscolor.init();
+        // this.colorPickerTemp.show();
+      });
+    },
+    closeModalChoose() {
+      this.modalChooseCourse = false;
+    },
     /**
      * get all course
      */
@@ -157,34 +372,32 @@ export default {
         const data = await userApi.getUser(email);
         localStorage.setItem('user', JSON.stringify(data));
         const user = JSON.parse(localStorage.getItem('user'));
+
         this.listCourses.forEach((item) => {
-          if (user.level == 'BEGINNER') {
+          const isAdvanced = item.level.toUpperCase() == 'ADVANCED';
+          const isBeginner = item.level.toUpperCase() == 'BEGINNER';
+          if (user.level == 'ADVANCED')
             this.userLevel.push({
               id: item.id,
               level: item.level,
-              status: 1,
+              status: true,
             });
-          } else if (user.level == 'Intermediate') {
+          else if (user.level == 'INTERMEDIATE') {
             this.userLevel.push({
               id: item.id,
               level: item.level,
-              status: 1,
+              status: isAdvanced ? false : true,
             });
-          } else if (user.level == 'ADVANCED') {
+          } else if (user.level == 'BEGINNER') {
             this.userLevel.push({
               id: item.id,
               level: item.level,
-              status: 1,
+              status: isBeginner ? true : false,
             });
-          } else
-            this.userLevel.push({
-              id: item.id,
-              level: item.level,
-              status: 0,
-            });
+          }
         });
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     },
     /**
@@ -215,17 +428,13 @@ export default {
     changeBack() {
       this.$router.push({ name: 'HomeUser' });
     },
-
-    closeModalChoose() {
-      this.modalChooseCourse = false;
-    },
     getData(data) {
       const result = this.userLevel.some(
         (item) =>
           item.level == data.item.level && item.status == data.item.status,
       );
-      console.log(data, result);
-      if (result) {
+      console.log(result, data, this.userLevel);
+      if (!result) {
         if (data.status) {
           this.courseObject.id = data.item.id;
           this.courseObject.title = data.item.title;
