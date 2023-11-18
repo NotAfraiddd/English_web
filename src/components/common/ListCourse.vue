@@ -9,11 +9,12 @@
       >
         <img :src="item.image" alt="" srcset="" class="h-44 course-image" />
         <div class="absolute w-7/12 top-12 bg-white h-32 course-infor">
-          <div class="flex flex-col items-start ml-10 mt-10">
-            <div class="font-semibold text-2xl text-left">{{ item.title }}</div>
-            <div class="text-base text-left">
-              Read a direct message on social media to practise and improve your
-              reading skills.
+          <div class="flex flex-col items-start ml-8 mt-8">
+            <div class="font-semibold text-2xl text-left text-overflow">
+              {{ item.title }}
+            </div>
+            <div class="text-base text-left subtext-overflow">
+              {{ item.subTitle }}
             </div>
           </div>
         </div>
@@ -43,6 +44,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.text-overflow {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.subtext-overflow {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
 .course-image {
   width: 20rem;
   border-bottom-left-radius: 40px;

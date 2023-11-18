@@ -26,7 +26,7 @@
       <ListCourse :data="listListening" @clicked="goToDetailCourse" />
     </div>
     <div
-      class="sticky top-24 w-2/5 mx-3 mt-14 contain-list__reading border-8 border-table_border"
+      class="sticky top-24 w-2/5 mx-3 mt-14 contain-list__reading border-8 border-table_border z-10 bg-white"
     >
       <!-- Reading -->
       <div class="relative mt-3 ml-3">
@@ -48,7 +48,9 @@
             :key="key"
             class="flex gap-2 items-center cursor-pointer"
           >
-            <div class="hover:underline">- {{ item.title }}</div>
+            <div class="hover:underline break-words w-3/4 text-overflow">
+              - {{ item.title }}
+            </div>
             <img
               :src="item.status == 0 ? CANCEL : CHECKED"
               alt=""
@@ -77,7 +79,9 @@
             :key="key"
             class="flex gap-2 items-center cursor-pointer"
           >
-            <div class="hover:underline">- {{ item.title }}</div>
+            <div class="hover:underline break-words w-3/4 text-overflow">
+              - {{ item.title }}
+            </div>
             <img
               :src="item.status == 0 ? CANCEL : CHECKED"
               alt=""
@@ -86,7 +90,7 @@
           </div>
         </div>
       </div>
-      <div ref="text" class="flex ml-5 gap-1">
+      <div ref="text" class="flex ml-5 gap-1 flex-wrap">
         Create post
         <div
           v-if="createPost == 0"
@@ -209,12 +213,36 @@ export default {
       courseReading: false,
       courseListening: false,
       listListening: [
-        { id: 1, title: 'Message to new friend', image: EXAMPLE },
-        { id: 2, title: 'Message to new friend', image: EXAMPLE },
-        { id: 3, title: 'Message to new friend', image: EXAMPLE },
+        {
+          id: 1,
+          title:
+            'Message to new friendMessage to new friendMessage to new friend',
+          subTitle:
+            'Read a direct message on social media to practise and improve your reading skills.',
+          image: EXAMPLE,
+        },
+        {
+          id: 2,
+          title: 'Message to new friend',
+          subTitle:
+            'Read a direct message on social media to practise and improve your reading skills.',
+          image: EXAMPLE,
+        },
+        {
+          id: 3,
+          title: 'Message to new friend',
+          subTitle:
+            'Read a direct message on social media to practise and improve your reading skills.',
+          image: EXAMPLE,
+        },
       ],
       listDetailReading: [
-        { id: 1, title: 'Message to new friend', status: 0 },
+        {
+          id: 1,
+          title:
+            'Message to new friend Message to new friend Message to new friend',
+          status: 0,
+        },
         { id: 2, title: 'Message to new friend', status: 1 },
         { id: 3, title: 'Message to new friend', status: 0 },
         { id: 4, title: 'Message to new friend', status: 1 },
@@ -233,6 +261,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.text-overflow {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
 .profile-background {
   height: 450px;
   background-repeat: no-repeat;

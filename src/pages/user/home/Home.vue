@@ -7,6 +7,7 @@
       @add="handleAdd"
       :hideProcessBar="true"
       :hideCourseFinished="true"
+      :show-add-course="isAdvanced"
       extendClass="grid-cols-user mt-2"
       extendItemClass="user-course mx-5"
     />
@@ -134,13 +135,6 @@
         >
           Level
         </div>
-        <!-- <input
-          ref="errorInputLevel"
-          v-model="createLevel"
-          type="text"
-          class="input-type-course border rounded-lg form-control"
-          spellcheck="false"
-        /> -->
         <InputLevel
           external-class="input-type-course h-10"
           :selectedValueProp="createLevel"
@@ -183,13 +177,46 @@
       </div>
     </template>
   </ConfirmModal>
+  <!-- modal check -->
+  <ConfirmModal
+    :showModal="modalCheckLastOne"
+    @closeModal="closeModalCheckLastOne"
+    @save="closeModalCheckLastOne"
+    :showFooter="false"
+    :widthCustom="600"
+  >
+    <template #icon>
+      <img :src="WARNING" alt="" srcset="" class="w-10 h-10" />
+    </template>
+    <template #content>
+      <div class="text-primary_black my-4 text-center">
+        Please check one last time, because the course cannot be updated
+      </div>
+    </template>
+    <template #select>
+      <div class="flex gap-20">
+        <div
+          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="cancelAPICreateCourse"
+        >
+          <span class="text-base text-primary">Cancel</span>
+        </div>
+        <div
+          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="sendAPICreateCourse"
+        >
+          <span class="text-base text-white">Send Admin</span>
+        </div>
+      </div>
+    </template>
+  </ConfirmModal>
 </template>
 <script>
 import { notification } from 'ant-design-vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import ListTypeCourse from '../../../components/common/ListTypeCourse.vue';
 import { formatSpacerIntoHyphen } from '../../../constants/function';
-import { AVATAR, LEARN, LISTENING } from '../../../constants/image';
+import { AVATAR, LEARN, LISTENING, WARNING } from '../../../constants/image';
 import ButtonBackUser from '../../../components/common/ButtonBackUser.vue';
 import Slider from '../../../components/common/Slider.vue';
 import moment from 'moment';
@@ -208,6 +235,7 @@ export default {
     Slider,
   },
   created() {
+    this.WARNING = WARNING;
     this.AVATAR = AVATAR;
     this.LISTENING = LISTENING;
     this.LEARN = LEARN;
@@ -216,8 +244,16 @@ export default {
     this.getAllCourse();
     this.getDetail();
   },
+  computed: {
+    isAdvanced() {
+      if (this.userInfor.level == this.checkLevel) return true;
+      return false;
+    },
+  },
   data() {
     return {
+      checkLevel: 'ADVANCED',
+      modalCheckLastOne: false,
       showModalChooseCourse: false,
       showModalCreateCourse: false,
       createTitle: '',
@@ -261,6 +297,37 @@ export default {
     setInterval(this.updateCurrentTime, 1000);
   },
   methods: {
+    sendAPICreateCourse() {
+      const temp = this.listCourses;
+      temp.push({
+        id: temp.length,
+        title: this.createTitle,
+        subtitle: this.createSubtitle,
+        percentages: [{ percentage: 0 }],
+        name: this.createName,
+        courseFinished: 0,
+        color: this.createColor,
+        level: this.createLevel,
+        status: true,
+      });
+      this.modalCheckLastOne = false;
+      this.cancelTypeCourse();
+    },
+    cancelAPICreateCourse() {
+      this.modalCheckLastOne = false;
+    },
+    /**
+     * show and hide modal check last one
+     */
+    closeModalCheckLastOne() {
+      this.modalCheckLastOne = false;
+    },
+    showModalCheckLastOne() {
+      this.modalCheckLastOne = true;
+    },
+    updateLevel(e) {
+      this.createLevel = e;
+    },
     handleAdd() {
       this.showModalCreateCourse = true;
       this.handleCreateColor();
@@ -281,15 +348,7 @@ export default {
         this.createColor &&
         this.createLevel
       ) {
-        this.listCourses.push({
-          id: this.listCourses.length,
-          title: this.createTitle,
-          subtitle: this.createSubtitle,
-          color: this.createColor,
-          name: this.createName,
-          level: this.createLevel,
-        });
-        this.cancelTypeCourse();
+        this.showModalCheckLastOne();
       } else {
         notification.error({ message: NOTIFY_MESSAGE.CREATE_FAILED });
       }
@@ -356,7 +415,7 @@ export default {
             name: item?.name,
             courseFinished: 0,
             color: item?.colorCode,
-            status: 0,
+            status: false,
           });
         });
       } catch (error) {

@@ -61,9 +61,27 @@ export default {
   data() {
     return {
       listGrammar: [
-        { id: 1, title: 'Message to new friend', image: EXAMPLE },
-        { id: 2, title: 'Message to new friend', image: EXAMPLE },
-        { id: 3, title: 'Message to new friend', image: EXAMPLE },
+        {
+          id: 1,
+          title: 'Message to new friend',
+          subTitle:
+            'Read a direct message on social media to practise and improve your reading skills.',
+          image: EXAMPLE,
+        },
+        {
+          id: 2,
+          title: 'Message to new friend',
+          subTitle:
+            'Read a direct message on social media to practise and improve your reading skills.',
+          image: EXAMPLE,
+        },
+        {
+          id: 3,
+          title: 'Message to new friend',
+          subTitle:
+            'Read a direct message on social media to practise and improve your reading skills.',
+          image: EXAMPLE,
+        },
       ],
     };
   },

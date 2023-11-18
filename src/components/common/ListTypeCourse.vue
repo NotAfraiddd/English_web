@@ -33,10 +33,13 @@
         <div v-if="hideCourseFinished" class="text-sm flex gap-3">
           Completed
           <div class="font-semibold">{{ item.courseFinished }}</div>
+          <div v-if="item.status" class="text-right text-yellow-400">
+            ( Pending )
+          </div>
         </div>
       </div>
     </div>
-    <div class="course relative">
+    <div v-if="showAddCourse" class="course relative">
       <div
         @click="handleAdd"
         class="flex justify-center cursor-pointer border-dashed border-4 border-primary_black_opacity-600 flex-col w-full px-4 gap-1 rounded-2xl h-40"
