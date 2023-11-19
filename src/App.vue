@@ -118,7 +118,7 @@ export default {
           detail: 'Admin have rejected blog of you.',
           life: 3000,
         });
-      } else if (data.kind == SOCKET.NOTIFY_COURSE_PENDING) {
+      } else if (data.kind == SOCKET.REJECTED_COURSE_PENDING) {
         this.$toast.add({
           severity: 'warn',
           detail: 'Admin have rejected course of you.',

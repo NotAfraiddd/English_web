@@ -26,7 +26,6 @@
       :avatar="true"
       :image="true"
       :react="true"
-      :icon="true"
       @changePath="goToDetail"
       @showComment="handleShowComment"
     />

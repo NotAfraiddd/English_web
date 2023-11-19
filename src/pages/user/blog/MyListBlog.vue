@@ -27,7 +27,6 @@
       :avatar="true"
       :image="true"
       :react="true"
-      :icon="true"
       :check-react="checkReact"
       @click-react="clickReact"
       @changePath="goToDetail"

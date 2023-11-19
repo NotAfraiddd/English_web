@@ -1,7 +1,7 @@
 <template>
   <div class="mx-2">
     <ButtonBack
-      title="Detail Listening Pending"
+      title="Detail Reading Pending"
       :hide-back="true"
       @back="onBack"
     />
@@ -325,10 +325,10 @@ export default {
       this.inputPriority.push(+data.value);
     },
     onBack() {
-      this.$router.push({ name: 'CoursePending' });
+      this.$router.push({ name: 'CourseListeningPending' });
     },
     handleBack() {
-      this.$router.push({ name: 'CoursePending' });
+      this.$router.push({ name: 'CourseListeningPending' });
     },
     setQuetions(data) {
       this.dataListWords = data;

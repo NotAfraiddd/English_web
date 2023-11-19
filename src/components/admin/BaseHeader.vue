@@ -189,13 +189,6 @@
           </li>
           <div class="spacer flex flex-growth-1 bg-gray-300 mx-6 my-1" />
           <li
-            v-if="!checkRoute && userInfor.level == checkLevel"
-            @click="handleGoToCreateCourse"
-            class="text-base item leading-9 h-9 text-left pl-6"
-          >
-            Create course
-          </li>
-          <li
             v-if="!checkRoute"
             @click="handleGoToSetting"
             class="text-base item leading-9 h-9 text-left pl-6"
@@ -329,7 +322,7 @@ export default {
         this.listNotify.push({
           id: uuidv4(),
           avatar: newVal.content.avatar, // avatar admin
-          nameCourse: `Course ${newVal.content.courseName || ''}`,
+          nameCourse: `Course ${newVal.content.nameCourse || ''}`,
           content: 'has been approved by admin',
           seen: false,
           fullName: newVal.content.name,
@@ -356,7 +349,7 @@ export default {
         this.listNotify.push({
           id: uuidv4(),
           avatar: newVal.content.avatar,
-          nameCourse: `${newVal.content.courseName || ''}`,
+          nameCourse: `${newVal.content.nameCourse || ''}`,
           content: 'has been rejected by admin',
           seen: false,
           fullName: newVal.content.name,
@@ -372,7 +365,7 @@ export default {
         this.isMatchedRoute('Dashboard') ||
         this.isMatchedRoute('BlogPending') ||
         this.isMatchedRoute('DetailBlogPending') ||
-        this.isMatchedRoute('CourseListeningPending') ||
+        this.isMatchedRoute('CoursePending') ||
         this.isMatchedRoute('Course') ||
         this.isMatchedRoute('CreateCourse') ||
         this.isMatchedRoute('Member') ||

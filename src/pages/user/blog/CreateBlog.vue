@@ -14,7 +14,12 @@
       </div>
       <div class="flex items-center">
         <div class="font-semibold">Profile Blog</div>
-        <ImageUpload :src-img="AVATAR" extend-class="h-96 w-full" />
+        <ImageUpload
+          :src-img="AVATAR"
+          extend-class="h-96 width-image"
+          extend-class-icon="icon-remove"
+          :remove="true"
+        />
       </div>
     </div>
     <Word :contentProp="contentListening" @update="updateContentListening" />
@@ -51,6 +56,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.icon-remove {
+  top: 2%;
+  right: 2%;
+  z-index: 1;
+}
+.width-image {
+  max-width: 550px;
+}
 .grid-cols-user {
   grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
   @media screen and (max-width: 1460px) {

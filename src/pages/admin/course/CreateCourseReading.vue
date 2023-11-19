@@ -3,7 +3,12 @@
     <!-- Reading -->
     <div>
       <ButtonBack title="Reading" hide-back="true" @back="changeBack" />
-      <ImageUpload :src-img="AVATAR" extend-class="w-96 h-96" :remove="true" />
+      <ImageUpload
+        :src-img="AVATAR"
+        extend-class="w-96 h-96"
+        :remove="true"
+        extend-class-icon="icon-remove"
+      />
       <div class="flex mt-5 items-center">
         <div
           class="my-auto text-primary_black text-left font-semibold text-base create-course__subtitle"
@@ -59,7 +64,7 @@
         @click="showModalCreate"
         class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
       >
-        Next
+        Create
       </div>
     </div>
   </div>
@@ -196,6 +201,11 @@ export default {
 </script>
 
 <style lang="scss">
+.icon-remove {
+  top: 2%;
+  right: 35%;
+  z-index: 1;
+}
 // color
 .input-color {
   &:focus-visible {

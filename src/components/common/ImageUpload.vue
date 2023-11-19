@@ -29,7 +29,8 @@
     <div
       v-if="remove"
       @click.stop="handleRemoveImage"
-      class="icon-remove text-center bg-red-600 cursor-pointer absolute leading-5 h-5 w-5 text-white text-xs rounded-full"
+      :class="extendClassIcon"
+      class="text-center bg-red-600 cursor-pointer absolute leading-5 h-5 w-5 text-white text-xs rounded-full"
     >
       X
     </div>
@@ -43,6 +44,7 @@ export default {
     srcImg: { type: String, default: '' },
     title: { type: String, default: '' },
     extendClass: { type: String, default: '' },
+    extendClassIcon: { type: String, default: '' },
     avatar: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
     remove: { type: Boolean, default: false },
@@ -87,11 +89,6 @@ export default {
 </script>
 
 <style scoped>
-.icon-remove {
-  top: 2%;
-  right: 35%;
-  z-index: 1;
-}
 .personal-image input[type='file'] {
   display: none;
 }

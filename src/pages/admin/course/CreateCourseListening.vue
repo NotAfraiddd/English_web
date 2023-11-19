@@ -46,7 +46,12 @@
     </div>
     <!-- listening -->
     <ButtonBack title="Listening" extend-class="mt-5" />
-    <ImageUpload :src-img="AVATAR" extend-class="w-96 h-96" :remove="true" />
+    <ImageUpload
+      :src-img="AVATAR"
+      extend-class="w-96 h-96"
+      extend-class-icon="icon-remove"
+      :remove="true"
+    />
     <Audio
       :data-prop="selectedAudio"
       :hide-choose="true"
@@ -137,7 +142,13 @@
         @click="showModalCreate"
         class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
       >
-        Next
+        Create
+      </div>
+      <div
+        @click="nextReading"
+        class="cursor-pointer rounded-lg border border-primary text-primary w-40 text-center h-8 leading-8 hover:opacity-50"
+      >
+        Next Reading
       </div>
     </div>
   </div>
@@ -153,8 +164,6 @@
       <div class="w-full text-center text-xl opacity-90">
         Are you sure you created this
         <b>Listening course</b>
-        and will move on to creating
-        <b>Reading course</b>
         ?
       </div>
     </template>
@@ -169,7 +178,7 @@
           </div>
           <div
             class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
-            @click="createCourseNext"
+            @click="createCourseListening"
           >
             <span class="text-base text-white">Create</span>
           </div>
@@ -245,8 +254,11 @@ export default {
     closeModalCreate() {
       this.showModalCreateCourse = false;
     },
-    createCourseNext() {
+    createCourseListening() {
       notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
+      this.showModalCreateCourse = false;
+    },
+    nextReading() {
       this.$router.push({ name: 'CreateCourseForAdvancedReading' });
     },
     changeBack() {
@@ -327,6 +339,11 @@ export default {
 </script>
 
 <style lang="scss">
+.icon-remove {
+  top: 2%;
+  right: 35%;
+  z-index: 1;
+}
 // color
 .input-color {
   &:focus-visible {
