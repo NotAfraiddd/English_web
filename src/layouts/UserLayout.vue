@@ -18,14 +18,64 @@ import BaseHeader from '../components/admin/BaseHeader';
 import BaseFooter from '../components/admin/BaseFooter';
 import LoadingScreen from '../components/common/LoadingScreen';
 import { LoadingMixins } from '../mixins/Loading';
+import { SOCKET } from '../constants';
+import { mapMutations } from 'vuex';
 export default {
   name: 'UserLayout',
   components: { BaseSideBar, BaseHeader, LoadingScreen, BaseFooter },
   mixins: [LoadingMixins],
+  created() {
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
+  },
   data() {
     return {
+      userInfor: null,
+      numNotify: 0,
       isLoading: false,
     };
+  },
+  mounted() {
+    // reject
+    this.sockets.subscribe('rejectCoursePending', (data) => {
+      if (
+        data.kind == SOCKET.REJECTED_COURSE_PENDING &&
+        data.data.creatorUserid.email == this.userInfor.email
+      ) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.REJECTED_COURSE_PENDING,
+        });
+      }
+    });
+    const contentReject = {
+      room: this.userInfor,
+      kind: SOCKET.REJECTED_COURSE_PENDING,
+    };
+    this.$socket.emit('joinRoom', contentReject);
+    // accept
+    this.sockets.subscribe('coursePending', (data) => {
+      console.log('coursePending', data);
+      if (
+        data.kind == SOCKET.NOTIFY_COURSE_PENDING &&
+        data.data.creatorUserid.email == this.userInfor.email
+      ) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.NOTIFY_COURSE_PENDING,
+        });
+      }
+    });
+    const content = {
+      room: this.userInfor,
+      kind: SOCKET.NOTIFY_COURSE_PENDING,
+    };
+    this.$socket.emit('joinRoom', content);
   },
   watch: {
     $route(to, from) {
@@ -34,6 +84,9 @@ export default {
         this.emitter.emit('isShowLoading', false);
       }, 1000);
     },
+  },
+  methods: {
+    ...mapMutations('notify', ['setNotify']),
   },
 };
 </script>

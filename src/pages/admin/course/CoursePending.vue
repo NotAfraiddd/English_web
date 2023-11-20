@@ -1,7 +1,7 @@
 <template>
   <div class="text-primary_black">
     <ButtonBack title="Course pending" @back="changeBack" :hide-back="true" />
-    <div class="mt-5">
+    <div class="mt-5" v-if="listCourse.length != 0">
       <div
         v-for="(item, index) in listCourse"
         :key="index"
@@ -9,7 +9,11 @@
         class="flex text-base flex-1 justify-between items-center mt-3 border px-5 rounded-lg h-auto hover:opacity-80 cursor-pointer"
       >
         <div class="flex items-center py-2 total-width mr-3">
-          <img :src="item.avatar" alt="" class="h-10 w-10 rounded-full" />
+          <Avatar
+            :imgUrl="item.avatar"
+            :name="item.name"
+            externalClass="h-10 w-10 rounded-full"
+          />
           <div class="flex-1 flex items-start ml-3 flex-col">
             <div class="font-semibold">{{ item.name }} &nbsp;</div>
             <div class="flex items-end">
@@ -56,7 +60,7 @@
         </div>
       </div>
     </div>
-
+    <div class="mt-5 font-semibold text-xl">No data</div>
     <div class="mt-5 flex justify-center">
       <a-pagination
         class="pagination"
@@ -74,79 +78,99 @@ import ButtonBack from '../../../components/common/ButtonBack.vue';
 import { AVATAR } from '../../../constants/image';
 import { LEVEL, SOCKET, TYPE_COURSE } from '../../../constants';
 import { formatSpacerIntoHyphen } from '../../../constants/function';
-import { mapMutations } from 'vuex';
-
+import Avatar from '../../../components/common/Avatar.vue';
+import courseApi from '../../../apis/course';
 export default {
-  name: 'CourseListeningPending',
-  components: { ButtonBack },
+  name: 'CoursePending',
+  components: { ButtonBack, Avatar },
   created() {
     this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
     this.AVATAR = AVATAR;
     this.LEVEL = LEVEL;
     this.TYPE_COURSE = TYPE_COURSE;
+    this.getAllCoursePending();
   },
   watch: {},
-  mounted() {
-    // reject
-    this.sockets.subscribe('rejectCoursePending', (data) => {
-      if (data.kind == SOCKET.REJECTED_COURSE_PENDING) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.REJECTED_COURSE_PENDING,
-        });
-      }
-    });
-    const contentReject = {
-      room: this.userID,
-      kind: SOCKET.REJECTED_COURSE_PENDING,
-    };
-    this.$socket.emit('joinRoom', contentReject);
-    // accept
-    this.sockets.subscribe('coursePending', (data) => {
-      if (data.kind == SOCKET.NOTIFY_COURSE_PENDING) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.NOTIFY_COURSE_PENDING,
-        });
-      }
-    });
-    const content = {
-      room: this.userID,
-      kind: SOCKET.NOTIFY_COURSE_PENDING,
-    };
-    this.$socket.emit('joinRoom', content);
-  },
   methods: {
-    ...mapMutations('notify', ['setNotify']),
-    handleReject(data) {
-      const dataSocket = {
-        room: this.userID,
-        kind: SOCKET.REJECTED_COURSE_PENDING,
-      };
-      this.$socket.emit('joinRoom', dataSocket);
-      let content = {
-        data: data,
-        kind: SOCKET.REJECTED_COURSE_PENDING,
-      };
-      this.$socket.emit('sendSignal', content);
+    /**
+     * get all course pending
+     */
+    async getAllCoursePending() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const data = await courseApi.allCourse();
+        data.forEach((item) => {
+          if (item.courseStatus == 'PENDING') {
+            this.userID = item?.creatorUserid?.uid;
+            let modifiedLevel =
+              item?.courseLevel.charAt(0).toUpperCase() +
+              item?.courseLevel.slice(1).toLowerCase();
+            this.listCourse.push({
+              id: item?.id,
+              userID: item?.creatorUserid?.uid,
+              avatar: item?.creatorUserid?.avatar || '',
+              name: item?.creatorUserid?.fullName || '',
+              level: modifiedLevel,
+              nameCourse: item?.name,
+              type: TYPE_COURSE.LISTENING,
+            });
+          }
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
     },
-    handleAprroved(data) {
-      const dataSocket = {
-        room: this.userID,
-        kind: SOCKET.NOTIFY_COURSE_PENDING,
-      };
-      this.$socket.emit('joinRoom', dataSocket);
-      let content = {
-        data: data,
-        kind: SOCKET.NOTIFY_COURSE_PENDING,
-      };
-      this.$socket.emit('sendSignal', content);
+    /**
+     * reject
+     */
+    async handleReject(data) {
+      this.idCourse = data.id;
+      try {
+        const data = await courseApi.rejectedCourse({ id: this.idCourse });
+        const dataSocket = {
+          room: this.userID,
+          kind: SOCKET.REJECTED_COURSE_PENDING,
+        };
+        this.$socket.emit('joinRoom', dataSocket);
+        let content = {
+          data: data,
+          kind: SOCKET.REJECTED_COURSE_PENDING,
+        };
+        this.$socket.emit('sendSignal', content);
+      } catch (error) {
+        this.emitter.emit('isShowLoading', false);
+        console.log(error);
+      } finally {
+        this.listCourse = [];
+        this.getAllCoursePending();
+      }
+    },
+    /**
+     * approve
+     */
+    async handleAprroved(data) {
+      this.idCourse = data.id;
+      try {
+        const data = await courseApi.approvedCourse({ id: this.idCourse });
+        const dataSocket = {
+          room: this.userID,
+          kind: SOCKET.NOTIFY_COURSE_PENDING,
+        };
+        this.$socket.emit('joinRoom', dataSocket);
+        let content = {
+          data: data,
+          kind: SOCKET.NOTIFY_COURSE_PENDING,
+        };
+        this.$socket.emit('sendSignal', content);
+      } catch (error) {
+        this.emitter.emit('isShowLoading', false);
+        console.log(error);
+      } finally {
+        this.listCourse = [];
+        this.getAllCoursePending();
+      }
     },
     onShowSizeChange(current, pageSize) {
       console.log(current, pageSize);
@@ -165,38 +189,20 @@ export default {
   },
   data() {
     return {
+      idCourse: null,
       userID: null,
-      numNotify: 0,
       current: 6,
       pageSize: 3,
       listCourse: [
-        {
-          id: 1,
-          userID: 1,
-          avatar: AVATAR,
-          name: 'Chi Bao',
-          level: LEVEL.BEGINNER,
-          nameCourse: 'English is so good',
-          type: TYPE_COURSE.LISTENING,
-        },
-        {
-          id: 2,
-          userID: 2,
-          avatar: AVATAR,
-          name: 'Chi Bao',
-          level: LEVEL.INTERMEDIATE,
-          nameCourse: 'English is so good',
-          type: TYPE_COURSE.READING,
-        },
-        {
-          id: 3,
-          userID: 3,
-          avatar: AVATAR,
-          name: 'Chi Bao',
-          level: LEVEL.ADVANCED,
-          nameCourse: 'English is so good',
-          type: TYPE_COURSE.LISTENING,
-        },
+        // {
+        //   id: 1,
+        //   userID: 1,
+        //   avatar: AVATAR,
+        //   name: 'Chi Bao',
+        //   level: LEVEL.BEGINNER,
+        //   nameCourse: 'English is so good',
+        //   type: TYPE_COURSE.LISTENING,
+        // },
       ],
     };
   },

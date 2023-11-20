@@ -113,8 +113,14 @@
         }"
       >
         <div v-if="checkRoute == true" class="flex items-center cursor-pointer">
-          <span class="name ml-5 w-48">Nguyen Huynh Chi Bao</span>
-          <Avatar :imgUrl="AVATAR" class="w-9" />
+          <span class="name mx-3">
+            {{ userInfor.fullName }}
+          </span>
+          <Avatar
+            :imgUrl="userInfor.avtURL"
+            :name="userInfor.fullName"
+            class="w-9 h-9"
+          />
         </div>
         <div v-else class="flex justify-center items-center cursor-pointer">
           <div
@@ -123,7 +129,11 @@
           >
             My course
           </div>
-          <Avatar :imgUrl="AVATAR" class="w-9" />
+          <Avatar
+            :imgUrl="userInfor.avtURL"
+            :name="userInfor.fullName || userInfor.email"
+            class="w-9 h-9"
+          />
         </div>
 
         <img
@@ -137,11 +147,10 @@
         <ul :class="['absolute m-0', isHovered && 'block']">
           <li class="item mt-4">
             <div class="flex pl-6 gap-3 mb-2">
-              <img
-                :src="AVATAR"
-                alt=""
-                srcset=""
-                class="w-12 h-12 rounded-full"
+              <Avatar
+                :imgUrl="userInfor.avtURL"
+                :name="userInfor.fullName || userInfor.email"
+                class="w-12 h-12"
               />
               <div
                 class="flex flex-col items-start hover:opacity-50"
@@ -318,7 +327,6 @@ export default {
           fullName: newVal.content.name,
         });
       } else if (newVal.kind == SOCKET.NOTIFY_COURSE_PENDING) {
-        console.log(newVal);
         this.listNotify.push({
           id: uuidv4(),
           avatar: newVal.content.avatar, // avatar admin

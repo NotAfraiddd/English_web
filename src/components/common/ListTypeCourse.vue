@@ -22,6 +22,14 @@
           <Processbar v-if="hideProcessBar" :percentages="item.percentages" />
         </div>
         <button
+          v-if="item.status"
+          class="course-learn__button cursor-pointer"
+          @click="handleClickPending(item.status)"
+        >
+          Pending
+        </button>
+        <button
+          v-else
           class="course-learn__button cursor-pointer"
           @click="handleClick(item)"
         >
@@ -55,6 +63,7 @@
   </div>
 </template>
 <script>
+import { notification } from 'ant-design-vue';
 import Processbar from './Processbar.vue';
 export default {
   name: 'ListTypeCourse',
@@ -70,6 +79,11 @@ export default {
     showAddCourse: { type: Boolean, default: false },
   },
   methods: {
+    handleClickPending(data) {
+      if (data) {
+        notification.warning({ message: 'Course awaiting approval' });
+      }
+    },
     handleClick(data) {
       this.$emit('clicked', { item: data, status: true });
     },

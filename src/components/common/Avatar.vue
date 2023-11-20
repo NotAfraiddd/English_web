@@ -34,7 +34,7 @@ export default {
 <style lang="scss" scoped>
 .base-avatar {
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba($color: #000000, $alpha: 0.1);
+  box-shadow: 0 0px 30px rgba($color: #000000, $alpha: 0.1);
 
   img {
     height: 100%;

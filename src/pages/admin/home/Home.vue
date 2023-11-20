@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import courseApi from '../../../apis/course';
 import BaseTable from '../../../components/common/BaseTable.vue';
 import Notify from '../../../components/common/Notify.vue';
 import { ARROW_LEFT, AVATAR } from '../../../constants/image';
@@ -26,6 +27,7 @@ export default {
     this.ARROW_LEFT = ARROW_LEFT;
     this.NOTIFY = NOTIFY;
     this.SCREEN = SCREEN;
+    this.getAllCoursePending();
   },
   mounted() {
     if (this.screenUI == SCREEN.comment) {
@@ -33,12 +35,29 @@ export default {
     }
   },
   methods: {
+    /**
+     * get all course pending
+     */
+    async getAllCoursePending() {
+      try {
+        const data = await courseApi.allCourse();
+        let course = [];
+        data.forEach((item) => {
+          if (item.courseStatus == 'PENDING') {
+            course.push(item);
+          }
+        });
+        this.numCourse = course.length;
+      } catch (error) {
+        console.log(error);
+      }
+    },
     changeUI(data) {
       if (data == NOTIFY.comment)
         this.$router.push({ name: 'CommentReported' });
       else if (data == NOTIFY.blog) this.$router.push({ name: 'BlogPending' });
       else if (data == NOTIFY.course)
-        this.$router.push({ name: 'CourseListeningPending' });
+        this.$router.push({ name: 'CoursePending' });
       else this.screenUI = SCREEN.dashboard;
     },
     changeBack() {

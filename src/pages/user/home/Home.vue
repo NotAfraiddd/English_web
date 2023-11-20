@@ -401,24 +401,32 @@ export default {
      */
     async getAllCourse() {
       try {
+        this.emitter.emit('isShowLoading', true);
         const data = await CourseApi.allCourse();
         data.forEach((item) => {
-          let modifiedLevel =
-            item?.courseLevel.charAt(0).toUpperCase() +
-            item?.courseLevel.slice(1).toLowerCase();
-          this.listCourses.push({
-            id: item?.id,
-            title: modifiedLevel + ' Level',
-            level: modifiedLevel,
-            subtitle: item?.description,
-            percentages: [{ percentage: 0 }],
-            name: item?.name,
-            courseFinished: 0,
-            color: item?.colorCode,
-            status: false,
-          });
+          if (
+            item.courseStatus == 'APPROVED' ||
+            item.courseStatus == 'PENDING'
+          ) {
+            let modifiedLevel =
+              item?.courseLevel.charAt(0).toUpperCase() +
+              item?.courseLevel.slice(1).toLowerCase();
+            this.listCourses.push({
+              id: item?.id,
+              title: modifiedLevel + ' Level',
+              level: modifiedLevel,
+              subtitle: item?.description,
+              percentages: [{ percentage: 0 }],
+              name: item?.name,
+              courseFinished: 0,
+              color: item?.colorCode,
+              status: item.courseStatus == 'PENDING' ? true : false,
+            });
+          }
         });
+        this.emitter.emit('isShowLoading', false);
       } catch (error) {
+        this.emitter.emit('isShowLoading', false);
         console.log(error);
       }
     },

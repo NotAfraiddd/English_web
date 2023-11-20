@@ -9,9 +9,10 @@
     >
       <template #message="slotProps">
         <div class="flex items-center bg-white w-full gap-4">
-          <img
-            class="w-12 h-12 rounded-full"
-            :src="inforComment.content.avatar"
+          <Avatar
+            :imgUrl="inforComment.content.creatorUserid.avatar"
+            :name="inforComment.content.creatorUserid.fullName"
+            externalClass="h-10 w-12 rounded-full"
           />
           <div class="w-full">
             <div class="text-base font-semibold">
@@ -30,9 +31,10 @@ import { mapState } from 'vuex';
 import { HOME_ICON } from './constants/image';
 import Toast from 'primevue/toast';
 import { SOCKET } from '../socket_server/config/constant';
+import Avatar from './components/common/Avatar.vue';
 
 export default {
-  components: { Toast },
+  components: { Toast, Avatar },
   created() {
     this.HOME_ICON = HOME_ICON;
   },
