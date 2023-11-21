@@ -81,6 +81,7 @@ export default {
       if (imageFile) {
         const imageURL = URL.createObjectURL(imageFile);
         this.imageURL = imageURL;
+        this.$emit('update', this.imageURL);
         event.target.value = '';
       }
     },

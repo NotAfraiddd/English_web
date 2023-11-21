@@ -43,6 +43,7 @@
                 extend-class="h-32 w-32"
                 :src-img="avatar"
                 :avatar="true"
+                @update="getAvatar"
                 :disabled="!editAvatar"
               />
               <div />
@@ -372,7 +373,7 @@ import InputLevel from '../../../components/common/InputLevel.vue';
 import InputBlog from '../../../components/common/InputBlog.vue';
 import { notification } from 'ant-design-vue';
 import userApi from '../../../apis/user';
-
+import { getFile } from '../../../apis/file';
 export default {
   name: 'SettingProfile',
   components: {
@@ -394,6 +395,9 @@ export default {
     this.getDetail();
   },
   methods: {
+    getAvatar(data) {
+      this.avatar = data;
+    },
     /**
      * get detail user
      */
@@ -419,7 +423,7 @@ export default {
           uid: this.emailLocalStorage,
           fullName: this.inputFullname,
           bio: this.inputBio,
-          avtURL: null,
+          avtURL: this.avatar,
           email: this.inputEmail,
           registrationDate: this.inputDate,
           gender: true,
