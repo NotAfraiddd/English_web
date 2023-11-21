@@ -10,8 +10,16 @@
       <template #message="slotProps">
         <div class="flex items-center bg-white w-full gap-4">
           <Avatar
-            :imgUrl="inforComment.content.creatorUserid.avatar"
-            :name="inforComment.content.creatorUserid.fullName"
+            :imgUrl="
+              inforComment.admin
+                ? ADMIN
+                : inforComment.content.creatorUserid.avatar
+            "
+            :name="
+              inforComment.admin
+                ? ADMIN
+                : inforComment.content.creatorUserid.fullName
+            "
             externalClass="h-10 w-12 rounded-full"
           />
           <div class="w-full">
@@ -28,7 +36,7 @@
 
 <script>
 import { mapState } from 'vuex';
-import { HOME_ICON } from './constants/image';
+import { HOME_ICON, ADMIN } from './constants/image';
 import Toast from 'primevue/toast';
 import { SOCKET } from '../socket_server/config/constant';
 import Avatar from './components/common/Avatar.vue';
@@ -36,6 +44,7 @@ import Avatar from './components/common/Avatar.vue';
 export default {
   components: { Toast, Avatar },
   created() {
+    this.ADMIN = ADMIN;
     this.HOME_ICON = HOME_ICON;
   },
   data() {

@@ -53,8 +53,10 @@ import GROUP_STUDENT_4 from '../assets/images/group-student-4.jpg';
 import MOUNTAIN_CLIMB from '../assets/images/mountain-climbing.jpg';
 import WARNING from '../assets/images/warn.svg';
 import RELOAD from '../assets/images/reload.svg';
+import ADMIN from '../assets/images/avatar_admin.png';
 
 export {
+  ADMIN,
   RELOAD,
   WARNING,
   CONGRATULATION,

@@ -11,11 +11,13 @@
         <div class="flex items-center py-2 total-width mr-3">
           <Avatar
             :imgUrl="item.avatar"
-            :name="item.name"
+            :name="item.name || item.userID"
             externalClass="h-10 w-10 rounded-full"
           />
           <div class="flex-1 flex items-start ml-3 flex-col">
-            <div class="font-semibold">{{ item.name }} &nbsp;</div>
+            <div class="font-semibold">
+              {{ item.name || item.userID }} &nbsp;
+            </div>
             <div class="flex items-end">
               Course: &nbsp;
               <div class="">
@@ -60,7 +62,7 @@
         </div>
       </div>
     </div>
-    <div class="mt-5 font-semibold text-xl">No data</div>
+    <div v-else class="mt-5 font-semibold text-xl">No data</div>
     <div class="mt-5 flex justify-center">
       <a-pagination
         class="pagination"
@@ -80,6 +82,8 @@ import { LEVEL, SOCKET, TYPE_COURSE } from '../../../constants';
 import { formatSpacerIntoHyphen } from '../../../constants/function';
 import Avatar from '../../../components/common/Avatar.vue';
 import courseApi from '../../../apis/course';
+import { mapMutations } from 'vuex';
+
 export default {
   name: 'CoursePending',
   components: { ButtonBack, Avatar },
@@ -92,6 +96,8 @@ export default {
   },
   watch: {},
   methods: {
+    ...mapMutations('course', ['setIDCourse']),
+    ...mapMutations('notify', ['setNotify']),
     /**
      * get all course pending
      */
@@ -144,7 +150,7 @@ export default {
         console.log(error);
       } finally {
         this.listCourse = [];
-        this.getAllCoursePending();
+        await this.getAllCoursePending();
       }
     },
     /**
@@ -169,7 +175,7 @@ export default {
         console.log(error);
       } finally {
         this.listCourse = [];
-        this.getAllCoursePending();
+        await this.getAllCoursePending();
       }
     },
     onShowSizeChange(current, pageSize) {
@@ -179,11 +185,13 @@ export default {
       this.$router.push({ name: 'Dashboard' });
     },
     goToDetail(data) {
+      this.setIDCourse(data.id);
+      localStorage.setItem('idCoursePending', data.id);
       const path = formatSpacerIntoHyphen(data.nameCourse);
-      const type = data.type == TYPE_COURSE.LISTENING ? 'Listening' : 'Reading';
+      const type = data.type == TYPE_COURSE.LISTENING ? 'listening' : 'reading';
       this.$router.push({
         name: 'DetailCourseListeningPending',
-        params: { name: path, type: type, id: data.id },
+        params: { name: path, type: type, id: data.userID },
       });
     },
   },
@@ -193,17 +201,7 @@ export default {
       userID: null,
       current: 6,
       pageSize: 3,
-      listCourse: [
-        // {
-        //   id: 1,
-        //   userID: 1,
-        //   avatar: AVATAR,
-        //   name: 'Chi Bao',
-        //   level: LEVEL.BEGINNER,
-        //   nameCourse: 'English is so good',
-        //   type: TYPE_COURSE.LISTENING,
-        // },
-      ],
+      listCourse: [],
     };
   },
 };

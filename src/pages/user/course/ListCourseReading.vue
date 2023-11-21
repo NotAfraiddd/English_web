@@ -24,7 +24,7 @@
       <ListCourse :data="listReading" @clicked="goToDetailCourse" />
     </div>
     <div
-      class="sticky top-24 w-2/5 mx-3 mt-14 contain-list__reading border-8 border-table_border z-10 bg-white"
+      class="sticky top-24 w-2/5 mx-3 mt-14 contain-list__reading border-8 border-table_border bg-white"
     >
       <!-- Reading -->
       <div class="relative mt-3 ml-3">

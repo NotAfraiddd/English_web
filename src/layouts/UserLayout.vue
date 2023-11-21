@@ -47,32 +47,34 @@ export default {
           numberNotifications: this.numNotify,
           content: data.data,
           kind: SOCKET.REJECTED_COURSE_PENDING,
+          admin: true,
         });
       }
     });
     const contentReject = {
-      room: this.userInfor,
+      room: this.userInfor.email,
       kind: SOCKET.REJECTED_COURSE_PENDING,
     };
     this.$socket.emit('joinRoom', contentReject);
     // accept
     this.sockets.subscribe('coursePending', (data) => {
-      console.log('coursePending', data);
       if (
         data.kind == SOCKET.NOTIFY_COURSE_PENDING &&
         data.data.creatorUserid.email == this.userInfor.email
       ) {
+        this.setStatusCallAPICourse(true);
         this.numNotify++;
         this.setNotify({
           id: 1,
           numberNotifications: this.numNotify,
           content: data.data,
           kind: SOCKET.NOTIFY_COURSE_PENDING,
+          admin: true,
         });
       }
     });
     const content = {
-      room: this.userInfor,
+      room: this.userInfor.email,
       kind: SOCKET.NOTIFY_COURSE_PENDING,
     };
     this.$socket.emit('joinRoom', content);
@@ -86,7 +88,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations('notify', ['setNotify']),
+    ...mapMutations('notify', ['setNotify', 'setStatusCallAPICourse']),
   },
 };
 </script>

@@ -139,7 +139,7 @@
         <img
           :src="isHovered ? ARROW_DOWN : ARROW_UP"
           :class="[
-            'toggle-sidebar-icon relative cur-pointer h-3 arrow ml-2',
+            'toggle-sidebar-icon relative cur-pointer h-3 arrow ml-3',
             isHovered && 'logo-xl-btn-collapse ml-2',
           ]"
         />
@@ -223,6 +223,7 @@ import {
   BELL,
   LOCK,
   ARROW_LEFT,
+  ADMIN,
 } from '../../constants/image';
 import Avatar from '../common/Avatar.vue';
 import { formatNumber } from '../../constants/function';
@@ -235,6 +236,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export default {
   created() {
+    this.ADMIN = ADMIN;
     this.ARROW_LEFT = ARROW_LEFT;
     this.BELL = BELL;
     this.ARROW_UP = ARROW_UP;
@@ -311,7 +313,7 @@ export default {
       } else if (newVal.kind == SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN) {
         this.listNotify.push({
           id: uuidv4(),
-          avatar: newVal.content.avatar,
+          avatar: ADMIN,
           nameCourse: null,
           content: 'Admin have approved reported comment of you.',
           seen: false,
@@ -320,7 +322,7 @@ export default {
       } else if (newVal.kind == SOCKET.NOTIFY_BLOG_PENDING) {
         this.listNotify.push({
           id: uuidv4(),
-          avatar: newVal.content.avatar,
+          avatar: ADMIN,
           nameCourse: null,
           content: 'Admin have approved blog of you.',
           seen: false,
@@ -329,8 +331,8 @@ export default {
       } else if (newVal.kind == SOCKET.NOTIFY_COURSE_PENDING) {
         this.listNotify.push({
           id: uuidv4(),
-          avatar: newVal.content.avatar, // avatar admin
-          nameCourse: `Course ${newVal.content.nameCourse || ''}`,
+          avatar: ADMIN, // avatar admin
+          nameCourse: `${newVal.content.name || ''}`,
           content: 'has been approved by admin',
           seen: false,
           fullName: newVal.content.name,
@@ -338,8 +340,8 @@ export default {
       } else if (newVal.kind == SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN) {
         this.listNotify.push({
           id: uuidv4(),
-          avatar: newVal.content.avatar,
-          nameCourse: `${newVal.content.courseName || ''}`,
+          avatar: ADMIN,
+          nameCourse: `${newVal.content.name || ''}`,
           content: 'has been rejected by admin',
           seen: false,
           fullName: newVal.content.name,
@@ -347,17 +349,18 @@ export default {
       } else if (newVal.kind == SOCKET.REJECTED_BLOG_PENDING) {
         this.listNotify.push({
           id: uuidv4(),
-          avatar: newVal.content.avatar,
-          nameCourse: `${newVal.content.courseName || ''}`,
+          avatar: ADMIN,
+          nameCourse: `${newVal.content.name || ''}`,
           content: 'has been rejected by admin',
           seen: false,
           fullName: newVal.content.name,
         });
       } else if (newVal.kind == SOCKET.REJECTED_COURSE_PENDING) {
+        console.log(newVal);
         this.listNotify.push({
           id: uuidv4(),
-          avatar: newVal.content.avatar,
-          nameCourse: `${newVal.content.nameCourse || ''}`,
+          avatar: ADMIN,
+          nameCourse: `${newVal.content.name || ''}`,
           content: 'has been rejected by admin',
           seen: false,
           fullName: newVal.content.name,
@@ -428,26 +431,7 @@ export default {
           ],
         },
       ],
-      listNotify: [
-        {
-          id: 1,
-          avatar: AVATAR,
-          nameCourse: null,
-          content:
-            'Your comment is reported by someone Your comment is reported by someone Your comment is reported by someone Your comment is reported',
-          seen: false,
-          fullName: 'Ngoc Huan',
-        },
-        {
-          id: 2,
-          avatar: AVATAR,
-          nameCourse: null,
-          content:
-            'Your comment is reported by someone Your comment is reported by someone Your comment is reported by someone Your comment is reported',
-          seen: true,
-          fullName: 'Chi Bao',
-        },
-      ],
+      listNotify: [],
     };
   },
   methods: {

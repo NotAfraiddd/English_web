@@ -8,7 +8,6 @@ const router = VueRouter.createRouter({
     if (savedPosition) {
       return savedPosition;
     }
-
     return { top: 0, behavior: 'smooth' };
   },
 });

@@ -225,6 +225,7 @@ import CourseApi from '../../../apis/course';
 import jscolor from '@eastdesire/jscolor';
 import { NOTIFY_MESSAGE } from '../../../constants';
 import InputLevel from '../../../components/common/InputLevel.vue';
+import { mapState } from 'vuex';
 export default {
   name: 'HomeUser',
   components: {
@@ -245,6 +246,7 @@ export default {
     this.getDetail();
   },
   computed: {
+    ...mapState('notify', ['statusCallAPICourse']),
     isAdvanced() {
       if (this.userInfor.level == this.checkLevel) return true;
       return false;
@@ -290,6 +292,11 @@ export default {
     },
     createName() {
       this.$refs.errorInputName.classList.remove('border-red-500');
+    },
+    statusCallAPICourse(newVal) {
+      if (newVal) {
+        this.getAllCourse();
+      }
     },
   },
   mounted() {
@@ -400,6 +407,7 @@ export default {
      * get all course
      */
     async getAllCourse() {
+      this.listCourses = [];
       try {
         this.emitter.emit('isShowLoading', true);
         const data = await CourseApi.allCourse();

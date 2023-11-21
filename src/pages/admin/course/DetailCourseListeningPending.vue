@@ -212,7 +212,8 @@ import MatchWord from '../../../components/common/MatchWord.vue';
 import PutPriority from '../../../components/common/PutPriority.vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import { SOCKET } from '../../../constants';
-import { mapMutations } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
+import courseApi from '../../../apis/course';
 
 export default {
   name: 'DetailCourseListeningPending',
@@ -231,6 +232,9 @@ export default {
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
     this.paramName = this.$route.params.name;
     this.userID = this.$route.params.id;
+    this.idCoursePendingLocal = JSON.parse(
+      localStorage.getItem('idCoursePending'),
+    );
   },
   watch: {
     listAnswers() {
@@ -240,45 +244,10 @@ export default {
       this.courseName = newVal.split('-').join(' ');
     },
   },
-  mounted() {
-    // reject comment
-    // this.sockets.subscribe('rejectBlogPending', (data) => {
-    //   console.log('rejectBlogPending', data);
-    //   if (data.kind == SOCKET.REJECTED_BLOG_PENDING) {
-    //     this.numNotify++;
-    //     this.setNotify({
-    //       id: 1,
-    //       numberNotifications: this.numNotify,
-    //       content: data.data,
-    //       kind: SOCKET.REJECTED_BLOG_PENDING,
-    //     });
-    //   }
-    // });
-    // const rejectContent = {
-    //   room: this.userID,
-    //   kind: SOCKET.REJECTED_BLOG_PENDING,
-    // };
-    // this.$socket.emit('joinRoom', rejectContent);
-    // comment
-    this.sockets.subscribe('coursePending', (data) => {
-      if (data.kind == SOCKET.NOTIFY_COURSE_PENDING) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.NOTIFY_COURSE_PENDING,
-        });
-      }
-    });
-    const content = {
-      room: this.userID,
-      kind: SOCKET.NOTIFY_COURSE_PENDING,
-    };
-    this.$socket.emit('joinRoom', content);
+  computed: {
+    ...mapState('course', ['idCoursePending']),
   },
   methods: {
-    ...mapMutations('notify', ['setNotify']),
     resetResult() {
       this.submitMultipleChoice = false;
       this.submitMatching = false;
@@ -407,23 +376,30 @@ export default {
         }
       }
     },
-    handleAcceptCourse() {
-      // join socket rejectcomment
-      const dataSocket = {
-        room: this.userID,
-        kind: SOCKET.NOTIFY_COURSE_PENDING,
-      };
-      this.$socket.emit('joinRoom', dataSocket);
-      let course = {
-        userID: this.userID,
-        avatar: AVATAR,
-        courseName: this.courseName,
-      };
-      let data = {
-        data: course,
-        kind: SOCKET.NOTIFY_COURSE_PENDING,
-      };
-      this.$socket.emit('sendSignal', data);
+    /**
+     * approve
+     */
+    async handleAcceptCourse() {
+      try {
+        const data = await courseApi.approvedCourse({
+          id: this.idCoursePending || this.idCoursePendingLocal,
+        });
+        const dataSocket = {
+          room: this.userID,
+          kind: SOCKET.NOTIFY_COURSE_PENDING,
+        };
+        this.$socket.emit('joinRoom', dataSocket);
+        let content = {
+          data: data,
+          kind: SOCKET.NOTIFY_COURSE_PENDING,
+        };
+        this.$socket.emit('sendSignal', content);
+      } catch (error) {
+        this.emitter.emit('isShowLoading', false);
+        console.log(error);
+      } finally {
+        this.$router.push({ name: 'CoursePending' });
+      }
       // ( call api)
     },
     goToDetailCourse(data) {
@@ -450,6 +426,7 @@ export default {
   },
   data() {
     return {
+      idCoursePendingLocal: null,
       numNotify: 0,
       userID: null,
       courseName: null,
