@@ -104,6 +104,18 @@
       </div>
     </div>
   </div>
+  <div
+    v-if="userInfor.level == 'ADVANCED'"
+    @click="goToCreateCourse"
+    class="flex flex-col mt-10 mr-5 h-auto cursor-pointer text-base flex-1 justify-between items-center border-dashed border-4 border-primary_black_opacity-600 gap-1 py-2 px-5 rounded-lg"
+  >
+    <div
+      class="bg-text_back w-7 h-7 rounded-full text-xl font-semibold text-gray-400"
+    >
+      +
+    </div>
+    <div class="text-primary_black font-semibold">Add new course</div>
+  </div>
 </template>
 <script>
 import ButtonBack from '../../../components/common/ButtonBack.vue';
@@ -131,8 +143,16 @@ export default {
         this.checkHeightReading();
       });
     }
+    this.namePath = this.$route.params.name;
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
   },
   methods: {
+    goToCreateCourse() {
+      this.$router.push({
+        name: 'UserCreateCourseReading',
+        params: { course: this.namePath },
+      });
+    },
     onBack() {
       this.$router.push({ name: 'HomeUser' });
     },
@@ -205,6 +225,7 @@ export default {
   },
   data() {
     return {
+      userInfor: null,
       createPost: 0,
       courseReading: false,
       courseListening: false,

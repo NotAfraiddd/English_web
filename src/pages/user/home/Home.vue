@@ -226,6 +226,7 @@ import jscolor from '@eastdesire/jscolor';
 import { NOTIFY_MESSAGE } from '../../../constants';
 import InputLevel from '../../../components/common/InputLevel.vue';
 import { mapState } from 'vuex';
+import courseApi from '../../../apis/course';
 export default {
   name: 'HomeUser',
   components: {
@@ -304,19 +305,29 @@ export default {
     setInterval(this.updateCurrentTime, 1000);
   },
   methods: {
-    sendAPICreateCourse() {
-      const temp = this.listCourses;
-      temp.push({
-        id: temp.length,
-        title: this.createTitle,
-        subtitle: this.createSubtitle,
-        percentages: [{ percentage: 0 }],
-        name: this.createName,
-        courseFinished: 0,
-        color: this.createColor,
-        level: this.createLevel,
-        status: true,
-      });
+    async sendAPICreateCourse() {
+      try {
+        const data = {
+          name: this.createTitle,
+          description: this.createSubtitle,
+          courseLevel: this.createLevel,
+          colorCode: this.createColor,
+          creatorUserid: {
+            uid: this.userInfor.email,
+          },
+        };
+        if (this.modalCheckLastOne) {
+          this.emitter.emit('isShowLoading', true);
+          await courseApi.createCourse(data);
+          this.emitter.emit('isShowLoading', false);
+          notification.success({ message: 'Create course success' });
+        }
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      } finally {
+        this.getAllCourse();
+      }
       this.modalCheckLastOne = false;
       this.cancelTypeCourse();
     },
@@ -508,7 +519,6 @@ export default {
         (item) =>
           item.level == data.item.level && item.status == data.item.status,
       );
-      console.log(result, data, this.userLevel);
       if (!result) {
         if (data.status) {
           this.courseObject.id = data.item.id;

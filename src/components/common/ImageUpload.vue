@@ -79,9 +79,12 @@ export default {
     handleImageChange(event) {
       const imageFile = event.target.files[0];
       if (imageFile) {
-        const imageURL = URL.createObjectURL(imageFile);
-        this.imageURL = imageURL;
-        this.$emit('update', this.imageURL);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const base64Image = e.target.result;
+          this.$emit('update', base64Image);
+        };
+        reader.readAsDataURL(imageFile);
         event.target.value = '';
       }
     },

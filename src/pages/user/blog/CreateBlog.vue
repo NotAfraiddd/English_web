@@ -1,7 +1,7 @@
 <template>
   <div class="mr-5">
     <ButtonBackUser title="Write blog" />
-    <div class="flex items-center gap-20 w-full">
+    <div class="flex items-start gap-20 w-full mt-5">
       <div class="flex flex-col items-start justify-center w-2/5 gap-2">
         <div class="font-semibold mr-4">Title Blog</div>
         <input
@@ -12,8 +12,8 @@
           spellcheck="false"
         />
       </div>
-      <div class="flex items-center">
-        <div class="font-semibold">Profile Blog</div>
+      <div class="flex items-start">
+        <div class="font-semibold mt-5">Profile Blog</div>
         <ImageUpload
           :src-img="AVATAR"
           extend-class="h-96 width-image"
@@ -55,7 +55,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .icon-remove {
   top: 2%;
   right: 2%;

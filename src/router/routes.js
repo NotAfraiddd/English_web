@@ -117,6 +117,17 @@ const routes = [
         component: () =>
           import('../pages/admin/course/DetailCourseGrammar.vue'),
       },
+      {
+        path: 'course/:course/reading/create',
+        name: 'UserCreateCourseReading',
+        component: () => import('../pages/user/course/CreateReading.vue'),
+      },
+      {
+        path: 'course/:course/reading/create',
+        name: 'UserCreateCourseListening',
+        component: () =>
+          import('../pages/admin/course/CreateCourseListening.vue'),
+      },
     ],
   },
   {
