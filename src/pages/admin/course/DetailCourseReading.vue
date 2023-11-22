@@ -33,9 +33,10 @@ It would take a book to list all the races and awards he's won and the mountains
         @setValue="getAnswerMultichoice"
         :correctAnswer="correctAnswer"
         :errors="errorsMultiple"
+        :submit-prop="submitMultipleChoice"
       />
     </div>
-    <div class="flex justify-center gap-20 items-center py-5 text-base">
+    <div class="flex justify-center gap-20 items-center py-5 text-base mt-10">
       <div v-if="!isMatchedRoute('MemberDetailCourseReading')">
         <div class="flex gap-20">
           <div
@@ -56,9 +57,16 @@ It would take a book to list all the races and awards he's won and the mountains
           >
             Test
           </div>
+          <img
+            :src="RELOAD"
+            alt=""
+            class="w-5 h-5 rotate-transition"
+            @click="resetResult"
+            :style="{ transform: 'rotate(' + 360 + 'deg)' }"
+          />
         </div>
       </div>
-      <div v-else class="flex gap-20">
+      <div v-else class="flex gap-20 items-center">
         <div
           class="cursor-pointer font-semibold rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
           @click="onBack"
@@ -71,20 +79,29 @@ It would take a book to list all the races and awards he's won and the mountains
         >
           Submit
         </div>
+        <img
+          :src="RELOAD"
+          alt=""
+          class="w-5 h-5 rotate-transition"
+          @click="resetResult"
+          :style="{ transform: 'rotate(' + 360 + 'deg)' }"
+        />
       </div>
     </div>
   </div>
 </template>
 <script>
+import { notification } from 'ant-design-vue';
 import ButtonBack from '../../../components/common/ButtonBack.vue';
 import MultipleChoice from '../../../components/common/MultipleChoice.vue';
-import { ARROW_LEFT, MOUNTAIN_CLIMB } from '../../../constants/image';
+import { ARROW_LEFT, MOUNTAIN_CLIMB, RELOAD } from '../../../constants/image';
 
 import { mapMutations, mapState } from 'vuex';
 export default {
   name: 'DetailCourseReading',
   components: { ButtonBack, MultipleChoice },
   created() {
+    this.RELOAD = RELOAD;
     this.ARROW_LEFT = ARROW_LEFT;
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
     this.paramName = this.$route.params.name;
@@ -96,6 +113,11 @@ export default {
   },
   methods: {
     ...mapMutations('course', ['setSubmit']),
+    resetResult() {
+      this.submitMultipleChoice = false;
+      this.errorsMultiple = [];
+      this.myAnswer = [];
+    },
     isMatchedRoute(routeName) {
       return this.$route.matched.some(({ name }) => {
         return name == routeName;
@@ -119,20 +141,32 @@ export default {
       return JSON.stringify(valueA) === JSON.stringify(valueB);
     },
     handleSubmit() {
-      // this.setSubmit(true);
-      // MultipleChoice
-      this.errorsMultiple = [];
-      for (let i = 0; i < this.dataMultipleChoice.length; i++) {
-        if (
-          this.compareMultiple(this.correctAnswer[i], this.myAnswer[i]) == false
-        ) {
-          this.errorsMultiple.push(this.dataMultipleChoice[i].id + 1);
+      if (!this.submitMultipleChoice) {
+        this.errorsMultiple = [];
+        for (let i = 0; i < this.dataMultipleChoice.length; i++) {
+          if (!this.compareMultiple(this.correctAnswer[i], this.myAnswer[i])) {
+            this.errorsMultiple.push(this.dataMultipleChoice[i].id + 1);
+          }
+        }
+        this.submitMultipleChoice = true;
+        if (this.errorsMultiple.length == 0) {
+          notification.success({ message: 'Success' });
+          this.$router.push({
+            name: 'ListCourseReading',
+            params: { name: this.paramName },
+          });
+        } else {
+          notification.warning({
+            message:
+              'You must complete everything before going to the next session',
+          });
         }
       }
     },
   },
   data() {
     return {
+      submitMultipleChoice: false,
       paramName: null,
       errorsMultiple: [],
       myAnswer: [],

@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-2">
+  <div class="mx-2 mt-6">
     <div class="flex items-center w-full">
       <div class="bg-primary_line course-line w-full" />
       <div class="text-lg text-primary_black font-semibold w-full">

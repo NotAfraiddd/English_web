@@ -2,21 +2,47 @@
   <div class="create-course">
     <!-- Reading -->
     <div>
-      <ButtonBack title="Reading" hide-back="true" @back="changeBack" />
-      <ImageUpload
-        :src-img="AVATAR"
-        extend-class="w-96 h-96"
-        :remove="true"
-        extend-class-icon="icon-remove"
+      <ButtonBack
+        title="Create Session Reading"
+        hide-back="true"
+        @back="changeBack"
       />
+      <div class="flex gap-10">
+        <div class="flex mt-5 w-full items-center">
+          <div class="flex create-course__title">
+            <div
+              class="my-auto text-primary_black text-left font-semibold text-base mr-2"
+            >
+              Title
+            </div>
+            <img :src="STAR_RED" alt="" srcset="" class="w-2 h-2 my-auto" />
+          </div>
+          <input
+            type="text"
+            v-model="title"
+            class="w-full border rounded-lg form-control"
+            spellcheck="false"
+          />
+        </div>
+      </div>
       <div class="flex mt-5 items-center">
         <div
           class="my-auto text-primary_black text-left font-semibold text-base create-course__subtitle"
         >
-          <div class="flex gap-2">
-            Level
-            <img :src="STAR_RED" alt="" srcset="" class="w-2 h-2 my-auto" />
-          </div>
+          Subtitle
+        </div>
+        <input
+          v-model="subTitle"
+          type="text"
+          class="w-full border rounded-lg form-control"
+          spellcheck="false"
+        />
+      </div>
+      <div class="flex mt-5 items-center">
+        <div
+          class="my-auto text-primary_black text-left font-semibold text-base create-course__subtitle"
+        >
+          Level
         </div>
         <InputLevel
           external-class="w-52 flex mr-auto w-full"
@@ -24,6 +50,13 @@
           @update="updateLevel"
         />
       </div>
+      <ImageUpload
+        :src-img="AVATAR"
+        extend-class="w-96 h-96"
+        :remove="true"
+        extend-class-icon="icon-remove"
+      />
+
       <ButtonBack title="Reading text" extend-class="mt-5" />
       <Word :contentProp="contentReading" @update="updateContentReading" />
       <ButtonBack

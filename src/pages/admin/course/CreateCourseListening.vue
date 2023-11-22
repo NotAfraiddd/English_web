@@ -1,6 +1,10 @@
 <template>
   <div class="create-course">
-    <ButtonBack title="Create Course" @back="changeBack" :hide-back="true" />
+    <ButtonBack
+      title="Create Session Listening"
+      @back="changeBack"
+      :hide-back="true"
+    />
     <!-- title -->
     <div class="flex gap-10">
       <div class="flex mt-5 w-full items-center">
@@ -27,6 +31,7 @@
         Subtitle
       </div>
       <input
+        v-model="subTitle"
         type="text"
         class="w-full border rounded-lg form-control"
         spellcheck="false"
@@ -45,7 +50,6 @@
       />
     </div>
     <!-- listening -->
-    <ButtonBack title="Listening" extend-class="mt-5" />
     <ImageUpload
       :src-img="AVATAR"
       extend-class="w-96 h-96"
@@ -299,6 +303,7 @@ export default {
       contentListening: '',
       screen: UI.UI_LISTENING,
       title: '',
+      subTitle: '',
       indexFocus: null,
       numWords: 1,
       word: [],
@@ -341,7 +346,7 @@ export default {
 <style lang="scss">
 .icon-remove {
   top: 2%;
-  right: 35%;
+  right: 32%;
   z-index: 1;
 }
 // color

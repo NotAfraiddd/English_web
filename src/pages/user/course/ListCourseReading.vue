@@ -36,15 +36,12 @@
         </div>
         <div
           ref="course"
-          :class="[
-            'detail-course absolute text-left ml-3',
-            { open: courseReading },
-          ]"
+          :class="['detail-course absolute text-left', { open: courseReading }]"
         >
           <div
             v-for="(item, key) in listDetailReading"
             :key="key"
-            class="flex gap-2 items-center cursor-pointer"
+            class="flex gap-2 items-center cursor-pointer justify-around"
           >
             <div class="hover:underline break-words w-3/4 text-overflow">
               - {{ item.title }}
@@ -68,14 +65,14 @@
         <div
           ref="courseListening"
           :class="[
-            'detail-course-listening absolute text-left ml-3',
+            'detail-course-listening absolute text-left',
             { open: courseListening },
           ]"
         >
           <div
             v-for="(item, key) in listDetailListening"
             :key="key"
-            class="flex gap-2 items-center cursor-pointer"
+            class="flex gap-2 items-center cursor-pointer justify-around"
           >
             <div class="hover:underline break-words w-3/4 text-overflow">
               - {{ item.title }}

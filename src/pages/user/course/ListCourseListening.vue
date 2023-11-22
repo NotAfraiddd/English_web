@@ -39,14 +39,14 @@
         <div
           ref="course"
           :class="[
-            'detail-course absolute text-left ml-3',
+            'detail-course absolute text-left ',
             { open: courseReading },
           ]"
         >
           <div
             v-for="(item, key) in listDetailReading"
             :key="key"
-            class="flex gap-2 items-center cursor-pointer"
+            class="flex gap-2 items-center cursor-pointer justify-around"
           >
             <div class="hover:underline break-words w-3/4 text-overflow">
               - {{ item.title }}
@@ -70,14 +70,14 @@
         <div
           ref="courseListening"
           :class="[
-            'detail-course-listening absolute text-left ml-3',
+            'detail-course-listening absolute text-left ',
             { open: courseListening },
           ]"
         >
           <div
             v-for="(item, key) in listDetailListening"
             :key="key"
-            class="flex gap-2 items-center cursor-pointer"
+            class="flex gap-2 items-center cursor-pointer justify-around"
           >
             <div class="hover:underline break-words w-3/4 text-overflow">
               - {{ item.title }}
@@ -105,6 +105,18 @@
         <div class="text-primary cursor-pointer hover:underline">here</div>
       </div>
     </div>
+  </div>
+  <div
+    v-if="userInfor.level == 'ADVANCED'"
+    @click="goToCreateCourse"
+    class="flex flex-col mt-10 mr-5 h-auto cursor-pointer text-base flex-1 justify-between items-center border-dashed border-4 border-primary_black_opacity-600 gap-1 py-2 px-5 rounded-lg"
+  >
+    <div
+      class="bg-text_back w-7 h-7 rounded-full text-xl font-semibold text-gray-400"
+    >
+      +
+    </div>
+    <div class="text-primary_black font-semibold">Add new course</div>
   </div>
 </template>
 <script>
@@ -135,6 +147,8 @@ export default {
         this.checkHeightListening();
       });
     }
+    this.namePath = this.$route.params.name;
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
   },
   methods: {
     onBack() {
@@ -147,6 +161,12 @@ export default {
     isMatchedRoute(routeName) {
       return this.$route.matched.some(({ name }) => {
         return name == routeName;
+      });
+    },
+    goToCreateCourse() {
+      this.$router.push({
+        name: 'UserCreateCourseListening',
+        params: { course: this.namePath },
       });
     },
     goToDetailCourse(data) {
@@ -209,6 +229,8 @@ export default {
   },
   data() {
     return {
+      namePath: null,
+      userInfor: null,
       createPost: 0,
       courseReading: false,
       courseListening: false,

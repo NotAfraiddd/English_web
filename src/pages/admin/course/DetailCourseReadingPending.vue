@@ -136,7 +136,7 @@
           alt=""
           class="w-5 h-5 rotate-transition"
           @click="resetResult"
-          :style="{ transform: 'rotate(' + rotation + 'deg)' }"
+          :style="{ transform: 'rotate(' + 360 + 'deg)' }"
         />
       </div>
     </div>

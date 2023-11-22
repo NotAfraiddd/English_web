@@ -3,7 +3,7 @@
     <!-- Reading -->
     <div>
       <ButtonBack
-        title="Create Session Reading"
+        title="Create Session Listening"
         hide-back="true"
         @back="changeBack"
       />
@@ -45,7 +45,7 @@
           />
         </div>
       </div>
-      <div class="flex mt-5">
+      <div>
         <div
           class="my-auto text-primary_black text-left font-semibold text-base create-course__subtitle"
         >
@@ -54,7 +54,7 @@
         <input
           v-model="createSubtitle"
           type="text"
-          class="input-type-course border rounded-lg form-control h-8 mr-5"
+          class="input-type-course border rounded-lg form-control h-8"
           spellcheck="false"
           ref="errorInputTitle"
         />
@@ -227,7 +227,7 @@ export default {
       namePath: null,
       avatar: AVATAR,
       createTitle: null,
-      createSubtitle: null,
+      createSubtitle: '',
       showModalCreateCourse: false,
       inputLevel: 1,
       checkName: false,

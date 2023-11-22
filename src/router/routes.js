@@ -123,10 +123,9 @@ const routes = [
         component: () => import('../pages/user/course/CreateReading.vue'),
       },
       {
-        path: 'course/:course/reading/create',
+        path: 'course/:course/listening/create',
         name: 'UserCreateCourseListening',
-        component: () =>
-          import('../pages/admin/course/CreateCourseListening.vue'),
+        component: () => import('../pages/user/course/CreateListening.vue'),
       },
     ],
   },
