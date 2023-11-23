@@ -46,7 +46,10 @@
         <ButtonBack
           title="Listen to the dialogue above and choose the correct answer"
         />
-        <div class="h-6 border-orange border rounded-xl flex items-center">
+        <div
+          v-if="userInfor.role == 'ADMIN'"
+          class="h-6 border-orange border rounded-xl flex items-center"
+        >
           <div
             class="text-primary_black hover:underline cursor-pointer mx-3"
             @click="showModalMuilti"
@@ -70,7 +73,10 @@
       <ButtonBack
         title="Listen to the dialogue above and match the beginnings and endings of the phrases"
       />
-      <div class="h-6 border-orange border rounded-xl flex items-center">
+      <div
+        v-if="userInfor.role == 'ADMIN'"
+        class="h-6 border-orange border rounded-xl flex items-center"
+      >
         <div
           class="text-primary_black hover:underline cursor-pointer mx-3"
           @click="showModalMatch"
@@ -91,7 +97,10 @@
     <!-- put priority -->
     <div class="flex items-center flex-wrap mt-5 gap-5">
       <ButtonBack title="Put the tasks in order of priority." />
-      <div class="h-6 border-orange border rounded-xl flex items-center">
+      <div
+        v-if="userInfor.role == 'ADMIN'"
+        class="h-6 border-orange border rounded-xl flex items-center"
+      >
         <div
           class="text-primary_black hover:underline cursor-pointer mx-3"
           @click="showModalFill"
@@ -101,7 +110,7 @@
       </div>
     </div>
     <PutPriority
-      placeholder="Priority sequence"
+      placeholder="priority sequence"
       :data-priority="listPriority"
       :list-correct-priority="listCorrectPriority"
       :input-priority-prop="inputPriority"
@@ -130,21 +139,35 @@
           >
             Test
           </div>
+          <img
+            :src="RELOAD"
+            alt=""
+            class="w-5 h-5 rotate-transition"
+            @click="resetResult"
+            :style="{ transform: 'rotate(' + rotation + 'deg)' }"
+          />
         </div>
       </div>
-      <div v-else class="flex gap-20">
+      <div v-else class="flex gap-20 items-center">
         <div
-          class="cursor-pointer font-semibold rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
           @click="onBack"
         >
           <span class="text-base text-primary">Back</span>
         </div>
         <div
           @click="handleSubmit"
-          class="cursor-pointer font-semibold rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
         >
           Submit
         </div>
+        <img
+          :src="RELOAD"
+          alt=""
+          class="w-5 h-5 rotate-transition"
+          @click="resetResult"
+          :style="{ transform: 'rotate(' + rotation + 'deg)' }"
+        />
       </div>
     </div>
   </div>
@@ -228,6 +251,7 @@ export default {
     this.ARROW_LEFT = ARROW_LEFT;
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
     this.paramName = this.$route.params.name;
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
   },
   watch: {
     listAnswers() {
@@ -247,6 +271,7 @@ export default {
       });
       this.myAnswer = [];
       this.inputPriority = [];
+      this.rotation += 360;
     },
     /**
      * show modal
@@ -395,6 +420,8 @@ export default {
   },
   data() {
     return {
+      userInfor: null,
+      rotation: 0,
       modalMuilti: false,
       modalMatch: false,
       modalFillin: false,
@@ -539,6 +566,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.rotate-transition {
+  transition: transform 1s ease-in-out;
+}
 .detail {
   &-field {
     height: 510px;

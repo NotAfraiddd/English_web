@@ -6,7 +6,7 @@
       class="h-auto min-h-max"
       :class="extendItemClass"
     >
-      <div class="course relative">
+      <div class="course relative ml-5">
         <div
           class="course-learn__detail flex justify-center border flex-col w-full px-4 gap-1 rounded-2xl h-40"
           :style="`background-color: ${item.color};`"
@@ -21,20 +21,31 @@
           </div>
           <Processbar v-if="hideProcessBar" :percentages="item.percentages" />
         </div>
-        <button
-          v-if="item.status"
-          class="course-learn__button cursor-pointer"
-          @click="handleClickPending(item.status)"
-        >
-          Pending
-        </button>
-        <button
-          v-else
-          class="course-learn__button cursor-pointer"
-          @click="handleClick(item)"
-        >
-          Learn
-        </button>
+        <div class="flex">
+          <button
+            v-if="item.status"
+            class="course-learn__button cursor-pointer"
+            :style="{ left: showDelete ? '35%' : '50%' }"
+            @click="handleClickPending(item.status)"
+          >
+            Pending
+          </button>
+          <button
+            v-else
+            class="course-learn__button cursor-pointer"
+            :style="{ left: showDelete ? '35%' : '50%' }"
+            @click="handleClick(item)"
+          >
+            Learn
+          </button>
+          <button
+            v-if="showDelete"
+            @click="handleDeleteCourse(item)"
+            class="course-learn__button-2"
+          >
+            <img :src="DELETE_GRAY_ICON" alt="" class="h-5 w-5" />
+          </button>
+        </div>
       </div>
       <div class="w-full mt-3 flex flex-col gap-1 my-4 items-center">
         <div class="font-semibold text-xl w-full">{{ item.name }}</div>
@@ -65,11 +76,14 @@
 <script>
 import { notification } from 'ant-design-vue';
 import Processbar from './Processbar.vue';
+import { DELETE_GRAY_ICON } from '../../constants/image';
 export default {
   name: 'ListTypeCourse',
   components: { Processbar },
-  created() {},
-  emits: ['clicked', 'add'],
+  created() {
+    this.DELETE_GRAY_ICON = DELETE_GRAY_ICON;
+  },
+  emits: ['clicked', 'add', 'delete'],
   props: {
     data: { type: Array, default: () => [] },
     extendClass: { type: String, default: '' },
@@ -77,8 +91,12 @@ export default {
     hideProcessBar: { type: Boolean, default: false },
     hideCourseFinished: { type: Boolean, default: false },
     showAddCourse: { type: Boolean, default: false },
+    showDelete: { type: Boolean, default: false },
   },
   methods: {
+    handleDeleteCourse(data) {
+      this.$emit('delete', data);
+    },
     handleClickPending(data) {
       if (data) {
         notification.warning({ message: 'Course awaiting approval' });
@@ -105,13 +123,27 @@ export default {
   &-learn__button {
     background-color: #fff;
     border-color: #fff;
-    left: 50%;
     opacity: 0;
     font-weight: 600;
     position: absolute;
     top: 55%;
     border-radius: 12px;
     padding: 9px 16px;
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease 0s;
+    visibility: hidden;
+    z-index: 1;
+  }
+  &-learn__button-2 {
+    background-color: #fff;
+    border-color: #fff;
+    right: 15%;
+    opacity: 0;
+    font-weight: 600;
+    position: absolute;
+    top: 55%;
+    border-radius: 12px;
+    padding: 10px 20px;
     transform: translate(-50%, -50%);
     transition: all 0.3s ease 0s;
     visibility: hidden;
@@ -129,6 +161,7 @@ export default {
   }
 }
 .course:hover .course-learn__detail::after,
+.course:hover .course-learn__button-2,
 .course:hover .course-learn__button {
   opacity: 1;
   visibility: visible;

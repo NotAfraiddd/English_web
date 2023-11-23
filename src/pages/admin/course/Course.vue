@@ -3,6 +3,8 @@
     <ListTypeCourse
       :data="listCourses"
       @clicked="getData"
+      :show-delete="true"
+      @delete="getDataDelete"
       extendClass="grid-cols-3"
       extend-item-class="item-course"
     />
@@ -216,7 +218,7 @@
           class="mt-4 cursor-pointer rounded-lg border-yellow-400 border w-24 text-center h-8 leading-8 hover:opacity-50"
           @click="editModal"
         >
-          <span class="text-base text-yellow-400">Edit</span>
+          <span class="text-base text-yellow-400">Update</span>
         </div>
         <div class="flex mt-4" v-if="checkLevel != 'All'">
           <div class="flex gap-10">
@@ -244,15 +246,52 @@
       </div>
     </template>
   </ConfirmModal>
+  <!-- confirm delete course -->
+  <ConfirmModal
+    :showModal="modalConfirmDelete"
+    @closeModal="closeModalConfirmDelete"
+    @save="closeModalConfirmDelete"
+    :showFooter="false"
+    :widthCustom="500"
+  >
+    <template #icon>
+      <img :src="DELETE_GRAY_ICON" alt="" srcset="" class="h-10 w-10" />
+    </template>
+    <template #content>
+      <div class="text-base flex">Do you want to delete this course ?</div>
+    </template>
+    <template #select>
+      <div class="flex gap-10 mt-2">
+        <div
+          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="closeModalConfirmDelete"
+        >
+          <span class="text-base text-primary">Cancel</span>
+        </div>
+        <div
+          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="acceptModalConfirmDelete"
+        >
+          <span class="text-base text-white">OK</span>
+        </div>
+      </div>
+    </template>
+  </ConfirmModal>
 </template>
 <script>
 import ListTypeCourse from '../../../components/common/ListTypeCourse.vue';
 import jscolor from '@eastdesire/jscolor';
 import { NOTIFY, NOTIFY_MESSAGE } from '../../../constants';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
-import { AVATAR, TITLE, ADMIN_COURSE } from '../../../constants/image';
+import {
+  AVATAR,
+  TITLE,
+  ADMIN_COURSE,
+  DELETE_GRAY_ICON,
+} from '../../../constants/image';
 import { notification } from 'ant-design-vue';
 import { formatSpacerIntoHyphen } from '../../../constants/function';
+import courseApi from '../../../apis/course';
 export default {
   name: 'Course',
   components: { ListTypeCourse, ConfirmModal },
@@ -262,7 +301,9 @@ export default {
     this.TITLE = TITLE;
     this.AVATAR = AVATAR;
     this.NOTIFY = NOTIFY;
+    this.DELETE_GRAY_ICON = DELETE_GRAY_ICON;
     this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
+    this.getAllCourse();
   },
 
   watch: {
@@ -278,6 +319,52 @@ export default {
   },
 
   methods: {
+    acceptModalConfirmDelete() {
+      this.modalConfirmDelete = false;
+      notification.success({ message: 'Delete success' });
+    },
+    closeModalConfirmDelete() {
+      this.modalConfirmDelete = false;
+    },
+    /**
+     * delete course
+     */
+    getDataDelete(data) {
+      this.detailCourse = data;
+      this.modalConfirmDelete = true;
+    },
+    /**
+     * get all course
+     */
+    async getAllCourse() {
+      this.listCourses = [];
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const data = await courseApi.allCourse();
+        data.forEach((item) => {
+          if (item.courseStatus == 'APPROVED') {
+            let modifiedLevel =
+              item?.courseLevel.charAt(0).toUpperCase() +
+              item?.courseLevel.slice(1).toLowerCase();
+            this.listCourses.push({
+              id: item?.id,
+              title: modifiedLevel + ' Level',
+              level: modifiedLevel,
+              subtitle: item?.description,
+              percentages: [{ percentage: 0 }],
+              name: item?.name,
+              courseFinished: 0,
+              color: item?.colorCode,
+              status: item.courseStatus == 'PENDING' ? true : false,
+            });
+          }
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        this.emitter.emit('isShowLoading', false);
+        console.log(error);
+      }
+    },
     handleEditUpdate(record) {
       console.log(record);
     },
@@ -459,6 +546,8 @@ export default {
   },
   data() {
     return {
+      detailCourse: {},
+      modalConfirmDelete: false,
       checkLevel: null,
       showModalChooseCourse: false,
       showModalCreateCourse: false,
@@ -482,52 +571,7 @@ export default {
       showModal: false,
       current: 6,
       pageSize: 3,
-      listCourses: [
-        {
-          id: 1,
-          title: 'Basic Level',
-          level: 'Basic',
-          subtitle: 'English for individuals with basic knowledge.',
-          percentages: [{ percentage: 30 }],
-          name: 'Basic English Course',
-          courseFinished: '3/10',
-          color: '#0068FF',
-          status: 1,
-        },
-        {
-          id: 2,
-          title: 'Intermediate Level',
-          level: 'Intermediate',
-          subtitle: 'English for individuals with intermediate knowledge.',
-          percentages: [{ percentage: 65 }],
-          name: 'Intermediate English Course',
-          courseFinished: '3/10',
-          color: '#AA53EE',
-          status: 0,
-        },
-        {
-          id: 3,
-          title: 'Advanced Level',
-          level: 'Advanced',
-          subtitle: 'English for individuals with advanced knowledge.',
-          percentages: [{ percentage: 0 }],
-          name: 'Advanced English Course',
-          courseFinished: '0/10',
-          color: '#87CF2A',
-          status: 0,
-        },
-        {
-          id: 4,
-          title: 'Grammar',
-          level: 'All',
-          subtitle: 'English for individuals with basic knowledge.',
-          percentages: [{ percentage: 90 }],
-          name: 'Grammar English Course',
-          courseFinished: '3/10',
-          color: '#7C89CE',
-          status: 1,
-        },
-      ],
+      listCourses: [],
     };
   },
 };

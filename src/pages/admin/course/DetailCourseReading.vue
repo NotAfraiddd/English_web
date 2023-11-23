@@ -23,10 +23,20 @@ All this is thanks to his childhood in the mountains and to genetics, but it is 
 It would take a book to list all the races and awards he's won and the mountains he's climbed. And even here, Kilian’s achievements exceed the average person as, somehow, he finds time to record his career on his blog and has written three books, Run or Die, The Invisible Border and Summits of My Life.</div>`
       "
     />
-    <ButtonBack
-      title="Read the passage above and choose the correct"
-      extend-class="mt-5"
-    />
+    <div class="flex items-center flex-wrap mt-5 gap-5">
+      <ButtonBack title="Read the passage above and choose the correct" />
+      <div
+        v-if="userInfor.role == 'ADMIN'"
+        class="h-6 border-orange border rounded-xl flex items-center"
+      >
+        <div
+          class="text-primary_black hover:underline cursor-pointer mx-3"
+          @click="showModalMuilti"
+        >
+          Correct Answers
+        </div>
+      </div>
+    </div>
     <div class="px-5 pb-2 mt-5 detail-multiple-choice">
       <MultipleChoice
         :data="dataMultipleChoice"
@@ -68,14 +78,14 @@ It would take a book to list all the races and awards he's won and the mountains
       </div>
       <div v-else class="flex gap-20 items-center">
         <div
-          class="cursor-pointer font-semibold rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
           @click="onBack"
         >
           <span class="text-base text-primary">Back</span>
         </div>
         <div
           @click="handleSubmit"
-          class="cursor-pointer font-semibold rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
         >
           Submit
         </div>
@@ -84,27 +94,45 @@ It would take a book to list all the races and awards he's won and the mountains
           alt=""
           class="w-5 h-5 rotate-transition"
           @click="resetResult"
-          :style="{ transform: 'rotate(' + 360 + 'deg)' }"
+          :style="{ transform: 'rotate(' + rotation + 'deg)' }"
         />
       </div>
     </div>
   </div>
+  <ConfirmModal
+    :showModal="modalMuilti"
+    @closeModal="closeModalMuilti"
+    @save="closeModalMuilti"
+    :showFooter="false"
+    :widthCustom="300"
+  >
+    <template #content>
+      <div class="w-full text-center text-xl text-primary">Correct Answers</div>
+      <div v-for="(item, index) in correctAnswer" :key="index" class="w-full">
+        <div class="text-base flex w-full justify-between mt-3">
+          <div>Answers {{ index + 1 }} is</div>
+          <div class="text-orange">{{ item }}</div>
+        </div>
+      </div>
+    </template>
+  </ConfirmModal>
 </template>
 <script>
 import { notification } from 'ant-design-vue';
 import ButtonBack from '../../../components/common/ButtonBack.vue';
 import MultipleChoice from '../../../components/common/MultipleChoice.vue';
 import { ARROW_LEFT, MOUNTAIN_CLIMB, RELOAD } from '../../../constants/image';
-
 import { mapMutations, mapState } from 'vuex';
+import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 export default {
   name: 'DetailCourseReading',
-  components: { ButtonBack, MultipleChoice },
+  components: { ButtonBack, MultipleChoice, ConfirmModal },
   created() {
     this.RELOAD = RELOAD;
     this.ARROW_LEFT = ARROW_LEFT;
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
     this.paramName = this.$route.params.name;
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
   },
   watch: {
     listAnswers() {
@@ -113,10 +141,23 @@ export default {
   },
   methods: {
     ...mapMutations('course', ['setSubmit']),
+    /**
+     * show modal
+     */
+    showModalMuilti() {
+      this.modalMuilti = true;
+    },
+    /**
+     * close modal
+     */
+    closeModalMuilti() {
+      this.modalMuilti = false;
+    },
     resetResult() {
       this.submitMultipleChoice = false;
       this.errorsMultiple = [];
       this.myAnswer = [];
+      this.rotation += 360;
     },
     isMatchedRoute(routeName) {
       return this.$route.matched.some(({ name }) => {
@@ -166,6 +207,9 @@ export default {
   },
   data() {
     return {
+      rotation: 0,
+      userInfor: null,
+      modalMuilti: false,
       submitMultipleChoice: false,
       paramName: null,
       errorsMultiple: [],
@@ -270,6 +314,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.rotate-transition {
+  transition: transform 1s ease-in-out;
+}
 .detail {
   &-field {
     height: 510px;

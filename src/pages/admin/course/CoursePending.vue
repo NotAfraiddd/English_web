@@ -39,9 +39,7 @@
             <div class="flex items-end">
               Type: &nbsp;
               <div class="">
-                {{
-                  item.type == TYPE_COURSE.LISTENING ? 'Listening' : 'Reading'
-                }}
+                {{ item.type }}
               </div>
             </div>
           </div>
@@ -118,7 +116,12 @@ export default {
               name: item?.creatorUserid?.fullName || '',
               level: modifiedLevel,
               nameCourse: item?.name,
-              type: TYPE_COURSE.LISTENING,
+              type:
+                item?.listeningSectionList.length == 0 &&
+                item?.readingSectionList.length == 0
+                  ? 'Course'
+                  : TYPE_COURSE.LISTENING,
+              // : TYPE_COURSE.LISTENING,
             });
           }
         });

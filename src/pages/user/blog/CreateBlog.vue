@@ -15,16 +15,17 @@
       <div class="flex items-start">
         <div class="font-semibold mt-5">Profile Blog</div>
         <ImageUpload
-          :src-img="AVATAR"
+          :src-img="avatar"
           extend-class="h-96 width-image"
           extend-class-icon="icon-remove"
           :remove="true"
+          @update="getAvatar"
         />
       </div>
     </div>
     <Word :contentProp="contentListening" @update="updateContentListening" />
     <div
-      class="bg-primary font-semibold w-24 h-9 leading-9 rounded-md cursor-pointer ml-auto mt-5 hover:opacity-50"
+      class="bg-primary w-24 h-9 leading-9 rounded-md cursor-pointer ml-auto mt-5 hover:opacity-50"
     >
       Create
     </div>
@@ -44,12 +45,16 @@ export default {
   data() {
     return {
       contentListening: null,
+      avatar: AVATAR,
     };
   },
 
   methods: {
     updateContentListening(data) {
       this.contentListening = data;
+    },
+    getAvatar(data) {
+      this.avatar = data;
     },
   },
 };
