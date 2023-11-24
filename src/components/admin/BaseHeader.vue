@@ -68,7 +68,7 @@
         class="absolute overflow-y-auto z-10 bg-white top-16 right-10 rounded-lg header-notify__list"
         :class="[!listNotify && 'header-notify__no-notify']"
       >
-        <div class="flex items-center justify-between mt-3 text-primary_black">
+        <div class="flex items-center justify-between my-3 text-primary_black">
           <div class="text-base text-left ml-3 font-semibold">
             Notifications
           </div>
@@ -76,27 +76,30 @@
             Mark all as read
           </div>
         </div>
-        <div
-          v-for="(item, index) in listNotify"
-          :key="index"
-          class="flex items-center hover:bg-table_border cursor-pointer h-16 header-notify__item"
-        >
-          <div class="ml-3 mr-2">
-            <Avatar :imgUrl="item.avatar" class="w-9 ml-3" />
-          </div>
+        <div v-if="listNotify.length != 0">
           <div
-            class="w-4/5 text-left text-base textpr header-notify__item-content"
-            :class="[item.seen && 'opacity-50']"
+            v-for="(item, index) in listNotify"
+            :key="index"
+            class="flex items-center hover:bg-table_border cursor-pointer h-16 header-notify__item"
           >
-            <strong>
-              {{ !item.nameCourse ? item.fullName : item.nameCourse }}
-            </strong>
-            {{ item.content }}
-          </div>
-          <div v-if="!item.seen" class="mr-5">
-            <div class="w-2 h-2 rounded-lg bg-blue-400" />
+            <div class="ml-3 mr-2">
+              <Avatar :imgUrl="item.avatar" class="w-9 ml-3" />
+            </div>
+            <div
+              class="w-4/5 text-left text-base textpr header-notify__item-content"
+              :class="[item.seen && 'opacity-50']"
+            >
+              <strong>
+                {{ !item.nameCourse ? item.fullName : item.nameCourse }}
+              </strong>
+              {{ item.content }}
+            </div>
+            <div v-if="!item.seen" class="mr-5">
+              <div class="w-2 h-2 rounded-lg bg-blue-400" />
+            </div>
           </div>
         </div>
+        <div v-else class="mb-2">No notifications</div>
       </div>
       <div
         @mouseenter="isHovered = true"
@@ -284,6 +287,7 @@ export default {
           fullName: newVal.content.name,
         });
       } else if (newVal.kind == SOCKET.REACT) {
+        console.log('header', newVal);
         this.listNotify.push({
           id: uuidv4(),
           avatar: newVal.content.avatar,

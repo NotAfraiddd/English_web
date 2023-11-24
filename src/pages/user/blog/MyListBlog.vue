@@ -246,6 +246,7 @@ export default {
     this.HEART = HEART;
     this.HEART_DEFAULT = HEART_DEFAULT;
     this.ICON_LAUGH = ICON_LAUGH;
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
   },
   watch: {
     showComment(newValue) {
@@ -259,7 +260,8 @@ export default {
       checkListReactReplyComment: [],
       numNotify: 0,
       showComment: false,
-      idUserBlog: null,
+      userInfor: null,
+      idUserBlog: 'test@mail.com',
       idCommentFirst: null,
       senderName: '',
       receiverName: '',
@@ -360,7 +362,7 @@ export default {
       }
     });
     const data = {
-      room: +this.idUserBlog,
+      room: this.idUserBlog,
       kind: SOCKET.COMMENT,
     };
     this.$socket.emit('joinRoom', data);
@@ -377,27 +379,10 @@ export default {
       }
     });
     const dataReply = {
-      room: +this.idUserBlog + `REPLY`,
+      room: this.idUserBlog + `REPLY`,
       kind: SOCKET.REPLY_COMMENT,
     };
     this.$socket.emit('joinRoom', dataReply);
-    // ------------------ react ------------------
-    this.sockets.subscribe('react', (data) => {
-      if (data.kind == SOCKET.REACT) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.REACT,
-        });
-      }
-    });
-    const dataReact = {
-      room: +this.idUserBlog,
-      kind: SOCKET.REACT,
-    };
-    this.$socket.emit('joinRoom', dataReact);
     // ------------------ react comment ------------------
     this.sockets.subscribe('reactComment', (data) => {
       if (data.kind == SOCKET.REACT_COMMENT) {
@@ -411,7 +396,7 @@ export default {
       }
     });
     const dataReactComment = {
-      room: +this.idUserBlog,
+      room: this.idUserBlog,
       kind: SOCKET.REACT_COMMENT,
     };
     this.$socket.emit('joinRoom', dataReactComment);
@@ -428,7 +413,7 @@ export default {
       }
     });
     const dataReactCommentReply = {
-      room: +this.idUserBlog,
+      room: this.idUserBlog,
       kind: SOCKET.REACT_COMMENT_REPLY,
     };
     this.$socket.emit('joinRoom', dataReactCommentReply);
@@ -475,16 +460,18 @@ export default {
       const isDuplicate = this.listBlog.some((p) => p.index === data.index);
       // join socket react
       const dataSocket = {
-        room: +this.idUserBlog,
+        room: this.idUserBlog,
         kind: SOCKET.REACT,
       };
       this.$socket.emit('joinRoom', dataSocket);
       // per user will be able to click once
       if (!isDuplicate) {
         let content = {
+          id: this.idUserBlog,
           react: data.numReact,
-          name: this.userNameLogin,
+          name: this.userInfor.fullName,
           avatar: AVATAR,
+          admin: this.userInfor.role == 'ADMIN' ? true : false,
         };
         const react = {
           data: content,
@@ -498,7 +485,7 @@ export default {
     handleClickReact(arr, data, id) {
       const isDuplicate = arr.some((p) => p.id == id);
       const dataSocket = {
-        room: +this.idUserBlog,
+        room: this.idUserBlog,
         kind: SOCKET.REACT_COMMENT,
       };
       this.$socket.emit('joinRoom', dataSocket);
@@ -529,7 +516,7 @@ export default {
     handleClickReactReply(arr, data, id) {
       const isDuplicate = arr.some((p) => p.id == id);
       const dataSocket = {
-        room: +this.idUserBlog,
+        room: this.idUserBlog,
         kind: SOCKET.REACT_COMMENT_REPLY,
       };
       this.$socket.emit('joinRoom', dataSocket);
@@ -571,7 +558,7 @@ export default {
         if (this.receiverName) {
           // join socket
           const dataSocket = {
-            room: +this.idUserBlog + `REPLY`,
+            room: this.idUserBlog + `REPLY`,
             kind: SOCKET.REPLY_COMMENT,
           };
           this.$socket.emit('joinRoom', dataSocket);
@@ -594,7 +581,7 @@ export default {
           console.log(this.replyComments);
         } else {
           const dataSocket = {
-            room: +this.idUserBlog,
+            room: this.idUserBlog,
             kind: SOCKET.COMMENT,
           };
           this.$socket.emit('joinRoom', dataSocket);
@@ -626,7 +613,7 @@ export default {
       }
     },
     handleShowComment(data) {
-      this.idUserBlog = data.data.id;
+      // this.idUserBlog = data.data.id;
       if (data.status) {
         this.showComment = true;
       }

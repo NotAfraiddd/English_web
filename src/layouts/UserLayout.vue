@@ -78,6 +78,24 @@ export default {
       kind: SOCKET.NOTIFY_COURSE_PENDING,
     };
     this.$socket.emit('joinRoom', content);
+    // ------------------ react ------------------
+    this.sockets.subscribe('react', (data) => {
+      if (data.kind == SOCKET.REACT && data.data.id == this.userInfor.email) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.REACT,
+          admin: data.data.admin,
+        });
+      }
+    });
+    const dataReact = {
+      room: this.userInfor.email,
+      kind: SOCKET.REACT,
+    };
+    this.$socket.emit('joinRoom', dataReact);
   },
   watch: {
     $route(to, from) {

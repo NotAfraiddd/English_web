@@ -13,12 +13,12 @@
             :imgUrl="
               inforComment.admin
                 ? ADMIN
-                : inforComment.content.creatorUserid.avatar
+                : inforComment.content?.creatorUserid?.avatar
             "
             :name="
               inforComment.admin
-                ? ADMIN
-                : inforComment.content.creatorUserid.fullName
+                ? inforComment.content.name
+                : inforComment.content?.creatorUserid?.fullName
             "
             externalClass="h-10 w-12 rounded-full"
           />
@@ -79,6 +79,7 @@ export default {
           life: 3000,
         });
       } else if (data.kind == SOCKET.REACT) {
+        console.log('SOCKET.REACT', data.content);
         this.$toast.add({
           severity: 'success',
           summary: `${data.content.name}`,
