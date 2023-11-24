@@ -24,3 +24,12 @@ export const validPassword = (password) => {
 export const validConfirmPassword = (password, confirmPassword) => {
   return password == confirmPassword;
 };
+export const validNumber = (e, isFraction = true) => {
+  const charStr = e.key;
+  if (charStr.match(/^[a-zA-ZâÂăAƯưƠơÔôđĐ~!@#$%^&*(_=+[{}\]\\;':",/<>?)]$/)) {
+    e.preventDefault();
+  }
+  if (!isFraction && charStr === '.') {
+    e.preventDefault();
+  }
+};

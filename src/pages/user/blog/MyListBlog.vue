@@ -348,76 +348,7 @@ export default {
       ],
     };
   },
-  mounted() {
-    // listeing socket
-    this.sockets.subscribe('signal', (data) => {
-      if (data.kind == SOCKET.COMMENT) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.COMMENT,
-        });
-      }
-    });
-    const data = {
-      room: this.idUserBlog,
-      kind: SOCKET.COMMENT,
-    };
-    this.$socket.emit('joinRoom', data);
-    // ------------------ reply comment ------------------
-    this.sockets.subscribe('reply', (data) => {
-      if (data.kind == SOCKET.REPLY_COMMENT) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.REPLY_COMMENT,
-        });
-      }
-    });
-    const dataReply = {
-      room: this.idUserBlog + `REPLY`,
-      kind: SOCKET.REPLY_COMMENT,
-    };
-    this.$socket.emit('joinRoom', dataReply);
-    // ------------------ react comment ------------------
-    this.sockets.subscribe('reactComment', (data) => {
-      if (data.kind == SOCKET.REACT_COMMENT) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.REACT_COMMENT,
-        });
-      }
-    });
-    const dataReactComment = {
-      room: this.idUserBlog,
-      kind: SOCKET.REACT_COMMENT,
-    };
-    this.$socket.emit('joinRoom', dataReactComment);
-    // ------------------ react reply comment ------------------
-    this.sockets.subscribe('reactCommentReply', (data) => {
-      if (data.kind == SOCKET.REACT_COMMENT_REPLY) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.REACT_COMMENT_REPLY,
-        });
-      }
-    });
-    const dataReactCommentReply = {
-      room: this.idUserBlog,
-      kind: SOCKET.REACT_COMMENT_REPLY,
-    };
-    this.$socket.emit('joinRoom', dataReactCommentReply);
-  },
+  mounted() {},
   methods: {
     ...mapMutations('notify', ['setNotify']),
     /**
@@ -492,14 +423,17 @@ export default {
       if (isDuplicate) {
         data.numReact++;
         let content = {
+          id: this.idUserBlog,
           react: data.numReact,
-          name: this.userNameLogin,
+          name: this.userInfor.fullName,
           avatar: AVATAR,
+          admin: this.userInfor.role == 'ADMIN' ? true : false,
         };
         const react = {
           data: content,
           kind: SOCKET.REACT_COMMENT,
         };
+        console.log(this.idUserBlog);
         this.checkListReactComment[id] = true;
         this.$socket.emit('sendSignal', react);
       }
@@ -523,9 +457,11 @@ export default {
       if (isDuplicate) {
         data.numReact++;
         let content = {
+          id: this.idUserBlog,
           react: data.numReact,
-          name: this.userNameLogin,
+          name: this.userInfor.fullName,
           avatar: AVATAR,
+          admin: this.userInfor.role == 'ADMIN' ? true : false,
         };
         const react = {
           data: content,
@@ -563,14 +499,16 @@ export default {
           };
           this.$socket.emit('joinRoom', dataSocket);
           const commentDetail = {
-            userID: this.userLogin,
-            name: this.userNameLogin,
+            id: this.idUserBlog,
+            userID: this.userInfor.uid,
+            name: this.userInfor.fullName,
             avatar: AVATAR,
             nameReply: this.receiverName,
             content: this.contentChat,
             numReact: 0,
             numComment: 0,
             created_at: moment().format('DD/MM/YYYY HH:mm'),
+            admin: this.userInfor.role == 'ADMIN' ? true : false,
           };
           const comment = {
             data: commentDetail,
@@ -578,7 +516,6 @@ export default {
           };
           this.$socket.emit('sendSignal', comment);
           this.replyComments.push(commentDetail);
-          console.log(this.replyComments);
         } else {
           const dataSocket = {
             room: this.idUserBlog,
@@ -586,9 +523,9 @@ export default {
           };
           this.$socket.emit('joinRoom', dataSocket);
           const commentDetail = {
-            id: uuidv4(),
-            userID: this.userLogin,
-            name: this.userNameLogin,
+            id: this.idUserBlog,
+            userID: this.userInfor.uid,
+            name: this.userInfor.fullName,
             avatar: AVATAR,
             nameReply: this.receiverName,
             content: this.contentChat,
@@ -596,6 +533,7 @@ export default {
             numComment: 0,
             replyComments: [],
             created_at: moment().format('DD/MM/YYYY HH:mm'),
+            admin: this.userInfor.role == 'ADMIN' ? true : false,
           };
           const comment = {
             data: commentDetail,

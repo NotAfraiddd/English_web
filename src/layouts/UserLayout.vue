@@ -96,6 +96,89 @@ export default {
       kind: SOCKET.REACT,
     };
     this.$socket.emit('joinRoom', dataReact);
+    // ------------------ react comment ------------------
+    this.sockets.subscribe('reactComment', (data) => {
+      if (
+        data.kind == SOCKET.REACT_COMMENT &&
+        data.data.id == this.userInfor.email
+      ) {
+        console.log('SOCKET.REACT_COMMENT');
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.REACT_COMMENT,
+          admin: data.data.admin,
+        });
+      }
+    });
+    const dataReactComment = {
+      room: this.idUserBlog,
+      kind: SOCKET.REACT_COMMENT,
+    };
+    this.$socket.emit('joinRoom', dataReactComment);
+    // ------------------ react reply comment ------------------
+    this.sockets.subscribe('reactCommentReply', (data) => {
+      if (
+        data.kind == SOCKET.REACT_COMMENT_REPLY &&
+        data.data.id == this.userInfor.email
+      ) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.REACT_COMMENT_REPLY,
+          admin: data.data.admin,
+        });
+      }
+    });
+    const dataReactCommentReply = {
+      room: this.idUserBlog,
+      kind: SOCKET.REACT_COMMENT_REPLY,
+    };
+    this.$socket.emit('joinRoom', dataReactCommentReply);
+    // listeing socket
+    this.sockets.subscribe('signal', (data) => {
+      console.log('comment', data);
+      if (data.kind == SOCKET.COMMENT && data.data.id == this.userInfor.email) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.COMMENT,
+          admin: data.data.admin,
+        });
+      }
+    });
+    const data = {
+      room: this.idUserBlog,
+      kind: SOCKET.COMMENT,
+    };
+    this.$socket.emit('joinRoom', data);
+    // ------------------ reply comment ------------------
+    this.sockets.subscribe('reply', (data) => {
+      if (
+        data.kind == SOCKET.REPLY_COMMENT &&
+        data.data.id == this.userInfor.email
+      ) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.REPLY_COMMENT,
+          admin: data.data.admin,
+        });
+      }
+    });
+    const dataReply = {
+      room: this.idUserBlog + `REPLY`,
+      kind: SOCKET.REPLY_COMMENT,
+    };
+    this.$socket.emit('joinRoom', dataReply);
   },
   watch: {
     $route(to, from) {

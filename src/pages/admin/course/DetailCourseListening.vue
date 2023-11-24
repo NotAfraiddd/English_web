@@ -433,6 +433,7 @@ export default {
       drag: false,
       errorPriority: [],
       inputPriority: [],
+      // theo thu tu
       listPriority: [
         { id: 1, question: 'I have an apple in my bag.' },
         { id: 2, question: 'I have an apple in my bag.' },
@@ -443,6 +444,7 @@ export default {
         { id: 4, question: 'I have an apple in my bag.' },
       ],
       listCorrectPriority: [1, 3, 2, 4],
+      // match
       listQuestions: [
         {
           id: 1,
@@ -489,6 +491,7 @@ export default {
         { id: 4, word: 'have lunch' },
         { id: 5, word: 'at the school' },
       ],
+      // trac nghiem
       dataMultipleChoice: [
         {
           id: 0,
