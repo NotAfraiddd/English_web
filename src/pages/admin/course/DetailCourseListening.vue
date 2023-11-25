@@ -47,7 +47,7 @@
           title="Listen to the dialogue above and choose the correct answer"
         />
         <div
-          v-if="userInfor.role == 'ADMIN'"
+          v-if="userInfor.role == 'ADMIN' && checkRoute"
           class="h-6 border-orange border rounded-xl flex items-center"
         >
           <div
@@ -74,7 +74,7 @@
         title="Listen to the dialogue above and match the beginnings and endings of the phrases"
       />
       <div
-        v-if="userInfor.role == 'ADMIN'"
+        v-if="userInfor.role == 'ADMIN' && checkRoute"
         class="h-6 border-orange border rounded-xl flex items-center"
       >
         <div
@@ -98,7 +98,7 @@
     <div class="flex items-center flex-wrap mt-5 gap-5">
       <ButtonBack title="Put the tasks in order of priority." />
       <div
-        v-if="userInfor.role == 'ADMIN'"
+        v-if="userInfor.role == 'ADMIN' && checkRoute"
         class="h-6 border-orange border rounded-xl flex items-center"
       >
         <div
@@ -258,6 +258,31 @@ export default {
       this.errorsMatching = [];
     },
   },
+  computed: {
+    checkRoute() {
+      if (
+        this.isMatchedRoute('Dashboard') ||
+        this.isMatchedRoute('BlogPending') ||
+        this.isMatchedRoute('DetailBlogPending') ||
+        this.isMatchedRoute('CoursePending') ||
+        this.isMatchedRoute('Course') ||
+        this.isMatchedRoute('CreateCourse') ||
+        this.isMatchedRoute('Member') ||
+        this.isMatchedRoute('CourseListening') ||
+        this.isMatchedRoute('CourseReading') ||
+        this.isMatchedRoute('DetailCourseListening') ||
+        this.isMatchedRoute('DetailCourseReading') ||
+        this.isMatchedRoute('DetailCourseListeningPending') ||
+        this.isMatchedRoute('CreateCourseListening') ||
+        this.isMatchedRoute('CreateCourseReading') ||
+        this.isMatchedRoute('AdminDetail') ||
+        this.isMatchedRoute('MemberDetail') ||
+        this.isMatchedRoute('CommentReported')
+      )
+        return true;
+      return false;
+    },
+  },
   methods: {
     resetResult() {
       this.submitMultipleChoice = false;
@@ -272,6 +297,7 @@ export default {
       this.myAnswer = [];
       this.inputPriority = [];
       this.rotation += 360;
+      this.checkTranscript = false;
     },
     /**
      * show modal
