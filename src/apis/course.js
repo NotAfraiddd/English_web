@@ -32,8 +32,20 @@ class CourseApi {
     const res = await http.put(`course/approveCourse`, data);
     return res.data;
   }
+  async approvedSession(data) {
+    const res = await http.put(`section/approveReadingSection`, data);
+    return res.data;
+  }
   async rejectedCourse(data) {
     const res = await http.put(`course/rejectCourse`, data);
+    return res.data;
+  }
+  async getAllReadingSession(data) {
+    const res = await http.post(`section/getReadingSectionList`, data);
+    return res.data;
+  }
+  async createReadingSession(data) {
+    const res = await http.post(`section/createReadingSection`, data);
     return res.data;
   }
 }

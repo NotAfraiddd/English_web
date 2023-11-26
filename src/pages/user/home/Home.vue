@@ -12,9 +12,7 @@
       extendItemClass="user-course mx-5"
     />
   </div>
-  <div v-else>
-    <ButtonBackUser title="My course" :hide-back="true" @back="changeBack" />
-  </div>
+  <div v-else>No data</div>
   <div class="text-left font-semibold text-xl mt-10">Featured blogs</div>
   <div class="grid grid-cols-5 detail-blog-grid gap-4 mr-4">
     <div
@@ -217,7 +215,6 @@ import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import ListTypeCourse from '../../../components/common/ListTypeCourse.vue';
 import { formatSpacerIntoHyphen } from '../../../constants/function';
 import { AVATAR, LEARN, LISTENING, WARNING } from '../../../constants/image';
-import ButtonBackUser from '../../../components/common/ButtonBackUser.vue';
 import Slider from '../../../components/common/Slider.vue';
 import moment from 'moment';
 import userApi from '../../../apis/user';
@@ -233,7 +230,6 @@ export default {
     ListTypeCourse,
     ConfirmModal,
     InputLevel,
-    ButtonBackUser,
     Slider,
   },
   created() {
@@ -525,6 +521,7 @@ export default {
           this.courseObject.title = data.item.title;
           this.courseObject.subtitle = data.item.subtitle;
           this.modalChooseCourse = data.status;
+          if (data.item.id) localStorage.setItem('IDCourse', data.item.id);
         }
       } else notification.warn({ message: 'Your level is not yet achieved' });
     },

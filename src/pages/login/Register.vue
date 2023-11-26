@@ -264,6 +264,7 @@ import {
   GOOGLE,
 } from '../../constants/image.js';
 import authUser from '../../apis/auth';
+import { notification } from 'ant-design-vue';
 export default {
   name: 'Register',
   created() {
@@ -385,6 +386,8 @@ export default {
           },
         });
         this.emitter.emit('isShowLoading', false);
+        notification.success({ message: 'Register account success' });
+        this.$router.push({ name: 'Login' });
       }
     },
     toggleShowPassword() {

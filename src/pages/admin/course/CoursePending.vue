@@ -104,11 +104,11 @@ export default {
         this.emitter.emit('isShowLoading', true);
         const data = await courseApi.allCourse();
         data.forEach((item) => {
+          let modifiedLevel =
+            item?.courseLevel.charAt(0).toUpperCase() +
+            item?.courseLevel.slice(1).toLowerCase();
           if (item.courseStatus == 'PENDING') {
             this.userID = item?.creatorUserid?.uid;
-            let modifiedLevel =
-              item?.courseLevel.charAt(0).toUpperCase() +
-              item?.courseLevel.slice(1).toLowerCase();
             this.listCourse.push({
               id: item?.id,
               userID: item?.creatorUserid?.uid,
@@ -116,13 +116,38 @@ export default {
               name: item?.creatorUserid?.fullName || '',
               level: modifiedLevel,
               nameCourse: item?.name,
-              type:
-                item?.listeningSectionList.length == 0 &&
-                item?.readingSectionList.length == 0
-                  ? 'Course'
-                  : TYPE_COURSE.LISTENING,
-              // : TYPE_COURSE.LISTENING,
+              type: 'Course',
             });
+          } else {
+            if (item?.readingSectionList) {
+              item?.readingSectionList.forEach((ele) => {
+                if (ele.sectionStatus == 'PENDING') {
+                  this.listCourse.push({
+                    id: item?.id + '-' + ele.id,
+                    userID: item?.creatorUserid?.uid,
+                    avatar: item?.creatorUserid?.avatar || '',
+                    name: item?.creatorUserid?.fullName || '',
+                    level: modifiedLevel,
+                    nameCourse: ele?.textContent,
+                    type: 'Reading course session',
+                  });
+                }
+              });
+            } else if (item?.listeningSectionList) {
+              item?.listeningSectionList.forEach((ele) => {
+                if (ele.sectionStatus == 'PENDING') {
+                  this.listCourse.push({
+                    id: item?.id + '-' + ele.id,
+                    userID: item?.creatorUserid?.uid,
+                    avatar: item?.creatorUserid?.avatar || '',
+                    name: item?.creatorUserid?.fullName || '',
+                    level: modifiedLevel,
+                    nameCourse: ele?.textContent,
+                    type: 'Listening course session',
+                  });
+                }
+              });
+            }
           }
         });
         this.emitter.emit('isShowLoading', false);
@@ -160,25 +185,48 @@ export default {
      * approve
      */
     async handleAprroved(data) {
-      this.idCourse = data.id;
-      try {
-        const data = await courseApi.approvedCourse({ id: this.idCourse });
-        const dataSocket = {
-          room: this.userID,
-          kind: SOCKET.NOTIFY_COURSE_PENDING,
-        };
-        this.$socket.emit('joinRoom', dataSocket);
-        let content = {
-          data: data,
-          kind: SOCKET.NOTIFY_COURSE_PENDING,
-        };
-        this.$socket.emit('sendSignal', content);
-      } catch (error) {
-        this.emitter.emit('isShowLoading', false);
-        console.log(error);
-      } finally {
-        this.listCourse = [];
-        await this.getAllCoursePending();
+      if (typeof data.id == 'number') {
+        this.idCourse = data.id;
+        try {
+          const data = await courseApi.approvedCourse({ id: this.idCourse });
+          const dataSocket = {
+            room: this.userID,
+            kind: SOCKET.NOTIFY_COURSE_PENDING,
+          };
+          this.$socket.emit('joinRoom', dataSocket);
+          let content = {
+            data: data,
+            kind: SOCKET.NOTIFY_COURSE_PENDING,
+          };
+          this.$socket.emit('sendSignal', content);
+        } catch (error) {
+          this.emitter.emit('isShowLoading', false);
+          console.log(error);
+        } finally {
+          this.listCourse = [];
+          await this.getAllCoursePending();
+        }
+      } else {
+        let number = +data.id.split('-').pop();
+        try {
+          const data = await courseApi.approvedSession({ id: number });
+          const dataSocket = {
+            room: this.userID,
+            kind: SOCKET.NOTIFY_COURSE_PENDING,
+          };
+          this.$socket.emit('joinRoom', dataSocket);
+          let content = {
+            data: data,
+            kind: SOCKET.NOTIFY_COURSE_PENDING,
+          };
+          this.$socket.emit('sendSignal', content);
+        } catch (error) {
+          this.emitter.emit('isShowLoading', false);
+          console.log(error);
+        } finally {
+          this.listCourse = [];
+          await this.getAllCoursePending();
+        }
       }
     },
     onShowSizeChange(current, pageSize) {

@@ -9,9 +9,17 @@
       >
         <img :src="item.image" alt="" srcset="" class="h-44 course-image" />
         <div class="absolute w-7/12 top-12 bg-white h-32 course-infor">
-          <div class="flex flex-col items-start ml-8 mt-8">
-            <div class="font-semibold text-2xl text-left text-overflow">
-              {{ item.title }}
+          <div
+            class="flex flex-col items-start ml-8"
+            :class="item.status ? 'mt-5' : 'mt-8'"
+          >
+            <div>
+              <div v-if="item.status" class="text-yellow-400 text-left text-sm">
+                ( Pending )
+              </div>
+              <div class="font-semibold text-2xl text-left text-overflow">
+                {{ item.title }}
+              </div>
             </div>
             <div class="text-base text-left subtext-overflow">
               {{ item.subTitle }}

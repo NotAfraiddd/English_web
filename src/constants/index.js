@@ -25,6 +25,7 @@ export const NOTIFY_MESSAGE = {
   ADD_ANSWER: 'Maximum 4 questions',
   ADD_WORD: 'Maximum 5 questions',
   ADD_QUESTION: 'Maximum 6 questions',
+  ADD_QUESTION_9: 'Must 9 questions',
 };
 
 export const ERROR_MESSAGE = {

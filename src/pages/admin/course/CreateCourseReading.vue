@@ -227,7 +227,7 @@ export default {
           answers: [],
         },
       ],
-      dataQuestionReadingCorrect: [2],
+      dataQuestionReadingCorrect: [],
     };
   },
 };
