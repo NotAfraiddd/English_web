@@ -3,6 +3,8 @@ const course = {
   state: {
     submit: false,
     idCoursePending: null,
+    numCourse: 0,
+    file: null,
   },
   mutations: {
     setSubmit(state, submit) {
@@ -10,6 +12,12 @@ const course = {
     },
     setIDCourse(state, idCoursePending) {
       state.idCoursePending = idCoursePending;
+    },
+    setNumberCourse(state, numCourse) {
+      state.numCourse = numCourse;
+    },
+    setFileImage(state, file) {
+      state.file = file;
     },
   },
 };

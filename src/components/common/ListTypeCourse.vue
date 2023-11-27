@@ -11,12 +11,10 @@
           class="course-learn__detail flex justify-center border flex-col w-full px-4 gap-1 rounded-2xl h-40"
           :style="`background-color: ${item.color};`"
         >
-          <div
-            class="font-semibold text-2xl text-white flex flex-wrap justify-center"
-          >
+          <div class="font-semibold text-2xl text-white break-normal">
             {{ item.title }}
           </div>
-          <div class="text-base text-white flex flex-wrap justify-center">
+          <div class="text-base text-white text-overflow break-normal">
             {{ item.subtitle }}
           </div>
           <Processbar v-if="hideProcessBar" :percentages="item.percentages" />
@@ -116,6 +114,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.text-overflow {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
 .course {
   &:hover {
     transform: translateY(-2px);

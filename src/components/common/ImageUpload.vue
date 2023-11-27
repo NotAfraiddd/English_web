@@ -20,7 +20,7 @@
       >
         <img
           :src="!checkCancel ? imageURL : AVATAR"
-          class="personal-avatar w-full h-full"
+          class="personal-avatar w-full h-full object-cover"
           :class="avatar ? 'rounded-full' : ''"
           alt="avatar"
         />
@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
 import { AVATAR } from '../../constants/image';
 export default {
   props: {
@@ -73,11 +74,13 @@ export default {
     };
   },
   methods: {
+    ...mapMutations('course', ['setFileImage']),
     handleRemoveImage() {
       this.imageURL = AVATAR;
     },
     handleImageChange(event) {
       const imageFile = event.target.files[0];
+      this.setFileImage(imageFile);
       if (imageFile) {
         const reader = new FileReader();
         reader.onload = (e) => {

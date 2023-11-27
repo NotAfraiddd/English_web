@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import { mapMutations, mapState } from 'vuex';
 import courseApi from '../../../apis/course';
 import BaseTable from '../../../components/common/BaseTable.vue';
 import Notify from '../../../components/common/Notify.vue';
@@ -34,7 +35,12 @@ export default {
       const containWidthElement = this.$refs.containWidth;
     }
   },
+  computed: {
+    ...mapState('course', ['numCourse']),
+  },
   methods: {
+    ...mapMutations('course', ['setNumberCourse']),
+
     /**
      * get all course pending
      */
@@ -45,9 +51,20 @@ export default {
         data.forEach((item) => {
           if (item.courseStatus == 'PENDING') {
             course.push(item);
+          } else {
+            if (item?.readingSectionList.length != 0) {
+              item?.readingSectionList.forEach((ele) => {
+                if (ele?.sectionStatus == 'PENDING') course.push(ele);
+              });
+            }
+            if (item?.listeningSectionList.length != 0) {
+              item?.listeningSectionList.forEach((ele) => {
+                if (ele?.sectionStatus == 'PENDING') course.push(ele);
+              });
+            }
           }
         });
-        this.numCourse = course.length;
+        this.setNumberCourse(course.length);
       } catch (error) {
         console.log(error);
       }
@@ -70,7 +87,6 @@ export default {
       screenUI: SCREEN.dashboard,
       numReport: 0,
       numBlog: 1,
-      numCourse: 100,
       report: {
         id: NOTIFY.comment,
         subtitle: 'Report',

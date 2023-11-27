@@ -20,15 +20,65 @@ import ButtonBack from '../../../components/common/ButtonBack.vue';
 import ListCourse from '../../../components/common/ListCourse.vue';
 import { EXAMPLE } from '../../../constants/image';
 import { formatSpacerIntoHyphen } from '../../../constants/function';
-
+import courseApi from '../../../apis/course';
+import { notification } from 'ant-design-vue';
+import { mapMutations } from 'vuex';
 export default {
   name: 'CourseReading',
   components: { ButtonBack, ListCourse },
   created() {
     this.EXAMPLE = EXAMPLE;
     this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
+    this.idCourse = JSON.parse(localStorage.getItem('IDCourse'));
+    this.getAllReading();
   },
   methods: {
+    /**
+     * get all session
+     * @param {*} dataID
+     */
+    async getAllReading() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const arrAPI = await courseApi.getAllReadingSession({
+          id: this.idCourse,
+        });
+
+        this.listReading = [];
+
+        if (
+          this.userInfor.role == 'ADMIN' ||
+          this.userInfor.level == 'ADVANCED'
+        ) {
+          arrAPI.forEach((item) => {
+            this.listReading.push({
+              id: item?.id,
+              title: item?.title,
+              subTitle: item?.description,
+              image: item?.imgURL || EXAMPLE,
+              status: item?.sectionStatus == 'PENDING' ? true : false,
+            });
+          });
+        } else {
+          arrAPI.forEach((item) => {
+            if (item?.sectionStatus == 'APPROVED') {
+              this.listReading.push({
+                id: item?.id,
+                title: item?.description,
+                subTitle: item?.textContent,
+                image: item?.imgURL || EXAMPLE,
+                status: false,
+              });
+            }
+          });
+        }
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
     onBack() {
       this.$router.push({ name: 'Course' });
     },
@@ -36,38 +86,20 @@ export default {
       this.$router.push({ name: 'CreateCourseReading' });
     },
     goToDetailCourse(data) {
-      const path = formatSpacerIntoHyphen(data.item.title);
-      this.$router.push({
-        name: 'DetailCourseReading',
-        params: { name: path.toLowerCase() },
-      });
+      if (!data?.item.status) {
+        const path = formatSpacerIntoHyphen(data.item.title);
+        this.$router.push({
+          name: 'DetailCourseReading',
+          params: { name: path.toLowerCase() },
+        });
+      } else {
+        notification.warning({ message: 'Session awaiting approval' });
+      }
     },
   },
   data() {
     return {
-      listReading: [
-        {
-          id: 1,
-          title: 'Message to new friend',
-          subTitle:
-            'Read a direct message on social media to practise and improve your reading skills.',
-          image: EXAMPLE,
-        },
-        {
-          id: 2,
-          title: 'Message to new friend',
-          subTitle:
-            'Read a direct message on social media to practise and improve your reading skills.',
-          image: EXAMPLE,
-        },
-        {
-          id: 3,
-          title: 'Message to new friend',
-          subTitle:
-            'Read a direct message on social media to practise and improve your reading skills.',
-          image: EXAMPLE,
-        },
-      ],
+      listReading: [],
     };
   },
 };

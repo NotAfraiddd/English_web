@@ -27,13 +27,7 @@
             <div class="flex items-end">
               Level: &nbsp;
               <div class="">
-                {{
-                  item.level == LEVEL.BEGINNER
-                    ? 'Beginner'
-                    : item.level == LEVEL.INTERMEDIATE
-                    ? 'Intermediate'
-                    : 'Advanced'
-                }}
+                {{ item.level }}
               </div>
             </div>
             <div class="flex items-end">
@@ -94,7 +88,7 @@ export default {
   },
   watch: {},
   methods: {
-    ...mapMutations('course', ['setIDCourse']),
+    ...mapMutations('course', ['setIDCourse', 'setNumberCourse']),
     ...mapMutations('notify', ['setNotify']),
     /**
      * get all course pending
@@ -128,7 +122,7 @@ export default {
                     avatar: item?.creatorUserid?.avatar || '',
                     name: item?.creatorUserid?.fullName || '',
                     level: modifiedLevel,
-                    nameCourse: ele?.textContent,
+                    nameCourse: ele?.title,
                     type: 'Reading course session',
                   });
                 }
@@ -142,7 +136,7 @@ export default {
                     avatar: item?.creatorUserid?.avatar || '',
                     name: item?.creatorUserid?.fullName || '',
                     level: modifiedLevel,
-                    nameCourse: ele?.textContent,
+                    nameCourse: ele?.title,
                     type: 'Listening course session',
                   });
                 }
@@ -150,6 +144,7 @@ export default {
             }
           }
         });
+        this.setNumberCourse(this.listCourse.length);
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
         console.log(error);

@@ -117,11 +117,11 @@
       >
         <div v-if="checkRoute == true" class="flex items-center cursor-pointer">
           <span class="name mx-3">
-            {{ userInfor.fullName }}
+            {{ userInfor.fullName || userInfor.email }}
           </span>
           <Avatar
-            :imgUrl="userInfor.avtURL"
-            :name="userInfor.fullName"
+            :imgUrl="user.avtURL"
+            :name="user.fullName || user.email"
             class="w-9 h-9"
           />
         </div>
@@ -133,8 +133,8 @@
             My course
           </div>
           <Avatar
-            :imgUrl="userInfor.avtURL"
-            :name="userInfor.fullName || userInfor.email"
+            :imgUrl="user.avtURL"
+            :name="user.fullName || user.email"
             class="w-9 h-9"
           />
         </div>
@@ -264,6 +264,9 @@ export default {
     Avatar,
   },
   watch: {
+    user(newVal) {
+      console.log('meme', newVal);
+    },
     searchInputProp(newValue) {
       this.searchInput = newValue;
     },
@@ -374,6 +377,7 @@ export default {
   },
   computed: {
     ...mapState('notify', ['inforComment']),
+    ...mapState('member', ['user']),
     ...mapState('auth', ['email', 'password']),
     checkRoute() {
       if (
@@ -456,7 +460,6 @@ export default {
         this.totalOnline = await userApi.getTotalUserOnline();
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
-        console.error('Lỗi logout:', error);
         this.emitter.emit('isShowLoading', false);
       }
     },

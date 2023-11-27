@@ -17,6 +17,7 @@
             :src-img="avatar"
             :avatar="true"
             :disabled="!editAvatar"
+            @update="getAvatar"
             extend-class="w-28 h-28"
           />
           <div />
@@ -162,7 +163,7 @@
           <InputLevel
             external-class="w-full"
             :disabled="!editLevel"
-            :radio-prop="inputLevel"
+            :selectedValueProp="inputLevel"
             @update="updateLevel"
           />
         </div>
@@ -196,6 +197,12 @@
       </div>
     </div>
   </div>
+  <div
+    class="mt-10 cursor-pointer rounded-lg bg-green-500 w-24 h-8 leading-8 hover:opacity-50 ml-auto my-5"
+    @click="handleUpdateProfile"
+  >
+    <span class="text-base text-white">Update</span>
+  </div>
 </template>
 
 <script>
@@ -212,6 +219,9 @@ import ButtonEdit from '../../../components/common/ButtonEdit.vue';
 import InputGender from '../../../components/common/InputGender.vue';
 import InputBlog from '../../../components/common/InputBlog.vue';
 import InputLevel from '../../../components/common/InputLevel.vue';
+import userApi from '../../../apis/user';
+import fileApi from '../../../apis/file';
+import { mapState, mapMutations } from 'vuex';
 export default {
   name: 'MemberDetail',
   components: {
@@ -228,10 +238,64 @@ export default {
     this.LOCK_COLOR = LOCK_COLOR;
     this.AVATAR = AVATAR;
     this.ARROW_LEFT = ARROW_LEFT;
+    this.getDetail();
+  },
+  computed: {
+    ...mapState('course', ['file']),
   },
   methods: {
+    ...mapMutations('member', ['setUser']),
+    async handleUpdateProfile() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        let formData = new FormData();
+        if (this.file) {
+          formData.append('file', this.file);
+        }
+        const avatar = await fileApi.updateImg(formData);
+        await userApi.updateUser({
+          uid: this.emailLocalStorage,
+          fullName: this.inputFullname,
+          bio: this.inputBio,
+          avtURL: avatar,
+          email: this.inputEmail,
+          registrationDate: this.inputDate,
+          gender: this.inputGender != 1 ? true : false,
+          level: this.inputLevel,
+          socialMediaConnection: null,
+          role: 'ADMIN',
+        });
+        await this.getDetail();
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.error(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
+    /**
+     * get detail user
+     */
+    async getDetail() {
+      this.emailLocalStorage = localStorage.getItem('email');
+      const res = await userApi.getUser(this.emailLocalStorage);
+      this.setUser(res);
+      this.inputFullname = res?.fullName;
+      this.inputBio = res?.bio;
+      this.avatar = res?.avtURL;
+      this.inputEmail = res?.email;
+      this.inputDate = res?.registrationDate;
+      res.gender ? (this.inputGender = 0) : (this.inputGender = 1);
+      this.socialMediaConnection = res?.socialMediaConnection;
+      if (res.level == 'PENDING') this.inputLevel = 0;
+      else if (res.level == 'BASIC') this.inputLevel = 1;
+      else if (res.level == 'INTERMIDATE') this.inputLevel = 2;
+      else if (res.level == 'ADVANCED') this.inputLevel = 3;
+    },
     onBack() {
       this.$router.push({ name: 'Member' });
+    },
+    getAvatar(data) {
+      this.avatar = data;
     },
     // AVATAR
     handleEditAvatar(data) {
@@ -347,6 +411,7 @@ export default {
   },
   data() {
     return {
+      emailLocalStorage: null,
       cancelAvatar: false,
       avatar: AVATAR,
       avatarOriginal: null,

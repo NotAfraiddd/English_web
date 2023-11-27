@@ -434,7 +434,7 @@ export default {
         });
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
-        console.error('Lỗi đăng nhập:', error);
+        console.error(error);
         this.emitter.emit('isShowLoading', false);
       }
     },

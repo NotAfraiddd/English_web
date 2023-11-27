@@ -48,6 +48,7 @@
           external-class="w-52 flex mr-auto w-full"
           :selectedValueProp="inputLevel"
           @update="updateLevel"
+          :disabled="true"
         />
       </div>
       <ImageUpload
@@ -146,6 +147,7 @@ import { NOTIFY_MESSAGE } from '../../../constants/index';
 import { notification } from 'ant-design-vue';
 import InputLevel from '../../../components/common/InputLevel2.vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
+import courseApi from '../../../apis/course';
 
 export default {
   name: 'CreateCourseReading',
@@ -163,6 +165,8 @@ export default {
     this.STAR_RED = STAR_RED;
     if (this.$route.name == 'CreateCourseForAdvancedReading')
       this.checkName = true;
+    this.idCourse = JSON.parse(localStorage.getItem('IDCourse'));
+    this.inputLevel = JSON.parse(localStorage.getItem('IDCourse'));
   },
 
   methods: {
@@ -183,8 +187,63 @@ export default {
     updateContentReading(data) {
       this.contentReading = data;
     },
-    createCourse() {
-      notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
+    checkQuestions() {
+      this.dataQuestionReading.forEach((questionData, index) => {
+        const questionObject = {
+          questionContent: questionData.title,
+          correctAnswer: this.dataQuestionReadingCorrect[index] + 1,
+          options: questionData.answers.map((answer) => ({ content: answer })),
+        };
+        this.questionList.push(questionObject);
+      });
+    },
+    async createCourse() {
+      this.dataQuestionReading = this.dataQuestionReading.filter(
+        (item, index) => index === 0 || item.title !== '',
+      );
+      this.checkQuestions();
+      try {
+        if (
+          this.dataQuestionReading.length == 2 &&
+          this.dataQuestionReadingCorrect.length == 2 &&
+          this.title
+        ) {
+          this.emitter.emit('isShowLoading', true);
+          await courseApi.createReadingSession({
+            description: this.subTitle,
+            textContent: this.contentReading,
+            title: this.title,
+            course: {
+              id: this.idCourse,
+            },
+            questionList: this.questionList,
+          });
+          this.emitter.emit('isShowLoading', false);
+          notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
+          this.$router.push({
+            name: 'CourseReading',
+            params: { name: this.namePath },
+          });
+        } else if (this.dataQuestionReading.length != 2) {
+          notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_9 });
+        }
+        if (
+          this.dataQuestionReadingCorrect.length != 2 &&
+          this.dataQuestionReading.length == 2
+        ) {
+          notification.error({
+            message: 'The answers has not been filled in yet',
+          });
+        }
+        if (!this.title)
+          notification.error({
+            message: 'Title has not been filled in yet',
+          });
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+        notification.error({ message: NOTIFY_MESSAGE.CREATE_FAILED });
+      }
     },
     cancelCreate() {
       this.$router.push({ name: 'CourseReading' });
@@ -193,12 +252,12 @@ export default {
       this.$router.push({ name: 'CourseReading' });
     },
     addQuestionReading() {
-      if (this.dataQuestionReading.length <= 5)
+      if (this.dataQuestionReading.length <= 8)
         this.dataQuestionReading.push({
           title: '',
           answers: [],
         });
-      else notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION });
+      else notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_9 });
     },
     subtractQuestionReading(data) {
       this.dataQuestionReading.splice(data, 1);
@@ -216,6 +275,9 @@ export default {
 
   data() {
     return {
+      subTitle: null,
+      idCourse: null,
+      questionList: [],
       showModalCreateCourse: false,
       inputLevel: 1,
       checkName: false,
