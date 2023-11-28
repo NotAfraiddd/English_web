@@ -100,13 +100,13 @@ const routes = [
         component: () => import('../pages/user/course/Grammar.vue'),
       },
       {
-        path: 'course/:course/reading/detail/:name',
+        path: 'course/:course/reading/detail/:name/:id',
         name: 'MemberDetailCourseReading',
         component: () =>
           import('../pages/admin/course/DetailCourseReading.vue'),
       },
       {
-        path: 'course/:course/listening/detail/:name',
+        path: 'course/:course/listening/detail/:name/:id',
         name: 'MemberDetailCourseListening',
         component: () =>
           import('../pages/admin/course/DetailCourseListening.vue'),

@@ -112,34 +112,7 @@
             />
           </div>
         </div>
-        <!-- email -->
-        <div class="text-primary_black mt-5">
-          <div
-            class="member-detail__width flex items-center mx-auto justify-center"
-          >
-            <div class="mt-4 flex items-start flex-col contain__member-contain">
-              <div
-                class="text-base text-primary_black font-semibold member-name"
-              >
-                Email
-              </div>
-              <input
-                v-model="inputEmail"
-                type="text"
-                class="border-b form-control w-96"
-                :class="!editEmail ? 'cursor-not-allowed' : ''"
-                spellcheck="false"
-                :disabled="!editEmail"
-              />
-            </div>
-            <!-- Edit -->
-            <ButtonEdit
-              @cancel="handleCancelEmail"
-              @edit="handleEditEmail"
-              @update="handleUpdateEmail"
-            />
-          </div>
-        </div>
+
         <!-- date -->
         <div class="text-primary_black mt-5">
           <div
@@ -191,6 +164,35 @@
               @cancel="handleCancelGender"
               @edit="handleEditGender"
               @update="handleUpdateGender"
+            />
+          </div>
+        </div>
+        <!-- email -->
+        <div class="text-primary_black mt-5">
+          <div
+            class="member-detail__width flex items-center mx-auto justify-center"
+          >
+            <div class="mt-4 flex items-start flex-col contain__member-contain">
+              <div
+                class="text-base text-primary_black font-semibold member-name"
+              >
+                Email
+              </div>
+              <input
+                v-model="inputEmail"
+                type="text"
+                class="border-b form-control w-96"
+                :class="!editEmail ? 'cursor-not-allowed' : ''"
+                spellcheck="false"
+                :disabled="!editEmail"
+              />
+            </div>
+            <!-- Edit -->
+            <ButtonEdit
+              extend-class="invisible"
+              @cancel="handleCancelEmail"
+              @edit="handleEditEmail"
+              @update="handleUpdateEmail"
             />
           </div>
         </div>
@@ -373,7 +375,8 @@ import InputLevel from '../../../components/common/InputLevel.vue';
 import InputBlog from '../../../components/common/InputBlog.vue';
 import { notification } from 'ant-design-vue';
 import userApi from '../../../apis/user';
-import { getFile } from '../../../apis/file';
+import { mapState, mapMutations } from 'vuex';
+import fileAPI from '../../../apis/file';
 export default {
   name: 'SettingProfile',
   components: {
@@ -393,8 +396,13 @@ export default {
     this.AVATAR = AVATAR;
     this.ARROW_LEFT = ARROW_LEFT;
     this.getDetail();
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
+  },
+  computed: {
+    ...mapState('course', ['file']),
   },
   methods: {
+    ...mapMutations('member', ['setUser']),
     getAvatar(data) {
       this.avatar = data;
     },
@@ -404,6 +412,7 @@ export default {
     async getDetail() {
       this.emailLocalStorage = localStorage.getItem('email');
       const res = await userApi.getUser(this.emailLocalStorage);
+      this.setUser(res);
       this.inputFullname = res?.fullName;
       this.inputBio = res?.bio;
       this.avatar = res?.avtURL;
@@ -419,6 +428,11 @@ export default {
     async handleUpdateProfile() {
       try {
         this.emitter.emit('isShowLoading', true);
+        if (this.file) {
+          let formData = new FormData();
+          formData.append('file', this.file);
+          this.avatar = await fileAPI.updateImg(formData);
+        }
         await userApi.updateUser({
           uid: this.emailLocalStorage,
           fullName: this.inputFullname,
@@ -426,12 +440,12 @@ export default {
           avtURL: this.avatar,
           email: this.inputEmail,
           registrationDate: this.inputDate,
-          gender: true,
-          level: 'PENDING',
-          role: 'USER',
-          accountStatus: 'ONLINE',
+          gender: this.inputGender != 1 ? true : false,
+          level: this.inputLevel,
           socialMediaConnection: null,
+          role: this.userInfor.role == 'ADMIN' ? 'ADMIN' : 'USER',
         });
+        await this.getDetail();
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
         console.error(error);
@@ -610,6 +624,7 @@ export default {
   },
   data() {
     return {
+      userInfor: null,
       emailLocalStorage: null,
       activeKey: 1,
       panelMenu: [

@@ -48,6 +48,10 @@ class CourseApi {
     const res = await http.post(`section/createReadingSection`, data);
     return res.data;
   }
+  async getReadingSessionByID(data) {
+    const res = await http.post(`section/getReadingSectionById`, data);
+    return res.data;
+  }
 }
 
 const courseApi = new CourseApi();

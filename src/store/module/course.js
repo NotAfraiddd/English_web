@@ -5,8 +5,12 @@ const course = {
     idCoursePending: null,
     numCourse: 0,
     file: null,
+    idSession: null,
   },
   mutations: {
+    setIdSession(state, idSession) {
+      state.idSession = idSession;
+    },
     setSubmit(state, submit) {
       state.submit = submit;
     },

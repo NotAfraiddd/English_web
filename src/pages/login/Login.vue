@@ -483,6 +483,7 @@ export default {
   },
   methods: {
     ...mapMutations('auth', ['setEmail', 'setPassword']),
+    ...mapMutations('member', ['setUser']),
     handleLoginGoogle() {
       googleTokenLogin().then((response) => {
         console.log('Handle the response', response);
@@ -645,6 +646,7 @@ export default {
             userName: this.email,
             password: this.password,
           });
+          this.setUser(user);
           localStorage.setItem('user', JSON.stringify(user));
           // Đăng nhập thành công
           this.emitter.emit('isShowLoading', false);

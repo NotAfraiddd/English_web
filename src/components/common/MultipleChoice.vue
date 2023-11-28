@@ -15,7 +15,7 @@
           :value="key"
           :checked="isSelected(i.id, key + 1)"
           @change="handleChange(i.id, key + 1)"
-          class="mt-1 mb-auto"
+          class="my-auto"
         />
         <label
           :for="'question-' + i.id + '-' + key"
@@ -92,6 +92,7 @@ export default {
     },
     handleChange(id, key) {
       this.selected[id] = key;
+      this.selected = this.selected.filter((item) => item !== undefined);
       this.$emit('setValue', this.selected);
     },
     hasError(id) {

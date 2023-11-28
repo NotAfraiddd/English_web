@@ -120,8 +120,8 @@
             {{ userInfor.fullName || userInfor.email }}
           </span>
           <Avatar
-            :imgUrl="user.avtURL"
-            :name="user.fullName || user.email"
+            :imgUrl="userInfor.avtURL"
+            :name="userInfor.fullName || userInfor.email"
             class="w-9 h-9"
           />
         </div>
@@ -133,8 +133,8 @@
             My course
           </div>
           <Avatar
-            :imgUrl="user.avtURL"
-            :name="user.fullName || user.email"
+            :imgUrl="userInfor.avtURL"
+            :name="userInfor.fullName || userInfor.email"
             class="w-9 h-9"
           />
         </div>
@@ -264,8 +264,8 @@ export default {
     Avatar,
   },
   watch: {
-    user(newVal) {
-      console.log('meme', newVal);
+    user(newVal, oldVal) {
+      localStorage.setItem('user', JSON.stringify(newVal));
     },
     searchInputProp(newValue) {
       this.searchInput = newValue;
@@ -535,17 +535,19 @@ export default {
       });
     },
     handleGoProfile() {
+      const path = `@${this.userInfor.email}`;
       if (this.checkRoute == true) {
-        this.$router.push({ name: 'AdminDetail', params: { id: 1 } });
+        this.$router.push({ name: 'AdminDetail', params: { id: path } });
       } else {
-        this.$router.push({ name: 'Profile', params: { id: 1 } });
+        this.$router.push({ name: 'Profile', params: { id: path } });
       }
     },
     handleGoToMyCourse() {
       this.$router.push({ name: 'ListCourse' });
     },
     handleGoToSetting() {
-      this.$router.push({ name: 'SettingProfile', params: { id: 1 } });
+      const path = `@${this.userInfor.email}`;
+      this.$router.push({ name: 'SettingProfile', params: { id: path } });
     },
     handleGoToBlog() {
       if (!this.statusBlog) {

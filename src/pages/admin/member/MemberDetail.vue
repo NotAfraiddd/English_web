@@ -82,32 +82,7 @@
         />
       </div>
     </div>
-    <!-- email -->
-    <div class="text-primary_black mt-5">
-      <div
-        class="member-detail__width flex items-center mx-auto justify-center"
-      >
-        <div class="mt-4 flex items-start flex-col contain__member-contain">
-          <div class="text-base text-primary_black font-semibold member-name">
-            Email
-          </div>
-          <input
-            v-model="inputEmail"
-            type="text"
-            class="border-b form-control w-96"
-            :class="!editEmail ? 'cursor-not-allowed' : ''"
-            spellcheck="false"
-            :disabled="!editEmail"
-          />
-        </div>
-        <!-- Edit -->
-        <ButtonEdit
-          @cancel="handleCancelEmail"
-          @edit="handleEditEmail"
-          @update="handleUpdateEmail"
-        />
-      </div>
-    </div>
+
     <!-- date -->
     <div class="text-primary_black mt-5">
       <div
@@ -196,6 +171,33 @@
         />
       </div>
     </div>
+    <!-- email -->
+    <div class="text-primary_black mt-5">
+      <div
+        class="member-detail__width flex items-center mx-auto justify-center"
+      >
+        <div class="mt-4 flex items-start flex-col contain__member-contain">
+          <div class="text-base text-primary_black font-semibold member-name">
+            Email
+          </div>
+          <input
+            v-model="inputEmail"
+            type="text"
+            class="border-b form-control w-96"
+            :class="!editEmail ? 'cursor-not-allowed' : ''"
+            spellcheck="false"
+            :disabled="!editEmail"
+          />
+        </div>
+        <!-- Edit -->
+        <ButtonEdit
+          extend-class="invisible"
+          @cancel="handleCancelEmail"
+          @edit="handleEditEmail"
+          @update="handleUpdateEmail"
+        />
+      </div>
+    </div>
   </div>
   <div
     class="mt-10 cursor-pointer rounded-lg bg-green-500 w-24 h-8 leading-8 hover:opacity-50 ml-auto my-5"
@@ -248,16 +250,16 @@ export default {
     async handleUpdateProfile() {
       try {
         this.emitter.emit('isShowLoading', true);
-        let formData = new FormData();
         if (this.file) {
+          let formData = new FormData();
           formData.append('file', this.file);
+          this.avatar = await fileApi.updateImg(formData);
         }
-        const avatar = await fileApi.updateImg(formData);
         await userApi.updateUser({
           uid: this.emailLocalStorage,
           fullName: this.inputFullname,
           bio: this.inputBio,
-          avtURL: avatar,
+          avtURL: this.avatar,
           email: this.inputEmail,
           registrationDate: this.inputDate,
           gender: this.inputGender != 1 ? true : false,

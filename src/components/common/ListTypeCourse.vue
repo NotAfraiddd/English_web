@@ -56,7 +56,7 @@
         </div>
       </div>
     </div>
-    <div v-if="showAddCourse" class="course relative">
+    <div v-if="showAddCourse" class="course relative mx-5">
       <div
         @click="handleAdd"
         class="flex justify-center cursor-pointer border-dashed border-4 border-primary_black_opacity-600 flex-col w-full px-4 gap-1 rounded-2xl h-40"
