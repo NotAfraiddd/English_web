@@ -7,8 +7,8 @@
     <div class="relative">
       <figure class="personal-figure absolute w-32 h-32 my-0 mr-0 ml-7">
         <img
-          :src="AVATAR"
-          class="personal-avatar w-32 h-32 rounded-full"
+          :src="avatar"
+          class="personal-avatar w-32 h-32 rounded-full object-cover"
           alt="avatar"
         />
       </figure>
@@ -140,6 +140,7 @@ export default {
       fullName: null,
       bio: null,
       registrationDate: null,
+      avatar: null,
       listCourses: [
         {
           id: 1,
@@ -186,11 +187,13 @@ export default {
     async getDetail() {
       const email = localStorage.getItem('email');
       const res = await userApi.getUser(email);
+      console.log(res);
       this.fullName = res?.fullName;
       this.bio = res?.bio;
       this.registrationDate = moment(res?.registrationDate).format(
         'DD/MM/YYYY',
       );
+      this.avatar = res?.avtURL;
       this.socialMediaConnection = res?.socialMediaConnection;
     },
   },

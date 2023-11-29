@@ -2,16 +2,6 @@ import http from './http';
 import axios from 'axios';
 
 class CourseApi {
-  async getUser(data) {
-    const axiosInstance = axios.create({
-      baseURL: 'http://localhost:9090/',
-      headers: {
-        'Content-type': 'text/plain',
-      },
-    });
-    const res = await axiosInstance.post(`user/getUser`, data);
-    return res.data;
-  }
   async allCourse() {
     const res = await http.get(`course/getAllCourse`);
     return res.data;

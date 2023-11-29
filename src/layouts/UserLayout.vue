@@ -1,7 +1,7 @@
 <template>
   <BaseSideBar />
   <div class="content-user-layout">
-    <BaseHeader :hideSearch="true" />
+    <BaseHeader :hideSearch="true" @back="handleBack" />
     <div class="user-layout">
       <div class="user-content-wrap">
         <router-view />
@@ -190,6 +190,9 @@ export default {
   },
   methods: {
     ...mapMutations('notify', ['setNotify', 'setStatusCallAPICourse']),
+    handleBack() {
+      this.$router.push({ name: 'HomeUser' });
+    },
   },
 };
 </script>

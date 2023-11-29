@@ -394,6 +394,7 @@ import { mapMutations } from 'vuex';
 import { LoadingMixins } from '../../mixins/Loading';
 import LoadingScreen from '../../components/common/LoadingScreen.vue';
 import axios from 'axios';
+import { notification } from 'ant-design-vue';
 
 export default {
   name: 'Login',
@@ -658,6 +659,7 @@ export default {
             this.$router.push({ name: 'HomeUser' });
           }
         } catch (error) {
+          notification.error({ message: 'Account or password is wrong' });
           // Xử lý lỗi đăng nhập
           console.error('Lỗi đăng nhập:', error);
           this.emitter.emit('isShowLoading', false);

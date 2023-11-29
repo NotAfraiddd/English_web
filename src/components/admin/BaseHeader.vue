@@ -12,7 +12,10 @@
     >
       <div
         class="flex justify-center items-center cursor-pointer"
-        :class="!showBack && 'invisible'"
+        :class="
+          (!showBack && 'invisible') ||
+          (this.$route.name == 'HomeUser' && 'invisible')
+        "
         @click="changeBack"
         @mouseenter="hoverBack"
         @mouseleave="resetHover"

@@ -165,8 +165,8 @@ export default {
   computed: {
     ...mapState('auth', ['error']),
     level() {
-      if (this.error >= 20) return 'Basic';
-      else if (10 <= this.error && this.error < 20) return 'Intermedia';
+      if (this.error >= 20) return 'Beginner';
+      else if (10 <= this.error && this.error < 20) return 'Intermediate';
       else return 'Advanced';
     },
   },

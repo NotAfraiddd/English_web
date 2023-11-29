@@ -115,9 +115,6 @@ export default {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   gap: 1rem;
-  @media screen and (max-width: 1550px) {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  }
 }
 label:not(.form-check-label):not(.custom-file-label) {
   font-weight: 200;
