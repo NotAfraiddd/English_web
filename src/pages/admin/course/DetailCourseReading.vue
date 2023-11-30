@@ -10,7 +10,7 @@
     </div>
     <div class="detail-field mx-auto mt-5">
       <img
-        class="detail-image border-gray-100 border-t-0 border ml-2 mr-10 object-cover"
+        class="detail-image border-gray-100 border-t-0 border ml-2 mr-10 object-cover w-full"
         :src="imgURL == null ? MOUNTAIN_CLIMB : imgURL"
         alt=""
       />

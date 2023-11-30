@@ -445,6 +445,7 @@ export default {
           socialMediaConnection: null,
           role: this.userInfor.role == 'ADMIN' ? 'ADMIN' : 'USER',
         });
+        notification.success({ message: 'Update profile success' });
         await this.getDetail();
         this.emitter.emit('isShowLoading', false);
       } catch (error) {

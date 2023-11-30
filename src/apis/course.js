@@ -34,12 +34,28 @@ class CourseApi {
     const res = await http.post(`section/getReadingSectionList`, data);
     return res.data;
   }
+  async getAllListeningSession(data) {
+    const res = await http.post(`section/getListeningSectionList`, data);
+    return res.data;
+  }
   async createReadingSession(data) {
     const res = await http.post(`section/createReadingSection`, data);
     return res.data;
   }
+  async createListeningSession(data) {
+    const res = await http.post(`section/createListeningSection`, data);
+    return res.data;
+  }
   async getReadingSessionByID(data) {
     const res = await http.post(`section/getReadingSectionById`, data);
+    return res.data;
+  }
+  async getListeningSessionByID(data) {
+    const res = await http.post(`section/getListeningSectionById`, data);
+    return res.data;
+  }
+  async getRandomQuestionListening(data) {
+    const res = await http.post(`section/mixupAnswer`, data);
     return res.data;
   }
 }

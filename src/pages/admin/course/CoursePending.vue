@@ -32,7 +32,7 @@
             </div>
             <div class="flex items-end">
               Type: &nbsp;
-              <div class="">
+              <div :class="item.type === 'Course' && 'text-text_green'">
                 {{ item.type }}
               </div>
             </div>
@@ -75,6 +75,7 @@ import { formatSpacerIntoHyphen } from '../../../constants/function';
 import Avatar from '../../../components/common/Avatar.vue';
 import courseApi from '../../../apis/course';
 import { mapMutations } from 'vuex';
+import { notification } from 'ant-design-vue';
 
 export default {
   name: 'CoursePending',
@@ -111,6 +112,7 @@ export default {
               level: modifiedLevel,
               nameCourse: item?.name,
               type: 'Course',
+              colorCode: item?.colorCode,
             });
           } else {
             if (item?.readingSectionList) {
@@ -157,6 +159,7 @@ export default {
     async handleReject(data) {
       this.idCourse = data.id;
       try {
+        this.emitter.emit('isShowLoading', true);
         const data = await courseApi.rejectedCourse({ id: this.idCourse });
         const dataSocket = {
           room: this.userID,
@@ -167,6 +170,7 @@ export default {
           data: data,
           kind: SOCKET.REJECTED_COURSE_PENDING,
         };
+        notification.success({ message: 'Reject course' });
         this.$socket.emit('sendSignal', content);
       } catch (error) {
         this.emitter.emit('isShowLoading', false);
@@ -183,6 +187,7 @@ export default {
       if (typeof data.id == 'number') {
         this.idCourse = data.id;
         try {
+          this.emitter.emit('isShowLoading', true);
           const data = await courseApi.approvedCourse({ id: this.idCourse });
           const dataSocket = {
             room: this.userID,
@@ -193,6 +198,7 @@ export default {
             data: data,
             kind: SOCKET.NOTIFY_COURSE_PENDING,
           };
+          notification.success({ message: 'Approve course' });
           this.$socket.emit('sendSignal', content);
         } catch (error) {
           this.emitter.emit('isShowLoading', false);

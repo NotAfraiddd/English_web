@@ -10,7 +10,6 @@
       <ImageUpload
         :src-img="avatar"
         extend-class="w-96 h-96"
-        :remove="true"
         extend-class-icon="icon-remove"
         @update="updateAvatar"
       />

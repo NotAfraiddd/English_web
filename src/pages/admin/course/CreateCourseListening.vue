@@ -54,7 +54,6 @@
       :src-img="AVATAR"
       extend-class="w-96 h-96"
       extend-class-icon="icon-remove"
-      :remove="true"
     />
     <Audio
       :data-prop="selectedAudio"
@@ -81,7 +80,7 @@
       </div>
     </div>
     <ButtonBack
-      title="Listen to the dialogue above and match the beginnings and endings of the phrases ( only 5 questions )"
+      title="Listen to the dialogue above and match the beginnings and endings of the phrases ( only 11 questions )"
       extend-class="text-left mt-5"
     />
     <div class="text-primary_black font-semibold mt-2 text-left">

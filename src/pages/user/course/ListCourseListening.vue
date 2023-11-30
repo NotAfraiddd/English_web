@@ -23,7 +23,14 @@
           being used in the world today.
         </div>
       </div>
-      <ListCourse :data="listListening" @clicked="goToDetailCourse" />
+      <ListCourse
+        v-if="listListening.length != 0"
+        :data="listListening"
+        @clicked="goToDetailCourse"
+      />
+      <div v-else class="text-primary_grey_time mt-10 text-right text-xl">
+        No data
+      </div>
     </div>
     <div
       class="sticky top-24 w-2/5 mx-3 mt-14 contain-list__reading border-8 border-table_border bg-white"
@@ -116,7 +123,7 @@
     >
       +
     </div>
-    <div class="text-primary_black font-semibold">Add new course</div>
+    <div class="text-primary_black font-semibold">Add new session</div>
   </div>
 </template>
 <script>
@@ -130,6 +137,8 @@ import {
   LISTENING,
 } from '../../../constants/image';
 import { formatSpacerIntoHyphen } from '../../../constants/function';
+import courseApi from '../../../apis/course';
+import { notification } from 'ant-design-vue';
 
 export default {
   name: 'ListCourseListening',
@@ -149,8 +158,57 @@ export default {
     }
     this.namePath = this.$route.params.name;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
+    this.idCourse = JSON.parse(localStorage.getItem('IDCourse'));
+    this.getAllListening();
   },
   methods: {
+    /**
+     * get all session
+     * @param {*} dataID
+     */
+    async getAllListening() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const arrAPI = await courseApi.getAllListeningSession({
+          id: this.idCourse,
+        });
+
+        this.listListening = [];
+
+        if (
+          this.userInfor.role == 'ADMIN' ||
+          this.userInfor.level == 'ADVANCED'
+        ) {
+          arrAPI.forEach((item) => {
+            console.log(item);
+            this.listListening.push({
+              id: item?.id,
+              title: item?.title,
+              subTitle: item?.description,
+              image: item?.thumbnailURL || EXAMPLE,
+              status: item?.sectionStatus == 'PENDING' ? true : false,
+            });
+          });
+        } else {
+          arrAPI.forEach((item) => {
+            if (item?.sectionStatus == 'APPROVED') {
+              console.log('item');
+              this.listListening.push({
+                id: item?.id,
+                title: item?.description,
+                subTitle: item?.textContent,
+                image: item?.thumbnailURL || EXAMPLE,
+                status: false,
+              });
+            }
+          });
+        }
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
     onBack() {
       this.$router.push({ name: 'HomeUser' });
     },
@@ -168,13 +226,22 @@ export default {
         name: 'UserCreateCourseListening',
         params: { course: this.namePath },
       });
+      // this.$router.push({
+      //   name: 'UserCreateCourseReading',
+      //   params: { course: this.namePath },
+      // });
     },
     goToDetailCourse(data) {
-      const path = formatSpacerIntoHyphen(data.item.title);
-      this.$router.push({
-        name: 'MemberDetailCourseListening',
-        params: { course: path.toLowerCase() },
-      });
+      if (!data?.item.status) {
+        console.log(data.item);
+        const path = formatSpacerIntoHyphen(data.item.title);
+        this.$router.push({
+          name: 'MemberDetailCourseListening',
+          params: { course: path.toLowerCase(), id: data?.item.id },
+        });
+      } else {
+        notification.warning({ message: 'Session awaiting approval' });
+      }
     },
     showListCourseReading() {
       this.courseReading = true;
@@ -229,35 +296,13 @@ export default {
   },
   data() {
     return {
+      idCourse: null,
       namePath: null,
       userInfor: null,
       createPost: 0,
       courseReading: false,
       courseListening: false,
-      listListening: [
-        {
-          id: 1,
-          title:
-            'Message to new friendMessage to new friendMessage to new friend',
-          subTitle:
-            'Read a direct message on social media to practise and improve your reading skills.',
-          image: EXAMPLE,
-        },
-        {
-          id: 2,
-          title: 'Message to new friend',
-          subTitle:
-            'Read a direct message on social media to practise and improve your reading skills.',
-          image: EXAMPLE,
-        },
-        {
-          id: 3,
-          title: 'Message to new friend',
-          subTitle:
-            'Read a direct message on social media to practise and improve your reading skills.',
-          image: EXAMPLE,
-        },
-      ],
+      listListening: [],
       listDetailReading: [
         {
           id: 1,

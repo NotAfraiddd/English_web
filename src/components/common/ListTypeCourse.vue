@@ -11,7 +11,7 @@
           class="course-learn__detail flex justify-center border flex-col w-full px-4 gap-1 rounded-2xl h-40"
           :style="`background-color: ${item.color};`"
         >
-          <div class="font-semibold text-2xl text-white break-normal">
+          <div class="font-semibold text-xl text-white break-normal">
             {{ item.title }}
           </div>
           <div class="text-base text-white text-overflow break-normal">

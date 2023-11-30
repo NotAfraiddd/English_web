@@ -1,6 +1,13 @@
 <template>
   <div class="mx-2">
     <ButtonBack title="Detail Listening" :hide-back="true" @back="onBack" />
+    <div class="flex items-center w-full my-10">
+      <div class="bg-primary_line course-line w-full" />
+      <div class="text-2xl text-primary_black font-semibold w-full">
+        {{ title }}
+      </div>
+      <div class="bg-primary_line course-line w-full" />
+    </div>
     <div class="detail-field mx-auto mt-5">
       <img :src="MOUNTAIN_CLIMB" alt="" srcset="" class="detail-image" />
     </div>
@@ -94,30 +101,6 @@
       @setAnswers="setAnswers"
       @setQuetions="setQuetions"
     />
-    <!-- put priority -->
-    <div class="flex items-center flex-wrap mt-5 gap-5">
-      <ButtonBack title="Put the tasks in order of priority." />
-      <div
-        v-if="userInfor.role == 'ADMIN' && checkRoute"
-        class="h-6 border-orange border rounded-xl flex items-center"
-      >
-        <div
-          class="text-primary_black hover:underline cursor-pointer mx-3"
-          @click="showModalFill"
-        >
-          Correct Answers
-        </div>
-      </div>
-    </div>
-    <PutPriority
-      placeholder="priority sequence"
-      :data-priority="listPriority"
-      :list-correct-priority="listCorrectPriority"
-      :input-priority-prop="inputPriority"
-      :error-priority="errorPriority"
-      :submit-prop="submitPriority"
-      @update="setValuePriority"
-    />
     <div class="flex justify-center gap-20 items-center py-5 text-base">
       <div v-if="!isMatchedRoute('MemberDetailCourseListening')">
         <div class="flex gap-20">
@@ -205,28 +188,6 @@
       </div>
     </template>
   </ConfirmModal>
-  <ConfirmModal
-    :showModal="modalFillin"
-    @closeModal="closeModalFillin"
-    @save="closeModalFillin"
-    :showFooter="false"
-    :widthCustom="300"
-  >
-    <template #content>
-      <div class="w-full text-center text-xl text-primary">Correct Answers</div>
-      <div
-        v-for="(item, index) in listCorrectPriority"
-        :key="index"
-        class="w-full"
-      >
-        <div class="text-base flex w-full justify-between mt-3">
-          <div>Answers {{ index + 1 }} is</div>
-          &nbsp;
-          <div class="text-orange">{{ item }}</div>
-        </div>
-      </div>
-    </template>
-  </ConfirmModal>
 </template>
 <script>
 import ButtonBack from '../../../components/common/ButtonBack.vue';
@@ -234,8 +195,8 @@ import Audio from '../../../components/common/Audio.vue';
 import { ARROW_LEFT, MOUNTAIN_CLIMB, RELOAD } from '../../../constants/image';
 import MultipleChoice from '../../../components/common/MultipleChoice.vue';
 import MatchWord from '../../../components/common/MatchWord.vue';
-import PutPriority from '../../../components/common/PutPriority.vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
+import courseApi from '../../../apis/course';
 export default {
   name: 'DetailCourseListening',
   components: {
@@ -244,7 +205,6 @@ export default {
     ConfirmModal,
     MultipleChoice,
     MatchWord,
-    PutPriority,
   },
   created() {
     this.RELOAD = RELOAD;
@@ -252,6 +212,11 @@ export default {
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
     this.paramName = this.$route.params.name;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
+    this.idSession = +this.$route.params.id;
+    if (this.idSession) {
+      this.getDetailSession();
+      this.getRandomQuestions();
+    }
   },
   watch: {
     listAnswers() {
@@ -284,10 +249,57 @@ export default {
     },
   },
   methods: {
+    /**
+     * get random question
+     */
+    async getRandomQuestions() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const detailSession = await courseApi.getRandomQuestionListening({
+          id: this.idSession,
+        });
+        detailSession.forEach((word, index) => {
+          this.dataListWords.push({
+            id: index + 1,
+            word: word,
+          });
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
+    /**
+     * get detail session
+     */
+    async getDetailSession() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const detailSession = await courseApi.getListeningSessionByID({
+          id: this.idSession,
+        });
+        this.title = detailSession?.title;
+        this.textContent = detailSession?.textContent;
+        this.imgURL = detailSession?.imgURL;
+        this.selectedAudio = detailSession?.mediaURL;
+        detailSession?.questionList.forEach((item) => {
+          this.dataMultipleChoice.push({
+            id: item.id,
+            title: item.questionContent,
+            question: item.options.map((item) => item.content),
+          });
+          this.correctAnswer.push(+item.correctAnswer);
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
     resetResult() {
       this.submitMultipleChoice = false;
       this.submitMatching = false;
-      this.submitPriority = false;
       this.errorsMultiple = [];
       this.errorsMatching = [];
       this.errorPriority = [];
@@ -308,9 +320,7 @@ export default {
     showModalMatch() {
       this.modalMatch = true;
     },
-    showModalFill() {
-      this.modalFillin = true;
-    },
+
     /**
      * close modal
      */
@@ -320,9 +330,7 @@ export default {
     closeModalMatch() {
       this.modalMatch = false;
     },
-    closeModalFillin() {
-      this.modalFillin = false;
-    },
+
     isMatchedRoute(routeName) {
       return this.$route.matched.some(({ name }) => {
         return name == routeName;
@@ -386,17 +394,6 @@ export default {
         }
         this.submitMatching = true;
       }
-      // priority
-      if (!this.submitPriority) {
-        for (let i = 0; i < this.listCorrectPriority.length; i++) {
-          let checkPriority = this.comparePriority(
-            this.listCorrectPriority[i],
-            this.inputPriority[i],
-          );
-          this.errorPriority.push({ index: i, status: checkPriority });
-        }
-        this.submitPriority = true;
-      }
       this.checkTranscript = true;
     },
     checkHeight() {
@@ -446,12 +443,14 @@ export default {
   },
   data() {
     return {
+      idSession: null,
+      title: null,
+      textContent: null,
+      imgURL: null,
       userInfor: null,
       rotation: 0,
       modalMuilti: false,
       modalMatch: false,
-      modalFillin: false,
-      submitPriority: false,
       submitMatching: false,
       submitMultipleChoice: false,
       checkTranscript: false,
@@ -510,77 +509,9 @@ export default {
         { id: 4, word: null },
         { id: 5, word: null },
       ],
-      dataListWords: [
-        { id: 1, word: 'at the hospital' },
-        { id: 2, word: 'apple' },
-        { id: 3, word: 'have breakfast' },
-        { id: 4, word: 'have lunch' },
-        { id: 5, word: 'at the school' },
-      ],
+      dataListWords: [],
       // trac nghiem
-      dataMultipleChoice: [
-        {
-          id: 0,
-          title: 'Mary ask John about that: Mary ask John',
-          question: [
-            'Do you have breakfast?',
-            'Do you have lunch?',
-            'Do you have dinner?',
-            'I’m hungry all day.',
-          ],
-        },
-        {
-          id: 1,
-          title: 'Mary ask John about that:Mary ask John',
-          question: [
-            'Do you have breakfast?',
-            'Do you have lunch?',
-            'Do you have dinner?',
-            'I’m hungry all day.',
-          ],
-        },
-        {
-          id: 2,
-          title: 'Mary ask :',
-          question: [
-            'Do you have breakfast?',
-            'Do you have lunch?',
-            'Do you have dinner?',
-            'I’m hungry all day.',
-          ],
-        },
-        {
-          id: 3,
-          title: 'Mary ask John about that: Mary ask John',
-          question: [
-            'Do you have breakfast?',
-            'Do you have lunch? Do you have breakfast?Do you have breakfast?',
-            'Do you have dinner?',
-            'I’m hungry all day.',
-          ],
-        },
-        {
-          id: 4,
-          title:
-            'Mary ask John about that:Mary ask John Mary ask John about that:Mary ask John',
-          question: [
-            'Do you have breakfast?',
-            'Do you have lunch?',
-            'Do you have dinner?',
-            'I’m hungry all day.',
-          ],
-        },
-        {
-          id: 5,
-          title: 'Mary ask :',
-          question: [
-            'Do you have breakfast? Do you have breakfast? Do you have breakfast?',
-            'Do you have lunch?',
-            'Do you have dinner?',
-            'I’m hungry all day.',
-          ],
-        },
-      ],
+      dataMultipleChoice: [],
       correctAnswer: [1, 2, 3, 4, 1, 2],
       myAnswer: [],
       errorsMultiple: [],
@@ -595,6 +526,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.course-line {
+  height: 1px;
+}
 .rotate-transition {
   transition: transform 1s ease-in-out;
 }

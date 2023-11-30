@@ -5,6 +5,7 @@ const course = {
     idCoursePending: null,
     numCourse: 0,
     file: null,
+    media: null,
     idSession: null,
   },
   mutations: {
@@ -22,6 +23,9 @@ const course = {
     },
     setFileImage(state, file) {
       state.file = file;
+    },
+    setMedia(state, media) {
+      state.media = media;
     },
   },
 };

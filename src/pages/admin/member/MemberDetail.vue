@@ -224,6 +224,7 @@ import InputLevel from '../../../components/common/InputLevel.vue';
 import userApi from '../../../apis/user';
 import fileApi from '../../../apis/file';
 import { mapState, mapMutations } from 'vuex';
+import { notification } from 'ant-design-vue';
 export default {
   name: 'MemberDetail',
   components: {
@@ -267,6 +268,7 @@ export default {
           socialMediaConnection: null,
           role: 'ADMIN',
         });
+        notification.success({ message: 'Update profile success' });
         await this.getDetail();
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
@@ -283,7 +285,7 @@ export default {
       this.setUser(res);
       this.inputFullname = res?.fullName;
       this.inputBio = res?.bio;
-      this.avatar = res?.avtURL;
+      this.avatar = res?.avtURL || AVATAR;
       this.inputEmail = res?.email;
       this.inputDate = res?.registrationDate;
       res.gender ? (this.inputGender = 0) : (this.inputGender = 1);

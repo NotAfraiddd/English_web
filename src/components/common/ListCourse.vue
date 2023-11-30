@@ -7,7 +7,12 @@
         class="relative w-full hover:opacity-80 cursor-pointer"
         @click="handleClick(item)"
       >
-        <img :src="item.image" alt="" srcset="" class="h-44 course-image" />
+        <img
+          :src="item.image"
+          alt=""
+          srcset=""
+          class="h-44 course-image object-cover"
+        />
         <div class="absolute w-7/12 top-12 bg-white h-32 course-infor">
           <div
             class="flex flex-col items-start ml-8"

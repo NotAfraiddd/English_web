@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
+
 export default {
   props: {
     dataProp: { type: String, default: '' },
@@ -37,8 +39,10 @@ export default {
     };
   },
   methods: {
+    ...mapMutations('course', ['setMedia']),
     selectAudio(event) {
       const file = event.target.files[0];
+      this.setMedia(file);
       if (file) {
         this.playAudio(file);
         this.$emit('valueAudio', URL.createObjectURL(file));

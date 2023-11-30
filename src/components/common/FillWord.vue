@@ -34,18 +34,6 @@ export default {
     placeholderLeft: { type: String, default: () => '' },
     placeholderRight: { type: String, default: () => '' },
   },
-  watch: {
-    dataWords: {
-      deep: true,
-      handler(newDataQuestions) {
-        for (const item of newDataQuestions) {
-          if (!Array.isArray(item.answers) || item.answers.length !== 5) {
-            item.answers = ['', '', '', '', ''];
-          }
-        }
-      },
-    },
-  },
   methods: {},
   data() {
     return {};

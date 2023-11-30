@@ -52,6 +52,7 @@ export default {
           this.userInfor.level == 'ADVANCED'
         ) {
           arrAPI.forEach((item) => {
+            console.log(item);
             this.listReading.push({
               id: item?.id,
               title: item?.title,
@@ -62,6 +63,7 @@ export default {
           });
         } else {
           arrAPI.forEach((item) => {
+            console.log(item);
             if (item?.sectionStatus == 'APPROVED') {
               this.listReading.push({
                 id: item?.id,
@@ -87,10 +89,10 @@ export default {
     },
     goToDetailCourse(data) {
       if (!data?.item.status) {
-        const path = formatSpacerIntoHyphen(data.item.title);
+        this.path = formatSpacerIntoHyphen(data.item.title);
         this.$router.push({
           name: 'DetailCourseReading',
-          params: { name: path.toLowerCase() },
+          params: { name: this.path.toLowerCase() },
         });
       } else {
         notification.warning({ message: 'Session awaiting approval' });
@@ -100,6 +102,7 @@ export default {
   data() {
     return {
       listReading: [],
+      path: null,
     };
   },
 };
