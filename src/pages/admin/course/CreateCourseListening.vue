@@ -120,11 +120,7 @@
       placeholder-left="Phrase 1 to be filled in"
       placeholder-right="phrase 2 to be filled in"
     />
-    <ButtonBack
-      title="Put the tasks in order of priority"
-      extend-class="mt-5"
-    />
-    <PutTask :data-put-tasks="dataPutTasks" />
+
     <div class="border-t border-primary_line mt-5" />
     <div v-if="!checkName" class="flex justify-center gap-20 mt-5 text-base">
       <div
@@ -328,12 +324,6 @@ export default {
         { id: 3, contentLeft: '', contentRight: '' },
         { id: 4, contentLeft: '', contentRight: '' },
         { id: 5, contentLeft: '', contentRight: '' },
-      ],
-      dataPutTasks: [
-        { id: 1, content: '' },
-        { id: 2, content: '' },
-        { id: 3, content: '' },
-        { id: 4, content: '' },
       ],
       selectedAudio: null,
       dataQuestionCorrect: [1, 2], // example

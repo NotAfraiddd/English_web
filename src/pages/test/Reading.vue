@@ -2,7 +2,7 @@
   <div class="mx-2 mt-6">
     <ButtonBack
       v-if="this.$route.name == 'TestLevelReading'"
-      title="ABC"
+      title="Reading Test Level"
       extend-class="mb-5"
       @back="handleBack"
       :hide-back="true"
@@ -211,6 +211,7 @@ export default {
       this.myAnswer = [];
       this.errorsMultiple = [];
       this.numberErrors = 0;
+      this.submitMultipleChoice = false;
       this.rotation += 360;
     },
     async checkLevel() {

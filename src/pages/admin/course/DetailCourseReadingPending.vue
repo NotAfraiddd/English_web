@@ -91,26 +91,6 @@
       @setAnswers="setAnswers"
       @setQuetions="setQuetions"
     />
-    <div class="flex items-center flex-wrap mt-5 gap-5">
-      <ButtonBack title="Put the tasks in order of priority." />
-      <div class="h-6 border-orange border rounded-xl flex items-center">
-        <div
-          class="text-primary_black hover:underline cursor-pointer mx-3"
-          @click="showModalFill"
-        >
-          Correct Answers
-        </div>
-      </div>
-    </div>
-    <PutPriority
-      placeholder="Priority sequence"
-      :data-priority="listPriority"
-      :list-correct-priority="listCorrectPriority"
-      :input-priority-prop="inputPriority"
-      :error-priority="errorPriority"
-      :submit-prop="submitPriority"
-      @update="setValuePriority"
-    />
     <div class="flex justify-center gap-20 items-center py-5 text-base">
       <div class="flex items-center justify-around w-full">
         <div
@@ -171,28 +151,6 @@
         <div class="text-base flex w-full justify-between mt-3">
           <div>Answers {{ index + 1 }} is</div>
           <div class="text-orange">{{ item.word }}</div>
-        </div>
-      </div>
-    </template>
-  </ConfirmModal>
-  <ConfirmModal
-    :showModal="modalFillin"
-    @closeModal="closeModalFillin"
-    @save="closeModalFillin"
-    :showFooter="false"
-    :widthCustom="300"
-  >
-    <template #content>
-      <div class="w-full text-center text-xl text-primary">Correct Answers</div>
-      <div
-        v-for="(item, index) in listCorrectPriority"
-        :key="index"
-        class="w-full"
-      >
-        <div class="text-base flex w-full justify-between mt-3">
-          <div>Answers {{ index + 1 }} is</div>
-          &nbsp;
-          <div class="text-orange">{{ item }}</div>
         </div>
       </div>
     </template>
@@ -282,15 +240,12 @@ export default {
     resetResult() {
       this.submitMultipleChoice = false;
       this.submitMatching = false;
-      this.submitPriority = false;
       this.errorsMultiple = [];
       this.errorsMatching = [];
-      this.errorPriority = [];
       this.listAnswers.forEach((item) => {
         item.word = null;
       });
       this.myAnswer = [];
-      this.inputPriority = [];
     },
     /**
      * show modal
@@ -321,9 +276,7 @@ export default {
         return name == routeName;
       });
     },
-    setValuePriority(data) {
-      this.inputPriority.push(+data.value);
-    },
+
     onBack() {
       this.$router.push({ name: 'CourseListeningPending' });
     },
@@ -376,17 +329,6 @@ export default {
             });
         }
         this.submitMatching = true;
-      }
-      // priority
-      if (!this.submitPriority) {
-        for (let i = 0; i < this.listCorrectPriority.length; i++) {
-          let checkPriority = this.comparePriority(
-            this.listCorrectPriority[i],
-            this.inputPriority[i],
-          );
-          this.errorPriority.push({ index: i, status: checkPriority });
-        }
-        this.submitPriority = true;
       }
       this.checkTranscript = true;
     },
@@ -456,23 +398,11 @@ export default {
       modalMuilti: false,
       modalMatch: false,
       modalFillin: false,
-      submitPriority: false,
       submitMatching: false,
       submitMultipleChoice: false,
       checkTranscript: false,
       paramName: null,
       drag: false,
-      errorPriority: [],
-      inputPriority: [],
-      listPriority: [
-        { id: 1, question: 'I have an apple in my bag.' },
-        { id: 2, question: 'I have an apple in my bag.' },
-        {
-          id: 3,
-          question: 'I have an apple in my bag.I have an apple in my bag.',
-        },
-        { id: 4, question: 'I have an apple in my bag.' },
-      ],
       listQuestions: [
         {
           id: 1,
@@ -583,7 +513,6 @@ export default {
         },
       ],
       correctAnswer: [1, 2, 3, 4, 1, 2],
-      listCorrectPriority: [1, 3, 2, 4],
       myAnswer: [],
       errorsMultiple: [],
       errorsMatching: [],

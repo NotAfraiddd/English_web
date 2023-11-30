@@ -47,6 +47,9 @@
         external-class="w-52 flex mr-auto"
         :selectedValueProp="inputLevel"
         @update="updateLevel"
+        :disabled="
+          this.$route.name == 'TestLevelListeningUpdate' ? true : false
+        "
       />
     </div>
     <!-- listening -->
@@ -120,13 +123,12 @@
       placeholder-left="Phrase 1 to be filled in"
       placeholder-right="phrase 2 to be filled in"
     />
-    <ButtonBack
-      title="Put the tasks in order of priority"
-      extend-class="mt-5"
-    />
-    <PutTask :data-put-tasks="dataPutTasks" />
+
     <div class="border-t border-primary_line mt-5" />
-    <div v-if="!checkName" class="flex justify-center gap-20 mt-5 text-base">
+    <div
+      v-if="!checkName && this.$route.name != 'TestLevelListeningUpdate'"
+      class="flex justify-center gap-20 mt-5 text-base"
+    >
       <div
         @click="cancelCreate"
         class="border border-primary w-24 text-center text-primary h-8 leading-8 hover:opacity-70 rounded-lg cursor-pointer"
@@ -138,6 +140,17 @@
         class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
       >
         Create
+      </div>
+    </div>
+    <div
+      v-else-if="this.$route.name == 'TestLevelListeningUpdate'"
+      class="flex justify-center gap-20 mt-5 text-base"
+    >
+      <div
+        @click="createOrUpdate"
+        class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+      >
+        Create/Update
       </div>
     </div>
     <div v-else class="flex justify-center gap-20 mt-5 text-base">
@@ -197,7 +210,6 @@ import Audio from '../../../components/common/Audio.vue';
 import Word from '../../../components/common/Editor.vue';
 import AddAnswer from '../../../components/common/AddAnswer.vue';
 import FillWord from '../../../components/common/FillWord.vue';
-import PutTask from '../../../components/common/PutTask.vue';
 import { STAR_RED, AVATAR } from '../../../constants/image';
 import { NOTIFY_MESSAGE, UI } from '../../../constants/index';
 import { notification } from 'ant-design-vue';
@@ -212,7 +224,6 @@ export default {
     Word,
     AddAnswer,
     FillWord,
-    PutTask,
     ImageUpload,
     Inputlevel,
   },
@@ -223,9 +234,14 @@ export default {
     this.STAR_RED = STAR_RED;
     if (this.$route.name == 'CreateCourseForAdvancedListening')
       this.checkName = true;
+    this.inputLevel =
+      this.$route.name == 'TestLevelListeningUpdate' ? 'Pending' : '';
   },
 
   methods: {
+    createOrUpdate() {
+      console.log('update');
+    },
     // level
     updateLevel(e) {
       this.inputLevel = e;
@@ -329,12 +345,7 @@ export default {
         { id: 4, contentLeft: '', contentRight: '' },
         { id: 5, contentLeft: '', contentRight: '' },
       ],
-      dataPutTasks: [
-        { id: 1, content: '' },
-        { id: 2, content: '' },
-        { id: 3, content: '' },
-        { id: 4, content: '' },
-      ],
+
       selectedAudio: null,
       dataQuestionCorrect: [1, 2], // example
     };

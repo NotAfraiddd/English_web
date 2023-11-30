@@ -1,5 +1,12 @@
 <template>
   <div class="mx-2 mt-6">
+    <ButtonBack
+      v-if="this.$route.name == 'TestLevelListening'"
+      title="Listening Test Level"
+      extend-class="mb-5"
+      @back="handleBack"
+      :hide-back="true"
+    />
     <div class="flex items-center w-full">
       <div class="bg-primary_line course-line w-full" />
       <div class="text-lg text-primary_black font-semibold w-full">
@@ -41,17 +48,39 @@
     />
 
     <div
+      v-if="this.$route.name != 'TestLevelListening'"
       @click="handleSubmit"
       class="cursor-pointer my-5 mx-auto font-semibold rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
     >
       Next
+    </div>
+    <div v-else class="flex gap-20 items-center mt-10 justify-center">
+      <div
+        class="cursor-pointer font-semibold rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+        @click="goToEdit"
+      >
+        <span class="text-base text-primary">Edit</span>
+      </div>
+      <div
+        @click="handleTest"
+        class="cursor-pointer font-semibold rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+      >
+        Test
+      </div>
+      <img
+        :src="RELOAD"
+        alt=""
+        class="w-5 h-5 rotate-transition"
+        @click="resetResult"
+        :style="{ transform: 'rotate(' + rotation + 'deg)' }"
+      />
     </div>
   </div>
 </template>
 <script>
 import ButtonBack from '../../components/common/ButtonBack.vue';
 import Audio from '../../components/common/Audio.vue';
-import { ARROW_LEFT, MOUNTAIN_CLIMB } from '../../constants/image';
+import { ARROW_LEFT, MOUNTAIN_CLIMB, RELOAD } from '../../constants/image';
 import MultipleChoice from '../../components/common/MultipleChoice.vue';
 import MatchWord from '../../components/common/MatchWord.vue';
 import { mapState, mapMutations } from 'vuex';
@@ -59,6 +88,7 @@ export default {
   name: 'ListeningTest',
   components: { ButtonBack, Audio, MultipleChoice, MatchWord },
   created() {
+    this.RELOAD = RELOAD;
     this.ARROW_LEFT = ARROW_LEFT;
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
     localStorage.removeItem('error');
@@ -76,6 +106,53 @@ export default {
   },
   methods: {
     ...mapMutations('auth', ['setError', 'setDefaultError']),
+    resetResult() {
+      this.submitMultipleChoice = false;
+      this.submitMatching = false;
+      this.errorsMultiple = [];
+      this.errorsMatching = [];
+      this.listAnswers.forEach((item) => {
+        item.word = null;
+      });
+      this.myAnswer = [];
+    },
+    handleTest() {
+      if (!this.submitMultipleChoice) {
+        this.errorsMultiple = [];
+        for (let i = 0; i < this.dataMultipleChoice.length; i++) {
+          if (
+            this.compareMultiple(this.correctAnswer[i], this.myAnswer[i]) ==
+            false
+          ) {
+            this.errorsMultiple.push(this.dataMultipleChoice[i].id + 1);
+          }
+        }
+        this.submitMultipleChoice = true;
+      }
+      // matching
+      if (!this.submitMatching) {
+        this.errorsMatching = [];
+        for (let i = 0; i < this.listAnswers.length; i++) {
+          if (!this.compareMatch(this.listQuestions[i], this.listAnswers[i])) {
+            this.errorsMatching.push({
+              id: this.listAnswers[i].id,
+              type: this.listAnswers[i].word == null ? 0 : 1,
+            });
+          } else
+            this.errorsMatching.push({
+              id: this.listAnswers[i].id,
+              type: 2,
+            });
+        }
+        this.submitMatching = true;
+      }
+    },
+    handleBack() {
+      this.$router.push({ name: 'Test' });
+    },
+    goToEdit() {
+      this.$router.push({ name: 'TestLevelListeningUpdate' });
+    },
     /**
      *  Check if the route name matches the route being displayed.
      *  @returns {boolean} - Returns true if the route name matches the current route, false otherwise.
