@@ -15,16 +15,16 @@
       <div class="flex items-start">
         <div class="font-semibold mt-5">Profile Blog</div>
         <ImageUpload
-          :src-img="avatar"
+          :src-img="avatar || AVATAR"
           extend-class="h-96 width-image"
           extend-class-icon="icon-remove"
-          :remove="true"
           @update="getAvatar"
         />
       </div>
     </div>
-    <Word :contentProp="contentListening" @update="updateContentListening" />
+    <Word :contentProp="content" @update="updateContentListening" />
     <div
+      @click="handleCreatePost"
       class="bg-primary w-24 h-9 leading-9 rounded-md cursor-pointer ml-auto mt-5 hover:opacity-50"
     >
       Create
@@ -36,25 +36,67 @@ import ButtonBackUser from '../../../components/common/ButtonBackUser.vue';
 import Word from '../../../components/common/Editor.vue';
 import ImageUpload from '../../../components/common/ImageUpload.vue';
 import { AVATAR } from '../../../constants/image';
+import blogApi from '../../../apis/blog';
+import fileAPI from '../../../apis/file';
+import { notification } from 'ant-design-vue';
+
 export default {
   name: 'CreateBlog',
   components: { ButtonBackUser, Word, ImageUpload },
   created() {
     this.AVATAR = AVATAR;
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
   },
   data() {
     return {
-      contentListening: null,
-      avatar: AVATAR,
+      content: null,
+      avatar: null,
+      file: null,
+      inputTitle: null,
+      userInfor: null,
     };
   },
 
   methods: {
     updateContentListening(data) {
-      this.contentListening = data;
+      this.content = data;
     },
-    getAvatar(data) {
+    getAvatar(data, fileData) {
       this.avatar = data;
+      this.file = fileData;
+    },
+    async handleCreatePost() {
+      try {
+        if (this.inputTitle && this.content && this.file) {
+          this.emitter.emit('isShowLoading', true);
+          if (this.file) {
+            let formData = new FormData();
+            formData.append('file', this.file);
+            this.avatar = await fileAPI.updateImg(formData);
+          }
+          await blogApi.createBlog({
+            content: this.inputTitle,
+            thumbnailURL: this.avatar,
+            author: {
+              uid: this.userInfor.email,
+            },
+          });
+          this.emitter.emit('isShowLoading', false);
+          this.$router.push({ name: 'MyBlog' });
+        }
+        if (!this.inputTitle) {
+          notification.error({ message: 'Missing title' });
+        }
+        if (!this.content) {
+          notification.error({ message: 'Missing content blog' });
+        }
+        if (!this.file) {
+          notification.error({ message: 'Missing image' });
+        }
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
     },
   },
 };

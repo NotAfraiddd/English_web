@@ -40,12 +40,7 @@
           transcript && 'border',
         ]"
       >
-        <div
-          class="m-5"
-          v-html="
-            `<div>Susanne: Hi, Mario. Can you help me prepare some things for the next month?<br>Mario: OK, sure. What can I help you with?<br>Susanne: I need to visit the customer in Germany. It's important.<br>Mario: What can I do to help?<br>Susanne: Can you send an email to the customer? Ask them when I can visit them next week. Please do this first. It's a priority and very urgent.<br>Mario: Right. I'll do it today.<br>Susanne: Thanks. This next task is also important. Can you invite everyone to the next team meeting?<br>Mario: Yes, I will.<br>Susanne: But first you need to book a meeting room. After that, please send everyone an email about it.<br>Mario: Yes, of course.<br>Susanne: And finally, can you write a short report about our new project? I have to give a presentation to our managers next month. Please do it when you have time &ndash; sometime in the next two or three weeks. It's not too urgent.<br>Mario: Sure, no problem. I can do it this week.<br>Susanne: There's no hurry. Take your time.</div>`
-          "
-        />
+        <div class="m-5" v-html="script" />
       </div>
     </div>
     <div ref="transcriptTop">
@@ -284,6 +279,7 @@ export default {
         this.textContent = detailSession?.textContent;
         this.imgURL = detailSession?.imgURL;
         this.selectedAudio = detailSession?.mediaURL;
+        this.script = detailSession?.script;
         detailSession?.questionList.forEach((item, index) => {
           this.dataMultipleChoice.push({
             id: index + 1,
@@ -456,6 +452,7 @@ export default {
   },
   data() {
     return {
+      script: null,
       idSession: null,
       title: null,
       textContent: null,

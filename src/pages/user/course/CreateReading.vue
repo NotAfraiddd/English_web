@@ -141,6 +141,7 @@ import { notification } from 'ant-design-vue';
 import InputLevel from '../../../components/common/InputLevel2.vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import courseApi from '../../../apis/course';
+import fileAPI from '../../../apis/file';
 export default {
   name: 'CreateCourseReading',
   components: {
@@ -167,8 +168,9 @@ export default {
     },
   },
   methods: {
-    updateAvatar(data) {
+    updateAvatar(data, fileData) {
       this.avatar = data;
+      this.fileImg = fileData;
     },
     // level
     updateLevel(e) {
@@ -209,7 +211,13 @@ export default {
           this.createTitle
         ) {
           this.emitter.emit('isShowLoading', true);
+          if (this.fileImg) {
+            let formData = new FormData();
+            formData.append('file', this.fileImg);
+            this.avatar = await fileAPI.updateImg(formData);
+          }
           await courseApi.createReadingSession({
+            imgURL: this.avatar,
             description: this.createSubtitle,
             textContent: this.contentReading,
             title: this.createTitle,
@@ -290,6 +298,7 @@ export default {
 
   data() {
     return {
+      fileImg: null,
       idCourse: null,
       questionList: [],
       namePath: null,

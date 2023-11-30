@@ -176,9 +176,9 @@ export default {
         this.title = detailSession?.title;
         this.textContent = detailSession?.textContent;
         this.imgURL = detailSession?.imgURL;
-        detailSession?.questionList.forEach((item) => {
+        detailSession?.questionList.forEach((item, index) => {
           this.dataMultipleChoice.push({
-            id: item.id,
+            id: index + 1,
             title: item.questionContent,
             question: item.options.map((item) => item.content),
           });
@@ -225,9 +225,7 @@ export default {
       });
     },
     getAnswerMultichoice(data) {
-      if (data) {
-        this.myAnswer.push(...data);
-      }
+      this.myAnswer = data;
     },
     compareMultiple(valueA, valueB) {
       return JSON.stringify(valueA) === JSON.stringify(valueB);
@@ -237,7 +235,7 @@ export default {
         this.errorsMultiple = [];
         for (let i = 0; i < this.dataMultipleChoice.length; i++) {
           if (!this.compareMultiple(this.correctAnswer[i], this.myAnswer[i])) {
-            this.errorsMultiple.push(this.dataMultipleChoice[i].id + 1);
+            this.errorsMultiple.push(this.dataMultipleChoice[i].id);
           }
         }
         this.submitMultipleChoice = true;

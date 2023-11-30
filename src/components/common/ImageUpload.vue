@@ -85,7 +85,7 @@ export default {
         const reader = new FileReader();
         reader.onload = (e) => {
           const base64Image = e.target.result;
-          this.$emit('update', base64Image);
+          this.$emit('update', base64Image, imageFile);
         };
         reader.readAsDataURL(imageFile);
         event.target.value = '';

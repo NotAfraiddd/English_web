@@ -510,7 +510,7 @@ export default {
     changeBack() {
       this.$router.push({ name: 'HomeUser' });
     },
-    getData(data) {
+    async getData(data) {
       const result = this.userLevel.some(
         (item) =>
           item.level == data.item.level && item.status == data.item.status,
@@ -521,7 +521,27 @@ export default {
           this.courseObject.title = data.item.title;
           this.courseObject.subtitle = data.item.subtitle;
           this.modalChooseCourse = data.status;
-          if (data.item.id) localStorage.setItem('IDCourse', data.item.id);
+          if (data.item.id) {
+            localStorage.setItem('IDCourse', data.item.id);
+            this.emitter.emit('isShowLoading', true);
+            try {
+              await courseApi.createCourseAttemp({
+                courseAttempt: {
+                  course: {
+                    id: data.item.id,
+                  },
+                  completion: 0,
+                },
+                user: {
+                  uid: this.userInfor.email,
+                },
+              });
+              this.emitter.emit('isShowLoading', false);
+            } catch (error) {
+              console.log(error);
+              this.emitter.emit('isShowLoading', false);
+            }
+          }
         }
       } else notification.warn({ message: 'Your level is not yet achieved' });
     },

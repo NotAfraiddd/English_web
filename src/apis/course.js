@@ -58,6 +58,19 @@ class CourseApi {
     const res = await http.post(`section/mixupAnswer`, data);
     return res.data;
   }
+
+  async createCourseAttemp(data) {
+    const res = await http.post(`courseAttemp/createCourseAttempt`, data);
+    return res.data;
+  }
+
+  async createListeningSecionAttemp(data) {
+    const res = await http.post(
+      `sectionAttempt/createListeningSectionAttempt`,
+      data,
+    );
+    return res.data;
+  }
 }
 
 const courseApi = new CourseApi();
