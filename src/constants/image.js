@@ -54,9 +54,11 @@ import MOUNTAIN_CLIMB from '../assets/images/mountain-climbing.jpg';
 import WARNING from '../assets/images/warn.svg';
 import RELOAD from '../assets/images/reload.svg';
 import ADMIN from '../assets/images/avatar_admin.png';
+import DOCUMENT from '../assets/images/document.svg';
 
 export {
   ADMIN,
+  DOCUMENT,
   RELOAD,
   WARNING,
   CONGRATULATION,

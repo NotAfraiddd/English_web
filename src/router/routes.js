@@ -151,6 +151,31 @@ const routes = [
         component: () => import('../pages/admin/member/Member.vue'),
       },
       {
+        path: 'test-level',
+        name: 'Test',
+        component: () => import('../pages/admin/test/Test.vue'),
+      },
+      {
+        path: 'test-level/reading',
+        name: 'TestLevelReading',
+        component: () => import('../pages/test/Reading.vue'),
+      },
+      {
+        path: 'test-level/reading/update',
+        name: 'TestLevelReadingUpdate',
+        component: () => import('../pages/admin/test/TestReadingUpdate.vue'),
+      },
+      {
+        path: 'test-level/listening',
+        name: 'TestLevelListening',
+        component: () => import('../pages/test/Listening.vue'),
+      },
+      {
+        path: 'test-level/listening/update',
+        name: 'TestLevelListeningUpdate',
+        component: () => import('../pages/admin/test/TestReadingListening.vue'),
+      },
+      {
         path: 'edit/:id',
         name: 'AdminDetail',
         component: () => import('../pages/admin/member/MemberDetail.vue'),

@@ -71,6 +71,7 @@ import {
   ADMIN_HOME,
   ADMIN_MEMBER,
   MENU,
+  DOCUMENT,
 } from '../../constants/image';
 export default {
   name: 'BaseSidebar',
@@ -96,6 +97,7 @@ export default {
     this.ADMIN_HOME = ADMIN_HOME;
     this.ADMIN_MEMBER = ADMIN_MEMBER;
     this.MENU = MENU;
+    this.DOCUMENT = DOCUMENT;
     // this.logoRoute = this.isRoleAdmin ? ADMIN_DASHBOARD_ROUTE : HOME_ROUTE;
   },
   data() {
@@ -120,6 +122,12 @@ export default {
           message: 'Member',
           to: '/admin/member',
           iconPath: ADMIN_MEMBER,
+          activeLinks: [],
+        },
+        {
+          message: 'Test Level',
+          to: '/admin/test-level',
+          iconPath: DOCUMENT,
           activeLinks: [],
         },
       ],

@@ -400,6 +400,11 @@ export default {
         this.isMatchedRoute('CreateCourseReading') ||
         this.isMatchedRoute('AdminDetail') ||
         this.isMatchedRoute('MemberDetail') ||
+        this.isMatchedRoute('Test') ||
+        this.isMatchedRoute('TestLevelListening') ||
+        this.isMatchedRoute('TestLevelReadingUpdate') ||
+        this.isMatchedRoute('TestLevelListeningUpdate') ||
+        this.isMatchedRoute('TestLevelReading') ||
         this.isMatchedRoute('CommentReported')
       )
         return true;

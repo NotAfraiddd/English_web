@@ -1,5 +1,12 @@
 <template>
   <div class="mx-2 mt-6">
+    <ButtonBack
+      v-if="this.$route.name == 'TestLevelReading'"
+      title="ABC"
+      extend-class="mb-5"
+      @back="handleBack"
+      :hide-back="true"
+    />
     <div class="flex items-center w-full">
       <div class="bg-primary_line course-line w-full" />
       <div class="text-lg text-primary_black font-semibold w-full">
@@ -43,7 +50,7 @@
       />
     </div>
     <div class="flex justify-center gap-20 items-center py-5 text-base">
-      <div class="flex gap-20">
+      <div v-if="this.$route.name != 'TestLevelReading'" class="flex gap-20">
         <div
           class="cursor-pointer font-semibold rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
           @click="onBack"
@@ -56,6 +63,27 @@
         >
           Submit
         </div>
+      </div>
+      <div v-else class="flex gap-20 items-center">
+        <div
+          class="cursor-pointer font-semibold rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="goToEdit"
+        >
+          <span class="text-base text-primary">Edit</span>
+        </div>
+        <div
+          @click="handleTest"
+          class="cursor-pointer font-semibold rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+        >
+          Test
+        </div>
+        <img
+          :src="RELOAD"
+          alt=""
+          class="w-5 h-5 rotate-transition"
+          @click="resetResult"
+          :style="{ transform: 'rotate(' + rotation + 'deg)' }"
+        />
       </div>
     </div>
   </div>
@@ -141,6 +169,7 @@ import {
   MOUNTAIN_CLIMB,
   CONGRATULATION,
   WARNING,
+  RELOAD,
 } from '../../constants/image';
 import { mapState, mapMutations } from 'vuex';
 import userApi from '../../apis/user';
@@ -148,6 +177,7 @@ export default {
   name: 'ReadingTest',
   components: { ButtonBack, MultipleChoice, ConfirmModal },
   created() {
+    this.RELOAD = RELOAD;
     this.WARNING = WARNING;
     this.CONGRATULATION = CONGRATULATION;
     this.ARROW_LEFT = ARROW_LEFT;
@@ -171,6 +201,18 @@ export default {
     },
   },
   methods: {
+    handleBack() {
+      this.$router.push({ name: 'Test' });
+    },
+    goToEdit() {
+      this.$router.push({ name: 'TestLevelReadingUpdate' });
+    },
+    resetResult() {
+      this.myAnswer = [];
+      this.errorsMultiple = [];
+      this.numberErrors = 0;
+      this.rotation += 360;
+    },
     async checkLevel() {
       if (this.error >= 20) {
         await userApi.updateLevel({
@@ -223,6 +265,20 @@ export default {
     compareMultiple(valueA, valueB) {
       return JSON.stringify(valueA) === JSON.stringify(valueB);
     },
+    handleTest() {
+      if (!this.submitMultipleChoice) {
+        this.errorsMultiple = [];
+        for (let i = 0; i < this.dataMultipleChoice.length; i++) {
+          if (
+            this.compareMultiple(this.correctAnswer[i], this.myAnswer[i]) ==
+            false
+          ) {
+            this.errorsMultiple.push(this.dataMultipleChoice[i].id);
+          }
+        }
+        this.submitMultipleChoice = true;
+      }
+    },
     handleSubmit() {
       // MultipleChoice
       if (!this.submitMultipleChoice) {
@@ -248,6 +304,7 @@ export default {
   },
   data() {
     return {
+      rotation: 0,
       userInfor: null,
       modalBack: false,
       modalNotifyLevel: false,
@@ -394,5 +451,8 @@ export default {
     border: 1px solid #eae4e4;
     box-shadow: -4px 4px 4px 0px rgba(0, 0, 0, 0.25);
   }
+}
+.rotate-transition {
+  transition: transform 1s ease-in-out;
 }
 </style>

@@ -39,19 +39,7 @@
       @setAnswers="setAnswers"
       @setQuetions="setQuetions"
     />
-    <ButtonBack
-      title="Put the tasks in order of priority."
-      extend-class="mt-5"
-    />
-    <PutPriority
-      placeholder="Priority sequence"
-      :data-priority="listPriority"
-      :list-correct-priority="listCorrectPriority"
-      :input-priority-prop="inputPriority"
-      :error-priority="errorPriority"
-      :submit-prop="submitPriority"
-      @update="setValuePriority"
-    />
+
     <div
       @click="handleSubmit"
       class="cursor-pointer my-5 mx-auto font-semibold rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
@@ -66,11 +54,10 @@ import Audio from '../../components/common/Audio.vue';
 import { ARROW_LEFT, MOUNTAIN_CLIMB } from '../../constants/image';
 import MultipleChoice from '../../components/common/MultipleChoice.vue';
 import MatchWord from '../../components/common/MatchWord.vue';
-import PutPriority from '../../components/common/PutPriority.vue';
 import { mapState, mapMutations } from 'vuex';
 export default {
   name: 'ListeningTest',
-  components: { ButtonBack, Audio, MultipleChoice, MatchWord, PutPriority },
+  components: { ButtonBack, Audio, MultipleChoice, MatchWord },
   created() {
     this.ARROW_LEFT = ARROW_LEFT;
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
@@ -98,15 +85,7 @@ export default {
         return name == routeName;
       });
     },
-    setValuePriority(data) {
-      this.inputPriority = this.listCorrectPriority.map((element, index) => {
-        if (index === data.i) {
-          return data.value;
-        } else {
-          return this.inputPriority[index];
-        }
-      });
-    },
+
     setQuetions(data) {
       this.dataListWords = data;
     },
@@ -157,26 +136,14 @@ export default {
         }
         this.submitMatching = true;
       }
-      // priority
-      if (!this.submitPriority) {
-        for (let i = 0; i < this.listCorrectPriority.length; i++) {
-          let checkPriority = this.comparePriority(
-            this.listCorrectPriority[i],
-            this.inputPriority[i],
-          );
-          this.errorPriority.push({ index: i, status: checkPriority });
-        }
-        this.submitPriority = true;
-      }
-      if (
-        this.submitMatching &&
-        this.submitMultipleChoice &&
-        this.submitPriority
-      ) {
+
+      if (this.submitMatching && this.submitMultipleChoice) {
         setTimeout(() => {
           localStorage.setItem('error', this.error);
         }, 0);
-        this.$router.push({ name: 'ReadingTest' });
+        if (this.$route.name != 'TestLevelListening')
+          this.$router.push({ name: 'ReadingTest' });
+        else this.$router.push({ name: 'TestLevelReading' });
       }
     },
     checkHeight() {
@@ -200,22 +167,9 @@ export default {
   data() {
     return {
       numberErrorTemp: 0,
-      submitPriority: false,
       submitMatching: false,
       submitMultipleChoice: false,
       drag: false,
-      errorPriority: [],
-      inputPriority: [],
-      listPriority: [
-        { id: 1, question: 'I have an apple in my bag.' },
-        { id: 2, question: 'I have an apple in my bag.' },
-        {
-          id: 3,
-          question: 'I have an apple in my bag.I have an apple in my bag.',
-        },
-        { id: 4, question: 'I have an apple in my bag.' },
-      ],
-      listCorrectPriority: [1, 3, 2, 4],
       listQuestions: [
         {
           id: 1,
