@@ -12,9 +12,8 @@
         <input
           type="radio"
           :id="'question-' + i.id + '-' + key"
-          :value="key"
-          :checked="isSelected(i.id, key + 1)"
-          @change="handleChange(i.id, key + 1)"
+          :value="key + 1"
+          v-model="selected[i.id - 1]"
           class="my-auto"
         />
         <label
@@ -25,7 +24,7 @@
         </label>
       </div>
       <span
-        v-if="hasError(i.id + 1)"
+        v-if="hasError(i.id)"
         class="ml-1 text-text_red font-semibold text-base"
       >
         x
@@ -36,6 +35,7 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex';
+
 export default {
   created() {
     this.paramName = this.$route.name;
@@ -63,8 +63,14 @@ export default {
         this.numError = this.errors.length;
         this.setError(this.numError);
       } else {
-        this.selected = [];
+        this.selected = {};
       }
+    },
+    selected: {
+      handler(newVal) {
+        this.$emit('setValue', newVal);
+      },
+      deep: true,
     },
   },
   computed: {
@@ -74,26 +80,14 @@ export default {
     return {
       paramName: null,
       numError: 0,
-      selected: [],
+      selected: {}, // Use an object to store selected answers for each question
       submit: false,
     };
   },
   methods: {
     ...mapMutations('auth', ['setError']),
-    /**
-     *  Check if the route name matches the route being displayed.
-     *  @returns {boolean} - Returns true if the route name matches the current route, false otherwise.
-     */
     isMatchedRoute(routeName) {
       return this.$route.name == routeName;
-    },
-    isSelected(id, key) {
-      return this.selected[id] === key;
-    },
-    handleChange(id, key) {
-      this.selected[id] = key;
-      this.selected = this.selected.filter((item) => item !== undefined);
-      this.$emit('setValue', this.selected);
     },
     hasError(id) {
       if (
@@ -110,6 +104,7 @@ export default {
   },
 };
 </script>
+
 <style lang="scss" scoped>
 .grid-container {
   display: grid;

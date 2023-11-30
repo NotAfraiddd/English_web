@@ -180,7 +180,6 @@ export default {
           this.userInfor.level == 'ADVANCED'
         ) {
           arrAPI.forEach((item) => {
-            console.log(item);
             this.listListening.push({
               id: item?.id,
               title: item?.title,
@@ -192,7 +191,6 @@ export default {
         } else {
           arrAPI.forEach((item) => {
             if (item?.sectionStatus == 'APPROVED') {
-              console.log('item');
               this.listListening.push({
                 id: item?.id,
                 title: item?.description,
@@ -226,14 +224,9 @@ export default {
         name: 'UserCreateCourseListening',
         params: { course: this.namePath },
       });
-      // this.$router.push({
-      //   name: 'UserCreateCourseReading',
-      //   params: { course: this.namePath },
-      // });
     },
     goToDetailCourse(data) {
       if (!data?.item.status) {
-        console.log(data.item);
         const path = formatSpacerIntoHyphen(data.item.title);
         this.$router.push({
           name: 'MemberDetailCourseListening',

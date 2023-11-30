@@ -197,6 +197,7 @@ import MultipleChoice from '../../../components/common/MultipleChoice.vue';
 import MatchWord from '../../../components/common/MatchWord.vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import courseApi from '../../../apis/course';
+import { notification } from 'ant-design-vue';
 export default {
   name: 'DetailCourseListening',
   components: {
@@ -283,13 +284,21 @@ export default {
         this.textContent = detailSession?.textContent;
         this.imgURL = detailSession?.imgURL;
         this.selectedAudio = detailSession?.mediaURL;
-        detailSession?.questionList.forEach((item) => {
+        detailSession?.questionList.forEach((item, index) => {
           this.dataMultipleChoice.push({
-            id: item.id,
+            id: index + 1,
             title: item.questionContent,
             question: item.options.map((item) => item.content),
           });
           this.correctAnswer.push(+item.correctAnswer);
+        });
+        detailSession?.fillInBlankQuestionList.forEach((ele, index) => {
+          this.listQuestions.push({
+            id: index + 1,
+            contentLeft: ele?.leftContent,
+            contentRight: ele?.rightContent,
+            word: ele?.answer,
+          });
         });
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
@@ -302,14 +311,13 @@ export default {
       this.submitMatching = false;
       this.errorsMultiple = [];
       this.errorsMatching = [];
-      this.errorPriority = [];
       this.listAnswers.forEach((item) => {
         item.word = null;
       });
       this.myAnswer = [];
-      this.inputPriority = [];
       this.rotation += 360;
       this.checkTranscript = false;
+      this.getRandomQuestions();
     },
     /**
      * show modal
@@ -336,9 +344,7 @@ export default {
         return name == routeName;
       });
     },
-    setValuePriority(data) {
-      this.inputPriority.push(+data.value);
-    },
+
     onBack() {
       if (this.isMatchedRoute('MemberDetailCourseListening'))
         this.$router.push({ name: 'ListCourseListening' });
@@ -359,9 +365,6 @@ export default {
     compareMultiple(valueA, valueB) {
       return JSON.stringify(valueA) === JSON.stringify(valueB);
     },
-    comparePriority(valueA, valueB) {
-      return valueA == valueB;
-    },
     compareMatch(quetions, answers) {
       if (quetions.word == answers.word) return true;
       else return false;
@@ -372,7 +375,7 @@ export default {
         this.errorsMultiple = [];
         for (let i = 0; i < this.dataMultipleChoice.length; i++) {
           if (!this.compareMultiple(this.correctAnswer[i], this.myAnswer[i])) {
-            this.errorsMultiple.push(this.dataMultipleChoice[i].id + 1);
+            this.errorsMultiple.push(this.dataMultipleChoice[i].id);
           }
         }
         this.submitMultipleChoice = true;
@@ -394,6 +397,16 @@ export default {
         }
         this.submitMatching = true;
       }
+
+      if (this.errorsMultiple.length == 0 && this.errorsMatching.length == 0) {
+        notification.success({ message: 'Congratulation complete' });
+      } else {
+        notification.warn({
+          message:
+            'Unfortunately !!! Please complete it to move on to the next section',
+        });
+      }
+
       this.checkTranscript = true;
     },
     checkHeight() {
@@ -457,51 +470,8 @@ export default {
       paramName: null,
       drag: false,
       errorPriority: [],
-      inputPriority: [],
-      // theo thu tu
-      listPriority: [
-        { id: 1, question: 'I have an apple in my bag.' },
-        { id: 2, question: 'I have an apple in my bag.' },
-        {
-          id: 3,
-          question: 'I have an apple in my bag.I have an apple in my bag.',
-        },
-        { id: 4, question: 'I have an apple in my bag.' },
-      ],
-      listCorrectPriority: [1, 3, 2, 4],
       // match
-      listQuestions: [
-        {
-          id: 1,
-          contentLeft: 'I have',
-          contentRight: ' in my bag.',
-          word: 'apple',
-        },
-        {
-          id: 2,
-          contentLeft: 'Susan and John go',
-          contentRight: 'with theirs parent today.',
-          word: 'at the school',
-        },
-        {
-          id: 3,
-          contentLeft: 'I have',
-          contentRight: ' in my bag.',
-          word: 'have lunch',
-        },
-        {
-          id: 4,
-          contentLeft: 'Susan and John go',
-          contentRight: 'with theirs parent today.',
-          word: 'have breakfast',
-        },
-        {
-          id: 5,
-          contentLeft: 'I have',
-          contentRight: ' in my bag.',
-          word: 'at the hospital',
-        },
-      ],
+      listQuestions: [],
       listAnswers: [
         { id: 1, word: null },
         { id: 2, word: null },
@@ -512,14 +482,13 @@ export default {
       dataListWords: [],
       // trac nghiem
       dataMultipleChoice: [],
-      correctAnswer: [1, 2, 3, 4, 1, 2],
+      correctAnswer: [],
       myAnswer: [],
       errorsMultiple: [],
       errorsMatching: [],
       emptysMultiple: [],
       transcript: false,
-      selectedAudio:
-        'https://6a63fca904fd268f15f7-d5770ffdd579eb31eaa89faeffc55fe7.ssl.cf1.rackcdn.com/LE_listening_C1_A_job_interview.mp3',
+      selectedAudio: null,
     };
   },
 };

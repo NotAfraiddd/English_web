@@ -205,6 +205,8 @@ import Inputlevel from '../../../components/common/InputLevel2.vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import { validNumber } from '../../../constants/function';
 import courseApi from '../../../apis/course';
+import fileApi from '../../../apis/file';
+import { mapState } from 'vuex';
 export default {
   name: 'CreateCourseListening',
   components: {
@@ -284,6 +286,16 @@ export default {
           this.title
         ) {
           this.emitter.emit('isShowLoading', true);
+          if (this.file) {
+            let formData = new FormData();
+            formData.append('file', this.file);
+            this.avatar = await fileApi.updateImg(formData);
+          }
+          if (this.media) {
+            let formData = new FormData();
+            formData.append('file', this.media);
+            this.selectedAudio = await fileApi.updateMp3(formData);
+          }
           const data = {
             description: this.subTitle,
             script: this.contentListening,
@@ -296,20 +308,19 @@ export default {
             questionList: this.questionList,
             fillInBlankQuestionList: this.fillInBlankQuestionList,
           };
-          console.log(data);
-          // await courseApi.createListeningSession(data);
+          await courseApi.createListeningSession(data);
           this.emitter.emit('isShowLoading', false);
           notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
           this.$router.push({
             name: 'ListCourseListening',
             params: { name: this.namePath },
           });
-        } else if (this.dataQuestionReading.length != 2) {
+        } else if (this.dataQuestion.length != 2) {
           notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_9 });
         }
         if (
-          this.dataQuestionReadingCorrect.length != 9 &&
-          this.dataQuestionReading.length == 9
+          this.dataQuestionCorrect.length != 9 &&
+          this.dataQuestion.length == 9
         ) {
           notification.error({
             message: 'The answers has not been filled in yet',
@@ -369,7 +380,9 @@ export default {
         $('.create-course').animate({ scrollTo: element.scrollHeight }, 0);
     },
   },
-  computed: {},
+  computed: {
+    ...mapState('course', ['media', 'file']),
+  },
 
   data() {
     return {
@@ -383,8 +396,8 @@ export default {
       inputLevel: 1,
       contentListening: '',
       screen: UI.UI_LISTENING,
-      title: '',
-      subTitle: '',
+      title: 'title',
+      subTitle: 'subTitle',
       indexFocus: null,
       numWords: 1,
       word: [],
