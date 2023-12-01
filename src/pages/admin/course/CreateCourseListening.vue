@@ -193,7 +193,6 @@ import Audio from '../../../components/common/Audio.vue';
 import Word from '../../../components/common/Editor.vue';
 import AddAnswer from '../../../components/common/AddAnswer.vue';
 import FillWord from '../../../components/common/FillWord.vue';
-import PutTask from '../../../components/common/PutTask.vue';
 import { STAR_RED, AVATAR } from '../../../constants/image';
 import { NOTIFY_MESSAGE, UI } from '../../../constants/index';
 import { notification } from 'ant-design-vue';
@@ -208,7 +207,6 @@ export default {
     Word,
     AddAnswer,
     FillWord,
-    PutTask,
     ImageUpload,
     Inputlevel,
   },

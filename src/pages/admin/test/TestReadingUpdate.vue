@@ -56,9 +56,10 @@
         />
       </div>
       <ImageUpload
-        :src-img="AVATAR"
+        :src-img="avatar"
         extend-class="w-96 h-96"
         extend-class-icon="icon-remove"
+        @update="getAvatar"
       />
 
       <ButtonBack title="Reading text" extend-class="mt-5" />
@@ -165,6 +166,7 @@ import { notification } from 'ant-design-vue';
 import InputLevel from '../../../components/common/InputLevel2.vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import courseApi from '../../../apis/course';
+import fileAPI from '../../../apis/file';
 
 export default {
   name: 'CreateCourseReading',
@@ -183,13 +185,49 @@ export default {
     if (this.$route.name == 'CreateCourseForAdvancedReading')
       this.checkName = true;
     this.idCourse = JSON.parse(localStorage.getItem('IDCourse'));
+    this.idSection = JSON.parse(localStorage.getItem('IDCourseTestLevel'));
     this.inputLevel =
       this.$route.name == 'TestLevelReadingUpdate'
         ? 'Pending'
         : JSON.parse(localStorage.getItem('IDCourse'));
+    this.getDetailSession();
   },
 
   methods: {
+    getAvatar(data, fileImg) {
+      this.avatar = data;
+      this.file = fileImg;
+    },
+    /**
+     * get detail session
+     */
+    async getDetailSession() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const detailSession = await courseApi.getReadingSessionByID({
+          id: this.idSection,
+        });
+        this.title = detailSession?.title;
+        this.subTitle = detailSession?.description;
+        this.contentReading = detailSession?.textContent;
+        this.avatar = detailSession?.imgURL;
+        detailSession?.questionList.forEach((item, index) => {
+          this.dataQuestionReading.push({
+            id: index + 1,
+            title: item.questionContent,
+            answers: item.options.map((item) => item.content),
+          });
+
+          this.dataQuestionReadingCorrect.push(+item.correctAnswer);
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        if (error.response.status == 404) this.noData = true;
+        this.$router.push({ name: 'TestLevelReadingUpdate' });
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
     // level
     updateLevel(e) {
       this.inputLevel = e;
@@ -217,8 +255,64 @@ export default {
         this.questionList.push(questionObject);
       });
     },
-    createOrUpdate() {
-      console.log('update');
+    async createOrUpdate() {
+      this.dataQuestionReading = this.dataQuestionReading.filter(
+        (item, index) => index === 0 || item.title !== '',
+      );
+      this.checkQuestions();
+      try {
+        if (this.title) {
+          this.emitter.emit('isShowLoading', true);
+          if (this.file) {
+            let formData = new FormData();
+            formData.append('file', this.file);
+            this.avatar = await fileAPI.updateImg(formData);
+          }
+          if (this.noData) {
+            await courseApi.createReadingSession({
+              description: this.subTitle,
+              textContent: this.contentReading,
+              title: this.title,
+              imgURL: this.avatar,
+              course: {
+                id: this.idCourse,
+              },
+              questionList: this.questionList,
+            });
+            this.emitter.emit('isShowLoading', false);
+            notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
+          } else {
+            await courseApi.updateReadingSession({
+              id: this.idSection,
+              description: this.subTitle,
+              textContent: this.contentReading,
+              title: this.title,
+              imgURL: this.avatar,
+              course: {
+                id: this.idCourse,
+              },
+              questionList: this.questionList,
+            });
+            this.emitter.emit('isShowLoading', false);
+            notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
+          }
+          this.$router.push({ name: 'TestLevelReading' });
+        } else {
+          notification.error({ message: 'Title has not been filled in yet' });
+        }
+        if (
+          this.dataQuestionReadingCorrect.length !=
+          this.dataQuestionReading.length
+        ) {
+          notification.error({
+            message: 'The answers or questions has not been filled in yet',
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+        notification.error({ message: NOTIFY_MESSAGE.UPDATE_FAILED });
+      }
     },
     async createCourse() {
       this.dataQuestionReading = this.dataQuestionReading.filter(
@@ -227,8 +321,8 @@ export default {
       this.checkQuestions();
       try {
         if (
-          this.dataQuestionReading.length == 2 &&
-          this.dataQuestionReadingCorrect.length == 2 &&
+          this.dataQuestionReading.length == 9 &&
+          this.dataQuestionReadingCorrect.length == 9 &&
           this.title
         ) {
           this.emitter.emit('isShowLoading', true);
@@ -247,12 +341,12 @@ export default {
             name: 'CourseReading',
             params: { name: this.namePath },
           });
-        } else if (this.dataQuestionReading.length != 2) {
+        } else if (this.dataQuestionReading.length != 9) {
           notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_9 });
         }
         if (
-          this.dataQuestionReadingCorrect.length != 2 &&
-          this.dataQuestionReading.length == 2
+          this.dataQuestionReadingCorrect.length != 9 &&
+          this.dataQuestionReading.length == 9
         ) {
           notification.error({
             message: 'The answers has not been filled in yet',
@@ -300,6 +394,10 @@ export default {
 
   data() {
     return {
+      noData: false,
+      avatar: null,
+      file: null,
+      idSection: null,
       subTitle: null,
       idCourse: null,
       questionList: [],
@@ -308,12 +406,7 @@ export default {
       checkName: false,
       contentReading: '',
       title: '',
-      dataQuestionReading: [
-        {
-          title: '',
-          answers: [],
-        },
-      ],
+      dataQuestionReading: [],
       dataQuestionReadingCorrect: [],
     };
   },

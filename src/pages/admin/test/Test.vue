@@ -5,39 +5,25 @@
       <div
         class="h-10 leading-10 text-primary_black text-left font-semibold text-base w-1/4"
       >
-        Title
-      </div>
-      <input
-        v-model="createTitle"
-        type="text"
-        class="input-type-course border rounded-lg form-control"
-        spellcheck="false"
-        ref="errorInputTitle"
-      />
-    </div>
-    <div class="flex w-full mt-5 justify-between">
-      <div
-        class="h-10 leading-10 text-primary_black text-left font-semibold text-base w-1/4"
-      >
-        Subtitle
-      </div>
-      <input
-        ref="errorInputSubtitle"
-        v-model="createSubtitle"
-        type="text"
-        class="input-type-course border rounded-lg form-control"
-        spellcheck="false"
-      />
-    </div>
-    <div class="flex w-full mt-5 justify-between">
-      <div
-        class="h-10 leading-10 text-primary_black text-left font-semibold text-base w-1/4"
-      >
         Name course
       </div>
       <input
         ref="errorInputName"
         v-model="createName"
+        type="text"
+        class="input-type-course border rounded-lg form-control"
+        spellcheck="false"
+      />
+    </div>
+    <div class="flex w-full mt-5 justify-between">
+      <div
+        class="h-10 leading-10 text-primary_black text-left font-semibold text-base w-1/4"
+      >
+        Title
+      </div>
+      <input
+        ref="errorInputSubtitle"
+        v-model="createTitle"
         type="text"
         class="input-type-course border rounded-lg form-control"
         spellcheck="false"
@@ -119,7 +105,7 @@ import { NOTIFY, SCREEN } from '../../../constants/index';
 import ButtonBack from '../../../components/common/ButtonBack.vue';
 import InputLevel from '../../../components/common/InputLevel2.vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
-
+import courseApi from '../../../apis/course';
 export default {
   name: 'Member',
   components: { ButtonBack, InputLevel, ConfirmModal },
@@ -130,8 +116,68 @@ export default {
     this.ARROW_LEFT = ARROW_LEFT;
     this.NOTIFY = NOTIFY;
     this.SCREEN = SCREEN;
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
+    this.getAllCoursePending();
   },
   methods: {
+    /**
+     * get all course pending
+     */
+    async getAllCoursePending() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const data = await courseApi.allCourse();
+        data.forEach((item) => {
+          if (item?.courseLevel == 'PENDING') {
+            this.checkData = true;
+            this.createName = this.checkData ? item?.name : '';
+            this.createTitle = this.checkData ? item?.description : '';
+            this.idCourseTest = this.checkData ? item?.id : '';
+            localStorage.setItem('IDCourseTestLevel', this.idCourseTest);
+          }
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
+    /**
+     * create course pending
+     */
+    async creatCoursePending() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        await courseApi.createCourse({
+          name: this.createName,
+          description: this.createTitle,
+          courseLevel: 0,
+          creatorUserid: {
+            uid: this.userInfor.email,
+          },
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      } finally {
+        await this.handleAprroved();
+      }
+    },
+    /**
+     * approve
+     */
+    async handleAprroved() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        await courseApi.approvedCourse({ id: this.idCourseTest });
+      } catch (error) {
+        this.emitter.emit('isShowLoading', false);
+        console.log(error);
+      } finally {
+        await this.getAllCoursePending();
+      }
+    },
     goToListening() {
       this.$router.push({ name: 'TestLevelListening' });
       this.modal = false;
@@ -150,13 +196,18 @@ export default {
     handleUpdate() {},
     handleNext() {
       this.modal = true;
+      if (!this.checkData) {
+        this.creatCoursePending();
+      }
     },
   },
   data() {
     return {
+      idCourseTest: null,
+      userInfor: null,
+      checkData: false,
       modal: false,
       createTitle: '',
-      createSubtitle: '',
       createName: '',
       createLevel: 'Pending',
     };

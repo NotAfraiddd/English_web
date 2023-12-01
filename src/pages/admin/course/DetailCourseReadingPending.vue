@@ -167,7 +167,6 @@ import {
 } from '../../../constants/image';
 import MultipleChoice from '../../../components/common/MultipleChoice.vue';
 import MatchWord from '../../../components/common/MatchWord.vue';
-import PutPriority from '../../../components/common/PutPriority.vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import { SOCKET } from '../../../constants';
 import { mapMutations } from 'vuex';
@@ -180,7 +179,6 @@ export default {
     MultipleChoice,
     ConfirmModal,
     MatchWord,
-    PutPriority,
   },
   created() {
     this.AVATAR = AVATAR;

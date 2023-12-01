@@ -129,7 +129,8 @@ export default {
                   });
                 }
               });
-            } else if (item?.listeningSectionList) {
+            }
+            if (item?.listeningSectionList) {
               item?.listeningSectionList.forEach((ele) => {
                 if (ele.sectionStatus == 'PENDING') {
                   this.listCourse.push({
