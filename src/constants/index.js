@@ -28,6 +28,10 @@ export const NOTIFY_MESSAGE = {
   ADD_QUESTION_9: 'Must 9 questions',
   CREATE_BLOG_SUCCESS: ' Create blog success',
   CREATE_BLOG_FAILED: ' Create blog failed',
+  APPROVE_SUCCESS: 'Approve success',
+  APPROVE_FAILED: 'Approve failed',
+  REJECT_SUCCESS: 'Reject success',
+  REJECT_FAILED: 'Reject failed',
 };
 
 export const ERROR_MESSAGE = {

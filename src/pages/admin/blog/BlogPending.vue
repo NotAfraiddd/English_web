@@ -8,6 +8,7 @@
       v-else
       :data="listBlog"
       :avatar="true"
+      :user="true"
       :button="true"
       :image="true"
       @changePath="goToDetail"
@@ -18,9 +19,8 @@
       <a-pagination
         class="pagination"
         v-model:current="current"
-        :showSizeChanger="false"
         v-model:page-size="pageSize"
-        :total="500"
+        :total="total"
         @change="onShowSizeChange"
       />
     </div>
@@ -31,60 +31,77 @@
 import ButtonBack from '../../../components/common/ButtonBack.vue';
 import ListBlog from '../../../components/common/ListBlog.vue';
 import { AVATAR, TITLE } from '../../../constants/image';
-import { NOTIFY, SOCKET } from '../../../constants/index';
+import { NOTIFY, NOTIFY_MESSAGE, SOCKET } from '../../../constants/index';
 import { mapMutations } from 'vuex';
+import blogApi from '../../../apis/blog';
+import { notification } from 'ant-design-vue';
+import moment from 'moment';
+
 export default {
   name: 'BlogPending',
   components: { ButtonBack, ListBlog },
   created() {
     this.TITLE = TITLE;
+    this.NOTIFY_MESSAGE = NOTIFY_MESSAGE;
     this.AVATAR = AVATAR;
     this.NOTIFY = NOTIFY;
+    this.getAllPost();
   },
   watch: {
-    pageSize(value) {},
-    current(value) {},
+    pageSize(value) {
+      this.pageSize = value;
+    },
   },
-  mounted() {
-    // reject blog
-    this.sockets.subscribe('rejectBlogPending', (data) => {
-      if (data.kind == SOCKET.REJECTED_BLOG_PENDING) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.REJECTED_BLOG_PENDING,
-        });
-      }
-    });
-    const rejectContent = {
-      room: this.idUserBlog,
-      kind: SOCKET.REJECTED_BLOG_PENDING,
-    };
-    this.$socket.emit('joinRoom', rejectContent);
-    // accept blog
-    this.sockets.subscribe('blogPending', (data) => {
-      if (data.kind == SOCKET.NOTIFY_BLOG_PENDING) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.NOTIFY_BLOG_PENDING,
-        });
-      }
-    });
-    const content = {
-      room: this.idUserBlog,
-      kind: SOCKET.NOTIFY_BLOG_PENDING,
-    };
-    this.$socket.emit('joinRoom', content);
-  },
+
   methods: {
     ...mapMutations('notify', ['setNotify']),
+    async getAllPost() {
+      try {
+        this.listBlog = [];
+        this.emitter.emit('isShowLoading', true);
+        const data = await blogApi.getAllPostPending(this.current);
+        data?.content.forEach((item) => {
+          this.listBlog.push({
+            id: item?.id,
+            userID: item?.author?.uid,
+            author: item?.author?.fullName,
+            avatar: item?.author?.avtURL,
+            imageTitle: item?.thumbnailURL,
+            title: item?.title || 'Notitle',
+            content: item?.content,
+            date: moment(item?.createDate).format('DD/MM/YYYY HH:mm'),
+          });
+          this.total = data?.totalElements;
+          this.pageSize = data?.size;
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
+    async apiApprovePost(dataIdPost) {
+      try {
+        await blogApi.approvePost({ id: dataIdPost });
+        notification.success({ message: NOTIFY_MESSAGE.APPROVE_SUCCESS });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        await this.getAllPost();
+      }
+    },
+    async apiRejectPost(dataIdPost) {
+      try {
+        await blogApi.rejectPost({ id: dataIdPost });
+        notification.error({ message: NOTIFY_MESSAGE.APPROVE_SUCCESS });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        await this.getAllPost();
+      }
+    },
     handleRejected(data) {
-      this.idUserBlog = +data.userID;
+      this.idUserBlog = data.userID;
       // join socket rejectcomment
       const dataSocket = {
         room: this.idUserBlog,
@@ -100,9 +117,10 @@ export default {
       this.listBlog = this.listBlog.filter(
         (item) => item.userID !== this.idUserBlog,
       );
+      this.apiRejectPost(data?.id);
     },
     handleApproved(data) {
-      this.idUserBlog = +data.userID;
+      this.idUserBlog = data.userID;
       // join socket rejectcomment
       const dataSocket = {
         room: this.idUserBlog,
@@ -118,56 +136,32 @@ export default {
       this.listBlog = this.listBlog.filter(
         (item) => item.userID !== this.idUserBlog,
       );
+      this.apiApprovePost(data?.id);
     },
     onShowSizeChange(current, pageSize) {
-      console.log(current, pageSize);
+      this.current = current;
+      this.pageSize = pageSize;
+      this.getAllPost();
     },
     changeBack() {
       this.$router.push({ name: 'Dashboard' });
     },
-    goToDetail(dataID) {
-      this.$router.push({ name: 'DetailBlogPending', params: { id: dataID } });
+    goToDetail(data) {
+      this.$router.push({
+        name: 'DetailBlogPending',
+        params: { username: data.userID, id: data.id },
+      });
     },
   },
   data() {
     return {
+      index: 0,
       numNotify: 0,
-      current: 6,
-      pageSize: 3,
+      current: 1,
+      pageSize: 0,
       idUserBlog: null,
-      listBlog: [
-        {
-          id: 1,
-          author: 'Chi Bao',
-          avatar: AVATAR,
-          userID: 1,
-          imageTitle: TITLE,
-          title: 'Effective Methods for Improving English Language Skills.',
-          content:
-            "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill. When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
-        },
-        {
-          id: 2,
-          author: 'Ngoc Huan',
-          avatar: AVATAR,
-          userID: 2,
-          imageTitle: TITLE,
-          title: 'Hello',
-          content:
-            "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
-        },
-        {
-          id: 3,
-          author: 'Bao Huan',
-          avatar: AVATAR,
-          userID: 3,
-          imageTitle: TITLE,
-          title:
-            'Effective Methods for Improving English Language Skills.adbjabskbdk',
-          content:
-            "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
-        },
-      ],
+      total: 0,
+      listBlog: [],
     };
   },
 };

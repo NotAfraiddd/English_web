@@ -28,6 +28,18 @@ class UserApi {
     const res = await http.get(`user/getTotalOnlineMember`);
     return res.data;
   }
+  async getTotalUserByLevel(data) {
+    const res = await http.post(`user/getTotalUserViaLevel`, data);
+    return res.data;
+  }
+  async getTotalBlogByLevel(data) {
+    const res = await http.post(`user/getPostCountViaAuthorLevel`, data);
+    return res.data;
+  }
+  async getTotalOnlineByLevel(data) {
+    const res = await http.post(`user/getOnlineUserCountViaLevel`, data);
+    return res.data;
+  }
 }
 
 const userApi = new UserApi();

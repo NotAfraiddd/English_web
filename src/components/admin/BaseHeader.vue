@@ -238,7 +238,6 @@ import authUserInstance from '../../apis/auth';
 import { mapState, mapMutations } from 'vuex';
 import userApi from '../../apis/user';
 import { SOCKET } from '../../constants';
-import { v4 as uuidv4 } from 'uuid';
 
 export default {
   created() {
@@ -276,7 +275,7 @@ export default {
     inforComment(newVal, oldVal) {
       if (newVal.kind == SOCKET.COMMENT)
         this.listNotify.push({
-          id: uuidv4(),
+          id: newVal.content.id,
           avatar: newVal.content.avatar,
           nameCourse: null,
           content: `mentioned you in a comment.`,
@@ -285,7 +284,7 @@ export default {
         });
       else if (newVal.kind == SOCKET.REPLY_COMMENT) {
         this.listNotify.push({
-          id: uuidv4(),
+          id: newVal.content.id,
           avatar: newVal.content.avatar,
           nameCourse: null,
           content: `replied to your comment on your post.`,
@@ -295,7 +294,7 @@ export default {
       } else if (newVal.kind == SOCKET.REACT) {
         console.log('header', newVal);
         this.listNotify.push({
-          id: uuidv4(),
+          id: newVal.content.id,
           avatar: newVal.content.avatar,
           nameCourse: null,
           content: `reacts your blog.`,
@@ -304,7 +303,7 @@ export default {
         });
       } else if (newVal.kind == SOCKET.REACT_COMMENT) {
         this.listNotify.push({
-          id: uuidv4(),
+          id: newVal.content.id,
           avatar: newVal.content.avatar,
           nameCourse: null,
           content: `reacts your comment.`,
@@ -313,7 +312,7 @@ export default {
         });
       } else if (newVal.kind == SOCKET.REACT_COMMENT_REPLY) {
         this.listNotify.push({
-          id: uuidv4(),
+          id: newVal.content.id,
           avatar: newVal.content.avatar,
           nameCourse: null,
           content: `reacts to your comment on your post.`,
@@ -322,7 +321,7 @@ export default {
         });
       } else if (newVal.kind == SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN) {
         this.listNotify.push({
-          id: uuidv4(),
+          id: newVal.content.id,
           avatar: ADMIN,
           nameCourse: null,
           content: 'Admin have approved reported comment of you.',
@@ -331,16 +330,16 @@ export default {
         });
       } else if (newVal.kind == SOCKET.NOTIFY_BLOG_PENDING) {
         this.listNotify.push({
-          id: uuidv4(),
+          id: newVal.content.id,
           avatar: ADMIN,
-          nameCourse: null,
-          content: 'Admin have approved blog of you.',
+          nameCourse: newVal.content.title,
+          content: 'admin have approved blog of you.',
           seen: false,
           fullName: newVal.content.name,
         });
       } else if (newVal.kind == SOCKET.NOTIFY_COURSE_PENDING) {
         this.listNotify.push({
-          id: uuidv4(),
+          id: newVal.content.id,
           avatar: ADMIN, // avatar admin
           nameCourse: `${newVal.content.name || ''}`,
           content: 'has been approved by admin',
@@ -349,7 +348,7 @@ export default {
         });
       } else if (newVal.kind == SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN) {
         this.listNotify.push({
-          id: uuidv4(),
+          id: newVal.content.id,
           avatar: ADMIN,
           nameCourse: `${newVal.content.name || ''}`,
           content: 'has been rejected by admin',
@@ -358,7 +357,7 @@ export default {
         });
       } else if (newVal.kind == SOCKET.REJECTED_BLOG_PENDING) {
         this.listNotify.push({
-          id: uuidv4(),
+          id: newVal.content.id,
           avatar: ADMIN,
           nameCourse: `${newVal.content.name || ''}`,
           content: 'has been rejected by admin',
@@ -368,7 +367,7 @@ export default {
       } else if (newVal.kind == SOCKET.REJECTED_COURSE_PENDING) {
         console.log(newVal);
         this.listNotify.push({
-          id: uuidv4(),
+          id: newVal.content.id,
           avatar: ADMIN,
           nameCourse: `${newVal.content.name || ''}`,
           content: 'has been rejected by admin',

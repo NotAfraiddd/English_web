@@ -8,7 +8,8 @@
         <div class="text-base font-semibold">{{ name }}</div>
       </div>
     </div>
-    <div class="mt-4 p-5" v-html="content" />
+    <div class="mt-4 text-left text-xl font-semibold">{{ title }}</div>
+    <div class="mt-4 text-left" v-html="content" />
     <div class="flex gap-5 absolute right-0">
       <div
         @click="handleRejected"
@@ -30,54 +31,62 @@
 import ButtonBack from '../../../components/common/ButtonBack.vue';
 import Avatar from '../../../components/common/Avatar.vue';
 import { AVATAR } from '../../../constants/image';
-import { SOCKET } from '../../../constants/index';
+import { NOTIFY_MESSAGE, SOCKET } from '../../../constants/index';
 import { mapMutations } from 'vuex';
-
+import blogApi from '../../../apis/blog';
+import moment from 'moment';
+import { notification } from 'ant-design-vue';
 export default {
   name: 'DetailBlogPending',
   created() {
+    this.NOTIFY_MESSAGE = NOTIFY_MESSAGE;
     this.AVATAR = AVATAR;
+    this.idBlog = +this.$route.params.id;
+    this.userID = this.$route.params.username;
+    if (this.idBlog) {
+      this.getDetail();
+    }
   },
   components: { ButtonBack, Avatar },
-  mounted() {
-    // reject comment
-    this.sockets.subscribe('rejectBlogPending', (data) => {
-      console.log('rejectBlogPending', data);
-      if (data.kind == SOCKET.REJECTED_BLOG_PENDING) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.REJECTED_BLOG_PENDING,
-        });
-      }
-    });
-    const rejectContent = {
-      room: this.userID,
-      kind: SOCKET.REJECTED_BLOG_PENDING,
-    };
-    this.$socket.emit('joinRoom', rejectContent);
-    // comment
-    this.sockets.subscribe('blogPending', (data) => {
-      if (data.kind == SOCKET.NOTIFY_BLOG_PENDING) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.NOTIFY_BLOG_PENDING,
-        });
-      }
-    });
-    const content = {
-      room: this.userID,
-      kind: SOCKET.NOTIFY_BLOG_PENDING,
-    };
-    this.$socket.emit('joinRoom', content);
-  },
   methods: {
     ...mapMutations('notify', ['setNotify']),
+    async getDetail() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const data = await blogApi.getDetailBlog({ id: this.idBlog });
+        this.content = data?.content;
+        this.created_at = moment(data?.createDate).format('DD/MM/YYYY HH:mm');
+        this.name = data?.author?.fullName;
+        this.avatar = data?.author?.avtURL;
+        this.title = data?.title;
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
+    async apiApprovePost() {
+      try {
+        await blogApi.approvePost({ id: this.idBlog });
+        notification.success({ message: NOTIFY_MESSAGE.APPROVE_SUCCESS });
+      } catch (error) {
+        console.log(error);
+        notification.error({ message: NOTIFY_MESSAGE.APPROVE_FAILED });
+      } finally {
+        this.$router.push({ name: 'BlogPending' });
+      }
+    },
+    async apiRejectPost() {
+      try {
+        await blogApi.rejectPost({ id: this.idBlog });
+        notification.success({ message: NOTIFY_MESSAGE.REJECT_SUCCESS });
+      } catch (error) {
+        console.log(error);
+        notification.error({ message: NOTIFY_MESSAGE.REJECT_FAILED });
+      } finally {
+        this.$router.push({ name: 'BlogPending' });
+      }
+    },
     handleRejected() {
       // join socket rejectcomment
       const dataSocket = {
@@ -98,6 +107,7 @@ export default {
       };
       this.$socket.emit('sendSignal', data);
       // ( call api)
+      this.apiRejectPost();
     },
     handleApproved() {
       // join socket react
@@ -119,6 +129,7 @@ export default {
       };
       this.$socket.emit('sendSignal', data);
       // ( call api)
+      this.apiApprovePost();
     },
     changeBack() {
       this.$router.push({ name: 'BlogPending' });
@@ -126,6 +137,8 @@ export default {
   },
   data() {
     return {
+      title: null,
+      idBlog: null,
       numNotify: 0,
       userID: 1,
       avatar: AVATAR,

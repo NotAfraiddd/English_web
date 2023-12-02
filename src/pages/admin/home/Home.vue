@@ -16,6 +16,8 @@
 <script>
 import { mapMutations, mapState } from 'vuex';
 import courseApi from '../../../apis/course';
+import userApi from '../../../apis/user';
+import blogApi from '../../../apis/blog';
 import BaseTable from '../../../components/common/BaseTable.vue';
 import Notify from '../../../components/common/Notify.vue';
 import { ARROW_LEFT, AVATAR } from '../../../constants/image';
@@ -29,6 +31,10 @@ export default {
     this.NOTIFY = NOTIFY;
     this.SCREEN = SCREEN;
     this.getAllCoursePending();
+    this.getAllPost();
+    this.getUserByLevel();
+    this.getBlogByLevel();
+    this.getOnlineByLevel();
   },
   mounted() {
     if (this.screenUI == SCREEN.comment) {
@@ -37,10 +43,80 @@ export default {
   },
   computed: {
     ...mapState('course', ['numCourse']),
+    ...mapState('blog', ['numBlog']),
   },
   methods: {
     ...mapMutations('course', ['setNumberCourse']),
-
+    ...mapMutations('blog', ['setNumBlog']),
+    /**
+     * get all user by level
+     */
+    async getUserByLevel() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        this.userLevel.basic = await userApi.getTotalUserByLevel(1);
+        this.userLevel.intermediate = await userApi.getTotalUserByLevel(2);
+        this.userLevel.advanced = await userApi.getTotalUserByLevel(3);
+        this.dataInformation[0].basic = this.userLevel.basic;
+        this.dataInformation[0].intermediate = this.userLevel.intermediate;
+        this.dataInformation[0].advanced = this.userLevel.advanced;
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
+    /**
+     * get all blog by level
+     */
+    async getBlogByLevel() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        this.blogLevel.basic = await userApi.getTotalBlogByLevel(1);
+        this.blogLevel.intermediate = await userApi.getTotalBlogByLevel(2);
+        this.blogLevel.advanced = await userApi.getTotalBlogByLevel(3);
+        this.dataInformation[1].basic = this.blogLevel.basic;
+        this.dataInformation[1].intermediate = this.blogLevel.intermediate;
+        this.dataInformation[1].advanced = this.blogLevel.advanced;
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
+    /**
+     * get all blog by level
+     */
+    async getOnlineByLevel() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        this.onlineLevel.basic = await userApi.getTotalOnlineByLevel(1);
+        this.onlineLevel.intermediate = await userApi.getTotalOnlineByLevel(2);
+        this.onlineLevel.advanced = await userApi.getTotalOnlineByLevel(3);
+        this.dataInformation[2].basic = this.onlineLevel.basic;
+        this.dataInformation[2].intermediate = this.onlineLevel.intermediate;
+        this.dataInformation[2].advanced = this.onlineLevel.advanced;
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
+    /**
+     * get all blog
+     */
+    async getAllPost() {
+      try {
+        this.listBlog = [];
+        this.emitter.emit('isShowLoading', true);
+        const data = await blogApi.getAllPostPending(1);
+        this.setNumBlog(data?.totalElements);
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
     /**
      * get all course pending
      */
@@ -85,10 +161,24 @@ export default {
   },
   data() {
     return {
+      userLevel: {
+        basic: 0,
+        intermediate: 0,
+        advanced: 0,
+      },
+      blogLevel: {
+        basic: 0,
+        intermediate: 0,
+        advanced: 0,
+      },
+      onlineLevel: {
+        basic: 0,
+        intermediate: 0,
+        advanced: 0,
+      },
       isHover: false,
       screenUI: SCREEN.dashboard,
       numReport: 0,
-      numBlog: 1,
       report: {
         id: NOTIFY.comment,
         subtitle: 'Report',
@@ -140,22 +230,22 @@ export default {
       ],
       dataInformation: [
         {
-          title: 'Current level member',
+          title: 'Total member',
           basic: 20,
           intermediate: 1,
           advanced: 15,
         },
         {
-          title: 'Blog',
+          title: 'Total blog',
           basic: 1,
           intermediate: 2,
           advanced: 3,
         },
         {
-          title: 'Online',
-          basic: 1,
-          intermediate: 2,
-          advanced: 3,
+          title: 'Total online',
+          basic: 0,
+          intermediate: 0,
+          advanced: 0,
         },
       ],
       columns: [

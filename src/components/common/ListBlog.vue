@@ -3,14 +3,19 @@
     v-for="(item, index) in data"
     :key="item.id"
     :class="extendClass"
-    @click="goToDetail(item.id)"
+    @click="goToDetail(item)"
     class="flex h-auto cursor-pointer text-base flex-1 justify-between items-start mt-3 border gap-2 py-3 px-5 rounded-lg"
   >
     <div
       class="flex max-h-40 flex-col list-blog-contain w-full h-40 justify-between"
     >
       <div v-if="user" class="flex gap-3 items-center">
-        <img :src="item.avatar" alt="" srcset="" class="h-8 w-8 rounded-full" />
+        <img
+          :src="item.avatar"
+          alt=""
+          srcset=""
+          class="h-8 w-8 object-cover rounded-full"
+        />
         <div class="flex flex-col items-start">
           <div class="font-semibold text-base">{{ item.author }}</div>
           <div class="text-xs">{{ item.date }}</div>
@@ -25,9 +30,9 @@
         <div
           class="text-base text-primary_black text-left overflow-hidden"
           :class="!user ? 'text-sub-content' : 'text-sub-content-3'"
-        >
-          {{ item.content }}
-        </div>
+          v-html="item.content"
+          style="margin-bottom: 0 !important"
+        />
       </div>
       <div v-if="button" class="flex w-40 justify-between flex-wrap gap-3">
         <div
@@ -159,7 +164,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .menu-option {
   height: fit-content;
   padding: 8px 0;
@@ -187,7 +192,9 @@ export default {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
 }
-
+p {
+  margin-bottom: 0;
+}
 .text-title {
   display: block;
   display: -webkit-box;

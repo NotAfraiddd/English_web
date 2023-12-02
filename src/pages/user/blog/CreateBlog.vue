@@ -40,6 +40,7 @@ import blogApi from '../../../apis/blog';
 import fileAPI from '../../../apis/file';
 import { notification } from 'ant-design-vue';
 import { NOTIFY_MESSAGE } from '../../../constants';
+import moment from 'moment';
 
 export default {
   name: 'CreateBlog',
@@ -77,7 +78,8 @@ export default {
             this.avatar = await fileAPI.updateImg(formData);
           }
           await blogApi.createBlog({
-            content: this.inputTitle,
+            title: this.inputTitle,
+            content: this.content,
             thumbnailURL: this.avatar,
             author: {
               uid: this.userInfor.email,

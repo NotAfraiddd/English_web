@@ -179,6 +179,42 @@ export default {
       kind: SOCKET.REPLY_COMMENT,
     };
     this.$socket.emit('joinRoom', dataReply);
+    // reject blog
+    this.sockets.subscribe('rejectBlogPending', (data) => {
+      if (data.kind == SOCKET.REJECTED_BLOG_PENDING) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.REJECTED_BLOG_PENDING,
+          admin: true,
+        });
+      }
+    });
+    const rejectContent = {
+      room: this.userInfor.email,
+      kind: SOCKET.REJECTED_BLOG_PENDING,
+    };
+    this.$socket.emit('joinRoom', rejectContent);
+    // accept blog
+    this.sockets.subscribe('blogPending', (data) => {
+      if (data.kind == SOCKET.NOTIFY_BLOG_PENDING) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.NOTIFY_BLOG_PENDING,
+          admin: true,
+        });
+      }
+    });
+    const approveBlog = {
+      room: this.idUserBlog,
+      kind: SOCKET.NOTIFY_BLOG_PENDING,
+    };
+    this.$socket.emit('joinRoom', approveBlog);
   },
   watch: {
     $route(to, from) {

@@ -237,7 +237,7 @@ const routes = [
         component: () => import('../pages/admin/blog/BlogPending.vue'),
       },
       {
-        path: 'blog-pending/detail/:id',
+        path: 'blog-pending/detail/:username/:id',
         name: 'DetailBlogPending',
         component: () => import('../pages/admin/blog/DetailBlogPending.vue'),
       },
