@@ -84,6 +84,7 @@ import { ARROW_LEFT, MOUNTAIN_CLIMB, RELOAD } from '../../constants/image';
 import MultipleChoice from '../../components/common/MultipleChoice.vue';
 import MatchWord from '../../components/common/MatchWord.vue';
 import { mapState, mapMutations } from 'vuex';
+import courseApi from '../../apis/course';
 export default {
   name: 'ListeningTest',
   components: { ButtonBack, Audio, MultipleChoice, MatchWord },
@@ -94,6 +95,11 @@ export default {
     localStorage.removeItem('error');
     if (this.isMatchedRoute('ListeningTest')) {
       this.setDefaultError(0);
+    }
+    this.idSection = JSON.parse(localStorage.getItem('IDCourseTestLevel'));
+    if (this.idSection) {
+      this.getDetailSession();
+      this.getRandomQuestions();
     }
   },
   watch: {
@@ -106,6 +112,63 @@ export default {
   },
   methods: {
     ...mapMutations('auth', ['setError', 'setDefaultError']),
+    /**
+     * get random question
+     */
+    async getRandomQuestions() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const detailSession = await courseApi.getRandomQuestionListening({
+          id: this.idSection,
+        });
+        detailSession.forEach((word, index) => {
+          this.dataListWords.push({
+            id: index + 1,
+            word: word,
+          });
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
+    /**
+     * get detail session
+     */
+    async getDetailSession() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const detailSession = await courseApi.getListeningSessionByID({
+          id: this.idSection,
+        });
+        this.title = detailSession?.title;
+        this.textContent = detailSession?.textContent;
+        this.imgURL = detailSession?.imgURL;
+        this.selectedAudio = detailSession?.mediaURL;
+        this.script = detailSession?.script;
+        detailSession?.questionList.forEach((item, index) => {
+          this.dataMultipleChoice.push({
+            id: index + 1,
+            title: item.questionContent,
+            question: item.options.map((item) => item.content),
+          });
+          this.correctAnswer.push(+item.correctAnswer);
+        });
+        detailSession?.fillInBlankQuestionList.forEach((ele, index) => {
+          this.listQuestions.push({
+            id: index + 1,
+            contentLeft: ele?.leftContent,
+            contentRight: ele?.rightContent,
+            word: ele?.answer,
+          });
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
     resetResult() {
       this.submitMultipleChoice = false;
       this.submitMatching = false;
@@ -115,6 +178,7 @@ export default {
         item.word = null;
       });
       this.myAnswer = [];
+      this.getRandomQuestions();
     },
     handleTest() {
       if (!this.submitMultipleChoice) {
@@ -243,42 +307,18 @@ export default {
   },
   data() {
     return {
+      script: null,
+      idSection: null,
+      title: null,
+      textContent: null,
+      imgURL: null,
+      userInfor: null,
+      rotation: 0,
       numberErrorTemp: 0,
       submitMatching: false,
       submitMultipleChoice: false,
       drag: false,
-      listQuestions: [
-        {
-          id: 1,
-          contentLeft: 'I have',
-          contentRight: ' in my bag.',
-          word: 'apple',
-        },
-        {
-          id: 2,
-          contentLeft: 'Susan and John go',
-          contentRight: 'with theirs parent today.',
-          word: 'at the school',
-        },
-        {
-          id: 3,
-          contentLeft: 'I have',
-          contentRight: ' in my bag.',
-          word: 'have lunch',
-        },
-        {
-          id: 4,
-          contentLeft: 'Susan and John go',
-          contentRight: 'with theirs parent today.',
-          word: 'have breakfast',
-        },
-        {
-          id: 5,
-          contentLeft: 'I have',
-          contentRight: ' in my bag.',
-          word: 'at the hospital',
-        },
-      ],
+      listQuestions: [],
       listAnswers: [
         { id: 1, word: null },
         { id: 2, word: null },
@@ -286,84 +326,15 @@ export default {
         { id: 4, word: null },
         { id: 5, word: null },
       ],
-      dataListWords: [
-        { id: 1, word: 'at the hospital' },
-        { id: 2, word: 'apple' },
-        { id: 3, word: 'have breakfast' },
-        { id: 4, word: 'have lunch' },
-        { id: 5, word: 'at the school' },
-      ],
-      dataMultipleChoice: [
-        {
-          id: 0,
-          title: 'Mary ask John about that: Mary ask John',
-          question: [
-            'Do you have breakfast?',
-            'Do you have lunch?',
-            'Do you have dinner?',
-            'I’m hungry all day.',
-          ],
-        },
-        {
-          id: 1,
-          title: 'Mary ask John about that:Mary ask John',
-          question: [
-            'Do you have breakfast?',
-            'Do you have lunch?',
-            'Do you have dinner?',
-            'I’m hungry all day.',
-          ],
-        },
-        {
-          id: 2,
-          title: 'Mary ask :',
-          question: [
-            'Do you have breakfast?',
-            'Do you have lunch?',
-            'Do you have dinner?',
-            'I’m hungry all day.',
-          ],
-        },
-        {
-          id: 3,
-          title: 'Mary ask John about that: Mary ask John',
-          question: [
-            'Do you have breakfast?',
-            'Do you have lunch? Do you have breakfast?Do you have breakfast?',
-            'Do you have dinner?',
-            'I’m hungry all day.',
-          ],
-        },
-        {
-          id: 4,
-          title:
-            'Mary ask John about that:Mary ask John Mary ask John about that:Mary ask John',
-          question: [
-            'Do you have breakfast?',
-            'Do you have lunch?',
-            'Do you have dinner?',
-            'I’m hungry all day.',
-          ],
-        },
-        {
-          id: 5,
-          title: 'Mary ask :',
-          question: [
-            'Do you have breakfast? Do you have breakfast? Do you have breakfast?',
-            'Do you have lunch?',
-            'Do you have dinner?',
-            'I’m hungry all day.',
-          ],
-        },
-      ],
-      correctAnswer: [1, 2, 3, 4, 1, 2],
+      dataListWords: [],
+      dataMultipleChoice: [],
+      correctAnswer: [],
       myAnswer: [],
       errorsMultiple: [],
       errorsMatching: [],
       emptysMultiple: [],
       transcript: false,
-      selectedAudio:
-        'https://6a63fca904fd268f15f7-d5770ffdd579eb31eaa89faeffc55fe7.ssl.cf1.rackcdn.com/LE_listening_C1_A_job_interview.mp3',
+      selectedAudio: null,
     };
   },
 };

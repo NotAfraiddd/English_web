@@ -3,8 +3,8 @@
     <div class="flex gap-3 items-center">
       <img :src="AVATAR" alt="" srcset="" class="h-10 w-10 rounded-full" />
       <div class="flex flex-col items-start">
-        <div class="font-semibold text-base">Chi Bao</div>
-        <div class="text-xs">Date: 20/09/2023 10:26</div>
+        <div class="font-semibold text-base">{{ detailBlog.name }}</div>
+        <div class="text-xs">Date: {{ detailBlog.created_at }}</div>
       </div>
     </div>
     <div class="mt-5 text-left" v-html="content" />
@@ -132,7 +132,7 @@
               {{ item.created_at }}
             </div>
             <!-- menu option -->
-            <MenuOption :id-prop="item.id" />
+            <MenuOption :id-prop="item.id" @report="handleReportFirst(item)" />
           </div>
         </div>
       </div>
@@ -212,7 +212,7 @@
                 {{ i.created_at }}
               </div>
               <!-- menu option -->
-              <MenuOption :id-prop="i.id" />
+              <MenuOption :id-prop="i.id" @report="handleReportSecond(i)" />
             </div>
           </div>
         </div>
@@ -244,7 +244,9 @@ import moment from 'moment';
 import MenuOption from '../../../components/common/MenuOption.vue';
 import { mapMutations } from 'vuex';
 import { SOCKET } from '../../../constants';
+import blogApi from '../../../apis/blog';
 import { v4 as uuidv4 } from 'uuid';
+
 export default {
   name: 'DetailBlog',
   components: { Emoji, MenuOption },
@@ -262,6 +264,9 @@ export default {
     this.TITLE = TITLE;
     this.removeBackslashes();
     this.idUserBlog = this.$route.params.id;
+    if (this.idUserBlog) {
+      this.getDetailBlogByID(this.idUserBlog);
+    }
   },
   watch: {
     showComment(newValue) {
@@ -270,6 +275,14 @@ export default {
   },
   data() {
     return {
+      detailBlog: {
+        avatar: null,
+        name: null,
+        content: null,
+        created_at: null,
+        thumbnailURL: null,
+        title: null,
+      },
       checkReact: false,
       checkListReactComment: [],
       checkListReactReplyComment: [],
@@ -336,7 +349,6 @@ He was 13 when he says he started to take it 'seriously' and trained with the Sk
 Sleeping only seven hours a night, Kilian Jornet seems almost superhuman. His resting heartbeat is extremely low at 33 beats per minute, compared with the average man's 60 per minute or an athlete's 40 per minute. He breathes more efficiently than average people too, taking in more oxygen per breath, and he has a much faster recovery time after exercise as his body quickly breaks down lactic acid – the acid in muscles that causes pain after exercise.
 All this is thanks to his childhood in the mountains and to genetics, but it is his mental strength that sets him apart. He often sets himself challenges to see how long he can endure difficult conditions in order to truly understand what his body and mind can cope with. For example, he almost gave himself kidney failure after only drinking 3.5 litres of water on a 100km run in temperatures of around 40°C.
 It would take a book to list all the races and awards he's won and the mountains he's climbed. And even here, Kilian’s achievements exceed the average person as, somehow, he finds time to record his career on his blog and has written three books, Run or Die, The Invisible Border and Summits of My Life.</div>`,
-      detailBlog: {},
       listBlog: [
         {
           id: 1,
@@ -531,6 +543,25 @@ It would take a book to list all the races and awards he's won and the mountains
   },
   methods: {
     ...mapMutations('notify', ['setNotify']),
+    async getDetailBlogByID(dataID) {
+      try {
+        const data = await blogApi.getDetailBlog({ id: dataID });
+        this.detailBlog.avatar = data?.author?.avtURL;
+        this.detailBlog.name = data?.author?.fullName;
+        this.detailBlog.content = data?.content;
+        this.detailBlog.created_at = data?.createDate;
+        this.detailBlog.thumbnailURL = data?.thumbnailURL;
+        this.detailBlog.title = data?.title;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    handleReportFirst(data) {
+      console.log(data);
+    },
+    handleReportSecond(data) {
+      console.log(data);
+    },
     /**
      * set time to show history time of blog
      */

@@ -115,35 +115,37 @@ export default {
               colorCode: item?.colorCode,
             });
           } else {
-            if (item?.readingSectionList) {
-              item?.readingSectionList.forEach((ele) => {
-                if (ele.sectionStatus == 'PENDING') {
-                  this.listCourse.push({
-                    id: item?.id + '-' + ele.id,
-                    userID: item?.creatorUserid?.uid,
-                    avatar: item?.creatorUserid?.avatar || '',
-                    name: item?.creatorUserid?.fullName || '',
-                    level: modifiedLevel,
-                    nameCourse: ele?.title,
-                    type: 'Reading course session',
-                  });
-                }
-              });
-            }
-            if (item?.listeningSectionList) {
-              item?.listeningSectionList.forEach((ele) => {
-                if (ele.sectionStatus == 'PENDING') {
-                  this.listCourse.push({
-                    id: item?.id + '-' + ele.id,
-                    userID: item?.creatorUserid?.uid,
-                    avatar: item?.creatorUserid?.avatar || '',
-                    name: item?.creatorUserid?.fullName || '',
-                    level: modifiedLevel,
-                    nameCourse: ele?.title,
-                    type: 'Listening course session',
-                  });
-                }
-              });
+            if (item.courseLevel != 'PENDING') {
+              if (item?.readingSectionList) {
+                item?.readingSectionList.forEach((ele) => {
+                  if (ele.sectionStatus == 'PENDING') {
+                    this.listCourse.push({
+                      id: item?.id + '-' + ele.id,
+                      userID: item?.creatorUserid?.uid,
+                      avatar: item?.creatorUserid?.avatar || '',
+                      name: item?.creatorUserid?.fullName || '',
+                      level: modifiedLevel,
+                      nameCourse: ele?.title,
+                      type: 'Reading course session',
+                    });
+                  }
+                });
+              }
+              if (item?.listeningSectionList) {
+                item?.listeningSectionList.forEach((ele) => {
+                  if (ele.sectionStatus == 'PENDING') {
+                    this.listCourse.push({
+                      id: item?.id + '-' + ele.id,
+                      userID: item?.creatorUserid?.uid,
+                      avatar: item?.creatorUserid?.avatar || '',
+                      name: item?.creatorUserid?.fullName || '',
+                      level: modifiedLevel,
+                      nameCourse: ele?.title,
+                      type: 'Listening course session',
+                    });
+                  }
+                });
+              }
             }
           }
         });

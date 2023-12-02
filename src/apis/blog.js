@@ -5,6 +5,11 @@ class Blog {
     const res = await http.post(`post/createPost`, data);
     return res.data;
   }
+
+  async getDetailBlog(data) {
+    const res = await http.post(`post/getPost`, data);
+    return res.data;
+  }
 }
 
 const blog = new Blog();

@@ -52,7 +52,7 @@ export default {
   },
   methods: {
     handleReport() {
-      console.log('Edit method');
+      this.$emit('report');
     },
     showOptions(data) {
       this.activeId = data;

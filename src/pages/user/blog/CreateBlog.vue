@@ -39,12 +39,14 @@ import { AVATAR } from '../../../constants/image';
 import blogApi from '../../../apis/blog';
 import fileAPI from '../../../apis/file';
 import { notification } from 'ant-design-vue';
+import { NOTIFY_MESSAGE } from '../../../constants';
 
 export default {
   name: 'CreateBlog',
   components: { ButtonBackUser, Word, ImageUpload },
   created() {
     this.AVATAR = AVATAR;
+    this.NOTIFY_MESSAGE = NOTIFY_MESSAGE;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
   },
   data() {
@@ -81,6 +83,7 @@ export default {
               uid: this.userInfor.email,
             },
           });
+          notification.success({ message: NOTIFY_MESSAGE.CREATE_BLOG_SUCCESS });
           this.emitter.emit('isShowLoading', false);
           this.$router.push({ name: 'MyBlog' });
         }
@@ -95,6 +98,7 @@ export default {
         }
       } catch (error) {
         console.log(error);
+        notification.success({ message: NOTIFY_MESSAGE.CREATE_BLOG_FAILED });
         this.emitter.emit('isShowLoading', false);
       }
     },

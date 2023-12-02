@@ -52,15 +52,17 @@ export default {
           if (item.courseStatus == 'PENDING') {
             course.push(item);
           } else {
-            if (item?.readingSectionList.length != 0) {
-              item?.readingSectionList.forEach((ele) => {
-                if (ele?.sectionStatus == 'PENDING') course.push(ele);
-              });
-            }
-            if (item?.listeningSectionList.length != 0) {
-              item?.listeningSectionList.forEach((ele) => {
-                if (ele?.sectionStatus == 'PENDING') course.push(ele);
-              });
+            if (item?.courseLevel != 'PENDING') {
+              if (item?.readingSectionList.length != 0) {
+                item?.readingSectionList.forEach((ele) => {
+                  if (ele?.sectionStatus == 'PENDING') course.push(ele);
+                });
+              }
+              if (item?.listeningSectionList.length != 0) {
+                item?.listeningSectionList.forEach((ele) => {
+                  if (ele?.sectionStatus == 'PENDING') course.push(ele);
+                });
+              }
             }
           }
         });

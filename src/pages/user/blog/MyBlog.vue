@@ -422,8 +422,7 @@ export default {
       this.showComment = false;
     },
     goToDetail(dataID) {
-      // this.$router.push({ name: 'DetailBlogPending', params: { id: dataID } });
-      console.log(dataID);
+      this.$router.push({ name: 'DetailBlog', params: { id: dataID } });
     },
     onShowSizeChange(current, pageSize) {
       console.log(current, pageSize);

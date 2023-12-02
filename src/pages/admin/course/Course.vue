@@ -342,23 +342,26 @@ export default {
         this.emitter.emit('isShowLoading', true);
         const data = await courseApi.allCourse();
         data.forEach((item) => {
-          if (item.courseStatus == 'APPROVED') {
-            let modifiedLevel =
-              item?.courseLevel.charAt(0).toUpperCase() +
-              item?.courseLevel.slice(1).toLowerCase();
-            this.listCourses.push({
-              id: item?.id,
-              title: modifiedLevel + ' Level',
-              level: modifiedLevel,
-              subtitle: item?.description,
-              percentages: [{ percentage: 0 }],
-              name: item?.name,
-              courseFinished: 0,
-              color: item?.colorCode,
-              status: item.courseStatus == 'PENDING' ? true : false,
-            });
+          if (item?.courseLevel != 'PENDING') {
+            if (item.courseStatus == 'APPROVED') {
+              let modifiedLevel =
+                item?.courseLevel.charAt(0).toUpperCase() +
+                item?.courseLevel.slice(1).toLowerCase();
+              this.listCourses.push({
+                id: item?.id,
+                title: modifiedLevel + ' Level',
+                level: modifiedLevel,
+                subtitle: item?.description,
+                percentages: [{ percentage: 0 }],
+                name: item?.name,
+                courseFinished: 0,
+                color: item?.colorCode,
+                status: item.courseStatus == 'PENDING' ? true : false,
+              });
+            }
           }
         });
+
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
         this.emitter.emit('isShowLoading', false);
