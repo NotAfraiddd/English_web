@@ -313,7 +313,7 @@ export default {
       submitMultipleChoice: false,
       paramName: null,
       errorsMultiple: [],
-      myAnswer: [],
+      myAnswer: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
       correctAnswer: [],
       dataMultipleChoice: [],
     };

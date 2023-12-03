@@ -539,7 +539,7 @@ export default {
                 const checkIDCourse = this.userInfor.courseAttemptList.some(
                   (item) => item?.course.id == data.item.id,
                 );
-                if (checkIDCourse) {
+                if (!checkIDCourse) {
                   await courseApi.createCourseAttemp({
                     completion: 0,
                     course: { id: data?.item.id },
