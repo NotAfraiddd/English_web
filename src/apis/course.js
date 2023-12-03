@@ -18,6 +18,10 @@ class CourseApi {
     const res = await http.post(`course/createCourse`, data);
     return res.data;
   }
+  async updateCourse(data) {
+    const res = await http.put(`course/modifyCourse`, data);
+    return res.data;
+  }
   async approvedCourse(data) {
     const res = await http.put(`course/approveCourse`, data);
     return res.data;

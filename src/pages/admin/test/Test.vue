@@ -38,8 +38,7 @@
       <InputLevel
         external-class="w-full"
         :disabled="true"
-        :selectedValueProp="createLevel"
-        @update="updateLevel"
+        :selected-value-prop="createLevel"
       />
     </div>
   </div>
@@ -101,11 +100,12 @@ import {
   GARBAGE,
   ADMIN_COURSE,
 } from '../../../constants/image';
-import { NOTIFY, SCREEN } from '../../../constants/index';
+import { NOTIFY, NOTIFY_MESSAGE, SCREEN } from '../../../constants/index';
 import ButtonBack from '../../../components/common/ButtonBack.vue';
 import InputLevel from '../../../components/common/InputLevel2.vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import courseApi from '../../../apis/course';
+import { notification } from 'ant-design-vue';
 export default {
   name: 'Member',
   components: { ButtonBack, InputLevel, ConfirmModal },
@@ -183,17 +183,32 @@ export default {
       this.modal = false;
     },
     goToReading() {
-      this.$router.push({ name: 'TestLevelReading' });
+      // this.$router.push({ name: 'TestLevelReading' });
       this.modal = false;
     },
     closeModal() {
       this.modal = false;
     },
     updateModal() {},
-    updateLevel(data) {
-      console.log(data);
+    async handleUpdate() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        await courseApi.updateCourse({
+          id: this.idCourseTest,
+          name: this.createName,
+          description: this.createTitle,
+          courseLevel: 0,
+          creatorUserid: {
+            uid: this.userInfor.email,
+          },
+        });
+        this.emitter.emit('isShowLoading', false);
+        notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
+      } catch (error) {
+        console.log(error);
+        notification.success({ message: NOTIFY_MESSAGE.UPDATE_FAILED });
+      }
     },
-    handleUpdate() {},
     handleNext() {
       this.modal = true;
       if (!this.checkData) {
@@ -203,6 +218,7 @@ export default {
   },
   data() {
     return {
+      checkChange: false,
       idCourseTest: null,
       userInfor: null,
       checkData: false,

@@ -107,9 +107,12 @@ export default {
      */
     async getAllPost() {
       try {
-        this.listBlog = [];
         this.emitter.emit('isShowLoading', true);
-        const data = await blogApi.getAllPostPending(1);
+        const data = await blogApi.getAllPostByStatus({
+          postStatus: 0,
+          index: 1,
+          pageSize: 10,
+        });
         this.setNumBlog(data?.totalElements);
         this.emitter.emit('isShowLoading', false);
       } catch (error) {

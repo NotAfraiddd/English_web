@@ -96,10 +96,9 @@ export default {
     if (this.isMatchedRoute('ListeningTest')) {
       this.setDefaultError(0);
     }
-    this.idSection = JSON.parse(localStorage.getItem('IDCourseTestLevel'));
-    if (this.idSection) {
-      this.getDetailSession();
-      this.getRandomQuestions();
+    this.idCourse = JSON.parse(localStorage.getItem('IDCourseTestLevel'));
+    if (this.idCourse) {
+      this.getAllListening();
     }
   },
   watch: {
@@ -113,6 +112,36 @@ export default {
   methods: {
     ...mapMutations('auth', ['setError', 'setDefaultError']),
     /**
+     * get all session
+     * @param {*} dataID
+     */
+    async getAllListening() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const arrAPI = await courseApi.getAllListeningSession({
+          id: this.idCourse,
+        });
+
+        this.listListening = [];
+        arrAPI.forEach((item) => {
+          this.listListening.push({
+            id: item?.id,
+            title: item?.title,
+            subTitle: item?.description,
+            status: item?.sectionStatus == 'PENDING' ? true : false,
+          });
+        });
+        this.idSection = this.listListening[0].id;
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      } finally {
+        await this.getDetailSession();
+        await this.getRandomQuestions();
+      }
+    },
+    /**
      * get random question
      */
     async getRandomQuestions() {
@@ -121,6 +150,7 @@ export default {
         const detailSession = await courseApi.getRandomQuestionListening({
           id: this.idSection,
         });
+        console.log(detailSession);
         detailSession.forEach((word, index) => {
           this.dataListWords.push({
             id: index + 1,
@@ -215,7 +245,10 @@ export default {
       this.$router.push({ name: 'Test' });
     },
     goToEdit() {
-      this.$router.push({ name: 'TestLevelListeningUpdate' });
+      this.$router.push({
+        name: 'TestLevelListeningUpdate',
+        params: { id: this.idSection },
+      });
     },
     /**
      *  Check if the route name matches the route being displayed.
@@ -307,6 +340,7 @@ export default {
   },
   data() {
     return {
+      listListening: [],
       script: null,
       idSection: null,
       title: null,

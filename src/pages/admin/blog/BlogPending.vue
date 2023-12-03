@@ -55,12 +55,19 @@ export default {
 
   methods: {
     ...mapMutations('notify', ['setNotify']),
+    /**
+     * get all blog by status
+     */
     async getAllPost() {
       try {
         this.listBlog = [];
         this.emitter.emit('isShowLoading', true);
-        const data = await blogApi.getAllPostPending(this.current);
-        data?.content.forEach((item) => {
+        const data = await blogApi.getAllPostByStatus({
+          postStatus: 0,
+          index: this.current,
+          pageSize: this.pageSize,
+        });
+        data?.content.forEach((item, index) => {
           this.listBlog.push({
             id: item?.id,
             userID: item?.author?.uid,
@@ -80,6 +87,7 @@ export default {
         this.emitter.emit('isShowLoading', false);
       }
     },
+
     async apiApprovePost(dataIdPost) {
       try {
         await blogApi.approvePost({ id: dataIdPost });
@@ -158,7 +166,7 @@ export default {
       index: 0,
       numNotify: 0,
       current: 1,
-      pageSize: 0,
+      pageSize: 10,
       idUserBlog: null,
       total: 0,
       listBlog: [],

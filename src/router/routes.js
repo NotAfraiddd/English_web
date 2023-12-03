@@ -166,7 +166,7 @@ const routes = [
         component: () => import('../pages/test/Reading.vue'),
       },
       {
-        path: 'test-level/reading/update',
+        path: 'test-level/reading/update/:id',
         name: 'TestLevelReadingUpdate',
         component: () => import('../pages/admin/test/TestReadingUpdate.vue'),
       },
@@ -176,7 +176,7 @@ const routes = [
         component: () => import('../pages/test/Listening.vue'),
       },
       {
-        path: 'test-level/listening/update',
+        path: 'test-level/listening/update/:id',
         name: 'TestLevelListeningUpdate',
         component: () => import('../pages/admin/test/TestListeningUpdate.vue'),
       },
