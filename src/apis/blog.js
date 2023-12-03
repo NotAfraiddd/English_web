@@ -47,6 +47,20 @@ class Blog {
     const res = await http.post(`post/dislikePost`, data);
     return res.data;
   }
+
+  async comment(data) {
+    const res = await http.post(`post/postComment`, data);
+    return res.data;
+  }
+
+  async replyComment(data) {
+    const res = await http.post(`post/replyToAComment`, data);
+    return res.data;
+  }
+  async getComment(data) {
+    const res = await http.post(`post/getComments`, data);
+    return res.data;
+  }
 }
 
 const blog = new Blog();

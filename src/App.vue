@@ -13,7 +13,8 @@
             :imgUrl="
               inforComment.admin
                 ? ADMIN
-                : inforComment.content?.creatorUserid?.avatar
+                : inforComment.content?.creatorUserid?.avatar ||
+                  inforComment.content?.avatar
             "
             :name="
               inforComment.admin
@@ -79,13 +80,22 @@ export default {
           life: 3000,
         });
       } else if (data.kind == SOCKET.REACT) {
-        console.log('SOCKET.REACT', data.content);
-        this.$toast.add({
-          severity: 'success',
-          summary: `${data.content.name}`,
-          detail: 'reacts your blog.',
-          life: 3000,
-        });
+        if (!data.content.react) {
+          this.$toast.add({
+            severity: 'success',
+            summary: `${data.content.name}`,
+            detail: 'unreacts your blog.',
+            life: 3000,
+          });
+        } else {
+          // Default notification for reacting
+          this.$toast.add({
+            severity: 'success',
+            summary: `${data.content.name}`,
+            detail: 'reacts your blog.',
+            life: 3000,
+          });
+        }
       } else if (data.kind == SOCKET.REACT_COMMENT) {
         this.$toast.add({
           severity: 'success',

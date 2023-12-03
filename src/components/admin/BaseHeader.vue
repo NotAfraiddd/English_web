@@ -64,6 +64,13 @@
           <p v-if="inforComment.numberNotifications > 99">+</p>
           {{ inforComment.numberNotifications }}
         </div>
+        <div
+          v-if="listNotify.length > 0"
+          class="absolute header-notify text-xs bg-red-600 text-center text-white leading-6 h-6 w-6 rounded-full"
+        >
+          <p v-if="listNotify.length > 99">+</p>
+          {{ listNotify.length }}
+        </div>
       </div>
       <div
         v-if="showNotify"
@@ -86,7 +93,7 @@
             class="flex items-center hover:bg-table_border cursor-pointer h-16 header-notify__item"
           >
             <div class="ml-3 mr-2">
-              <Avatar :imgUrl="item.avatar" class="w-9 ml-3" />
+              <Avatar :imgUrl="item.avatar" class="w-9 h-9 ml-3" />
             </div>
             <div
               class="w-4/5 text-left text-base textpr header-notify__item-content"
@@ -252,6 +259,7 @@ export default {
     this.formatNumber = formatNumber;
     this.getTotalUser();
     window.addEventListener('scroll', this.handleScroll);
+    this.getNotify();
   },
   emits: ['back'],
   unmounted() {
@@ -292,15 +300,24 @@ export default {
           fullName: newVal.content.name,
         });
       } else if (newVal.kind == SOCKET.REACT) {
-        console.log('header', newVal);
-        this.listNotify.push({
-          id: newVal.content.id,
-          avatar: newVal.content.avatar,
-          nameCourse: null,
-          content: `reacts your blog.`,
-          seen: false,
-          fullName: newVal.content.name,
-        });
+        if (newVal.content.react)
+          this.listNotify.push({
+            id: newVal.content.id,
+            avatar: newVal.content.avatar,
+            nameCourse: null,
+            content: `reacts your blog.`,
+            seen: false,
+            fullName: newVal.content.name,
+          });
+        else
+          this.listNotify.push({
+            id: newVal.content.id,
+            avatar: newVal.content.avatar,
+            nameCourse: null,
+            content: `unreacts your blog.`,
+            seen: false,
+            fullName: newVal.content.name,
+          });
       } else if (newVal.kind == SOCKET.REACT_COMMENT) {
         this.listNotify.push({
           id: newVal.content.id,
@@ -365,7 +382,6 @@ export default {
           fullName: newVal.content.name,
         });
       } else if (newVal.kind == SOCKET.REJECTED_COURSE_PENDING) {
-        console.log(newVal);
         this.listNotify.push({
           id: newVal.content.id,
           avatar: ADMIN,
@@ -460,6 +476,28 @@ export default {
     handleGoToAdmin() {
       this.$router.push({ name: 'Dashboard' });
     },
+    async getNotify() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const data = await userApi.getNotifyList({
+          user: { uid: this.userInfor.email },
+          index: 1,
+        });
+        data?.content?.forEach((item) => {
+          this.listNotify.push({
+            id: item?.id,
+            avatar: item?.commentAvt,
+            content: item?.content,
+            seen: item?.readStatus,
+            fullName: item?.readStatus,
+          });
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
+
     async getTotalUser() {
       try {
         this.emitter.emit('isShowLoading', true);

@@ -301,6 +301,7 @@ export default {
     this.AVATAR = AVATAR;
     this.TITLE = TITLE;
     this.idUserBlog = this.$route.params.username;
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
     this.idBlog = +this.$route.params.id;
     this.getDetailBlogByID(this.idBlog);
   },
@@ -311,6 +312,7 @@ export default {
   },
   data() {
     return {
+      current: 1,
       idBlog: null,
       userInfor: null,
       detailBlog: {
@@ -341,58 +343,9 @@ export default {
       userNameLogin: 'Khang',
       showAllComment: [],
       replyComments: [],
-      listComment: [
-        {
-          id: uuidv4(),
-          userID: 1,
-          name: 'Chi Bao',
-          avatar: AVATAR,
-          content:
-            ' Great !!! Your post is good. I will try something like you wrote',
-          numReact: 1,
-          numComment: 2,
-          created_at: '20/03/2023 10:43',
-          replyComments: [
-            {
-              id: 1,
-              userID: 2,
-              name: 'Ngoc Huan',
-              avatar: AVATAR,
-              content: ' Sure !!!!!!!!!! 😕',
-              nameReply: '',
-              numReact: 10,
-              numComment: 2,
-              created_at: '20/03/2023 12:43',
-            },
-            {
-              id: 2,
-              userID: 1,
-              name: 'Chi Bao',
-              avatar: AVATAR,
-              content: 'Great !!!',
-              nameReply: '',
-              numReact: 0,
-              numComment: 2,
-              created_at: '20/03/2023 14:43',
-            },
-          ],
-        },
-      ],
+      listComment: [],
 
-      listBlog: [
-        {
-          id: 1,
-          author: 'Chi Bao',
-          date: '16/09/2023 10:23',
-          avatar: AVATAR,
-          imageTitle: TITLE,
-          numReact: 0,
-          numComment: 2,
-          title: 'Effective Methods for Improving English Language Skills.',
-          content:
-            "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill. When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
-        },
-      ],
+      listBlog: [],
       listOtherBlog: [
         {
           id: uuidv4(),
@@ -484,95 +437,71 @@ export default {
     setInterval(() => {
       this.updateCurrentTime();
     }, 1000);
-    // listeing socket
-    this.sockets.subscribe('signal', (data) => {
-      if (data.kind == SOCKET.COMMENT) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.COMMENT,
-        });
-      }
-    });
-    const data = {
-      room: +this.idUserBlog,
-      kind: SOCKET.COMMENT,
-    };
-    this.$socket.emit('joinRoom', data);
-    // ------------------ reply comment ------------------
-    this.sockets.subscribe('reply', (data) => {
-      if (data.kind == SOCKET.REPLY_COMMENT) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.REPLY_COMMENT,
-        });
-      }
-    });
-    const dataReply = {
-      room: +this.idUserBlog + `REPLY`,
-      kind: SOCKET.REPLY_COMMENT,
-    };
-    this.$socket.emit('joinRoom', dataReply);
-    // ------------------ react ------------------
-    this.sockets.subscribe('react', (data) => {
-      console.log('react', data);
-      if (data.kind == SOCKET.REACT) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.REACT,
-        });
-      }
-    });
-    const dataReact = {
-      room: +this.idUserBlog,
-      kind: SOCKET.REACT,
-    };
-    this.$socket.emit('joinRoom', dataReact);
-    // ------------------ react comment ------------------
-    this.sockets.subscribe('reactComment', (data) => {
-      if (data.kind == SOCKET.REACT_COMMENT) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.REACT_COMMENT,
-        });
-      }
-    });
-    const dataReactComment = {
-      room: +this.idUserBlog,
-      kind: SOCKET.REACT_COMMENT,
-    };
-    this.$socket.emit('joinRoom', dataReactComment);
-    // ------------------ react reply comment ------------------
-    this.sockets.subscribe('reactCommentReply', (data) => {
-      if (data.kind == SOCKET.REACT_COMMENT_REPLY) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.REACT_COMMENT_REPLY,
-        });
-      }
-    });
-    const dataReactCommentReply = {
-      room: +this.idUserBlog,
-      kind: SOCKET.REACT_COMMENT_REPLY,
-    };
-    this.$socket.emit('joinRoom', dataReactCommentReply);
   },
   methods: {
     ...mapMutations('notify', ['setNotify']),
+    async getCommentByIDBlog() {
+      try {
+        const data = await blogApi.getComment({
+          post: {
+            id: this.idBlog,
+          },
+          index: this.current,
+          itemsPerPage: 5,
+        });
+        data.content.forEach((item) => {
+          const replyComments = item?.commentReplies.map((ele) => {
+            return {
+              id: ele?.id,
+              userID: ele?.replyUser?.email,
+              name: ele?.replyUser?.fullName,
+              content: ele?.content,
+              nameReply: ele?.mention?.fullName,
+              numReact: 10,
+              numComment: 2,
+              created_at: moment(ele?.postedTime).format('DD/MM/YYYY HH:mm'),
+            };
+          });
+          this.listComment.push({
+            id: item?.id,
+            userID: item?.postedUser?.email,
+            name: item?.postedUser?.fullName,
+            avatar: item?.postedUser?.avtURL,
+            content: item?.commentContent,
+            numReact: 0,
+            numComment: 0,
+            created_at: moment(item?.postedTime).format('DD/MM/YYYY HH:mm'),
+            replyComments: replyComments,
+          });
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async handleComment() {
+      await blogApi.comment({
+        commentContent: this.contentChat,
+        post: {
+          id: this.idBlog,
+        },
+        postedUser: {
+          uid: this.userInfor.email,
+        },
+      });
+    },
+
+    async handleReplyComment() {
+      await blogApi.replyComment({
+        content: this.contentChat,
+        mention: {
+          uid: this.idReply,
+        },
+        comment: { id: this.idCommentFirst },
+        replyUser: {
+          uid: this.userInfor.email,
+        },
+      });
+    },
     handlUpdateBlog() {
       this.$router.push({
         name: 'UpdateBlog',
@@ -647,12 +576,6 @@ export default {
       this.showAllComment[data] = !this.showAllComment[data];
     },
     /**
-     * go to detail
-     */
-    goToDetail(data) {
-      // this.$router.push({ name: 'DetailBlogPending', params: { id: dataID } });
-    },
-    /**
      * handle click react
      */
     clickReact() {
@@ -667,8 +590,8 @@ export default {
         this.react++;
         let content = {
           react: this.react,
-          name: this.userNameLogin,
-          avatar: AVATAR,
+          name: this.userInfor.fullName,
+          avatar: this.userInfor.avtURL,
         };
         const react = {
           data: content,
@@ -769,6 +692,9 @@ export default {
       }
     },
     replyComment(data, secondComment) {
+      console.log(data);
+      this.idCommentFirst = data?.id;
+      this.idReply = data?.userID;
       this.replyComments = secondComment;
       this.receiverName = data.name;
       if (this.receiverName) {
@@ -799,14 +725,15 @@ export default {
         if (this.receiverName) {
           // join socket
           const dataSocket = {
-            room: +this.idUserBlog + `REPLY`,
+            room: this.idUserBlog + `REPLY`,
             kind: SOCKET.REPLY_COMMENT,
           };
           this.$socket.emit('joinRoom', dataSocket);
           const commentDetail = {
-            userID: this.userLogin,
-            name: this.userNameLogin,
-            avatar: AVATAR,
+            id: this.idUserBlog,
+            userID: this.userInfor.uid,
+            name: this.userInfor.fullName,
+            avatar: this.userInfor.avtURL,
             nameReply: this.receiverName,
             content: this.contentChat,
             numReact: 0,
@@ -819,33 +746,34 @@ export default {
           };
           this.$socket.emit('sendSignal', comment);
           this.replyComments.push(commentDetail);
+          this.handleReplyComment();
         } else {
           const dataSocket = {
-            room: +this.idUserBlog,
+            room: this.idUserBlog,
             kind: SOCKET.COMMENT,
           };
           this.$socket.emit('joinRoom', dataSocket);
           const commentDetail = {
-            id: uuidv4(),
-            userID: this.userLogin,
-            name: this.userNameLogin,
-            avatar: AVATAR,
+            id: this.idUserBlog,
+            userID: this.userInfor.uid,
+            name: this.userInfor.fullName,
+            avatar: this.userInfor.avtURL,
             nameReply: this.receiverName,
             content: this.contentChat,
             numReact: 0,
             numComment: 0,
             replyComments: [],
             created_at: moment().format('DD/MM/YYYY HH:mm'),
+            admin: this.userInfor.role == 'ADMIN' ? true : false,
           };
           const comment = {
             data: commentDetail,
-            kind: 1,
+            kind: SOCKET.COMMENT,
           };
           this.$socket.emit('sendSignal', comment);
           this.listComment.unshift(commentDetail);
-          // this.listComment.push(commentDetail);
-          // this.listComment.reverse();
           this.comment++;
+          this.handleComment();
         }
         this.receiverName = '';
         this.contentChat = '';
@@ -854,6 +782,7 @@ export default {
     },
     handleShowComment() {
       this.showComment = true;
+      this.getCommentByIDBlog();
     },
     handleCloseComment() {
       this.showComment = false;

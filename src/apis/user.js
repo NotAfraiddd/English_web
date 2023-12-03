@@ -40,6 +40,11 @@ class UserApi {
     const res = await http.post(`user/getOnlineUserCountViaLevel`, data);
     return res.data;
   }
+
+  async getNotifyList(data) {
+    const res = await http.post(`user/getNotificationList`, data);
+    return res.data;
+  }
 }
 
 const userApi = new UserApi();

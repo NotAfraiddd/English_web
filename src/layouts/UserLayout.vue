@@ -80,6 +80,7 @@ export default {
     this.$socket.emit('joinRoom', content);
     // ------------------ react ------------------
     this.sockets.subscribe('react', (data) => {
+      console.log('lisstenin', data);
       if (data.kind == SOCKET.REACT && data.data.id == this.userInfor.email) {
         this.numNotify++;
         this.setNotify({
@@ -139,9 +140,9 @@ export default {
       kind: SOCKET.REACT_COMMENT_REPLY,
     };
     this.$socket.emit('joinRoom', dataReactCommentReply);
+    // ------------------ comment ------------------
     // listeing socket
     this.sockets.subscribe('signal', (data) => {
-      console.log('comment', data);
       if (data.kind == SOCKET.COMMENT && data.data.id == this.userInfor.email) {
         this.numNotify++;
         this.setNotify({

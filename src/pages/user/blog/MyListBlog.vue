@@ -60,7 +60,9 @@
       class="comment fixed bg-white pt-5 text-primary_black pl-5 overflow-y-auto"
       :class="{ 'menu-visible': showComment }"
     >
-      <div class="text-xl font-semibold text-left">12 Comments</div>
+      <div class="text-xl font-semibold text-left">
+        {{ listComment.length }} Comments
+      </div>
       <div class="text-sm text-left">( Report spam or bad content )</div>
       <!-- chat -->
       <div class="mt-5 flex">
@@ -72,7 +74,7 @@
             <img :src="ICON_LAUGH" alt="" srcset="" />
           </div>
         </div>
-        <div class="c-chat__emoji"><Emoji /></div>
+        <div class="c-chat__emoji z-20"><Emoji /></div>
         <textarea
           class="c-chat__input-chat text-base w-full mr-2 pr-3 border-b flex items-center relative"
           spellcheck="false"
@@ -243,14 +245,13 @@ import {
   ICON_LAUGH,
 } from '../../../constants/image';
 import moment from 'moment';
-import { v4 as uuidv4 } from 'uuid';
 import { SOCKET } from '../../../constants';
 import { mapMutations } from 'vuex';
 import blogApi from '../../../apis/blog';
-
+import Emoji from './Emoji.vue';
 export default {
   name: 'MemberListBlog',
-  components: { ButtonBackUser, ListBlog, MenuOption },
+  components: { ButtonBackUser, ListBlog, MenuOption, Emoji },
   created() {
     this.AVATAR = AVATAR;
     this.TITLE = TITLE;
@@ -271,6 +272,9 @@ export default {
   },
   data() {
     return {
+      currentComment: 1,
+      totalComment: 0,
+      IDBlog: null,
       selectedStatus: '',
       total: 0,
       current: 1,
@@ -282,69 +286,18 @@ export default {
       numNotify: 0,
       showComment: false,
       userInfor: null,
-      idUserBlog: 'test@mail.com',
+      idUserBlog: null,
       idCommentFirst: null,
       senderName: '',
       receiverName: '',
       userLogin: 3,
-      userNameLogin: 'Khang',
       contentChat: '',
       showAllComment: [],
       replyComments: [],
-      listComment: [
-        {
-          id: uuidv4(),
-          userID: 1,
-          name: 'Chi Bao',
-          avatar: AVATAR,
-          content:
-            ' Great !!! Your post is good. I will try something like you wrote',
-          numReact: 1,
-          numComment: 2,
-          created_at: '20/03/2023 10:43',
-          replyComments: [
-            {
-              id: 1,
-              userID: 2,
-              name: 'Ngoc Huan',
-              avatar: AVATAR,
-              content: ' Sure !!!!!!!!!! 😕',
-              nameReply: '',
-              numReact: 10,
-              numComment: 2,
-              created_at: '20/03/2023 12:43',
-            },
-            {
-              id: 2,
-              userID: 1,
-              name: 'Chi Bao',
-              avatar: AVATAR,
-              content: 'Great !!!',
-              nameReply: '',
-              numReact: 0,
-              numComment: 2,
-              created_at: '20/03/2023 14:43',
-            },
-          ],
-        },
-      ],
-      listBlog: [
-        {
-          id: 1,
-          author: 'Chi Bao',
-          date: '16/09/2023 10:23',
-          avatar: AVATAR,
-          imageTitle: TITLE,
-          numReact: 0,
-          numComment: 2,
-          title: 'Effective Methods for Improving English Language Skills.',
-          content:
-            "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill. When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
-        },
-      ],
+      listComment: [],
+      listBlog: [],
     };
   },
-  mounted() {},
   methods: {
     ...mapMutations('notify', ['setNotify']),
     onShowSizeChange(current, pageSize) {
@@ -476,19 +429,20 @@ export default {
 
       // join socket react
       const dataSocket = {
-        room: this.idUserBlog,
+        room: data?.data?.userID,
         kind: SOCKET.REACT,
       };
       this.$socket.emit('joinRoom', dataSocket);
       // per user will be able to click once
       if (!isDuplicate) {
         let content = {
-          id: this.idUserBlog,
-          react: data.numReact,
+          id: data?.data?.userID,
+          react: data.like,
           name: this.userInfor.fullName,
-          avatar: AVATAR,
+          avatar: this.userInfor.avtURL,
           admin: this.userInfor.role == 'ADMIN' ? true : false,
         };
+        console.log('content', content);
         const react = {
           data: content,
           kind: SOCKET.REACT,
@@ -511,14 +465,13 @@ export default {
           id: this.idUserBlog,
           react: data.numReact,
           name: this.userInfor.fullName,
-          avatar: AVATAR,
+          avatar: this.userInfor.avtURL,
           admin: this.userInfor.role == 'ADMIN' ? true : false,
         };
         const react = {
           data: content,
           kind: SOCKET.REACT_COMMENT,
         };
-        console.log(this.idUserBlog);
         this.checkListReactComment[id] = true;
         this.$socket.emit('sendSignal', react);
       }
@@ -545,7 +498,7 @@ export default {
           id: this.idUserBlog,
           react: data.numReact,
           name: this.userInfor.fullName,
-          avatar: AVATAR,
+          avatar: this.userInfor.avtURL,
           admin: this.userInfor.role == 'ADMIN' ? true : false,
         };
         const react = {
@@ -572,6 +525,55 @@ export default {
     handleSendChat(e) {
       !e.isComposing && this.sendChat(e.target.value);
     },
+    async handleComment() {
+      await blogApi.comment({
+        commentContent: this.contentChat,
+        post: {
+          id: this.IDBlog,
+        },
+        postedUser: {
+          uid: this.userInfor.email,
+        },
+      });
+    },
+    async getCommentByIDBlog() {
+      try {
+        const data = await blogApi.getComment({
+          post: {
+            id: this.IDBlog,
+          },
+          index: this.current,
+          itemsPerPage: 5,
+        });
+        data.content.forEach((item) => {
+          const replyComments = item?.commentReplies.map((ele) => {
+            return {
+              id: ele?.id,
+              userID: ele?.replyUser?.email,
+              name: ele?.replyUser?.fullName,
+              content: ele?.content,
+              nameReply: ele?.mention?.fullName,
+              numReact: 10,
+              numComment: 2,
+              created_at: moment(ele?.postedTime).format('DD/MM/YYYY HH:mm'),
+            };
+          });
+          this.listComment.push({
+            id: item?.id,
+            userID: item?.postedUser?.email,
+            name: item?.postedUser?.fullName,
+            avatar: item?.postedUser?.avtURL,
+            content: item?.commentContent,
+            numReact: 0,
+            numComment: 0,
+            created_at: moment(item?.postedTime).format('DD/MM/YYYY HH:mm'),
+            replyComments: replyComments,
+          });
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
     sendChat(data) {
       //
       const chatContent = this.$refs.chatContent;
@@ -587,7 +589,7 @@ export default {
             id: this.idUserBlog,
             userID: this.userInfor.uid,
             name: this.userInfor.fullName,
-            avatar: AVATAR,
+            avatar: this.userInfor.avtURL,
             nameReply: this.receiverName,
             content: this.contentChat,
             numReact: 0,
@@ -611,7 +613,7 @@ export default {
             id: this.idUserBlog,
             userID: this.userInfor.uid,
             name: this.userInfor.fullName,
-            avatar: AVATAR,
+            avatar: this.userInfor.avtURL,
             nameReply: this.receiverName,
             content: this.contentChat,
             numReact: 0,
@@ -626,8 +628,7 @@ export default {
           };
           this.$socket.emit('sendSignal', comment);
           this.listComment.unshift(commentDetail);
-          // this.listComment.push(commentDetail);
-          // this.listComment.reverse();
+          this.handleComment();
           this.comment++;
         }
         this.receiverName = '';
@@ -636,16 +637,21 @@ export default {
       }
     },
     handleShowComment(data) {
-      // this.idUserBlog = data.data.id;
+      this.idUserBlog = data?.data.userID;
+      this.IDBlog = data?.data.id;
       if (data.status) {
         this.showComment = true;
+        this.getCommentByIDBlog();
       }
     },
     handleCloseComment() {
       this.showComment = false;
     },
-    goToDetail(dataID) {
-      this.$router.push({ name: 'DetailBlog', params: { id: dataID } });
+    goToDetail(data) {
+      this.$router.push({
+        name: 'DetailBlog',
+        params: { username: data.userID, id: data.id },
+      });
     },
   },
 };

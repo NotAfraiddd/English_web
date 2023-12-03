@@ -249,6 +249,8 @@ export default {
   },
   data() {
     return {
+      currentComment: 1,
+      totalComment: 0,
       selectedStatus: '',
       userInfor: null,
       showComment: false,
