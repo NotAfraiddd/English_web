@@ -129,6 +129,7 @@ export default {
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
     this.paramName = this.$route.params.name;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
+    this.IDCourseAttemp = JSON.parse(localStorage.getItem('idCourseAttemp'));
     this.IDCourse = JSON.parse(localStorage.getItem('IDCourse'));
     this.idSession = +this.$route.params.id;
     this.getDetailSession();
@@ -249,12 +250,11 @@ export default {
           if (checkIDCourse.readingSectionAttemptList.length == 0) {
             this.createSectionAttemp();
           } else {
-            console.log('ababab');
+            this.$router.push({
+              name: 'ListCourseReading',
+              params: { name: this.paramName },
+            });
           }
-          // this.$router.push({
-          //   name: 'ListCourseReading',
-          //   params: { name: this.paramName },
-          // });
         } else {
           notification.warning({
             message:
@@ -268,13 +268,13 @@ export default {
         this.emitter.emit('isShowLoading', true);
         await courseApi.createReadingSecionAttemp({
           readingSectionAttempt: {
-            completion: 0,
+            completion: true,
             readingSection: {
               id: this.idSession,
             },
-            courseAttempt: {
-              id: this.IDCourse,
-            },
+          },
+          courseAttempt: {
+            id: this.IDCourseAttemp,
           },
         });
         this.emitter.emit('isShowLoading', false);
@@ -302,6 +302,7 @@ export default {
   },
   data() {
     return {
+      IDCourseAttemp: null,
       IDCourse: null,
       idSession: null,
       title: null,

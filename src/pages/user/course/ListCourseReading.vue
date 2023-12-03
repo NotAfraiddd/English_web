@@ -283,18 +283,7 @@ export default {
       courseReading: false,
       courseListening: false,
       listReading: [],
-      listDetailReading: [
-        {
-          id: 1,
-          title:
-            'Message to new friend Message to new friend Message to new friend Message to new friend Message to new friend',
-          status: 0,
-        },
-        { id: 2, title: 'Message to new friend', status: 1 },
-        { id: 3, title: 'Message to new friend', status: 0 },
-        { id: 4, title: 'Message to new friend', status: 1 },
-        { id: 5, title: 'Message to new friend', status: 0 },
-      ],
+      listDetailReading: [],
       listDetailListening: [
         { id: 1, title: 'Listening', status: 0 },
         { id: 2, title: 'Listening', status: 1 },

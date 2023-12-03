@@ -530,21 +530,23 @@ export default {
             this.emitter.emit('isShowLoading', true);
             try {
               if (this.userInfor.courseAttemptList.length == 0) {
-                await courseApi.createCourseAttemp({
+                const dataAttemp = await courseApi.createCourseAttemp({
                   completion: 0,
                   course: { id: data?.item.id },
                   user: { uid: this.userInfor.email },
                 });
+                localStorage.setItem('idCourseAttemp', dataAttemp.id);
               } else {
                 const checkIDCourse = this.userInfor.courseAttemptList.some(
                   (item) => item?.course.id == data.item.id,
                 );
                 if (!checkIDCourse) {
-                  await courseApi.createCourseAttemp({
+                  const dataAttemp = await courseApi.createCourseAttemp({
                     completion: 0,
                     course: { id: data?.item.id },
                     user: { uid: this.userInfor.email },
                   });
+                  localStorage.setItem('idCourseAttemp', dataAttemp.id);
                 }
               }
 
