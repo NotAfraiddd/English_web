@@ -1,15 +1,53 @@
 <template>
   <div class="mr-5">
-    <div class="flex gap-3 items-center">
-      <img :src="AVATAR" alt="" srcset="" class="h-10 w-10 rounded-full" />
-      <div class="flex flex-col items-start">
-        <div class="font-semibold text-base">{{ detailBlog.name }}</div>
-        <div class="text-xs">Date: {{ detailBlog.created_at }}</div>
+    <ButtonBackUser
+      title="Detail Blog"
+      @back="changeBack"
+      extend-class="mb-5"
+      :hide-back="true"
+    />
+    <div class="flex justify-between">
+      <div class="flex gap-3 items-center">
+        <img
+          :src="detailBlog.avatar"
+          alt=""
+          srcset=""
+          class="h-10 w-10 rounded-full object-cover"
+        />
+        <div class="flex flex-col items-start">
+          <div class="font-semibold text-base">{{ detailBlog.name }}</div>
+          <div class="text-xs">Date: {{ detailBlog.created_at }}</div>
+        </div>
+        <div
+          class="text-base text-red-500 mt-auto"
+          v-if="detailBlog.status == 'DELETED'"
+        >
+          ( Reject )
+        </div>
+        <div
+          class="text-base text-yellow-500 mt-auto"
+          v-if="detailBlog.status == 'PENDING'"
+        >
+          ( Pending )
+        </div>
+      </div>
+      <div
+        @click="handlUpdateBlog"
+        class="my-auto text-yellow-400 cursor-pointer hover:underline"
+      >
+        Edit
       </div>
     </div>
-    <div class="mt-5 text-left" v-html="content" />
+
+    <div class="mt-4 text-left text-xl font-semibold">
+      {{ detailBlog.title }}
+    </div>
+    <div class="mt-5 text-left" v-html="detailBlog.content" />
     <!-- react -->
-    <div class="flex w-24 justify-between flex-wrap gap-2 mt-5">
+    <div
+      v-if="detailBlog.status == 'APPROVED'"
+      class="flex w-24 justify-between flex-wrap gap-2 mt-5"
+    >
       <div class="flex justify-center items-center cursor-pointer">
         <div @click="clickReact">
           <img
@@ -60,7 +98,7 @@
     class="comment fixed bg-white pt-5 text-primary_black pl-5 overflow-y-auto"
     :class="{ 'menu-visible': showComment }"
   >
-    <div class="text-xl font-semibold text-left">12 Comments</div>
+    <div class="text-xl font-semibold text-left">{{ comment }} Comments</div>
     <div class="text-sm text-left">( Report spam or bad content )</div>
     <!-- chat -->
     <div class="mt-5 flex">
@@ -96,7 +134,7 @@
         <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
         <div class="flex flex-col w-full relative">
           <div
-            class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first relative mb-1"
+            class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first relative"
           >
             <div class="font-semibold">{{ item.name }}</div>
             <div class="text-left mb-1">{{ item.content }}</div>
@@ -246,10 +284,10 @@ import { mapMutations } from 'vuex';
 import { SOCKET } from '../../../constants';
 import blogApi from '../../../apis/blog';
 import { v4 as uuidv4 } from 'uuid';
-
+import ButtonBackUser from '../../../components/common/ButtonBackUser.vue';
 export default {
   name: 'DetailBlog',
-  components: { Emoji, MenuOption },
+  components: { Emoji, MenuOption, ButtonBackUser },
   created() {
     this.GROUP_STUDENT_1 = GROUP_STUDENT_1;
     this.GROUP_STUDENT_2 = GROUP_STUDENT_2;
@@ -262,11 +300,9 @@ export default {
     this.HEART_DEFAULT = HEART_DEFAULT;
     this.AVATAR = AVATAR;
     this.TITLE = TITLE;
-    this.removeBackslashes();
-    this.idUserBlog = this.$route.params.id;
-    if (this.idUserBlog) {
-      this.getDetailBlogByID(this.idUserBlog);
-    }
+    this.idUserBlog = this.$route.params.username;
+    this.idBlog = +this.$route.params.id;
+    this.getDetailBlogByID(this.idBlog);
   },
   watch: {
     showComment(newValue) {
@@ -275,6 +311,8 @@ export default {
   },
   data() {
     return {
+      idBlog: null,
+      userInfor: null,
       detailBlog: {
         avatar: null,
         name: null,
@@ -282,6 +320,7 @@ export default {
         created_at: null,
         thumbnailURL: null,
         title: null,
+        status: null,
       },
       checkReact: false,
       checkListReactComment: [],
@@ -292,8 +331,8 @@ export default {
       showComment: false,
       idUserBlog: null,
       idCommentFirst: null,
-      react: 1,
-      comment: 1,
+      react: 0,
+      comment: 0,
       contentChat: '',
       idReply: null,
       senderName: '',
@@ -339,16 +378,7 @@ export default {
           ],
         },
       ],
-      content: `<div>When you picture mountain climbers scaling Mount Everest, what probably comes to mind are teams of climbers with Sherpa guides leading them to the summit, equipped with oxygen masks, supplies and tents. And in most cases you'd be right, as 97 per cent of climbers use oxygen to ascend to Everest's summit at 8,850 metres above sea level. The thin air at high altitudes makes most people breathless at 3,500 metres, and the vast majority of climbers use oxygen past 7,000 metres. A typical climbing group will have 8–15 people in it, with an almost equal number of guides, and they'll spend weeks to get to the top after reaching Base Camp.
-But ultra-distance and mountain runner Kilian Jornet Burgada ascended the mountain in May 2017 alone, without an oxygen mask or fixed ropes for climbing.
-Oh, and he did it in 26 hours.
-With food poisoning.
-And then, five days later, he did it again, this time in only 17 hours.
-Born in 1987, Kilian has been training for Everest his whole life. And that really does mean his whole life, as he grew up 2,000 metres above sea level in the Pyrenees in the ski resort of Lles de Cerdanya in Catalonia, north-eastern Spain. While other children his age were learning to walk, Kilian was on skis. At one and a half years old he did a five-hour hike with his mother, entirely under his own steam. He left his peers even further behind when he climbed his first mountain and competed in his first cross-country ski race at age three. By age seven, he had scaled a 4,000er and, at ten, he did a 42-day crossing of the Pyrenees.
-He was 13 when he says he started to take it 'seriously' and trained with the Ski Mountaineering Technical Centre (CTEMC) in Catalonia, entering competitions and working with a coach. At 18, he took over his own ski-mountaineering and trail-running training, with a schedule that only allows a couple of weeks of rest a year. He does as many as 1,140 hours of endurance training a year, plus strength training and technical workouts as well as specific training in the week before a race. For his record-breaking ascent and descent of the Matterhorn, he prepared by climbing the mountain ten times until he knew every detail of it, even including where the sun would be shining at every part of the day.
-Sleeping only seven hours a night, Kilian Jornet seems almost superhuman. His resting heartbeat is extremely low at 33 beats per minute, compared with the average man's 60 per minute or an athlete's 40 per minute. He breathes more efficiently than average people too, taking in more oxygen per breath, and he has a much faster recovery time after exercise as his body quickly breaks down lactic acid – the acid in muscles that causes pain after exercise.
-All this is thanks to his childhood in the mountains and to genetics, but it is his mental strength that sets him apart. He often sets himself challenges to see how long he can endure difficult conditions in order to truly understand what his body and mind can cope with. For example, he almost gave himself kidney failure after only drinking 3.5 litres of water on a 100km run in temperatures of around 40°C.
-It would take a book to list all the races and awards he's won and the mountains he's climbed. And even here, Kilian’s achievements exceed the average person as, somehow, he finds time to record his career on his blog and has written three books, Run or Die, The Invisible Border and Summits of My Life.</div>`,
+
       listBlog: [
         {
           id: 1,
@@ -543,17 +573,34 @@ It would take a book to list all the races and awards he's won and the mountains
   },
   methods: {
     ...mapMutations('notify', ['setNotify']),
+    handlUpdateBlog() {
+      this.$router.push({
+        name: 'UpdateBlog',
+        params: { username: this.idUserBlog, id: this.idBlog },
+      });
+    },
+    changeBack() {
+      this.$router.push({ name: 'MyBlog' });
+    },
     async getDetailBlogByID(dataID) {
       try {
+        this.emitter.emit('isShowLoading', true);
         const data = await blogApi.getDetailBlog({ id: dataID });
         this.detailBlog.avatar = data?.author?.avtURL;
         this.detailBlog.name = data?.author?.fullName;
         this.detailBlog.content = data?.content;
-        this.detailBlog.created_at = data?.createDate;
+        this.detailBlog.created_at = moment(data?.createDate).format(
+          'DD/MM/YYYY HH:mm',
+        );
         this.detailBlog.thumbnailURL = data?.thumbnailURL;
         this.detailBlog.title = data?.title;
+        this.detailBlog.status = data?.postStatus;
+        this.comment = data?.commentList.length;
+        this.react = data?.likes.length;
+        this.emitter.emit('isShowLoading', false);
       } catch (error) {
         console.log(error);
+        this.emitter.emit('isShowLoading', false);
       }
     },
     handleReportFirst(data) {
@@ -604,9 +651,6 @@ It would take a book to list all the races and awards he's won and the mountains
      */
     goToDetail(data) {
       // this.$router.push({ name: 'DetailBlogPending', params: { id: dataID } });
-    },
-    removeBackslashes() {
-      this.content = this.content.replace(/\\"/g, '"');
     },
     /**
      * handle click react

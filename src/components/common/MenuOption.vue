@@ -21,7 +21,7 @@
       class="hover:bg-table_border cursor-pointer flex px-3 py-1"
       @click="handleReport"
     >
-      <img :src="REPORT" alt="" class="h-6 leading-6 mr-3 text-sm" />
+      <img :src="REPORT" alt="" class="h-5 my-auto mr-3 text-sm" />
       Report
     </div>
   </div>

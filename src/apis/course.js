@@ -75,6 +75,13 @@ class CourseApi {
     );
     return res.data;
   }
+  async createReadingSecionAttemp(data) {
+    const res = await http.post(
+      `sectionAttempt/createReadingSectionAttempt`,
+      data,
+    );
+    return res.data;
+  }
 }
 
 const courseApi = new CourseApi();

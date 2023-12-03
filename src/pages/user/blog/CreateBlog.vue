@@ -1,6 +1,17 @@
 <template>
   <div class="mr-5">
-    <ButtonBackUser title="Write blog" />
+    <ButtonBackUser
+      v-if="!checkRouteUpdate"
+      title="Write blog"
+      :hide-back="true"
+      @back="handleBack"
+    />
+    <ButtonBackUser
+      v-else
+      title="Update blog"
+      :hide-back="true"
+      @back="handleBack"
+    />
     <div class="flex items-start gap-20 w-full mt-5">
       <div class="flex flex-col items-start justify-center w-2/5 gap-2">
         <div class="font-semibold mr-4">Title Blog</div>
@@ -49,9 +60,13 @@ export default {
     this.AVATAR = AVATAR;
     this.NOTIFY_MESSAGE = NOTIFY_MESSAGE;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
+    if (this.$route.name == 'UpdateBlog') {
+      this.checkRouteUpdate = true;
+    }
   },
   data() {
     return {
+      checkRouteUpdate: false,
       content: null,
       avatar: null,
       file: null,
@@ -61,6 +76,10 @@ export default {
   },
 
   methods: {
+    handleBack() {
+      if (this.checkRouteUpdate) this.$router.push({ name: 'MyBlog' });
+      else this.$router.push({ name: 'HomeUser' });
+    },
     updateContentListening(data) {
       this.content = data;
     },

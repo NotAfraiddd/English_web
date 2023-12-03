@@ -14,6 +14,10 @@ class Blog {
     const res = await http.post(`post/getAllPost`, data);
     return res.data;
   }
+  async getAllPostByAuthor(data) {
+    const res = await http.post(`post/getAllPostByAuthor`, data);
+    return res.data;
+  }
   async getAllPostPending(data) {
     const res = await http.post(`post/getAllPendingPosts`, data);
     return res.data;

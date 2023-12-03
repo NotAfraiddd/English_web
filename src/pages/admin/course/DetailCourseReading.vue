@@ -119,6 +119,7 @@ import { ARROW_LEFT, MOUNTAIN_CLIMB, RELOAD } from '../../../constants/image';
 import { mapMutations, mapState } from 'vuex';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import courseApi from '../../../apis/course';
+import userApi from '../../../apis/user';
 export default {
   name: 'DetailCourseReading',
   components: { ButtonBack, MultipleChoice, ConfirmModal },
@@ -128,6 +129,7 @@ export default {
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
     this.paramName = this.$route.params.name;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
+    this.IDCourse = JSON.parse(localStorage.getItem('IDCourse'));
     this.idSession = +this.$route.params.id;
     this.getDetailSession();
   },
@@ -231,6 +233,9 @@ export default {
       return JSON.stringify(valueA) === JSON.stringify(valueB);
     },
     handleSubmit() {
+      const checkIDCourse = this.userInfor.courseAttemptList.find(
+        (item) => item?.course.id == this.IDCourse,
+      );
       if (!this.submitMultipleChoice) {
         this.errorsMultiple = [];
         for (let i = 0; i < this.dataMultipleChoice.length; i++) {
@@ -241,10 +246,15 @@ export default {
         this.submitMultipleChoice = true;
         if (this.errorsMultiple.length == 0) {
           notification.success({ message: 'Success' });
-          this.$router.push({
-            name: 'ListCourseReading',
-            params: { name: this.paramName },
-          });
+          if (checkIDCourse.readingSectionAttemptList.length == 0) {
+            this.createSectionAttemp();
+          } else {
+            console.log('ababab');
+          }
+          // this.$router.push({
+          //   name: 'ListCourseReading',
+          //   params: { name: this.paramName },
+          // });
         } else {
           notification.warning({
             message:
@@ -253,9 +263,46 @@ export default {
         }
       }
     },
+    async createSectionAttemp() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        await courseApi.createReadingSecionAttemp({
+          readingSectionAttempt: {
+            completion: 0,
+            readingSection: {
+              id: this.idSession,
+            },
+            courseAttempt: {
+              id: this.IDCourse,
+            },
+          },
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      } finally {
+        await this.getDetail();
+      }
+    },
+    /**
+     * get detail user
+     */
+    async getDetail() {
+      try {
+        const email = this.userInfor.email;
+        const data = await userApi.getUser(email);
+        localStorage.setItem('user', JSON.stringify(data));
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.userInfor = JSON.parse(localStorage.getItem('user'));
+      }
+    },
   },
   data() {
     return {
+      IDCourse: null,
       idSession: null,
       title: null,
       textContent: null,

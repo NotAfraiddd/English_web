@@ -7,32 +7,47 @@
     class="flex h-auto cursor-pointer text-base flex-1 justify-between items-start mt-3 border gap-2 py-3 px-5 rounded-lg"
   >
     <div
-      class="flex max-h-40 flex-col list-blog-contain w-full h-40 justify-between"
+      class="flex max-h-40 flex-col list-blog-contain w-full h-40 justify-between items-start"
     >
-      <div v-if="user" class="flex gap-3 items-center">
-        <img
-          :src="item.avatar"
-          alt=""
-          srcset=""
-          class="h-8 w-8 object-cover rounded-full"
-        />
-        <div class="flex flex-col items-start">
-          <div class="font-semibold text-base">{{ item.author }}</div>
-          <div class="text-xs">{{ item.date }}</div>
+      <div class="flex flex-col">
+        <div v-if="user" class="flex gap-3 items-center">
+          <img
+            :src="item.avatar"
+            alt=""
+            srcset=""
+            class="h-8 w-8 object-cover rounded-full"
+          />
+          <div class="flex flex-col items-start">
+            <div class="font-semibold text-base">{{ item.author }}</div>
+            <div class="text-xs">{{ item.date }}</div>
+          </div>
+
+          <div
+            class="text-base text-red-500 mb-auto"
+            v-if="item.status == 'DELETED'"
+          >
+            ( Reject )
+          </div>
+          <div
+            class="text-base text-yellow-500 mb-auto"
+            v-if="item.status == 'PENDING'"
+          >
+            ( Pending )
+          </div>
         </div>
-      </div>
-      <div class="flex flex-col items-start gap-1 hover:opacity-70">
-        <div
-          class="font-semibold text-xl text-primary_black text-left text-title overflow-hidden"
-        >
-          {{ item.title }}
+        <div class="flex flex-col items-start gap-1 hover:opacity-70">
+          <div
+            class="font-semibold text-xl text-primary_black text-left text-title overflow-hidden"
+          >
+            {{ item.title }}
+          </div>
+          <div
+            class="text-base text-primary_black text-left overflow-hidden"
+            :class="!user ? 'text-sub-content' : 'text-sub-content-3'"
+            v-html="item.content"
+            style="margin-bottom: 0 !important"
+          />
         </div>
-        <div
-          class="text-base text-primary_black text-left overflow-hidden"
-          :class="!user ? 'text-sub-content' : 'text-sub-content-3'"
-          v-html="item.content"
-          style="margin-bottom: 0 !important"
-        />
       </div>
       <div v-if="button" class="flex w-40 justify-between flex-wrap gap-3">
         <div
@@ -167,7 +182,7 @@ export default {
 <style lang="scss">
 .menu-option {
   height: fit-content;
-  padding: 8px 0;
+  padding: 5px 0;
   z-index: 1;
 }
 

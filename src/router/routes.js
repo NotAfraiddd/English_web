@@ -43,6 +43,11 @@ const routes = [
         component: () => import('../pages/user/blog/CreateBlog.vue'),
       },
       {
+        path: '/update-blog/:username/:id',
+        name: 'UpdateBlog',
+        component: () => import('../pages/user/blog/CreateBlog.vue'),
+      },
+      {
         path: '/list-blog',
         name: 'MemberListBlog',
         component: () => import('../pages/user/blog/MyListBlog.vue'),
@@ -58,7 +63,7 @@ const routes = [
         component: () => import('../pages/user/home/ListCourse.vue'),
       },
       {
-        path: '/detail/:id',
+        path: '/detail/:username/:id',
         name: 'DetailBlog',
         component: () => import('../pages/user/blog/DetailBlog.vue'),
       },

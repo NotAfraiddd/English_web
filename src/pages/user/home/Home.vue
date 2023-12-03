@@ -482,6 +482,8 @@ export default {
         });
       } catch (error) {
         console.error(error);
+      } finally {
+        this.userInfor = JSON.parse(localStorage.getItem('user'));
       }
     },
     /**
@@ -527,21 +529,31 @@ export default {
             localStorage.setItem('IDCourse', data.item.id);
             this.emitter.emit('isShowLoading', true);
             try {
-              await courseApi.createCourseAttemp({
-                courseAttempt: {
-                  course: {
-                    id: data.item.id,
-                  },
+              if (this.userInfor.courseAttemptList.length == 0) {
+                await courseApi.createCourseAttemp({
                   completion: 0,
-                },
-                user: {
-                  uid: this.userInfor.email,
-                },
-              });
+                  course: { id: data?.item.id },
+                  user: { uid: this.userInfor.email },
+                });
+              } else {
+                const checkIDCourse = this.userInfor.courseAttemptList.some(
+                  (item) => item?.course.id == data.item.id,
+                );
+                if (checkIDCourse) {
+                  await courseApi.createCourseAttemp({
+                    completion: 0,
+                    course: { id: data?.item.id },
+                    user: { uid: this.userInfor.email },
+                  });
+                }
+              }
+
               this.emitter.emit('isShowLoading', false);
             } catch (error) {
               console.log(error);
               this.emitter.emit('isShowLoading', false);
+            } finally {
+              await this.getDetail();
             }
           }
         }

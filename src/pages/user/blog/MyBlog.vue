@@ -1,6 +1,17 @@
 <template>
   <div class="mr-5">
-    <ButtonBackUser title="My Blog" :hide-back="true" @back="goToHome" />
+    <div class="flex justify-between">
+      <ButtonBackUser title="My Blog" :hide-back="true" @back="goToHome" />
+      <select
+        v-model="selectedStatus"
+        class="bg-gray-50 border w-1/2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      >
+        <option value="">Choose type of blog</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Reject</option>
+        <option value="pending">Pending</option>
+      </select>
+    </div>
     <div v-if="listBlog.length == 0">
       <div class="mt-2 text-left">No courses yet</div>
       <div class="mt-2 justify-start flex gap-1">
@@ -20,10 +31,12 @@
         </div>
       </div>
     </div>
+
     <ListBlog
       v-else
       :data="listBlog"
       :avatar="true"
+      :user="true"
       :image="true"
       :react="true"
       @changePath="goToDetail"
@@ -35,7 +48,7 @@
         v-model:current="current"
         :showSizeChanger="false"
         v-model:page-size="pageSize"
-        :total="500"
+        :total="total"
         @change="onShowSizeChange"
       />
     </div>
@@ -200,6 +213,7 @@
 <script>
 import ButtonBackUser from '../../../components/common/ButtonBackUser.vue';
 import ListBlog from '../../../components/common/ListBlog.vue';
+import blogApi from '../../../apis/blog';
 import {
   AVATAR,
   TITLE,
@@ -220,6 +234,10 @@ export default {
     this.HEART_DEFAULT = HEART_DEFAULT;
     this.ICON_LAUGH = ICON_LAUGH;
     this.AVATAR = AVATAR;
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
+    if (this.userInfor) {
+      this.getAllPost();
+    }
   },
   watch: {
     showComment(newValue) {
@@ -228,6 +246,8 @@ export default {
   },
   data() {
     return {
+      selectedStatus: '',
+      userInfor: null,
       showComment: false,
       idUserBlog: null,
       idCommentFirst: null,
@@ -239,7 +259,8 @@ export default {
       contentChat: '',
       replyComments: [],
       current: 1,
-      pageSize: 10,
+      pageSize: 0,
+      total: 0,
       listComment: [
         {
           id: 1,
@@ -277,45 +298,46 @@ export default {
           ],
         },
       ],
-      listBlog: [
-        {
-          id: 1,
-          author: 'Chi Bao',
-          avatar: AVATAR,
-          imageTitle: TITLE,
-          numReact: 0,
-          numComment: 2,
-          title: 'Effective Methods for Improving English Language Skills.',
-          content:
-            "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill. When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
-        },
-        {
-          id: 2,
-          author: 'Ngoc Huan',
-          avatar: AVATAR,
-          imageTitle: TITLE,
-          numReact: 1,
-          numComment: 2,
-          title: 'Hello',
-          content:
-            "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
-        },
-        {
-          id: 3,
-          author: 'Bao Huan',
-          avatar: AVATAR,
-          imageTitle: TITLE,
-          numReact: 1,
-          numComment: 2,
-          title:
-            'Effective Methods for Improving English Language Skills.adbjabskbdk',
-          content:
-            "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
-        },
-      ],
+      listBlog: [],
     };
   },
   methods: {
+    /**
+     * get all blog
+     */
+    async getAllPost() {
+      try {
+        this.listBlog = [];
+        this.emitter.emit('isShowLoading', true);
+        const data = await blogApi.getAllPostByAuthor({
+          user: {
+            uid: this.userInfor.email,
+          },
+          index: this.current,
+        });
+        data?.content.forEach((item) => {
+          this.listBlog.push({
+            id: item?.id,
+            userID: item?.author?.uid,
+            author: item?.author?.fullName,
+            avatar: item?.author?.avtURL,
+            imageTitle: item?.thumbnailURL,
+            title: item?.title || 'Notitle',
+            content: item?.content,
+            date: moment(item?.createDate).format('DD/MM/YYYY HH:mm'),
+            status: item?.postStatus,
+            numReact: item?.likes.length,
+            numComment: item?.commentList.length,
+          });
+          this.total = data?.totalElements;
+          this.pageSize = data?.size;
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
     handleShowAllComment() {
       this.showAllComment = !this.showAllComment;
     },
@@ -421,11 +443,16 @@ export default {
     handleCloseComment() {
       this.showComment = false;
     },
-    goToDetail(dataID) {
-      this.$router.push({ name: 'DetailBlog', params: { id: dataID } });
+    goToDetail(data) {
+      this.$router.push({
+        name: 'DetailBlog',
+        params: { username: data.userID, id: data.id },
+      });
     },
     onShowSizeChange(current, pageSize) {
-      console.log(current, pageSize);
+      this.current = current;
+      this.pageSize = pageSize;
+      this.getAllPost();
     },
     handleGoToCreateBlog() {
       this.$router.push({ name: 'CreateBlog' });

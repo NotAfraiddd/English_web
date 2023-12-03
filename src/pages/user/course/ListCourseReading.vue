@@ -179,8 +179,8 @@ export default {
             if (item?.sectionStatus == 'APPROVED') {
               this.listReading.push({
                 id: item?.id,
-                title: item?.description,
-                subTitle: item?.textContent,
+                title: item?.title,
+                subTitle: item?.description,
                 image: item?.imgURL || EXAMPLE,
                 status: false,
               });
