@@ -1,6 +1,17 @@
 <template>
   <div class="mr-5">
-    <ButtonBackUser title="Blog" :hide-back="true" />
+    <div class="flex justify-between">
+      <ButtonBackUser title="Blog" :hide-back="true" />
+      <select
+        v-model="selectedStatus"
+        class="bg-gray-50 border w-1/2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      >
+        <option value="">Choose type of blog</option>
+        <option value="0">Pending</option>
+        <option value="1">Approved</option>
+        <option value="2">Reject</option>
+      </select>
+    </div>
     <div v-if="listBlog.length == 0">
       <div class="mt-2 text-left">No courses yet</div>
       <div class="mt-2 justify-start flex gap-1">
@@ -38,7 +49,7 @@
         v-model:current="current"
         :showSizeChanger="false"
         v-model:page-size="pageSize"
-        :total="500"
+        :total="total"
         @change="onShowSizeChange"
       />
     </div>
@@ -235,6 +246,7 @@ import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 import { SOCKET } from '../../../constants';
 import { mapMutations } from 'vuex';
+import blogApi from '../../../apis/blog';
 
 export default {
   name: 'MemberListBlog',
@@ -247,14 +259,22 @@ export default {
     this.HEART_DEFAULT = HEART_DEFAULT;
     this.ICON_LAUGH = ICON_LAUGH;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
+    this.getAllPost();
   },
   watch: {
     showComment(newValue) {
       document.body.style.overflow = newValue ? 'hidden' : 'unset';
     },
+    selectedStatus() {
+      this.getAllPost();
+    },
   },
   data() {
     return {
+      selectedStatus: '',
+      total: 0,
+      current: 1,
+      pageSize: 10,
       checkReact: [],
       checkListReactComment: [],
       checkListReactReplyComment: [],
@@ -320,37 +340,52 @@ export default {
           content:
             "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill. When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
         },
-        {
-          id: 2,
-          author: 'Ngoc Huan',
-          date: '16/09/2023 10:23',
-          avatar: AVATAR,
-          imageTitle: TITLE,
-          numReact: 1,
-          numComment: 2,
-          title: 'Hello',
-          content:
-            "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
-        },
-        {
-          id: 3,
-          author: 'Bao Huan',
-          date: '16/09/2023 10:23',
-          avatar: AVATAR,
-          imageTitle: TITLE,
-          numReact: 1,
-          numComment: 2,
-          title:
-            'Effective Methods for Improving English Language Skills.adbjabskbdk',
-          content:
-            "When we think about improving a language, we usually come up with four types of skills we need, which are speaking, listening, reading and writing skills. Let's look at methods to improve each skill.",
-        },
       ],
     };
   },
   mounted() {},
   methods: {
     ...mapMutations('notify', ['setNotify']),
+    onShowSizeChange(current, pageSize) {
+      this.current = current;
+      this.pageSize = pageSize;
+      this.getAllPost();
+    },
+    /**
+     * get all blog by status
+     */
+    async getAllPost() {
+      try {
+        this.listBlog = [];
+        this.emitter.emit('isShowLoading', true);
+        const data = await blogApi.getAllPostByStatus({
+          postStatus: this.selectedStatus ? +this.selectedStatus : null,
+          index: this.current,
+          pageSize: this.pageSize,
+        });
+        data?.content.forEach((item) => {
+          this.listBlog.push({
+            id: item?.id,
+            userID: item?.author?.uid,
+            author: item?.author?.fullName,
+            avatar: item?.author?.avtURL,
+            imageTitle: item?.thumbnailURL,
+            title: item?.title || 'Notitle',
+            content: item?.content,
+            date: moment(item?.createDate).format('DD/MM/YYYY HH:mm'),
+            status: item?.postStatus,
+            numReact: item?.likes.length,
+            numComment: item?.commentList.length,
+          });
+          this.total = data?.totalElements;
+          this.pageSize = data?.size;
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
     /**
      * show all comment
      */

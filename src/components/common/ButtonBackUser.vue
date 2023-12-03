@@ -1,5 +1,5 @@
 <template>
-  <div class="flex" :class="extendClass">
+  <div class="flex items-center" :class="extendClass">
     <div
       @click="handleClicked"
       class="text-left font-semibold text-xl cursor-default"

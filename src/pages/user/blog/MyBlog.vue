@@ -7,9 +7,9 @@
         class="bg-gray-50 border w-1/2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
       >
         <option value="">Choose type of blog</option>
-        <option value="approved">Approved</option>
-        <option value="rejected">Reject</option>
-        <option value="pending">Pending</option>
+        <option value="0">Pending</option>
+        <option value="1">Approved</option>
+        <option value="2">Reject</option>
       </select>
     </div>
     <div v-if="listBlog.length == 0">
@@ -243,6 +243,9 @@ export default {
     showComment(newValue) {
       document.body.style.overflow = newValue ? 'hidden' : 'unset';
     },
+    selectedStatus() {
+      this.getAllPost();
+    },
   },
   data() {
     return {
@@ -259,7 +262,7 @@ export default {
       contentChat: '',
       replyComments: [],
       current: 1,
-      pageSize: 0,
+      pageSize: 10,
       total: 0,
       listComment: [
         {
@@ -314,6 +317,8 @@ export default {
             uid: this.userInfor.email,
           },
           index: this.current,
+          pageSize: this.pageSize,
+          postStatus: this.selectedStatus ? +this.selectedStatus : null,
         });
         data?.content.forEach((item) => {
           this.listBlog.push({

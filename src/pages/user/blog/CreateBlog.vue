@@ -36,9 +36,9 @@
     <Word :contentProp="content" @update="updateContentListening" />
     <div
       @click="handleCreatePost"
-      class="bg-primary w-24 h-9 leading-9 rounded-md cursor-pointer ml-auto mt-5 hover:opacity-50"
+      class="bg-primary w-40 h-9 leading-9 rounded-md cursor-pointer ml-auto mt-5 hover:opacity-50"
     >
-      Create
+      Send to Admin
     </div>
   </div>
 </template>
@@ -63,9 +63,14 @@ export default {
     if (this.$route.name == 'UpdateBlog') {
       this.checkRouteUpdate = true;
     }
+    this.idBlog = +this.$route.params.id;
+    if (this.idBlog) {
+      this.getDetail();
+    }
   },
   data() {
     return {
+      idBlog: null,
       checkRouteUpdate: false,
       content: null,
       avatar: null,
@@ -76,6 +81,21 @@ export default {
   },
 
   methods: {
+    async getDetail() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const data = await blogApi.getDetailBlog({ id: this.idBlog });
+        this.content = data?.content;
+        this.created_at = moment(data?.createDate).format('DD/MM/YYYY HH:mm');
+        this.name = data?.author?.fullName;
+        this.avatar = data?.author?.avtURL;
+        this.inputTitle = data?.title;
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
     handleBack() {
       if (this.checkRouteUpdate) this.$router.push({ name: 'MyBlog' });
       else this.$router.push({ name: 'HomeUser' });
@@ -89,21 +109,33 @@ export default {
     },
     async handleCreatePost() {
       try {
-        if (this.inputTitle && this.content && this.file) {
+        if (this.inputTitle && this.content && this.avatar) {
           this.emitter.emit('isShowLoading', true);
           if (this.file) {
             let formData = new FormData();
             formData.append('file', this.file);
             this.avatar = await fileAPI.updateImg(formData);
           }
-          await blogApi.createBlog({
-            title: this.inputTitle,
-            content: this.content,
-            thumbnailURL: this.avatar,
-            author: {
-              uid: this.userInfor.email,
-            },
-          });
+          if (!this.idBlog) {
+            await blogApi.createBlog({
+              title: this.inputTitle,
+              content: this.content,
+              thumbnailURL: this.avatar,
+              author: {
+                uid: this.userInfor.email,
+              },
+            });
+          } else {
+            await blogApi.updateBlog({
+              id: this.idBlog,
+              title: this.inputTitle,
+              content: this.content,
+              thumbnailURL: this.avatar,
+              author: {
+                uid: this.userInfor.email,
+              },
+            });
+          }
           notification.success({ message: NOTIFY_MESSAGE.CREATE_BLOG_SUCCESS });
           this.emitter.emit('isShowLoading', false);
           this.$router.push({ name: 'MyBlog' });
@@ -114,7 +146,7 @@ export default {
         if (!this.content) {
           notification.error({ message: 'Missing content blog' });
         }
-        if (!this.file) {
+        if (!this.avatar) {
           notification.error({ message: 'Missing image' });
         }
       } catch (error) {

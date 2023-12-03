@@ -5,6 +5,10 @@ class Blog {
     const res = await http.post(`post/createPost`, data);
     return res.data;
   }
+  async updateBlog(data) {
+    const res = await http.put(`post/modifyPost`, data);
+    return res.data;
+  }
 
   async getDetailBlog(data) {
     const res = await http.post(`post/getPost`, data);
@@ -14,8 +18,12 @@ class Blog {
     const res = await http.post(`post/getAllPost`, data);
     return res.data;
   }
+  async getAllPostByStatus(data) {
+    const res = await http.post(`post/getAllPostsByStatus`, data);
+    return res.data;
+  }
   async getAllPostByAuthor(data) {
-    const res = await http.post(`post/getAllPostByAuthor`, data);
+    const res = await http.post(`post/getPostByUserAndStatus`, data);
     return res.data;
   }
   async getAllPostPending(data) {
