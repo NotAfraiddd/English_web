@@ -4,7 +4,7 @@
       <ButtonBackUser title="Blog" :hide-back="true" />
       <select
         v-model="selectedStatus"
-        class="bg-gray-50 border w-1/2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        class="bg-gray-50 border w-44 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
       >
         <option value="">Choose type of blog</option>
         <option value="0">Pending</option>
@@ -275,6 +275,7 @@ export default {
       total: 0,
       current: 1,
       pageSize: 10,
+      idLike: null,
       checkReact: [],
       checkListReactComment: [],
       checkListReactReplyComment: [],
@@ -356,6 +357,7 @@ export default {
      */
     async getAllPost() {
       try {
+        this.checkReact = [];
         this.listBlog = [];
         this.emitter.emit('isShowLoading', true);
         const data = await blogApi.getAllPostByStatus({
@@ -363,7 +365,13 @@ export default {
           index: this.current,
           pageSize: this.pageSize,
         });
-        data?.content.forEach((item) => {
+        data?.content.forEach((item, index) => {
+          const checkLike = item?.likes.some(
+            (ele) => ele?.likedUser?.uid == this.userInfor.email,
+          );
+          const objectLike = item?.likes.find(
+            (ele) => ele?.likedUser?.uid == this.userInfor.email,
+          );
           this.listBlog.push({
             id: item?.id,
             userID: item?.author?.uid,
@@ -376,7 +384,12 @@ export default {
             status: item?.postStatus,
             numReact: item?.likes.length,
             numComment: item?.commentList.length,
+            like: checkLike ? true : false,
+            idLike: objectLike != undefined ? objectLike.id : null,
           });
+          if (checkLike) {
+            this.checkReact[item?.id] = true;
+          }
           this.total = data?.totalElements;
           this.pageSize = data?.size;
         });
@@ -422,8 +435,45 @@ export default {
         }
       }
     },
+    async handleReactBlog(idBlog) {
+      try {
+        const data = await blogApi.reactBlog({
+          likedUser: {
+            uid: this.userInfor.email,
+          },
+          post: {
+            id: idBlog,
+          },
+        });
+        this.idLike = data?.id;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async handleUnReactBlog(idBlog, idLike) {
+      try {
+        await blogApi.unReactBlog({
+          id: this.idLike || idLike,
+          likedUser: {
+            uid: this.userInfor.email,
+          },
+          post: {
+            id: idBlog,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.getAllPost();
+      }
+    },
+
     clickReact(data) {
+      if (data.like) this.handleReactBlog(data.data.id);
+      else this.handleUnReactBlog(data.data.id, data.data.idLike);
       const isDuplicate = this.listBlog.some((p) => p.index === data.index);
+
       // join socket react
       const dataSocket = {
         room: this.idUserBlog,
@@ -443,7 +493,7 @@ export default {
           data: content,
           kind: SOCKET.REACT,
         };
-        this.checkReact[data.index] = true;
+        this.checkReact[data.data.id] = data.like;
         this.$socket.emit('sendSignal', react);
       }
     },

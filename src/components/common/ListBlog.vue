@@ -63,27 +63,32 @@
           Approved
         </div>
       </div>
-      <div v-if="react" class="flex w-24 justify-between flex-wrap gap-2">
-        <div class="flex justify-center items-center cursor-pointer">
-          <div @click.stop="handleClickReact(item, index)">
-            <img
-              :src="checkReact[index] ? HEART : HEART_DEFAULT"
-              alt=""
-              srcset=""
-              class="w-5 h-4"
-            />
-          </div>
-          <div class="h-5 w-5 leading-5 text-primary_black">
-            {{ item.numReact }}
-          </div>
-        </div>
+      <div v-if="react">
         <div
-          class="flex justify-center items-center cursor-pointer"
-          @click.stop="showComment(item)"
+          v-if="item.status == 'APPROVED'"
+          class="flex w-24 justify-between flex-wrap gap-2"
         >
-          <img :src="CHAT" alt="" srcset="" class="w-5 h-4" />
-          <div class="h-5 w-5 leading-5 text-primary_black">
-            {{ item.numComment }}
+          <div class="flex justify-center items-center cursor-pointer">
+            <div @click.stop="handleClickReact(item, index)">
+              <img
+                :src="checkReact[item.id] ? HEART : HEART_DEFAULT"
+                alt=""
+                srcset=""
+                class="w-5 h-4"
+              />
+            </div>
+            <div class="h-5 w-5 leading-5 text-primary_black">
+              {{ item.numReact }}
+            </div>
+          </div>
+          <div
+            class="flex justify-center items-center cursor-pointer"
+            @click.stop="showComment(item)"
+          >
+            <img :src="CHAT" alt="" srcset="" class="w-5 h-4" />
+            <div class="h-5 w-5 leading-5 text-primary_black">
+              {{ item.numComment }}
+            </div>
           </div>
         </div>
       </div>
@@ -148,9 +153,40 @@ export default {
       this.$emit('approved', data);
     },
     handleClickReact(data, index) {
-      data.numReact += 1;
-      const event = { data, index };
-      this.$emit('clickReact', event);
+      if (!this.reactionExecuted) {
+        if (!data?.like) {
+          data.numReact += 1;
+          const event = {
+            data,
+            index,
+            like: true,
+          };
+          this.$emit('clickReact', event);
+          this.reactionExecuted = true;
+        } else {
+          if (data.numReact > 0) {
+            data.numReact -= 1;
+            const event = {
+              data,
+              index,
+              like: false,
+              idLike: data?.idLike,
+            };
+            this.$emit('clickReact', event);
+          }
+        }
+      } else {
+        if (data.numReact > 0) {
+          data.numReact -= 1;
+          const event = {
+            data,
+            index,
+            like: false,
+          };
+          this.$emit('clickReact', event);
+        }
+        this.reactionExecuted = false;
+      }
     },
     goToDetail(data) {
       this.$emit('changePath', data);
@@ -168,6 +204,7 @@ export default {
   },
   data() {
     return {
+      reactionExecuted: false,
       showOption: false,
       activeId: null,
       options: [

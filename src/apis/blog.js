@@ -38,6 +38,15 @@ class Blog {
     const res = await http.put(`post/deletePost`, data);
     return res.data;
   }
+
+  async reactBlog(data) {
+    const res = await http.post(`post/likePost`, data);
+    return res.data;
+  }
+  async unReactBlog(data) {
+    const res = await http.post(`post/dislikePost`, data);
+    return res.data;
+  }
 }
 
 const blog = new Blog();
