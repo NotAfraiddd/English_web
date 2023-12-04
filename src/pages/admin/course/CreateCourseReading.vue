@@ -52,10 +52,10 @@
         />
       </div>
       <ImageUpload
-        :src-img="AVATAR"
+        :src-img="avatar"
         extend-class="w-96 h-96"
-        :remove="true"
         extend-class-icon="icon-remove"
+        @update="getAvatar"
       />
 
       <ButtonBack title="Reading text" extend-class="mt-5" />
@@ -87,10 +87,18 @@
         Cancel
       </div>
       <div
+        v-if="this.$route.name != 'UpdateCourseReading'"
         @click="createCourse"
         class="cursor-pointer rounded-lg bg-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
       >
         Create
+      </div>
+      <div
+        v-else
+        @click="createOrUpdate"
+        class="cursor-pointer rounded-lg bg-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+      >
+        Update
       </div>
     </div>
     <div v-else class="flex justify-center gap-20 mt-5 text-base">
@@ -148,6 +156,7 @@ import { notification } from 'ant-design-vue';
 import InputLevel from '../../../components/common/InputLevel2.vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import courseApi from '../../../apis/course';
+import fileAPI from '../../../apis/file';
 
 export default {
   name: 'CreateCourseReading',
@@ -167,9 +176,106 @@ export default {
       this.checkName = true;
     this.idCourse = JSON.parse(localStorage.getItem('IDCourse'));
     this.inputLevel = JSON.parse(localStorage.getItem('IDCourse'));
+    this.idSection = +this.$route.params.id;
+    if (this.idSection) {
+      this.getDetailSession();
+    }
   },
 
   methods: {
+    async createOrUpdate() {
+      this.dataQuestionReading = this.dataQuestionReading.filter(
+        (item, index) => index === 0 || item.title !== '',
+      );
+      this.checkQuestions();
+      try {
+        if (this.title) {
+          this.emitter.emit('isShowLoading', true);
+          if (this.file) {
+            let formData = new FormData();
+            formData.append('file', this.file);
+            this.avatar = await fileAPI.updateImg(formData);
+          }
+          if (this.noData) {
+            await courseApi.createReadingSession({
+              description: this.subTitle,
+              textContent: this.contentReading,
+              title: this.title,
+              imgURL: this.avatar,
+              course: {
+                id: this.idCourse,
+              },
+              questionList: this.questionList,
+            });
+            this.emitter.emit('isShowLoading', false);
+            notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
+          } else {
+            await courseApi.updateReadingSession({
+              id: this.idSection,
+              description: this.subTitle,
+              textContent: this.contentReading,
+              title: this.title,
+              imgURL: this.avatar,
+              course: {
+                id: this.idCourse,
+              },
+              questionList: this.questionList,
+            });
+            this.emitter.emit('isShowLoading', false);
+            notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
+          }
+        } else {
+          notification.error({ message: 'Title has not been filled in yet' });
+        }
+        if (
+          this.dataQuestionReadingCorrect.length !=
+          this.dataQuestionReading.length
+        ) {
+          notification.error({
+            message: 'The answers or questions has not been filled in yet',
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+        notification.error({ message: NOTIFY_MESSAGE.UPDATE_FAILED });
+      }
+    },
+    /**
+     * get detail session
+     */
+    async getDetailSession() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const detailSession = await courseApi.getReadingSessionByID({
+          id: this.idSection,
+        });
+        this.title = detailSession?.title;
+        this.subTitle = detailSession?.description;
+        this.contentReading = detailSession?.textContent;
+        this.avatar = detailSession?.imgURL;
+        detailSession?.questionList.forEach((item, index) => {
+          this.dataQuestionReading.push({
+            id: index + 1,
+            title: item.questionContent,
+            answers: item.options.map((item) => item.content),
+          });
+
+          this.dataQuestionReadingCorrect.push(+item.correctAnswer);
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        if (error.response.status == 404) this.noData = true;
+        this.$router.push({ name: 'TestLevelReadingUpdate' });
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
+    getAvatar(data, fileImg) {
+      console.log(data, fileImg);
+      this.avatar = data;
+      this.file = fileImg;
+    },
     // level
     updateLevel(e) {
       this.inputLevel = e;
@@ -204,8 +310,8 @@ export default {
       this.checkQuestions();
       try {
         if (
-          this.dataQuestionReading.length == 2 &&
-          this.dataQuestionReadingCorrect.length == 2 &&
+          this.dataQuestionReading.length ==
+            this.dataQuestionReadingCorrect.length &&
           this.title
         ) {
           this.emitter.emit('isShowLoading', true);
@@ -228,8 +334,8 @@ export default {
           notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_9 });
         }
         if (
-          this.dataQuestionReadingCorrect.length != 2 &&
-          this.dataQuestionReading.length == 2
+          this.dataQuestionReadingCorrect.length !=
+          this.dataQuestionReading.length
         ) {
           notification.error({
             message: 'The answers has not been filled in yet',
@@ -275,20 +381,18 @@ export default {
 
   data() {
     return {
+      avatar: AVATAR,
+      file: null,
+      idSection: null,
       subTitle: null,
       idCourse: null,
       questionList: [],
       showModalCreateCourse: false,
-      inputLevel: 1,
+      inputLevel: 0,
       checkName: false,
       contentReading: '',
       title: '',
-      dataQuestionReading: [
-        {
-          title: '',
-          answers: [],
-        },
-      ],
+      dataQuestionReading: [],
       dataQuestionReadingCorrect: [],
     };
   },

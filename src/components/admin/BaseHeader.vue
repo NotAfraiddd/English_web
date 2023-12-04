@@ -409,6 +409,7 @@ export default {
     checkRoute() {
       if (
         this.isMatchedRoute('Dashboard') ||
+        this.isMatchedRoute('UpdateCourseReading') ||
         this.isMatchedRoute('BlogPending') ||
         this.isMatchedRoute('DetailBlogPending') ||
         this.isMatchedRoute('CoursePending') ||

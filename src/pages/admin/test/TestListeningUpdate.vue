@@ -419,7 +419,7 @@ export default {
       this.$router.push({ name: 'TestLevelListening' });
     },
     addWord() {
-      if (this.numWords.length <= 5) {
+      if (this.numWords.length <= 4) {
         this.numWords++;
         this.dataWords.push({
           id: this.numWords - 1,

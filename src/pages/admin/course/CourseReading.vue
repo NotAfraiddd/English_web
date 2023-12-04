@@ -92,7 +92,7 @@ export default {
         this.path = formatSpacerIntoHyphen(data.item.title);
         this.$router.push({
           name: 'DetailCourseReading',
-          params: { name: this.path.toLowerCase() },
+          params: { name: this.path.toLowerCase(), id: data?.item.id },
         });
       } else {
         notification.warning({ message: 'Session awaiting approval' });

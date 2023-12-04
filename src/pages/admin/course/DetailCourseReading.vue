@@ -236,8 +236,8 @@ export default {
     },
     handleUpdate() {
       this.$router.push({
-        name: 'CreateCourseReading',
-        params: { name: this.paramName },
+        name: 'UpdateCourseReading',
+        params: { id: this.idSession },
       });
     },
     getAnswerMultichoice(data) {

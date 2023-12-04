@@ -18,6 +18,8 @@
   </div>
 </template>
 <script>
+import { notification } from 'ant-design-vue';
+import courseApi from '../../../apis/course';
 import ButtonBack from '../../../components/common/ButtonBack.vue';
 import ListCourse from '../../../components/common/ListCourse.vue';
 import { formatSpacerIntoHyphen } from '../../../constants/function';
@@ -28,9 +30,57 @@ export default {
   created() {
     this.EXAMPLE = EXAMPLE;
     this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
+    this.idCourse = JSON.parse(localStorage.getItem('IDCourse'));
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
+    this.getAllListening();
     if (this.$route.params.course) this.pathCourse = this.$route.params.course;
   },
   methods: {
+    /**
+     * get all session
+     * @param {*} dataID
+     */
+    async getAllListening() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const arrAPI = await courseApi.getAllListeningSession({
+          id: this.idCourse,
+        });
+
+        this.listListening = [];
+
+        if (
+          this.userInfor.role == 'ADMIN' ||
+          this.userInfor.level == 'ADVANCED'
+        ) {
+          arrAPI.forEach((item) => {
+            this.listListening.push({
+              id: item?.id,
+              title: item?.title,
+              subTitle: item?.description,
+              image: item?.thumbnailURL || EXAMPLE,
+              status: item?.sectionStatus == 'PENDING' ? true : false,
+            });
+          });
+        } else {
+          arrAPI.forEach((item) => {
+            if (item?.sectionStatus == 'APPROVED') {
+              this.listListening.push({
+                id: item?.id,
+                title: item?.description,
+                subTitle: item?.textContent,
+                image: item?.thumbnailURL || EXAMPLE,
+                status: false,
+              });
+            }
+          });
+        }
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
     onBack() {
       this.$router.push({ name: 'Course' });
     },
@@ -41,39 +91,23 @@ export default {
       });
     },
     goToDetailCourse(data) {
-      const path = formatSpacerIntoHyphen(data.item.title);
-      this.$router.push({
-        name: 'DetailCourseListening',
-        params: { name: path },
-      });
+      if (!data?.item.status) {
+        const path = formatSpacerIntoHyphen(data.item.title);
+        this.$router.push({
+          name: 'DetailCourseListening',
+          params: { course: path.toLowerCase(), id: data?.item.id },
+        });
+      } else {
+        notification.warning({ message: 'Session awaiting approval' });
+      }
     },
   },
   data() {
     return {
       pathCourse: null,
-      listListening: [
-        {
-          id: 1,
-          title: 'Message to new friend',
-          subTitle:
-            'Read a direct message on social media to practise and improve your reading skills.',
-          image: EXAMPLE,
-        },
-        {
-          id: 2,
-          title: 'Message to new friend',
-          subTitle:
-            'Read a direct message on social media to practise and improve your reading skills.',
-          image: EXAMPLE,
-        },
-        {
-          id: 3,
-          title: 'Message to new friend',
-          subTitle:
-            'Read a direct message on social media to practise and improve your reading skills.',
-          image: EXAMPLE,
-        },
-      ],
+      listListening: [],
+      idCourse: null,
+      userInfor: null,
     };
   },
 };

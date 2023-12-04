@@ -198,6 +198,8 @@ import { NOTIFY_MESSAGE, UI } from '../../../constants/index';
 import { notification } from 'ant-design-vue';
 import Inputlevel from '../../../components/common/InputLevel2.vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
+import courseApi from '../../../apis/course';
+import fileAPI from '../../../apis/file';
 export default {
   name: 'CreateCourseListening',
   components: {
@@ -237,10 +239,78 @@ export default {
 
     subtractWord(index) {
       this.word.splice(index, 1);
+      this.dataWords.splice(index, 1);
       this.numWords--;
     },
-    createCourse() {
-      notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
+    async createCourse() {
+      this.dataQuestion = this.dataQuestion.filter(
+        (item, index) => index === 0 || item.title !== '',
+      );
+      this.checkQuestions();
+      this.checkWord();
+      try {
+        if (
+          this.dataQuestion.length == this.dataQuestionCorrect.length &&
+          this.title
+        ) {
+          this.emitter.emit('isShowLoading', true);
+          if (this.file) {
+            let formData = new FormData();
+            formData.append('file', this.file);
+            this.avatar = await fileAPI.updateImg(formData);
+          }
+          if (this.media) {
+            let formData = new FormData();
+            formData.append('file', this.media);
+            this.selectedAudio = await fileAPI.updateMp3(formData);
+          }
+          const data = {
+            description: this.subTitle,
+            script: this.contentListening,
+            title: this.title,
+            mediaURL: this.selectedAudio,
+            thumbnailURL: this.avatar,
+            course: {
+              id: this.idCourse,
+            },
+            questionList: this.questionList,
+            fillInBlankQuestionList: this.fillInBlankQuestionList,
+          };
+          const dataUpdate = {
+            id: this.idSection,
+            description: this.subTitle,
+            script: this.contentListening,
+            title: this.title,
+            mediaURL: this.selectedAudio,
+            thumbnailURL: this.avatar,
+            course: {
+              id: this.idCourse,
+            },
+            questionList: this.questionList,
+            fillInBlankQuestionList: this.fillInBlankQuestionList,
+          };
+          if (this.noData) await courseApi.createListeningSession(data);
+          else await courseApi.updateListeningSession(dataUpdate);
+          this.emitter.emit('isShowLoading', false);
+          notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
+          this.$router.push({
+            name: 'CourseListening',
+          });
+        } else if (
+          this.dataQuestion.length != this.dataQuestionCorrect.length
+        ) {
+          notification.error({
+            message: 'Questions and answers have not been filled in completely',
+          });
+        }
+        if (!this.title)
+          notification.error({
+            message: 'Title has not been filled in yet',
+          });
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
     },
     cancelCreate() {
       this.$router.push({ name: 'CourseListening' });
@@ -262,8 +332,14 @@ export default {
       this.$router.push({ name: 'CourseListening' });
     },
     addWord() {
-      if (this.numWords <= 4) this.numWords++;
-      else notification.error({ message: NOTIFY_MESSAGE.ADD_WORD });
+      if (this.numWords.length <= 4) {
+        this.numWords++;
+        this.dataWords.push({
+          id: this.numWords - 1,
+          contentLeft: '',
+          contentRight: '',
+        });
+      } else notification.warning({ message: 'Only 5 questions' });
     },
     addQuestion() {
       if (this.dataQuestion.length <= 5)

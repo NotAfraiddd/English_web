@@ -206,13 +206,13 @@ const routes = [
         component: () => import('../pages/admin/course/CourseGrammar.vue'),
       },
       {
-        path: 'course/:course/listening/detail/:name',
+        path: 'course/:course/listening/detail/:id',
         name: 'DetailCourseListening',
         component: () =>
           import('../pages/admin/course/DetailCourseListening.vue'),
       },
       {
-        path: 'course/:course/reading/detail/:name',
+        path: 'course/:course/reading/detail/:id',
         name: 'DetailCourseReading',
         component: () =>
           import('../pages/admin/course/DetailCourseReading.vue'),
@@ -224,7 +224,7 @@ const routes = [
           import('../pages/admin/course/CreateCourseReading.vue'),
       },
       {
-        path: 'course/:course/reading/detail/:name/update',
+        path: 'course/:course/reading/detail/:id/update',
         name: 'UpdateCourseReading',
         component: () =>
           import('../pages/admin/course/CreateCourseReading.vue'),

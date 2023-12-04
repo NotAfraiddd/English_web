@@ -65,7 +65,7 @@
     <ButtonBack title="Transcript" extend-class="mt-5" />
     <Word :contentProp="contentListening" @update="updateContentListening" />
     <ButtonBack
-      title="Listen to the dialogue above and choose the correct answer ( only 11 questions )"
+      title="Listen to the dialogue above and choose the correct answer ( only 9 questions )"
       extend-class="mt-5"
     />
     <AddAnswer
@@ -281,8 +281,8 @@ export default {
       this.checkWord();
       try {
         if (
-          this.dataQuestion.length == 2 &&
-          this.dataQuestionCorrect.length == 2 &&
+          this.dataQuestion.length == 9 &&
+          this.dataQuestionCorrect.length == 9 &&
           this.title
         ) {
           this.emitter.emit('isShowLoading', true);
@@ -315,7 +315,7 @@ export default {
             name: 'ListCourseListening',
             params: { name: this.namePath },
           });
-        } else if (this.dataQuestion.length != 2) {
+        } else if (this.dataQuestion.length != 9) {
           notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_9 });
         }
         if (
@@ -360,12 +360,12 @@ export default {
       else notification.error({ message: NOTIFY_MESSAGE.ADD_WORD });
     },
     addQuestion() {
-      if (this.dataQuestion.length <= 10)
+      if (this.dataQuestion.length <= 9)
         this.dataQuestion.push({
           title: '',
           answers: [],
         });
-      else notification.error({ message: 'Only 11 questions' });
+      else notification.error({ message: 'Only 9 questions' });
     },
     subtractQuestion(data) {
       this.dataQuestion.splice(data, 1);
