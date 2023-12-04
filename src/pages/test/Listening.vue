@@ -15,7 +15,12 @@
       <div class="bg-primary_line course-line w-full" />
     </div>
     <div class="detail-field mx-auto my-5">
-      <img :src="MOUNTAIN_CLIMB" alt="" srcset="" class="detail-image" />
+      <img
+        :src="imgURL || MOUNTAIN_CLIMB"
+        alt=""
+        srcset=""
+        class="detail-image"
+      />
     </div>
     <Audio :data-prop="selectedAudio" :hideChoose="false" />
     <div ref="transcriptTop">
@@ -85,6 +90,8 @@ import MultipleChoice from '../../components/common/MultipleChoice.vue';
 import MatchWord from '../../components/common/MatchWord.vue';
 import { mapState, mapMutations } from 'vuex';
 import courseApi from '../../apis/course';
+import { notification } from 'ant-design-vue';
+
 export default {
   name: 'ListeningTest',
   components: { ButtonBack, Audio, MultipleChoice, MatchWord },
@@ -150,7 +157,6 @@ export default {
         const detailSession = await courseApi.getRandomQuestionListening({
           id: this.idSection,
         });
-        console.log(detailSession);
         detailSession.forEach((word, index) => {
           this.dataListWords.push({
             id: index + 1,
@@ -183,7 +189,7 @@ export default {
             title: item.questionContent,
             question: item.options.map((item) => item.content),
           });
-          this.correctAnswer.push(+item.correctAnswer);
+          this.correctAnswer.push(+item.correctAnswer + 1);
         });
         detailSession?.fillInBlankQuestionList.forEach((ele, index) => {
           this.listQuestions.push({
@@ -244,6 +250,9 @@ export default {
         }
         this.submitMatching = true;
       }
+      if (this.errorsMultiple.length == 0 && this.errorsMatching.length == 0) {
+        notification.success({ message: 'Success' });
+      } else notification.warning({ message: 'Failed' });
     },
     handleBack() {
       this.$router.push({ name: 'Test' });

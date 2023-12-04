@@ -32,6 +32,7 @@
         </div>
       </div>
       <div
+        v-if="userInfor.email == idUserBlog"
         @click="handlUpdateBlog"
         class="my-auto text-yellow-400 cursor-pointer hover:underline"
       >

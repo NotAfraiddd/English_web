@@ -332,7 +332,7 @@ export default {
       this.$router.push({ name: 'CourseListening' });
     },
     addWord() {
-      if (this.numWords.length <= 4) {
+      if (this.numWords <= 4) {
         this.numWords++;
         this.dataWords.push({
           id: this.numWords - 1,

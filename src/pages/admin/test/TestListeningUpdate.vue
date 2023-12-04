@@ -265,7 +265,7 @@ export default {
             title: item.questionContent,
             answers: item.options.map((item) => item.content),
           });
-          this.dataQuestionCorrect.push(+item?.correctAnswer - 1);
+          this.dataQuestionCorrect.push(+item?.correctAnswer);
         });
         data?.fillInBlankQuestionList.forEach((ele, index) => {
           this.dataWords.push({
@@ -419,7 +419,7 @@ export default {
       this.$router.push({ name: 'TestLevelListening' });
     },
     addWord() {
-      if (this.numWords.length <= 4) {
+      if (this.numWords <= 4) {
         this.numWords++;
         this.dataWords.push({
           id: this.numWords - 1,

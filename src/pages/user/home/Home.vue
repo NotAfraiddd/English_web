@@ -16,23 +16,30 @@
   <div class="text-left font-semibold text-xl mt-10">Featured blogs</div>
   <div class="grid grid-cols-5 detail-blog-grid gap-4 mr-4">
     <div
-      v-for="(item, index) in 8"
+      v-for="(item, index) in listBlog"
       :key="index"
+      @click="handleGoToBlog(item)"
       class="flex flex-col detail-blog-item cursor-pointer hover:opacity-90"
     >
       <div
         class="profile-background mt-5 hover:opacity-50"
-        :style="{ backgroundImage: 'url(' + LISTENING + ')' }"
+        :style="{ backgroundImage: 'url(' + item.thumnail + ')' }"
       />
       <div class="font-semibold my-3 item-title">
-        Effective Methods for Improving English Language Skills.
+        {{ item?.title }}
       </div>
       <div class="flex">
-        <img :src="AVATAR" alt="" class="w-5 h-5 rounded-full" />
+        <img
+          :src="item.avatar"
+          alt=""
+          class="w-5 h-5 rounded-full object-cover"
+        />
         <div class="ml-3 flex justify-between items-center gap-2">
-          <div class="text-sm font-semibold">Chi Bao</div>
+          <div class="text-sm font-semibold">{{ item?.name }}</div>
           ·
-          <div class="text-sm text-primary_grey_time">{{ delayMinutes }}</div>
+          <div class="text-sm text-primary_grey_time">
+            {{ item?.created_at }}
+          </div>
         </div>
       </div>
     </div>
@@ -224,6 +231,7 @@ import { NOTIFY_MESSAGE } from '../../../constants';
 import InputLevel from '../../../components/common/InputLevel.vue';
 import { mapState } from 'vuex';
 import courseApi from '../../../apis/course';
+import blog from '../../../apis/blog';
 export default {
   name: 'HomeUser',
   components: {
@@ -241,6 +249,7 @@ export default {
     this.userInfor = JSON.parse(localStorage.getItem('user'));
     this.getAllCourse();
     this.getDetail();
+    this.getAllBlog();
   },
   computed: {
     ...mapState('notify', ['statusCallAPICourse']),
@@ -275,6 +284,7 @@ export default {
         name: null,
       },
       listCourses: [],
+      listBlog: [],
     };
   },
 
@@ -299,6 +309,32 @@ export default {
     setInterval(this.updateCurrentTime, 1000);
   },
   methods: {
+    handleGoToBlog(data) {
+      this.$router.push({
+        name: 'DetailBlog',
+        params: { username: data.userID, id: data.id },
+      });
+    },
+    async getAllBlog() {
+      try {
+        const data = await blog.getRecentBlog();
+        data.content.forEach((item) => {
+          this.listBlog.push({
+            id: item?.id,
+            userID: item?.author?.email,
+            avatar: item?.author?.avtURL,
+            name: item?.author?.fullName,
+            title: item?.title,
+            thumnail: item?.thumbnailURL,
+            created_at: moment(item?.createDate).format('DD/MM/YYYY HH:mm'),
+          });
+        });
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
+
     async sendAPICreateCourse() {
       try {
         const data = {

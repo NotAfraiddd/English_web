@@ -85,11 +85,6 @@
     </template>
     <template #content>
       <div class="text-base flex">
-        You scored
-        <div class="font-medium">&nbsp;{{ 25 - error }}&nbsp;</div>
-        of 25 answers
-      </div>
-      <div class="text-base flex">
         You have reached
         <div class="font-medium">&nbsp;{{ level }}&nbsp;</div>
         level

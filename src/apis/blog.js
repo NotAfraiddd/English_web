@@ -61,6 +61,11 @@ class Blog {
     const res = await http.post(`post/getComments`, data);
     return res.data;
   }
+
+  async getRecentBlog() {
+    const res = await http.get(`post/getMostPopularPosts`);
+    return res.data;
+  }
 }
 
 const blog = new Blog();
