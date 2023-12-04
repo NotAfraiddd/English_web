@@ -72,22 +72,29 @@
     <div class="text-lg font-semibold text-left">Other related blogs</div>
     <div class="grid grid-cols-5 detail-blog-grid gap-4 mr-4">
       <div
-        v-for="item in listOtherBlog"
-        :key="item.id"
+        v-for="(item, index) in listBlog"
+        :key="index"
+        @click="handleGoToBlog(item)"
         class="flex flex-col detail-blog-item cursor-pointer hover:opacity-90"
       >
         <div
           class="profile-background mt-5 hover:opacity-50"
-          :style="{ backgroundImage: 'url(' + item.background + ')' }"
+          :style="{ backgroundImage: 'url(' + item.thumnail + ')' }"
         />
-        <div class="font-semibold my-3 item-title">{{ item.title }}</div>
+        <div class="font-semibold my-3 item-title">
+          {{ item?.title }}
+        </div>
         <div class="flex">
-          <img :src="item.avatar" alt="" class="w-5 h-5 rounded-full" />
+          <img
+            :src="item.avatar"
+            alt=""
+            class="w-5 h-5 rounded-full object-cover"
+          />
           <div class="ml-3 flex justify-between items-center gap-2">
-            <div class="text-sm font-semibold">{{ item.name }}</div>
+            <div class="text-sm font-semibold">{{ item?.name }}</div>
             ·
             <div class="text-sm text-primary_grey_time">
-              {{ updateCurrentTime(item.created_at) }}
+              {{ item?.created_at }}
             </div>
           </div>
         </div>
@@ -305,6 +312,7 @@ export default {
     this.userInfor = JSON.parse(localStorage.getItem('user'));
     this.idBlog = +this.$route.params.id;
     this.getDetailBlogByID(this.idBlog);
+    this.getAllBlog();
   },
   watch: {
     showComment(newValue) {
@@ -443,6 +451,31 @@ export default {
   },
   methods: {
     ...mapMutations('notify', ['setNotify']),
+    handleGoToBlog(data) {
+      this.$router.push({
+        name: 'DetailBlog',
+        params: { username: data.userID, id: data.id },
+      });
+    },
+    async getAllBlog() {
+      try {
+        const data = await blogApi.getRecentBlog();
+        data.content.forEach((item) => {
+          this.listBlog.push({
+            id: item?.id,
+            userID: item?.author?.email,
+            avatar: item?.author?.avtURL,
+            name: item?.author?.fullName,
+            title: item?.title,
+            thumnail: item?.thumbnailURL,
+            created_at: moment(item?.createDate).format('DD/MM/YYYY HH:mm'),
+          });
+        });
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
     async getCommentByIDBlog() {
       try {
         const data = await blogApi.getComment({
