@@ -97,7 +97,6 @@ import {
   ARROW_LEFT,
   AVATAR,
   LOCK_COLOR,
-  GARBAGE,
   ADMIN_COURSE,
 } from '../../../constants/image';
 import { NOTIFY, NOTIFY_MESSAGE, SCREEN } from '../../../constants/index';

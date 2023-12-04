@@ -199,7 +199,13 @@
           >
             Blogging
           </li>
-          <div v-if="statusBlog" class="absolute w-5 h-5 right-6 header-lock">
+          <div
+            v-if="statusBlog"
+            class="absolute w-5 h-5 right-6"
+            :class="
+              userInfor?.role == 'ADMIN' ? 'header-lock-admin' : 'header-lock'
+            "
+          >
             <img :src="LOCK" alt="" srcset="" class="w-full h-full" />
           </div>
           <li
@@ -256,6 +262,9 @@ export default {
     this.LOCK = LOCK;
     this.AVATAR = AVATAR;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
+    if (this.userInfor.level != 'BEGINNER') {
+      this.statusBlog = false;
+    } else this.statusBlog = true;
     this.formatNumber = formatNumber;
     this.getTotalUser();
     window.addEventListener('scroll', this.handleScroll);

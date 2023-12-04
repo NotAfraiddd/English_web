@@ -32,7 +32,10 @@
           @click="showListCourseReading"
           class="px-2 text-lg text-left font-semibold cursor-pointer hover:underline"
         >
-          Reading ( 1/5 )
+          Reading ( {{ listDetailReadingFinished.length }}/{{
+            listDetailReading.length
+          }}
+          )
         </div>
         <div
           ref="course"
@@ -60,7 +63,10 @@
           @click="showListCourseListening"
           class="px-2 text-lg text-left font-semibold cursor-pointer hover:underline"
         >
-          Listening ( 1/5 )
+          Listening ( {{ listDetailListeningFinished.length }}/{{
+            listDetailListening.length
+          }}
+          )
         </div>
         <div
           ref="courseListening"
@@ -88,7 +94,7 @@
       <div ref="text" class="flex ml-5 gap-1 flex-wrap">
         Create post
         <div
-          v-if="createPost == 0"
+          v-if="userInfor.level == 'ADVANCED'"
           class="font-semibold cursor-pointer hover:underline"
         >
           ( No )
@@ -146,8 +152,56 @@ export default {
     this.userInfor = JSON.parse(localStorage.getItem('user'));
     this.idCourse = JSON.parse(localStorage.getItem('IDCourse'));
     this.getAllReading();
+    if (this.userInfor) {
+      this.getListReading();
+      this.getListListening();
+    }
   },
   methods: {
+    getListReading() {
+      this.userInfor.courseAttemptList.forEach((item) => {
+        if (item.course.id == this.idCourse) {
+          item.readingSectionAttemptList.forEach((ele) => {
+            if (!ele.completion) {
+              this.listDetailReading.push({
+                id: ele.readingSection.id,
+                title: ele.readingSection.title,
+                status: 0,
+              });
+            } else {
+              this.listDetailReading.push({
+                id: ele.readingSection.id,
+                title: ele.readingSection.title,
+                status: 1,
+              });
+              this.listDetailReadingFinished = this.listDetailReading;
+            }
+          });
+        }
+      });
+    },
+    getListListening() {
+      this.userInfor.courseAttemptList.forEach((item) => {
+        if (item.course.id == this.idCourse) {
+          item.listeningSectionAttemptList.forEach((ele) => {
+            if (!ele.completion) {
+              this.listDetailListening.push({
+                id: ele.listeningSection.id,
+                title: ele.listeningSection.title,
+                status: 0,
+              });
+            } else {
+              this.listDetailListening.push({
+                id: ele.readingSection.id,
+                title: ele.readingSection.title,
+                status: 1,
+              });
+              this.listDetailListeningFinished = this.listDetailListening;
+            }
+          });
+        }
+      });
+    },
     /**
      * get all session
      * @param {*} dataID
@@ -279,18 +333,13 @@ export default {
     return {
       userInfor: null,
       idCourse: null,
-      createPost: 0,
       courseReading: false,
       courseListening: false,
       listReading: [],
       listDetailReading: [],
-      listDetailListening: [
-        { id: 1, title: 'Listening', status: 0 },
-        { id: 2, title: 'Listening', status: 1 },
-        { id: 3, title: 'Listening', status: 0 },
-        { id: 4, title: 'Listening', status: 1 },
-        { id: 5, title: 'Listening', status: 0 },
-      ],
+      listDetailReadingFinished: [],
+      listDetailListening: [],
+      listDetailListeningFinished: [],
     };
   },
 };

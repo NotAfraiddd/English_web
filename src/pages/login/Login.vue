@@ -24,11 +24,6 @@
               ★
             </div>
           </label>
-          <!--
-            role="presentation"
-            autocomplete="new-password" 
-            to turn off autocomplete of google
-          -->
           <input
             id="fname"
             type="text"
@@ -112,7 +107,7 @@
         Forget password
       </div>
       <div
-        @click="handleLogin()"
+        @click="handleLogin"
         class="mt-4 mx-10 h-10 leading-10 rounded-lg bg-primary text-white text-lg font-semibold cursor-pointer hover:opacity-70"
       >
         Login
@@ -633,6 +628,7 @@ export default {
     },
     handleKeyPress(event) {
       if (event.keyCode === 13) {
+        console.log(event);
         this.handleLogin();
       }
     },

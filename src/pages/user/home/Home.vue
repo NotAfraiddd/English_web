@@ -266,11 +266,9 @@ export default {
       inputTime: '2023-10-25 01:08:00',
       delayMinutes: null,
       modalChooseCourse: false,
-      userLevel: [
-        // { id: 1, level: 'Basic', status: 1 },
-        // { id: 2, level: 'Intermediate', status: 0 },
-        // { id: 3, level: 'All', status: 1 },
-      ],
+      userLevel: [],
+      listeningSectionAttemptList: [],
+      readingSectionAttemptList: [],
       courseObject: {
         id: null,
         title: null,
@@ -438,6 +436,28 @@ export default {
                 color: item?.colorCode,
                 status: item.courseStatus == 'PENDING' ? true : false,
               });
+              if (item.courseStatus == 'APPROVED') {
+                item?.listeningSectionList.forEach((ele) => {
+                  if (ele.sectionStatus == 'APPROVED') {
+                    this.listeningSectionAttemptList.push({
+                      completion: 0,
+                      listeningSection: {
+                        id: ele.id,
+                      },
+                    });
+                  }
+                });
+                item?.readingSectionList.forEach((ele) => {
+                  if (ele.sectionStatus == 'APPROVED') {
+                    this.readingSectionAttemptList.push({
+                      completion: 0,
+                      readingSection: {
+                        id: ele.id,
+                      },
+                    });
+                  }
+                });
+              }
             }
           }
         });
@@ -530,24 +550,19 @@ export default {
             this.emitter.emit('isShowLoading', true);
             try {
               if (this.userInfor.courseAttemptList.length == 0) {
-                const dataAttemp = await courseApi.createCourseAttemp({
+                const dataCourseAttemp = {
                   completion: 0,
-                  course: { id: data?.item.id },
-                  user: { uid: this.userInfor.email },
-                });
-                localStorage.setItem('idCourseAttemp', dataAttemp.id);
-              } else {
-                const checkIDCourse = this.userInfor.courseAttemptList.some(
-                  (item) => item?.course.id == data.item.id,
-                );
-                if (!checkIDCourse) {
-                  const dataAttemp = await courseApi.createCourseAttemp({
-                    completion: 0,
-                    course: { id: data?.item.id },
-                    user: { uid: this.userInfor.email },
-                  });
-                  localStorage.setItem('idCourseAttemp', dataAttemp.id);
-                }
+                  user: {
+                    uid: this.userInfor.email,
+                  },
+                  course: {
+                    id: data.item.id,
+                  },
+                  listeningSectionAttemptList: this.listeningSectionAttemptList,
+                  readingSectionAttemptList: this.readingSectionAttemptList,
+                };
+                console.log(dataCourseAttemp);
+                await courseApi.createCourseAttemp(dataCourseAttemp);
               }
 
               this.emitter.emit('isShowLoading', false);
