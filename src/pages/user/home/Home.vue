@@ -439,8 +439,18 @@ export default {
               if (item.courseStatus == 'APPROVED') {
                 item?.listeningSectionList.forEach((ele) => {
                   if (ele.sectionStatus == 'APPROVED') {
+                    const check = this.userInfor.courseAttemptList.find(
+                      (item) => item.course.id == ele.id,
+                    );
+                    const hasCompletedReadingSection =
+                      check?.readingSectionAttemptList.some((item) => {
+                        return (
+                          item.listeningSection.id === 2 &&
+                          item.completion === true
+                        );
+                      });
                     this.listeningSectionAttemptList.push({
-                      completion: 0,
+                      completion: hasCompletedReadingSection ? 1 : 0,
                       listeningSection: {
                         id: ele.id,
                       },
@@ -449,8 +459,18 @@ export default {
                 });
                 item?.readingSectionList.forEach((ele) => {
                   if (ele.sectionStatus == 'APPROVED') {
+                    const check = this.userInfor.courseAttemptList.find(
+                      (item) => item.course.id == ele.id,
+                    );
+                    const hasCompletedReadingSection =
+                      check?.readingSectionAttemptList.some((item) => {
+                        return (
+                          item.readingSection.id === 2 &&
+                          item.completion === true
+                        );
+                      });
                     this.readingSectionAttemptList.push({
-                      completion: 0,
+                      completion: hasCompletedReadingSection ? 1 : 0,
                       readingSection: {
                         id: ele.id,
                       },
@@ -549,21 +569,18 @@ export default {
             localStorage.setItem('IDCourse', data.item.id);
             this.emitter.emit('isShowLoading', true);
             try {
-              if (this.userInfor.courseAttemptList.length == 0) {
-                const dataCourseAttemp = {
-                  completion: 0,
-                  user: {
-                    uid: this.userInfor.email,
-                  },
-                  course: {
-                    id: data.item.id,
-                  },
-                  listeningSectionAttemptList: this.listeningSectionAttemptList,
-                  readingSectionAttemptList: this.readingSectionAttemptList,
-                };
-                console.log(dataCourseAttemp);
-                await courseApi.createCourseAttemp(dataCourseAttemp);
-              }
+              const dataCourseAttemp = {
+                completion: 0,
+                user: {
+                  uid: this.userInfor.email,
+                },
+                course: {
+                  id: data.item.id,
+                },
+                listeningSectionAttemptList: this.listeningSectionAttemptList,
+                readingSectionAttemptList: this.readingSectionAttemptList,
+              };
+              await courseApi.createCourseAttemp(dataCourseAttemp);
 
               this.emitter.emit('isShowLoading', false);
             } catch (error) {

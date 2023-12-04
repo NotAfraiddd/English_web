@@ -11,7 +11,11 @@
     <div class="detail-field mx-auto mt-5">
       <img :src="MOUNTAIN_CLIMB" alt="" srcset="" class="detail-image" />
     </div>
-    <Audio :data-prop="selectedAudio" :hideChoose="false" />
+    <Audio
+      :data-prop="selectedAudio"
+      @valueAudio="handleGetValueAuio"
+      :hideChoose="false"
+    />
     <!-- transcript -->
     <div v-if="checkTranscript" class="relative">
       <div class="flex mt-5">
@@ -245,11 +249,15 @@ export default {
     },
   },
   methods: {
+    handleGetValueAuio(data) {
+      this.selectedAudio = data;
+    },
     /**
      * get random question
      */
     async getRandomQuestions() {
       try {
+        this.dataListWords = [];
         this.emitter.emit('isShowLoading', true);
         const detailSession = await courseApi.getRandomQuestionListening({
           id: this.idSession,
@@ -385,11 +393,7 @@ export default {
               id: this.listAnswers[i].id,
               type: this.listAnswers[i].word == null ? 0 : 1,
             });
-          } else
-            this.errorsMatching.push({
-              id: this.listAnswers[i].id,
-              type: 2,
-            });
+          }
         }
         this.submitMatching = true;
       }

@@ -369,25 +369,37 @@ export default {
       const validateConfirmPassword = this.validateConfirmPassword();
       if (validEmail && validPassword && validateConfirmPassword) {
         this.emitter.emit('isShowLoading', true);
-        await authUser.register({
-          userName: this.email,
-          password: this.confirmPassword,
-          uid: {
-            uid: this.email,
-            fullName: '',
-            bio: '',
-            avtURL: '',
-            email: this.email,
-            registrationDate: '',
-            gender: true,
-            level: 'PENDING',
-            role: 'USER',
-            accountStatus: 'ONLINE',
-          },
-        });
-        this.emitter.emit('isShowLoading', false);
-        notification.success({ message: 'Register account success' });
-        this.$router.push({ name: 'Login' });
+        try {
+          await authUser.register({
+            userName: this.email,
+            password: this.confirmPassword,
+            uid: {
+              uid: this.email,
+              fullName: '',
+              bio: '',
+              avtURL: '',
+              email: this.email,
+              registrationDate: '',
+              gender: true,
+              level: 'PENDING',
+              role: 'USER',
+              accountStatus: 'ONLINE',
+              socialMediaConnection: {
+                facebookURL: '',
+                youtubeURL: '',
+                instagramURL: '',
+                twitterURL: '',
+                linkedinURL: '',
+              },
+            },
+          });
+          this.emitter.emit('isShowLoading', false);
+          notification.success({ message: 'Register account success' });
+          this.$router.push({ name: 'Login' });
+        } catch (error) {
+          console.log(error);
+          this.emitter.emit('isShowLoading', false);
+        }
       }
     },
     toggleShowPassword() {

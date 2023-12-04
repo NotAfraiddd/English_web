@@ -75,7 +75,7 @@
             <img :src="ICON_LAUGH" alt="" srcset="" />
           </div>
         </div>
-        <div class="c-chat__emoji"><Emoji /></div>
+        <div class="c-chat__emoji z-20"><Emoji /></div>
         <textarea
           class="c-chat__input-chat text-base w-full mr-2 pr-3 border-b flex items-center relative"
           spellcheck="false"

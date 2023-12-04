@@ -74,6 +74,9 @@ export default {
     this.LEARN = LEARN;
     this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
+    if (this.userInfor) {
+      this.getListCourseStudied(this.userInfor.courseAttemptList);
+    }
   },
   data() {
     return {
@@ -100,7 +103,9 @@ export default {
     },
   },
   methods: {
-    getListCourseStudied(data) {},
+    getListCourseStudied(data) {
+      console.log(data);
+    },
     handleGoToHome() {
       this.$router.push({ name: 'HomeUser' });
     },
