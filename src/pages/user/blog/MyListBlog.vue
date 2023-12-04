@@ -442,7 +442,6 @@ export default {
           avatar: this.userInfor.avtURL,
           admin: this.userInfor.role == 'ADMIN' ? true : false,
         };
-        console.log('content', content);
         const react = {
           data: content,
           kind: SOCKET.REACT,
@@ -652,6 +651,12 @@ export default {
         name: 'DetailBlog',
         params: { username: data.userID, id: data.id },
       });
+    },
+    handleGoToCreateBlog() {
+      this.$router.push({ name: 'CreateBlog' });
+    },
+    handleGoToListBlog() {
+      this.$router.push({ name: 'MemberListBlog' });
     },
   },
 };

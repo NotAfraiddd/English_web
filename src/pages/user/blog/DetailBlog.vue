@@ -51,7 +51,7 @@
       <div class="flex justify-center items-center cursor-pointer">
         <div @click="clickReact">
           <img
-            :src="checkReact ? HEART : HEART_DEFAULT"
+            :src="checkReact || checkUserReact ? HEART : HEART_DEFAULT"
             alt=""
             srcset=""
             class="w-5 h-4"
@@ -312,6 +312,9 @@ export default {
   },
   data() {
     return {
+      idLike: null,
+      listReacts: [],
+      checkUserReact: false,
       current: 1,
       idBlog: null,
       userInfor: null,
@@ -328,7 +331,6 @@ export default {
       checkListReactComment: [],
       checkListReactReplyComment: [],
       idUserShowComment: 0,
-      inputTime: '2023-11-02 01:08:00',
       delayMinutes: null,
       showComment: false,
       idUserBlog: null,
@@ -524,6 +526,12 @@ export default {
         this.detailBlog.thumbnailURL = data?.thumbnailURL;
         this.detailBlog.title = data?.title;
         this.detailBlog.status = data?.postStatus;
+        data.likes.forEach((ele) => {
+          if (ele.likedUser.email == this.userInfor.email) {
+            this.checkUserReact = true;
+          }
+        });
+        this.listReacts = data?.likes;
         this.comment = data?.commentList.length;
         this.react = data?.likes.length;
         this.emitter.emit('isShowLoading', false);
@@ -581,24 +589,66 @@ export default {
     clickReact() {
       // join socket react
       const dataSocket = {
-        room: +this.idUserBlog,
+        room: this.idUserBlog,
         kind: SOCKET.REACT,
       };
       this.$socket.emit('joinRoom', dataSocket);
+      const checkLike = this.listReacts.find(
+        (item) => this.userInfor.email == item?.likedUser.email,
+      );
+      if (checkLike) {
+        this.handleUnReactBlog(this.idBlog, checkLike.id || this.idLike);
+      } else {
+        this.handleReactBlog(this.idBlog);
+      }
       // per user will be able to click once
-      if (!this.checkReact) {
-        this.react++;
-        let content = {
-          react: this.react,
-          name: this.userInfor.fullName,
-          avatar: this.userInfor.avtURL,
-        };
-        const react = {
-          data: content,
-          kind: SOCKET.REACT,
-        };
-        this.$socket.emit('sendSignal', react);
-        this.checkReact = true;
+      let content = {
+        id: this.userInfor.email,
+        react: this.checkUserReact,
+        name: this.userInfor.fullName,
+        avatar: this.userInfor.avtURL,
+        admin: this.userInfor.role == 'ADMIN' ? true : false,
+      };
+      const react = {
+        data: content,
+        kind: SOCKET.REACT,
+      };
+      this.$socket.emit('sendSignal', react);
+    },
+    async handleReactBlog(idBlog) {
+      try {
+        const data = await blogApi.reactBlog({
+          likedUser: {
+            uid: this.userInfor.email,
+          },
+          post: {
+            id: idBlog,
+          },
+        });
+        this.idLike = data.id;
+        this.checkUserReact = true;
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.getDetailBlogByID(idBlog);
+      }
+    },
+    async handleUnReactBlog(idBlog, idLike) {
+      try {
+        await blogApi.unReactBlog({
+          id: this.idLike || idLike,
+          likedUser: {
+            uid: this.userInfor.email,
+          },
+          post: {
+            id: idBlog,
+          },
+        });
+        this.checkUserReact = false;
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.getDetailBlogByID(idBlog);
       }
     },
     /**
@@ -632,16 +682,18 @@ export default {
     handleClickReactReply(arr, data, id) {
       const isDuplicate = arr.some((p) => p.id == id);
       const dataSocket = {
-        room: +this.idUserBlog,
+        room: this.idUserBlog,
         kind: SOCKET.REACT_COMMENT_REPLY,
       };
       this.$socket.emit('joinRoom', dataSocket);
       if (isDuplicate) {
         data.numReact++;
         let content = {
+          id: this.idUserBlog,
           react: data.numReact,
-          name: this.userNameLogin,
-          avatar: AVATAR,
+          name: this.userInfor.fullName,
+          avatar: this.userInfor.avtURL,
+          admin: this.userInfor.role == 'ADMIN' ? true : false,
         };
         const react = {
           data: content,
@@ -739,6 +791,7 @@ export default {
             numReact: 0,
             numComment: 0,
             created_at: moment().format('DD/MM/YYYY HH:mm'),
+            admin: this.userInfor.role == 'ADMIN' ? true : false,
           };
           const comment = {
             data: commentDetail,

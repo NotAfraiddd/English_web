@@ -88,7 +88,7 @@ export default {
         this.content = data?.content;
         this.created_at = moment(data?.createDate).format('DD/MM/YYYY HH:mm');
         this.name = data?.author?.fullName;
-        this.avatar = data?.author?.avtURL;
+        this.avatar = data?.thumbnailURL;
         this.inputTitle = data?.title;
         this.emitter.emit('isShowLoading', false);
       } catch (error) {

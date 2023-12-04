@@ -35,10 +35,12 @@
     <ListBlog
       v-else
       :data="listBlog"
-      :avatar="true"
       :user="true"
+      :avatar="true"
       :image="true"
       :react="true"
+      :check-react="checkReact"
+      @click-react="clickReact"
       @changePath="goToDetail"
       @showComment="handleShowComment"
     />
@@ -59,7 +61,9 @@
       class="comment fixed bg-white pt-5 text-primary_black pl-5 overflow-y-auto"
       :class="{ 'menu-visible': showComment }"
     >
-      <div class="text-xl font-semibold text-left">12 Comments</div>
+      <div class="text-xl font-semibold text-left">
+        {{ listComment.length }} Comments
+      </div>
       <div class="text-sm text-left">( Report spam or bad content )</div>
       <!-- chat -->
       <div class="mt-5 flex">
@@ -101,9 +105,11 @@
               <div class="text-left mb-1">{{ item.content }}</div>
               <div class="flex w-24 justify-between flex-wrap gap-2">
                 <div class="flex justify-center items-center cursor-pointer">
-                  <div @click="handleClickReact(item)">
+                  <div @click="handleClickReact(listComment, item, item.id)">
                     <img
-                      :src="item.numReact > 0 ? HEART : HEART_DEFAULT"
+                      :src="
+                        checkListReactComment[item.id] ? HEART : HEART_DEFAULT
+                      "
                       alt=""
                       srcset=""
                       class="w-5 h-4"
@@ -135,20 +141,34 @@
         </div>
         <!-- reply comment -->
         <div
-          @click="handleShowAllComment"
-          v-if="!showAllComment && item.replyComments"
+          @click="handleShowAllComment(index)"
+          v-if="
+            !showAllComment[index] &&
+            item.replyComments &&
+            item.replyComments.length >= 1
+          "
           class="text-left ml-14 text-primary cursor-pointer"
         >
           Show {{ item.replyComments.length }} comments
         </div>
         <div
-          v-if="showAllComment && item.replyComments"
-          @click="handleShowAllComment"
+          v-if="
+            showAllComment[index] &&
+            item.replyComments &&
+            item.replyComments.length >= 1
+          "
+          @click="handleCloseAllComment(index)"
           class="text-left ml-14 text-primary cursor-pointer"
         >
           Collapse {{ item.replyComments.length }} comments
         </div>
-        <div v-if="showAllComment && item.replyComments">
+        <div
+          v-if="
+            showAllComment[index] &&
+            item.replyComments &&
+            item.replyComments.length >= 1
+          "
+        >
           <div
             class="flex mt-2 ml-12"
             v-for="(i, ind) in item.replyComments"
@@ -168,9 +188,17 @@
                 </div>
                 <div class="flex gap-4 justify-between flex-wrap">
                   <div class="flex justify-center items-center cursor-pointer">
-                    <div @click="handleClickReactReply(i)">
+                    <div
+                      @click="
+                        handleClickReactReply(item.replyComments, i, i.id)
+                      "
+                    >
                       <img
-                        :src="i.numReact > 0 ? HEART : HEART_DEFAULT"
+                        :src="
+                          checkListReactReplyComment[i.id]
+                            ? HEART
+                            : HEART_DEFAULT
+                        "
                         alt=""
                         srcset=""
                         class="w-5 h-4"
@@ -224,6 +252,7 @@ import {
 } from '../../../constants/image';
 import Emoji from './Emoji.vue';
 import moment from 'moment';
+import { SOCKET } from '../../../constants';
 
 export default {
   name: 'MyBlog',
@@ -249,6 +278,7 @@ export default {
   },
   data() {
     return {
+      checkReact: [],
       currentComment: 1,
       totalComment: 0,
       selectedStatus: '',
@@ -260,58 +290,84 @@ export default {
       receiverName: '',
       userLogin: 3,
       userNameLogin: 'Khang',
-      showAllComment: false,
       contentChat: '',
-      replyComments: [],
       current: 1,
       pageSize: 10,
       total: 0,
-      listComment: [
-        {
-          id: 1,
-          userID: 1,
-          name: 'Chi Bao',
-          avatar: AVATAR,
-          content:
-            ' Great !!! Your post is good. I will try something like you wrote',
-          numReact: 1,
-          numComment: 2,
-          created_at: '20/03/2023 10:43',
-          replyComments: [
-            {
-              id: 1,
-              userID: 2,
-              name: 'Ngoc Huan',
-              avatar: AVATAR,
-              content: ' Sure !!!!!!!!!! 😕',
-              nameReply: '',
-              numReact: 10,
-              numComment: 2,
-              created_at: '20/03/2023 12:43',
-            },
-            {
-              id: 2,
-              userID: 1,
-              name: 'Chi Bao',
-              avatar: AVATAR,
-              content: 'Great !!!',
-              nameReply: '',
-              numReact: 0,
-              numComment: 2,
-              created_at: '20/03/2023 14:43',
-            },
-          ],
-        },
-      ],
+      showAllComment: [],
+      replyComments: [],
+      listComment: [],
       listBlog: [],
     };
   },
   methods: {
+    async handleReactBlog(idBlog) {
+      try {
+        const data = await blogApi.reactBlog({
+          likedUser: {
+            uid: this.userInfor.email,
+          },
+          post: {
+            id: idBlog,
+          },
+        });
+        this.idLike = data?.id;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async handleUnReactBlog(idBlog, idLike) {
+      try {
+        await blogApi.unReactBlog({
+          id: this.idLike || idLike,
+          likedUser: {
+            uid: this.userInfor.email,
+          },
+          post: {
+            id: idBlog,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.getAllPost();
+      }
+    },
+    clickReact(data) {
+      if (data.like) this.handleReactBlog(data.data.id);
+      else this.handleUnReactBlog(data.data.id, data.data.idLike);
+      const isDuplicate = this.listBlog.some((p) => p.index === data.index);
+
+      // join socket react
+      const dataSocket = {
+        room: data?.data?.userID,
+        kind: SOCKET.REACT,
+      };
+      this.$socket.emit('joinRoom', dataSocket);
+      // per user will be able to click once
+      if (!isDuplicate) {
+        let content = {
+          id: data?.data?.userID,
+          react: data.like,
+          name: this.userInfor.fullName,
+          avatar: this.userInfor.avtURL,
+          admin: this.userInfor.role == 'ADMIN' ? true : false,
+        };
+        const react = {
+          data: content,
+          kind: SOCKET.REACT,
+        };
+        this.checkReact[data.data.id] = data.like;
+        this.$socket.emit('sendSignal', react);
+      }
+    },
     /**
      * get all blog
      */
     async getAllPost() {
       try {
+        this.checkReact = [];
         this.listBlog = [];
         this.emitter.emit('isShowLoading', true);
         const data = await blogApi.getAllPostByAuthor({
@@ -322,7 +378,13 @@ export default {
           pageSize: this.pageSize,
           postStatus: this.selectedStatus ? +this.selectedStatus : null,
         });
-        data?.content.forEach((item) => {
+        data?.content.forEach((item, index) => {
+          const checkLike = item?.likes.some(
+            (ele) => ele?.likedUser?.uid == this.userInfor.email,
+          );
+          const objectLike = item?.likes.find(
+            (ele) => ele?.likedUser?.uid == this.userInfor.email,
+          );
           this.listBlog.push({
             id: item?.id,
             userID: item?.author?.uid,
@@ -335,7 +397,12 @@ export default {
             status: item?.postStatus,
             numReact: item?.likes.length,
             numComment: item?.commentList.length,
+            like: checkLike ? true : false,
+            idLike: objectLike != undefined ? objectLike.id : null,
           });
+          if (checkLike) {
+            this.checkReact[item?.id] = true;
+          }
           this.total = data?.totalElements;
           this.pageSize = data?.size;
         });
@@ -345,8 +412,14 @@ export default {
         this.emitter.emit('isShowLoading', false);
       }
     },
-    handleShowAllComment() {
-      this.showAllComment = !this.showAllComment;
+    handleShowAllComment(data) {
+      this.showAllComment[data] = !this.showAllComment[data];
+    },
+    /**
+     * show all comment
+     */
+    handleCloseAllComment(data) {
+      this.showAllComment[data] = !this.showAllComment[data];
     },
     handleDeleteKey(event) {
       if (event.key === 'Delete' || event.key === 'Backspace') {
@@ -375,8 +448,29 @@ export default {
         }
       }
     },
-    handleClickReact(data) {
-      data.numReact += 1;
+    handleClickReact(arr, data, id) {
+      const isDuplicate = arr.some((p) => p.id == id);
+      const dataSocket = {
+        room: this.idUserBlog,
+        kind: SOCKET.REACT_COMMENT,
+      };
+      this.$socket.emit('joinRoom', dataSocket);
+      if (isDuplicate) {
+        data.numReact++;
+        let content = {
+          id: this.idUserBlog,
+          react: data.numReact,
+          name: this.userInfor.fullName,
+          avatar: this.userInfor.avtURL,
+          admin: this.userInfor.role == 'ADMIN' ? true : false,
+        };
+        const react = {
+          data: content,
+          kind: SOCKET.REACT_COMMENT,
+        };
+        this.checkListReactComment[id] = true;
+        this.$socket.emit('sendSignal', react);
+      }
     },
     replyComment(data) {
       this.receiverName = data.name;
