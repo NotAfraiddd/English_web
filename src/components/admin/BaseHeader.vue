@@ -291,7 +291,7 @@ export default {
     },
     inforComment(newVal, oldVal) {
       if (newVal.kind == SOCKET.COMMENT)
-        this.listNotify.push({
+        this.listNotify.unshift({
           id: newVal.content.id,
           avatar: newVal.content.avatar,
           nameCourse: null,
@@ -300,7 +300,7 @@ export default {
           fullName: newVal.content.name,
         });
       else if (newVal.kind == SOCKET.REPLY_COMMENT) {
-        this.listNotify.push({
+        this.listNotify.unshift({
           id: newVal.content.id,
           avatar: newVal.content.avatar,
           nameCourse: null,
@@ -310,7 +310,7 @@ export default {
         });
       } else if (newVal.kind == SOCKET.REACT) {
         if (newVal.content.react)
-          this.listNotify.push({
+          this.listNotify.unshift({
             id: newVal.content.id,
             avatar: newVal.content.avatar,
             nameCourse: null,
@@ -319,7 +319,7 @@ export default {
             fullName: newVal.content.name,
           });
         else
-          this.listNotify.push({
+          this.listNotify.unshift({
             id: newVal.content.id,
             avatar: newVal.content.avatar,
             nameCourse: null,
@@ -328,7 +328,7 @@ export default {
             fullName: newVal.content.name,
           });
       } else if (newVal.kind == SOCKET.REACT_COMMENT) {
-        this.listNotify.push({
+        this.listNotify.unshift({
           id: newVal.content.id,
           avatar: newVal.content.avatar,
           nameCourse: null,
@@ -337,7 +337,7 @@ export default {
           fullName: newVal.content.name,
         });
       } else if (newVal.kind == SOCKET.REACT_COMMENT_REPLY) {
-        this.listNotify.push({
+        this.listNotify.unshift({
           id: newVal.content.id,
           avatar: newVal.content.avatar,
           nameCourse: null,
@@ -346,7 +346,7 @@ export default {
           fullName: newVal.content.name,
         });
       } else if (newVal.kind == SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN) {
-        this.listNotify.push({
+        this.listNotify.unshift({
           id: newVal.content.id,
           avatar: ADMIN,
           nameCourse: null,
@@ -355,7 +355,7 @@ export default {
           fullName: newVal.content.name,
         });
       } else if (newVal.kind == SOCKET.NOTIFY_BLOG_PENDING) {
-        this.listNotify.push({
+        this.listNotify.unshift({
           id: newVal.content.id,
           avatar: ADMIN,
           nameCourse: newVal.content.title,
@@ -364,7 +364,7 @@ export default {
           fullName: newVal.content.name,
         });
       } else if (newVal.kind == SOCKET.NOTIFY_COURSE_PENDING) {
-        this.listNotify.push({
+        this.listNotify.unshift({
           id: newVal.content.id,
           avatar: ADMIN, // avatar admin
           nameCourse: `${newVal.content.name || ''}`,
@@ -373,7 +373,7 @@ export default {
           fullName: newVal.content.name,
         });
       } else if (newVal.kind == SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN) {
-        this.listNotify.push({
+        this.listNotify.unshift({
           id: newVal.content.id,
           avatar: ADMIN,
           nameCourse: `${newVal.content.name || ''}`,
@@ -382,7 +382,7 @@ export default {
           fullName: newVal.content.name,
         });
       } else if (newVal.kind == SOCKET.REJECTED_BLOG_PENDING) {
-        this.listNotify.push({
+        this.listNotify.unshift({
           id: newVal.content.id,
           avatar: ADMIN,
           nameCourse: `${newVal.content.name || ''}`,
@@ -391,7 +391,7 @@ export default {
           fullName: newVal.content.name,
         });
       } else if (newVal.kind == SOCKET.REJECTED_COURSE_PENDING) {
-        this.listNotify.push({
+        this.listNotify.unshift({
           id: newVal.content.id,
           avatar: ADMIN,
           nameCourse: `${newVal.content.name || ''}`,
@@ -499,7 +499,6 @@ export default {
             avatar: item?.commentAvt,
             content: item?.content,
             seen: item?.readStatus,
-            fullName: item?.readStatus,
           });
         });
         this.emitter.emit('isShowLoading', false);

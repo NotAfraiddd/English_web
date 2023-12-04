@@ -46,7 +46,10 @@
             :key="key"
             class="flex gap-2 items-center cursor-pointer justify-around"
           >
-            <div class="hover:underline break-words w-3/4 text-overflow">
+            <div
+              @click="goToDetailReadingSection(item)"
+              class="hover:underline break-words w-3/4 text-overflow"
+            >
               - {{ item.title }}
             </div>
             <img
@@ -80,7 +83,10 @@
             :key="key"
             class="flex gap-2 items-center cursor-pointer justify-around"
           >
-            <div class="hover:underline break-words w-3/4 text-overflow">
+            <div
+              @click="goToDetailListeningSection(item)"
+              class="hover:underline break-words w-3/4 text-overflow"
+            >
               - {{ item.title }}
             </div>
             <img
@@ -174,7 +180,9 @@ export default {
                 title: ele.readingSection.title,
                 status: 1,
               });
-              this.listDetailReadingFinished = this.listDetailReading;
+              this.listDetailReadingFinished = this.listDetailReading.filter(
+                (item) => item.status == 1,
+              );
             }
           });
         }
@@ -196,7 +204,8 @@ export default {
                 title: ele.readingSection.title,
                 status: 1,
               });
-              this.listDetailListeningFinished = this.listDetailListening;
+              this.listDetailListeningFinished =
+                this.listDetailListening.filter((item) => item.status == 1);
             }
           });
         }
@@ -277,6 +286,20 @@ export default {
       } else {
         notification.warning({ message: 'Session awaiting approval' });
       }
+    },
+    goToDetailReadingSection(data) {
+      const path = formatSpacerIntoHyphen(data.title);
+      this.$router.push({
+        name: 'MemberDetailCourseReading',
+        params: { course: path.toLowerCase(), id: data?.id },
+      });
+    },
+    goToDetailListeningSection(data) {
+      const path = formatSpacerIntoHyphen(data.title);
+      this.$router.push({
+        name: 'MemberDetailCourseListening',
+        params: { course: path.toLowerCase(), id: data?.id },
+      });
     },
     showListCourseReading() {
       this.courseReading = true;

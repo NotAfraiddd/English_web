@@ -133,6 +133,9 @@ export default {
     this.IDCourse = JSON.parse(localStorage.getItem('IDCourse'));
     this.idSession = +this.$route.params.id;
     this.getDetailSession();
+    if (this.userInfor) {
+      this.getIdSectionAttemp();
+    }
   },
   watch: {
     listAnswers() {
@@ -167,6 +170,16 @@ export default {
 
   methods: {
     ...mapMutations('course', ['setSubmit']),
+    getIdSectionAttemp() {
+      const checkCourseAttemp = this.userInfor.courseAttemptList.find(
+        (item) => item.course.id == this.IDCourse,
+      );
+      const checkSectionAttemp =
+        checkCourseAttemp.readingSectionAttemptList.find(
+          (item) => item.readingSection.id == this.idSession,
+        );
+      this.IDSectionAttemp = checkSectionAttemp.id;
+    },
     /**
      * get detail session
      */
@@ -234,9 +247,6 @@ export default {
       return JSON.stringify(valueA) === JSON.stringify(valueB);
     },
     handleSubmit() {
-      const checkIDCourse = this.userInfor.courseAttemptList.find(
-        (item) => item?.course.id == this.IDCourse,
-      );
       if (!this.submitMultipleChoice) {
         this.errorsMultiple = [];
         for (let i = 0; i < this.dataMultipleChoice.length; i++) {
@@ -247,14 +257,7 @@ export default {
         this.submitMultipleChoice = true;
         if (this.errorsMultiple.length == 0) {
           notification.success({ message: 'Success' });
-          if (checkIDCourse.readingSectionAttemptList.length == 0) {
-            this.createSectionAttemp();
-          } else {
-            this.$router.push({
-              name: 'ListCourseReading',
-              params: { name: this.paramName },
-            });
-          }
+          this.submitSectionAttemp();
         } else {
           notification.warning({
             message:
@@ -263,19 +266,12 @@ export default {
         }
       }
     },
-    async createSectionAttemp() {
+    async submitSectionAttemp() {
       try {
         this.emitter.emit('isShowLoading', true);
-        await courseApi.createReadingSecionAttemp({
-          readingSectionAttempt: {
-            completion: true,
-            readingSection: {
-              id: this.idSession,
-            },
-          },
-          courseAttempt: {
-            id: this.IDCourseAttemp,
-          },
+        await courseApi.submitReadingSecionAttemp({
+          completion: true,
+          id: this.IDSectionAttemp,
         });
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
@@ -297,11 +293,13 @@ export default {
         console.error(error);
       } finally {
         this.userInfor = JSON.parse(localStorage.getItem('user'));
+        this.$router.push({ name: 'ListCourseReading' });
       }
     },
   },
   data() {
     return {
+      IDSectionAttemp: null,
       IDCourseAttemp: null,
       IDCourse: null,
       idSession: null,
@@ -314,7 +312,7 @@ export default {
       submitMultipleChoice: false,
       paramName: null,
       errorsMultiple: [],
-      myAnswer: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      myAnswer: [],
       correctAnswer: [],
       dataMultipleChoice: [],
     };

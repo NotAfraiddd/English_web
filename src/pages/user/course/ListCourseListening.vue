@@ -41,7 +41,10 @@
           @click="showListCourseReading"
           class="px-2 text-lg text-left font-semibold cursor-pointer hover:underline"
         >
-          Reading ( 1/5 )
+          Reading ( {{ listDetailReadingFinished.length }}/{{
+            listDetailReading.length
+          }}
+          )
         </div>
         <div
           ref="course"
@@ -55,7 +58,10 @@
             :key="key"
             class="flex gap-2 items-center cursor-pointer justify-around"
           >
-            <div class="hover:underline break-words w-3/4 text-overflow">
+            <div
+              @click="goToDetailReadingSection(item)"
+              class="hover:underline break-words w-3/4 text-overflow"
+            >
               - {{ item.title }}
             </div>
             <img
@@ -72,7 +78,10 @@
           @click="showListCourseListening"
           class="px-2 text-lg text-left font-semibold cursor-pointer hover:underline"
         >
-          Listening ( 1/5 )
+          Listening ( {{ listDetailListeningFinished.length }}/{{
+            listDetailListening.length
+          }}
+          )
         </div>
         <div
           ref="courseListening"
@@ -86,7 +95,10 @@
             :key="key"
             class="flex gap-2 items-center cursor-pointer justify-around"
           >
-            <div class="hover:underline break-words w-3/4 text-overflow">
+            <div
+              @click="goToDetailListeningSection(item)"
+              class="hover:underline break-words w-3/4 text-overflow"
+            >
               - {{ item.title }}
             </div>
             <img
@@ -160,8 +172,73 @@ export default {
     this.userInfor = JSON.parse(localStorage.getItem('user'));
     this.idCourse = JSON.parse(localStorage.getItem('IDCourse'));
     this.getAllListening();
+    if (this.userInfor) {
+      this.getListReading();
+      this.getListListening();
+    }
   },
   methods: {
+    goToDetailReadingSection(data) {
+      const path = formatSpacerIntoHyphen(data.title);
+      this.$router.push({
+        name: 'MemberDetailCourseReading',
+        params: { course: path.toLowerCase(), id: data?.id },
+      });
+    },
+    goToDetailListeningSection(data) {
+      const path = formatSpacerIntoHyphen(data.title);
+      this.$router.push({
+        name: 'MemberDetailCourseListening',
+        params: { course: path.toLowerCase(), id: data?.id },
+      });
+    },
+    getListReading() {
+      this.userInfor.courseAttemptList.forEach((item) => {
+        if (item.course.id == this.idCourse) {
+          item.readingSectionAttemptList.forEach((ele) => {
+            if (!ele.completion) {
+              this.listDetailReading.push({
+                id: ele.readingSection.id,
+                title: ele.readingSection.title,
+                status: 0,
+              });
+            } else {
+              this.listDetailReading.push({
+                id: ele.readingSection.id,
+                title: ele.readingSection.title,
+                status: 1,
+              });
+              this.listDetailReadingFinished = this.listDetailReading.filter(
+                (item) => item.status == 1,
+              );
+            }
+          });
+        }
+      });
+    },
+    getListListening() {
+      this.userInfor.courseAttemptList.forEach((item) => {
+        if (item.course.id == this.idCourse) {
+          item.listeningSectionAttemptList.forEach((ele) => {
+            if (!ele.completion) {
+              this.listDetailListening.push({
+                id: ele.listeningSection.id,
+                title: ele.listeningSection.title,
+                status: 0,
+              });
+            } else {
+              this.listDetailListening.push({
+                id: ele.readingSection.id,
+                title: ele.readingSection.title,
+                status: 1,
+              });
+              this.listDetailListeningFinished =
+                this.listDetailListening.filter((item) => item.status == 1);
+            }
+          });
+        }
+      });
+    },
     /**
      * get all session
      * @param {*} dataID
@@ -296,25 +373,10 @@ export default {
       courseReading: false,
       courseListening: false,
       listListening: [],
-      listDetailReading: [
-        {
-          id: 1,
-          title:
-            'Message to new friend Message to new friend Message to new friend',
-          status: 0,
-        },
-        { id: 2, title: 'Message to new friend', status: 1 },
-        { id: 3, title: 'Message to new friend', status: 0 },
-        { id: 4, title: 'Message to new friend', status: 1 },
-        { id: 5, title: 'Message to new friend', status: 0 },
-      ],
-      listDetailListening: [
-        { id: 1, title: 'Listening', status: 0 },
-        { id: 2, title: 'Listening', status: 1 },
-        { id: 3, title: 'Listening', status: 0 },
-        { id: 4, title: 'Listening', status: 1 },
-        { id: 5, title: 'Listening', status: 0 },
-      ],
+      listDetailReading: [],
+      listDetailListening: [],
+      listDetailReadingFinished: [],
+      listDetailListeningFinished: [],
     };
   },
 };
