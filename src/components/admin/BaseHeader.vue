@@ -420,6 +420,7 @@ export default {
         this.isMatchedRoute('TestLevelReadingUpdate') ||
         this.isMatchedRoute('TestLevelListeningUpdate') ||
         this.isMatchedRoute('TestLevelReading') ||
+        this.isMatchedRoute('TestLevelReadingCreate') ||
         this.isMatchedRoute('CommentReported')
       )
         return true;

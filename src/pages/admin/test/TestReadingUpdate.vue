@@ -184,16 +184,34 @@ export default {
     this.STAR_RED = STAR_RED;
     if (this.$route.name == 'CreateCourseForAdvancedReading')
       this.checkName = true;
-    this.idCourse = JSON.parse(localStorage.getItem('IDCourse'));
-    this.idSection = JSON.parse(localStorage.getItem('IDCourseTestLevel'));
+    this.idCourse = JSON.parse(localStorage.getItem('IDCourseTestLevel'));
     this.inputLevel =
       this.$route.name == 'TestLevelReadingUpdate'
         ? 'Pending'
         : JSON.parse(localStorage.getItem('IDCourse'));
-    this.getDetailSession();
+    if (this.$route.name != 'TestLevelReadingCreate') this.getAllReading();
   },
 
   methods: {
+    /**
+     * get all session
+     * @param {*} dataID
+     */
+    async getAllReading() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const arrAPI = await courseApi.getAllReadingSession({
+          id: this.idCourse,
+        });
+        this.idSection = arrAPI[0].id;
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      } finally {
+        this.getDetailSession();
+      }
+    },
     getAvatar(data, fileImg) {
       this.avatar = data;
       this.file = fileImg;
@@ -249,8 +267,10 @@ export default {
       this.dataQuestionReading.forEach((questionData, index) => {
         const questionObject = {
           questionContent: questionData.title,
-          correctAnswer: this.dataQuestionReadingCorrect[index] + 1,
-          options: questionData.answers.map((answer) => ({ content: answer })),
+          correctAnswer: this.dataQuestionReadingCorrect[index],
+          options: questionData.answers.map((answer) => ({
+            content: answer,
+          })),
         };
         this.questionList.push(questionObject);
       });
@@ -326,27 +346,30 @@ export default {
           this.title
         ) {
           this.emitter.emit('isShowLoading', true);
-          await courseApi.createReadingSession({
+          if (this.file) {
+            let formData = new FormData();
+            formData.append('file', this.file);
+            this.avatar = await fileAPI.updateImg(formData);
+          }
+          const data = await courseApi.createReadingSession({
             description: this.subTitle,
             textContent: this.contentReading,
             title: this.title,
+            imgURL: this.avatar,
             course: {
               id: this.idCourse,
             },
             questionList: this.questionList,
           });
+          this.idSection = data?.id;
           this.emitter.emit('isShowLoading', false);
           notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
-          this.$router.push({
-            name: 'CourseReading',
-            params: { name: this.namePath },
-          });
         } else if (this.dataQuestionReading.length != 9) {
           notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_9 });
         }
         if (
-          this.dataQuestionReadingCorrect.length != 9 &&
-          this.dataQuestionReading.length == 9
+          this.dataQuestionReadingCorrect.length !=
+          this.dataQuestionReading.length
         ) {
           notification.error({
             message: 'The answers has not been filled in yet',
@@ -359,16 +382,13 @@ export default {
       } catch (error) {
         console.log(error);
         this.emitter.emit('isShowLoading', false);
-        notification.error({ message: NOTIFY_MESSAGE.CREATE_FAILED });
       }
     },
     cancelCreate() {
       this.$router.push({ name: 'CourseReading' });
     },
     changeBack() {
-      if (this.$route.name != 'TestLevelReadingUpdate')
-        this.$router.push({ name: 'CourseReading' });
-      else this.$router.push({ name: 'TestLevelReading' });
+      this.$router.push({ name: 'TestLevelReading' });
     },
     addQuestionReading() {
       if (this.dataQuestionReading.length <= 8)
@@ -395,7 +415,7 @@ export default {
   data() {
     return {
       noData: false,
-      avatar: null,
+      avatar: AVATAR,
       file: null,
       idSection: null,
       subTitle: null,

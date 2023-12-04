@@ -1,7 +1,7 @@
 <template>
   <div class="create-course">
     <ButtonBack
-      title="Create Session Listening"
+      title="Listening Test Level"
       @back="changeBack"
       :hide-back="true"
     />
@@ -257,6 +257,7 @@ export default {
         });
         this.avatar = data?.thumbnailURL;
         this.selectedAudio = data?.mediaURL;
+        this.subTitle = data?.description;
         this.contentListening = data?.script;
         data?.questionList.forEach((item, index) => {
           this.dataQuestion.push({
@@ -277,6 +278,9 @@ export default {
         });
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
+        if (error.response.status == 404) {
+          this.noData = true;
+        }
         console.log(error);
         this.emitter.emit('isShowLoading', false);
       }
@@ -301,13 +305,14 @@ export default {
 
     subtractWord(index) {
       this.word.splice(index, 1);
+      this.dataWords.splice(index, 1);
       this.numWords--;
     },
     checkQuestions() {
       this.dataQuestion.forEach((questionData, index) => {
         const questionObject = {
           questionContent: questionData.title,
-          correctAnswer: this.dataQuestionCorrect[index] + 1,
+          correctAnswer: this.dataQuestionCorrect[index],
           options: questionData.answers.map((answer) => ({ content: answer })),
         };
         this.questionList.push(questionObject);
@@ -331,8 +336,7 @@ export default {
       this.checkWord();
       try {
         if (
-          this.dataQuestion.length == 2 &&
-          this.dataQuestionCorrect.length == 2 &&
+          this.dataQuestion.length == this.dataQuestionCorrect.length &&
           this.title
         ) {
           this.emitter.emit('isShowLoading', true);
@@ -358,22 +362,32 @@ export default {
             questionList: this.questionList,
             fillInBlankQuestionList: this.fillInBlankQuestionList,
           };
-          await courseApi.createListeningSession(data);
+          const dataUpdate = {
+            id: this.idSection,
+            description: this.subTitle,
+            script: this.contentListening,
+            title: this.title,
+            mediaURL: this.selectedAudio,
+            thumbnailURL: this.avatar,
+            course: {
+              id: this.idCourse,
+            },
+            questionList: this.questionList,
+            fillInBlankQuestionList: this.fillInBlankQuestionList,
+          };
+          if (this.noData) await courseApi.createListeningSession(data);
+          else await courseApi.updateListeningSession(dataUpdate);
           this.emitter.emit('isShowLoading', false);
           notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
           this.$router.push({
             name: 'ListCourseListening',
             params: { name: this.namePath },
           });
-        } else if (this.dataQuestion.length != 2) {
-          notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_9 });
-        }
-        if (
-          this.dataQuestionCorrect.length != 9 &&
-          this.dataQuestion.length == 9
+        } else if (
+          this.dataQuestion.length != this.dataQuestionCorrect.length
         ) {
           notification.error({
-            message: 'The answers has not been filled in yet',
+            message: 'Questions and answers have not been filled in completely',
           });
         }
         if (!this.title)
@@ -383,7 +397,6 @@ export default {
       } catch (error) {
         console.log(error);
         this.emitter.emit('isShowLoading', false);
-        notification.error({ message: NOTIFY_MESSAGE.CREATE_FAILED });
       }
     },
     cancelCreate() {
@@ -403,19 +416,25 @@ export default {
       this.$router.push({ name: 'CreateCourseForAdvancedReading' });
     },
     changeBack() {
-      this.$router.push({ name: 'ListCourseListening' });
+      this.$router.push({ name: 'TestLevelListening' });
     },
     addWord() {
-      if (this.numWords <= 4) this.numWords++;
-      else notification.error({ message: NOTIFY_MESSAGE.ADD_WORD });
+      if (this.numWords.length <= 5) {
+        this.numWords++;
+        this.dataWords.push({
+          id: this.numWords - 1,
+          contentLeft: '',
+          contentRight: '',
+        });
+      } else notification.warning({ message: 'Only 5 questions' });
     },
     addQuestion() {
-      if (this.dataQuestion.length <= 10)
+      if (this.dataQuestion.length <= 10) {
         this.dataQuestion.push({
           title: '',
           answers: [],
         });
-      else notification.error({ message: 'Only 11 questions' });
+      } else notification.error({ message: 'Only 11 questions' });
     },
     subtractQuestion(data) {
       this.dataQuestion.splice(data, 1);
@@ -436,6 +455,7 @@ export default {
 
   data() {
     return {
+      noData: false,
       idSection: null,
       idCourse: null,
       namePath: null,

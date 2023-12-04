@@ -192,6 +192,10 @@ export default {
             contentRight: ele?.rightContent,
             word: ele?.answer,
           });
+          this.listAnswers.push({
+            id: index + 1,
+            word: null,
+          });
         });
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
@@ -353,13 +357,7 @@ export default {
       submitMultipleChoice: false,
       drag: false,
       listQuestions: [],
-      listAnswers: [
-        { id: 1, word: null },
-        { id: 2, word: null },
-        { id: 3, word: null },
-        { id: 4, word: null },
-        { id: 5, word: null },
-      ],
+      listAnswers: [],
       dataListWords: [],
       dataMultipleChoice: [],
       correctAnswer: [],

@@ -171,6 +171,11 @@ const routes = [
         component: () => import('../pages/admin/test/TestReadingUpdate.vue'),
       },
       {
+        path: 'test-level/reading/create',
+        name: 'TestLevelReadingCreate',
+        component: () => import('../pages/admin/test/TestReadingUpdate.vue'),
+      },
+      {
         path: 'test-level/listening',
         name: 'TestLevelListening',
         component: () => import('../pages/test/Listening.vue'),

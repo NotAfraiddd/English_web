@@ -183,7 +183,7 @@ export default {
       this.modal = false;
     },
     goToReading() {
-      // this.$router.push({ name: 'TestLevelReading' });
+      this.$router.push({ name: 'TestLevelReading' });
       this.modal = false;
     },
     closeModal() {

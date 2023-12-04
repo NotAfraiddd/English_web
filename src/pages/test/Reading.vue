@@ -173,8 +173,10 @@ export default {
     setTimeout(() => {
       this.numberErrors = +localStorage.getItem('error');
     }, 0);
-    this.idSection = JSON.parse(localStorage.getItem('IDCourseTestLevel'));
-    this.getDetailSession();
+    this.idCourse = JSON.parse(localStorage.getItem('IDCourseTestLevel'));
+    if (this.idCourse) {
+      this.getAllListening();
+    }
   },
   watch: {
     listAnswers() {
@@ -190,6 +192,35 @@ export default {
     },
   },
   methods: {
+    /**
+     * get all session
+     * @param {*} dataID
+     */
+    async getAllListening() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const arrAPI = await courseApi.getAllReadingSession({
+          id: this.idCourse,
+        });
+
+        this.listReading = [];
+        arrAPI.forEach((item) => {
+          this.listReading.push({
+            id: item?.id,
+            title: item?.title,
+            subTitle: item?.description,
+            status: item?.sectionStatus == 'PENDING' ? true : false,
+          });
+        });
+        this.idSection = this.listReading[0].id;
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      } finally {
+        await this.getDetailSession();
+      }
+    },
     /**
      * get detail session
      */
@@ -213,7 +244,7 @@ export default {
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
         console.log(error);
-        this.$router.push({ name: 'TestLevelReadingUpdate' });
+        this.$router.push({ name: 'TestLevelReadingCreate' });
         this.emitter.emit('isShowLoading', false);
       }
     },
@@ -221,7 +252,10 @@ export default {
       this.$router.push({ name: 'Test' });
     },
     goToEdit() {
-      this.$router.push({ name: 'TestLevelReadingUpdate' });
+      this.$router.push({
+        name: 'TestLevelReadingUpdate',
+        params: { id: this.idSection },
+      });
     },
     resetResult() {
       this.myAnswer = [];
@@ -321,6 +355,8 @@ export default {
   },
   data() {
     return {
+      listReading: null,
+      idCourse: null,
       title: null,
       textContent: null,
       imgURL: null,

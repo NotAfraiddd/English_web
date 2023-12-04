@@ -47,7 +47,11 @@ class CourseApi {
     return res.data;
   }
   async updateReadingSession(data) {
-    const res = await http.post(`section/createReadingSection`, data);
+    const res = await http.put(`section/updateReadingSection`, data);
+    return res.data;
+  }
+  async updateListeningSession(data) {
+    const res = await http.put(`section/updateListeningSection`, data);
     return res.data;
   }
   async createListeningSession(data) {

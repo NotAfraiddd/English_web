@@ -221,7 +221,8 @@ export default {
   background: #fff;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   &__container {
-    height: 60px;
+    height: fit-content;
+    min-height: 80px;
     gap: 8px;
     @media screen and (max-width: 740px) {
       height: 80px;
