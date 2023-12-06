@@ -26,8 +26,20 @@ class CourseApi {
     const res = await http.put(`course/approveCourse`, data);
     return res.data;
   }
-  async approvedSession(data) {
+  async approvedListeningSession(data) {
+    const res = await http.put(`section/approveListeningSection`, data);
+    return res.data;
+  }
+  async approvedReadingSession(data) {
     const res = await http.put(`section/approveReadingSection`, data);
+    return res.data;
+  }
+  async rejectedListeningSession(data) {
+    const res = await http.put(`section/rejectListeningSection`, data);
+    return res.data;
+  }
+  async rejectedReadingSession(data) {
+    const res = await http.put(`section/rejectReadingSection`, data);
     return res.data;
   }
   async rejectedCourse(data) {

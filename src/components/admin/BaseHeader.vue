@@ -267,6 +267,7 @@ export default {
     } else this.statusBlog = true;
     this.formatNumber = formatNumber;
     this.getTotalUser();
+    this.getTotalUserOnline();
     window.addEventListener('scroll', this.handleScroll);
     this.getNotify();
   },
@@ -420,7 +421,6 @@ export default {
         this.isMatchedRoute('CourseReading') ||
         this.isMatchedRoute('DetailCourseListening') ||
         this.isMatchedRoute('DetailCourseReading') ||
-        this.isMatchedRoute('DetailCourseListeningPending') ||
         this.isMatchedRoute('CreateCourseListening') ||
         this.isMatchedRoute('CreateCourseReading') ||
         this.isMatchedRoute('AdminDetail') ||
@@ -431,6 +431,8 @@ export default {
         this.isMatchedRoute('TestLevelListeningUpdate') ||
         this.isMatchedRoute('TestLevelReading') ||
         this.isMatchedRoute('TestLevelReadingCreate') ||
+        this.isMatchedRoute('DetailCourseListeningPending') ||
+        this.isMatchedRoute('DetailCourseReadingPending') ||
         this.isMatchedRoute('CommentReported')
       )
         return true;
@@ -508,11 +510,19 @@ export default {
       }
     },
 
+    async getTotalUserOnline() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        this.totalOnline = await userApi.getTotalUserOnline();
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
     async getTotalUser() {
       try {
         this.emitter.emit('isShowLoading', true);
         this.totalUser = await userApi.getTotalUser();
-        this.totalOnline = await userApi.getTotalUserOnline();
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
         this.emitter.emit('isShowLoading', false);

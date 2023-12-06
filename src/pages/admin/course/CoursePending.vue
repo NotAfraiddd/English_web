@@ -55,16 +55,6 @@
       </div>
     </div>
     <div v-else class="mt-5 font-semibold text-xl">No data</div>
-    <div class="mt-5 flex justify-center">
-      <a-pagination
-        class="pagination"
-        v-model:current="current"
-        :showSizeChanger="false"
-        v-model:page-size="pageSize"
-        :total="100"
-        @change="onShowSizeChange"
-      />
-    </div>
   </div>
 </template>
 <script>
@@ -121,12 +111,13 @@ export default {
                   if (ele.sectionStatus == 'PENDING') {
                     this.listCourse.push({
                       id: item?.id + '-' + ele.id,
+                      idSection: ele?.id,
                       userID: item?.creatorUserid?.uid,
                       avatar: item?.creatorUserid?.avatar || '',
                       name: item?.creatorUserid?.fullName || '',
                       level: modifiedLevel,
                       nameCourse: ele?.title,
-                      type: 'Reading course session',
+                      type: 'Reading',
                     });
                   }
                 });
@@ -136,12 +127,13 @@ export default {
                   if (ele.sectionStatus == 'PENDING') {
                     this.listCourse.push({
                       id: item?.id + '-' + ele.id,
+                      idSection: ele?.id,
                       userID: item?.creatorUserid?.uid,
                       avatar: item?.creatorUserid?.avatar || '',
                       name: item?.creatorUserid?.fullName || '',
                       level: modifiedLevel,
                       nameCourse: ele?.title,
-                      type: 'Listening course session',
+                      type: 'Listening',
                     });
                   }
                 });
@@ -240,14 +232,23 @@ export default {
       this.$router.push({ name: 'Dashboard' });
     },
     goToDetail(data) {
-      this.setIDCourse(data.id);
-      localStorage.setItem('idCoursePending', data.id);
-      const path = formatSpacerIntoHyphen(data.nameCourse);
-      const type = data.type == TYPE_COURSE.LISTENING ? 'listening' : 'reading';
-      this.$router.push({
-        name: 'DetailCourseListeningPending',
-        params: { name: path, type: type, id: data.userID },
-      });
+      if (data.type != 'Course') {
+        this.setIDCourse(data.id);
+        localStorage.setItem('idCoursePending', data.id);
+        if (data.type == 'Listening')
+          this.$router.push({
+            name: 'DetailCourseListeningPending',
+            params: { id: data.idSection },
+          });
+        else {
+          this.$router.push({
+            name: 'DetailCourseReadingPending',
+            params: { id: data.idSection },
+          });
+        }
+      } else {
+        notification.warn({ message: 'This is title of course, no section' });
+      }
     },
   },
   data() {

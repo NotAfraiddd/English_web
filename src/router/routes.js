@@ -262,13 +262,13 @@ const routes = [
         component: () => import('../pages/admin/course/CoursePending.vue'),
       },
       {
-        path: 'course-pending/detail/:name/:type/:id',
+        path: 'course-pending/detail/listening/:id',
         name: 'DetailCourseListeningPending',
         component: () =>
           import('../pages/admin/course/DetailCourseListeningPending.vue'),
       },
       {
-        path: 'course-pending/detail/:name/:type/:id',
+        path: 'course-pending/detail/reading/:id',
         name: 'DetailCourseReadingPending',
         component: () =>
           import('../pages/admin/course/DetailCourseReadingPending.vue'),

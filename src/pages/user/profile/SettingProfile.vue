@@ -420,8 +420,9 @@ export default {
       this.inputDate = res?.registrationDate;
       res.gender ? (this.inputGender = 0) : (this.inputGender = 1);
       this.socialMediaConnection = res?.socialMediaConnection;
+      console.log(res.level);
       if (res.level == 'PENDING') this.inputLevel = 0;
-      else if (res.level == 'BASIC') this.inputLevel = 1;
+      else if (res.level == 'BEGINNER') this.inputLevel = 1;
       else if (res.level == 'INTERMIDATE') this.inputLevel = 2;
       else if (res.level == 'ADVANCED') this.inputLevel = 3;
     },
@@ -653,7 +654,7 @@ export default {
       inputBlogOriginal: null,
       editBlog: false,
       inputBlog: 0,
-      inputLevel: 2,
+      inputLevel: 0,
       inputLevelOriginal: null,
       editLevel: false,
       inputInstagram: null,

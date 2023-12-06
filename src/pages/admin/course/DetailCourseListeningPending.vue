@@ -92,18 +92,12 @@
       @setQuetions="setQuetions"
     />
     <div class="flex justify-center gap-20 items-center py-5 text-base">
-      <div class="flex items-center justify-around w-full">
+      <div class="flex items-center justify-around w-3/4">
         <div
           class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
           @click="onBack"
         >
           <span class="text-base text-primary">Back</span>
-        </div>
-        <div
-          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
-          @click="handleAcceptCourse"
-        >
-          <span class="text-base text-white">Accept</span>
         </div>
         <div
           @click="handleSubmit"
@@ -118,6 +112,20 @@
           @click="resetResult"
           :style="{ transform: 'rotate(' + rotation + 'deg)' }"
         />
+      </div>
+      <div class="flex justify-between gap-2 group-button w-1/4">
+        <div
+          @click.stop="handleRejectSection"
+          class="text-text_red hover:text-red-600 cursor-pointer"
+        >
+          Rejected
+        </div>
+        <div
+          @click.stop="handleAcceptSection"
+          class="text-text_green hover:text-green-600 cursor-pointer"
+        >
+          Approved
+        </div>
       </div>
     </div>
   </div>
@@ -171,6 +179,7 @@ import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import { SOCKET } from '../../../constants';
 import { mapMutations, mapState } from 'vuex';
 import courseApi from '../../../apis/course';
+import { notification } from 'ant-design-vue';
 
 export default {
   name: 'DetailCourseListeningPending',
@@ -187,10 +196,13 @@ export default {
     this.ARROW_LEFT = ARROW_LEFT;
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
     this.paramName = this.$route.params.name;
-    this.userID = this.$route.params.id;
-    this.idCoursePendingLocal = JSON.parse(
-      localStorage.getItem('idCoursePending'),
-    );
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
+    if (this.userInfor) this.userID = this.userInfor.email;
+    this.idSection = +this.$route.params.id;
+    if (this.idSection) {
+      this.getDetailSession(this.idSection);
+      this.getRandomQuestions();
+    }
   },
   watch: {
     listAnswers() {
@@ -200,10 +212,66 @@ export default {
       this.courseName = newVal.split('-').join(' ');
     },
   },
-  computed: {
-    ...mapState('course', ['idCoursePending']),
-  },
+
   methods: {
+    /**
+     * get random question
+     */
+    async getRandomQuestions() {
+      try {
+        this.dataListWords = [];
+        this.emitter.emit('isShowLoading', true);
+        const detailSession = await courseApi.getRandomQuestionListening({
+          id: this.idSection,
+        });
+        detailSession.forEach((word, index) => {
+          this.dataListWords.push({
+            id: index + 1,
+            word: word,
+          });
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
+    /**
+     * get detail session
+     */
+    async getDetailSession(data) {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const detailSession = await courseApi.getListeningSessionByID({
+          id: data,
+        });
+        this.title = detailSession?.title;
+        this.textContent = detailSession?.textContent;
+        this.imgURL = detailSession?.imgURL;
+        this.selectedAudio = detailSession?.mediaURL;
+        this.script = detailSession?.script;
+        detailSession?.questionList.forEach((item, index) => {
+          this.dataMultipleChoice.push({
+            id: index + 1,
+            title: item.questionContent,
+            question: item.options.map((item) => item.content),
+          });
+          this.correctAnswer.push(+item.correctAnswer);
+        });
+        detailSession?.fillInBlankQuestionList.forEach((ele, index) => {
+          this.listQuestions.push({
+            id: index + 1,
+            contentLeft: ele?.leftContent,
+            contentRight: ele?.rightContent,
+            word: ele?.answer,
+          });
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
     resetResult() {
       this.submitMultipleChoice = false;
       this.submitMatching = false;
@@ -213,6 +281,9 @@ export default {
         item.word = null;
       });
       this.myAnswer = [];
+      this.rotation += 360;
+      this.checkTranscript = false;
+      this.getRandomQuestions();
     },
     /**
      * show modal
@@ -314,10 +385,10 @@ export default {
     /**
      * approve
      */
-    async handleAcceptCourse() {
+    async handleAcceptSection() {
       try {
-        const data = await courseApi.approvedCourse({
-          id: this.idCoursePending || this.idCoursePendingLocal,
+        const data = await courseApi.approvedListeningSession({
+          id: this.idSection,
         });
         const dataSocket = {
           room: this.userID,
@@ -329,6 +400,33 @@ export default {
           kind: SOCKET.NOTIFY_COURSE_PENDING,
         };
         this.$socket.emit('sendSignal', content);
+        notification.success({ message: 'Success' });
+      } catch (error) {
+        this.emitter.emit('isShowLoading', false);
+        console.log(error);
+      } finally {
+        this.$router.push({ name: 'CoursePending' });
+      }
+    },
+    /**
+     * approve
+     */
+    async handleRejectSection() {
+      try {
+        const data = await courseApi.rejectedListeningSession({
+          id: this.idSection,
+        });
+        const dataSocket = {
+          room: this.userID,
+          kind: SOCKET.REJECTED_COURSE_PENDING,
+        };
+        this.$socket.emit('joinRoom', dataSocket);
+        let content = {
+          data: data,
+          kind: SOCKET.REJECTED_COURSE_PENDING,
+        };
+        this.$socket.emit('sendSignal', content);
+        notification.success({ message: 'Reject success' });
       } catch (error) {
         this.emitter.emit('isShowLoading', false);
         console.log(error);
@@ -361,8 +459,14 @@ export default {
   },
   data() {
     return {
-      idCoursePendingLocal: null,
+      script: null,
+      idSection: null,
+      title: null,
+      textContent: null,
+      imgURL: null,
+      rotation: 0,
       numNotify: 0,
+      userInfor: null,
       userID: null,
       courseName: null,
       modalMuilti: false,
@@ -373,38 +477,7 @@ export default {
       checkTranscript: false,
       paramName: null,
       drag: false,
-      listQuestions: [
-        {
-          id: 1,
-          contentLeft: 'I have',
-          contentRight: ' in my bag.',
-          word: 'apple',
-        },
-        {
-          id: 2,
-          contentLeft: 'Susan and John go',
-          contentRight: 'with theirs parent today.',
-          word: 'at the school',
-        },
-        {
-          id: 3,
-          contentLeft: 'I have',
-          contentRight: ' in my bag.',
-          word: 'have lunch',
-        },
-        {
-          id: 4,
-          contentLeft: 'Susan and John go',
-          contentRight: 'with theirs parent today.',
-          word: 'have breakfast',
-        },
-        {
-          id: 5,
-          contentLeft: 'I have',
-          contentRight: ' in my bag.',
-          word: 'at the hospital',
-        },
-      ],
+      listQuestions: [],
       listAnswers: [
         { id: 1, word: null },
         { id: 2, word: null },
@@ -412,84 +485,15 @@ export default {
         { id: 4, word: null },
         { id: 5, word: null },
       ],
-      dataListWords: [
-        { id: 1, word: 'at the hospital' },
-        { id: 2, word: 'apple' },
-        { id: 3, word: 'have breakfast' },
-        { id: 4, word: 'have lunch' },
-        { id: 5, word: 'at the school' },
-      ],
-      dataMultipleChoice: [
-        {
-          id: 0,
-          title: 'Mary ask John about that: Mary ask John',
-          question: [
-            'Do you have breakfast?',
-            'Do you have lunch?',
-            'Do you have dinner?',
-            'I’m hungry all day.',
-          ],
-        },
-        {
-          id: 1,
-          title: 'Mary ask John about that:Mary ask John',
-          question: [
-            'Do you have breakfast?',
-            'Do you have lunch?',
-            'Do you have dinner?',
-            'I’m hungry all day.',
-          ],
-        },
-        {
-          id: 2,
-          title: 'Mary ask :',
-          question: [
-            'Do you have breakfast?',
-            'Do you have lunch?',
-            'Do you have dinner?',
-            'I’m hungry all day.',
-          ],
-        },
-        {
-          id: 3,
-          title: 'Mary ask John about that: Mary ask John',
-          question: [
-            'Do you have breakfast?',
-            'Do you have lunch? Do you have breakfast?Do you have breakfast?',
-            'Do you have dinner?',
-            'I’m hungry all day.',
-          ],
-        },
-        {
-          id: 4,
-          title:
-            'Mary ask John about that:Mary ask John Mary ask John about that:Mary ask John',
-          question: [
-            'Do you have breakfast?',
-            'Do you have lunch?',
-            'Do you have dinner?',
-            'I’m hungry all day.',
-          ],
-        },
-        {
-          id: 5,
-          title: 'Mary ask :',
-          question: [
-            'Do you have breakfast? Do you have breakfast? Do you have breakfast?',
-            'Do you have lunch?',
-            'Do you have dinner?',
-            'I’m hungry all day.',
-          ],
-        },
-      ],
-      correctAnswer: [1, 2, 3, 4, 1, 2],
+      dataListWords: [],
+      dataMultipleChoice: [],
+      correctAnswer: [],
       myAnswer: [],
       errorsMultiple: [],
       errorsMatching: [],
       emptysMultiple: [],
       transcript: false,
-      selectedAudio:
-        'https://6a63fca904fd268f15f7-d5770ffdd579eb31eaa89faeffc55fe7.ssl.cf1.rackcdn.com/LE_listening_C1_A_job_interview.mp3',
+      selectedAudio: null,
     };
   },
 };

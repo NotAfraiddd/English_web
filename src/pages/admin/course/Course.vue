@@ -80,12 +80,10 @@
         >
           Level
         </div>
-        <input
-          ref="errorInputName"
-          v-model="createLevel"
-          type="text"
-          class="input-type-course border rounded-lg form-control"
-          spellcheck="false"
+        <InputLevel
+          external-class="input-type-course h-10"
+          :selectedValueProp="createLevel"
+          @update="updateLevel"
         />
       </div>
       <div class="flex w-full mt-5 justify-between">
@@ -292,9 +290,10 @@ import {
 import { notification } from 'ant-design-vue';
 import { formatSpacerIntoHyphen } from '../../../constants/function';
 import courseApi from '../../../apis/course';
+import InputLevel from '../../../components/common/InputLevel.vue';
 export default {
   name: 'Course',
-  components: { ListTypeCourse, ConfirmModal },
+  components: { ListTypeCourse, ConfirmModal, InputLevel },
   created() {
     this.NOTIFY_MESSAGE = NOTIFY_MESSAGE;
     this.ADMIN_COURSE = ADMIN_COURSE;
@@ -303,6 +302,7 @@ export default {
     this.NOTIFY = NOTIFY;
     this.DELETE_GRAY_ICON = DELETE_GRAY_ICON;
     this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
     this.getAllCourse();
   },
 
@@ -403,7 +403,10 @@ export default {
       this.createLevel = '';
       this.showModalCreateCourse = false;
     },
-    createTypeCourse() {
+    updateLevel(e) {
+      this.createLevel = e;
+    },
+    async createTypeCourse() {
       if (
         this.createTitle &&
         this.createName &&
@@ -411,14 +414,27 @@ export default {
         this.createColor &&
         this.createLevel
       ) {
-        this.listCourses.push({
-          id: this.listCourses.length,
-          title: this.createTitle,
-          subtitle: this.createSubtitle,
-          color: this.createColor,
-          name: this.createName,
-          level: this.createLevel,
-        });
+        console.log('abc');
+        try {
+          const data = {
+            name: this.createTitle,
+            description: this.createSubtitle,
+            courseLevel: this.createLevel,
+            colorCode: this.createColor,
+            creatorUserid: {
+              uid: this.userInfor.email,
+            },
+          };
+          this.emitter.emit('isShowLoading', true);
+          await courseApi.createCourse(data);
+          this.emitter.emit('isShowLoading', false);
+          notification.success({ message: 'Create course success' });
+        } catch (error) {
+          console.log(error);
+          this.emitter.emit('isShowLoading', false);
+        } finally {
+          this.getAllCourse();
+        }
         this.cancelTypeCourse();
       } else {
         notification.error({ message: NOTIFY_MESSAGE.CREATE_FAILED });
@@ -549,6 +565,7 @@ export default {
   },
   data() {
     return {
+      userInfor: null,
       detailCourse: {},
       modalConfirmDelete: false,
       checkLevel: null,
