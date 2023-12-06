@@ -100,9 +100,12 @@
             <div
               class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first relative"
             >
-              <div class="font-semibold">{{ item.name }}</div>
+              <div class="font-semibold">{{ item.name || item.userID }}</div>
               <div class="text-left mb-1">{{ item.content }}</div>
-              <div class="flex w-24 justify-between flex-wrap gap-2">
+              <div
+                v-if="false"
+                class="flex w-24 justify-between flex-wrap gap-2"
+              >
                 <div class="flex justify-center items-center cursor-pointer">
                   <div @click="handleClickReact(listComment, item, item.id)">
                     <img
@@ -173,7 +176,7 @@
               <div
                 class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first-2"
               >
-                <div class="font-semibold">{{ i.name }}</div>
+                <div class="font-semibold">{{ i.name || i.userID }}</div>
                 <div class="text-left mb-1">
                   <b v-if="i.nameReply" class="text-primary">
                     {{ i.nameReply }}
@@ -265,6 +268,7 @@ export default {
   watch: {
     showComment(newValue) {
       document.body.style.overflow = newValue ? 'hidden' : 'unset';
+      this.listComment = [];
     },
     selectedStatus() {
       this.getAllPost();
@@ -272,6 +276,7 @@ export default {
   },
   data() {
     return {
+      isClickComment: false,
       currentComment: 1,
       totalComment: 0,
       IDBlog: null,
@@ -451,6 +456,36 @@ export default {
       }
     },
 
+    async handleReactCommentBlog(idCommentBlog) {
+      try {
+        await blogApi.reactCommentBlog({
+          likedUser: {
+            uid: this.userInfor.email,
+          },
+          comment: {
+            id: idCommentBlog,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async handleUnReactCommentBlog(idCommentBlog) {
+      try {
+        await blogApi.reactCommentBlog({
+          likedUser: {
+            uid: this.userInfor.email,
+          },
+          comment: {
+            id: idCommentBlog,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     handleClickReact(arr, data, id) {
       const isDuplicate = arr.some((p) => p.id == id);
       const dataSocket = {
@@ -459,20 +494,40 @@ export default {
       };
       this.$socket.emit('joinRoom', dataSocket);
       if (isDuplicate) {
-        data.numReact++;
-        let content = {
-          id: this.idUserBlog,
-          react: data.numReact,
-          name: this.userInfor.fullName,
-          avatar: this.userInfor.avtURL,
-          admin: this.userInfor.role == 'ADMIN' ? true : false,
-        };
-        const react = {
-          data: content,
-          kind: SOCKET.REACT_COMMENT,
-        };
-        this.checkListReactComment[id] = true;
-        this.$socket.emit('sendSignal', react);
+        if (!this.isClickComment) {
+          this.isClickComment = true;
+          this.handleReactCommentBlog(id);
+          data.numReact++;
+          let content = {
+            id: this.idUserBlog,
+            react: this.isClickComment,
+            name: this.userInfor.fullName,
+            avatar: this.userInfor.avtURL,
+            admin: this.userInfor.role == 'ADMIN' ? true : false,
+          };
+          const react = {
+            data: content,
+            kind: SOCKET.REACT_COMMENT,
+          };
+          this.checkListReactComment[id] = true;
+          this.$socket.emit('sendSignal', react);
+        } else {
+          this.isClickComment = false;
+          data.numReact++;
+          let content = {
+            id: this.idUserBlog,
+            react: this.isClickComment,
+            name: this.userInfor.fullName,
+            avatar: this.userInfor.avtURL,
+            admin: this.userInfor.role == 'ADMIN' ? true : false,
+          };
+          const react = {
+            data: content,
+            kind: SOCKET.REACT_COMMENT,
+          };
+          this.checkListReactComment[id] = true;
+          this.$socket.emit('sendSignal', react);
+        }
       }
     },
     replyComment(data, secondComment) {

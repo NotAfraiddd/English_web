@@ -43,6 +43,15 @@ class Blog {
     const res = await http.post(`post/likePost`, data);
     return res.data;
   }
+
+  async reactCommentBlog(data) {
+    const res = await http.post(`post/likeAComment`, data);
+    return res.data;
+  }
+  async unReactCommentBlog(data) {
+    const res = await http.post(`post/likePost`, data);
+    return res.data;
+  }
   async unReactBlog(data) {
     const res = await http.post(`post/dislikePost`, data);
     return res.data;

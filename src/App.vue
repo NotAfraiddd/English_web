@@ -97,19 +97,37 @@ export default {
           });
         }
       } else if (data.kind == SOCKET.REACT_COMMENT) {
-        this.$toast.add({
-          severity: 'success',
-          summary: `${data.content.name}`,
-          detail: 'reacts to your comment on your post.',
-          life: 3000,
-        });
+        if (!data.content.react) {
+          this.$toast.add({
+            severity: 'success',
+            summary: `${data.content.name}`,
+            detail: 'unreacts to your comment on your post.',
+            life: 3000,
+          });
+        } else {
+          this.$toast.add({
+            severity: 'success',
+            summary: `${data.content.name}`,
+            detail: 'reacts to your comment on your post.',
+            life: 3000,
+          });
+        }
       } else if (data.kind == SOCKET.REACT_COMMENT_REPLY) {
-        this.$toast.add({
-          severity: 'success',
-          summary: `${data.content.name}`,
-          detail: 'reacts to your comment on your post.',
-          life: 3000,
-        });
+        if (!data.content.react) {
+          this.$toast.add({
+            severity: 'success',
+            summary: `${data.content.name}`,
+            detail: 'unreacts to your comment on your post.',
+            life: 3000,
+          });
+        } else {
+          this.$toast.add({
+            severity: 'success',
+            summary: `${data.content.name}`,
+            detail: 'reacts to your comment on your post.',
+            life: 3000,
+          });
+        }
       } else if (data.kind == SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN) {
         this.$toast.add({
           severity: 'success',

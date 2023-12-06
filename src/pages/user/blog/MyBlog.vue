@@ -103,7 +103,10 @@
             >
               <div class="font-semibold">{{ item.name }}</div>
               <div class="text-left mb-1">{{ item.content }}</div>
-              <div class="flex w-24 justify-between flex-wrap gap-2">
+              <div
+                v-if="false"
+                class="flex w-24 justify-between flex-wrap gap-2"
+              >
                 <div class="flex justify-center items-center cursor-pointer">
                   <div @click="handleClickReact(listComment, item, item.id)">
                     <img

@@ -144,9 +144,9 @@
           <div
             class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first relative"
           >
-            <div class="font-semibold">{{ item.name }}</div>
+            <div class="font-semibold">{{ item.name || item.userID }}</div>
             <div class="text-left mb-1">{{ item.content }}</div>
-            <div class="flex w-24 justify-between flex-wrap gap-2">
+            <div v-if="false" class="flex w-24 justify-between flex-wrap gap-2">
               <div class="flex justify-center items-center cursor-pointer">
                 <div @click="handleClickReact(listComment, item, item.id)">
                   <img
@@ -351,94 +351,11 @@ export default {
       senderName: '',
       receiverName: '',
       userLogin: 3,
-      userNameLogin: 'Khang',
       showAllComment: [],
       replyComments: [],
       listComment: [],
 
       listBlog: [],
-      listOtherBlog: [
-        {
-          id: uuidv4(),
-          avatar: AVATAR,
-          name: 'Chi Bao',
-          background: LISTENING,
-          title: 'Effective Methods for Improving English Language Skills.',
-          created_at: '2023-11-07 16:10:00',
-        },
-        {
-          id: uuidv4(),
-          avatar: AVATAR,
-          name: 'Chi Bao',
-          background: GROUP_STUDENT_1,
-          title: 'Effective Methods for Improving English Language Skills.',
-          created_at: '2023-11-07 15:19:00',
-        },
-        {
-          id: uuidv4(),
-          avatar: AVATAR,
-          name: 'Chi Bao',
-          background: GROUP_STUDENT_2,
-          title: 'Effective Methods for Improving English Language Skills.',
-          created_at: '2023-11-07 01:13:00',
-        },
-        {
-          id: uuidv4(),
-          avatar: AVATAR,
-          name: 'Chi Huan',
-          background: GROUP_STUDENT_3,
-          title: 'Effective Methods for Improving English Language Skills.',
-          created_at: '2023-11-02 01:08:00',
-        },
-        {
-          id: uuidv4(),
-          avatar: AVATAR,
-          name: 'Ngoc Bao',
-          background: GROUP_STUDENT_4,
-          title: 'Effective Methods for Improving English Language Skills.',
-          created_at: '2023-11-03 01:08:00',
-        },
-        {
-          id: uuidv4(),
-          avatar: AVATAR,
-          name: 'Ngoc Huan',
-          background: GROUP_STUDENT_1,
-          title: 'Effective Methods for Improving English Language Skills.',
-          created_at: '2023-11-04 01:08:00',
-        },
-        {
-          id: uuidv4(),
-          avatar: AVATAR,
-          name: 'Huan Huan',
-          background: LISTENING,
-          title: 'Effective Methods for Improving English Language Skills.',
-          created_at: '2023-11-05 01:08:00',
-        },
-        {
-          id: uuidv4(),
-          avatar: AVATAR,
-          name: 'Trong Dat',
-          background: GROUP_STUDENT_2,
-          title: 'Effective Methods for Improving English Language Skills.',
-          created_at: '2023-11-06 01:08:00',
-        },
-        {
-          id: uuidv4(),
-          avatar: AVATAR,
-          name: 'Tao Thao',
-          background: LISTENING,
-          title: 'Effective Methods for Improving English Language Skills.',
-          created_at: '2023-11-07 01:08:00',
-        },
-        {
-          id: uuidv4(),
-          avatar: AVATAR,
-          name: 'Huan Huan',
-          background: GROUP_STUDENT_3,
-          title: 'Effective Methods for Improving English Language Skills.',
-          created_at: '2023-11-02 01:08:00',
-        },
-      ],
       numNotify: 0,
     };
   },
@@ -833,7 +750,6 @@ export default {
           };
           this.$socket.emit('sendSignal', comment);
           this.replyComments.push(commentDetail);
-          this.handleReplyComment();
         } else {
           const dataSocket = {
             room: this.idUserBlog,
@@ -859,8 +775,8 @@ export default {
           };
           this.$socket.emit('sendSignal', comment);
           this.listComment.unshift(commentDetail);
-          this.comment++;
           this.handleComment();
+          this.comment++;
         }
         this.receiverName = '';
         this.contentChat = '';

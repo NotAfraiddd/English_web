@@ -74,6 +74,12 @@ class CourseApi {
     const res = await http.post(`section/getReadingSectionById`, data);
     return res.data;
   }
+
+  async getCourseListAtempByIdCourse(data) {
+    const res = await http.post(`courseAttemp/getCourseAttempViaId`, data);
+    return res.data;
+  }
+
   async getListeningSessionByID(data) {
     const res = await http.post(`section/getListeningSectionById`, data);
     return res.data;
