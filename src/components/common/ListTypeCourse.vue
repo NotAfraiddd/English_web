@@ -48,8 +48,6 @@
       <div class="w-full mt-3 flex flex-col gap-1 my-4 items-center">
         <div class="font-semibold text-xl w-full">{{ item.name }}</div>
         <div v-if="hideCourseFinished" class="text-sm flex gap-3">
-          Completed
-          <div class="font-semibold">{{ item.courseFinished }}</div>
           <div v-if="item.status" class="text-right text-yellow-400">
             ( Pending )
           </div>

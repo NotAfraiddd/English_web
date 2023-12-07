@@ -76,10 +76,11 @@
         </div>
       </div>
       <div class="ml-10 profile-course w-3/5 px-5 py-3 flex flex-col">
-        <div class="font-semibold">Course(s) attended</div>
+        <div class="font-semibold">Course(s) recommended by admin</div>
         <div
           v-for="(item, index) in listCourses"
           :key="index"
+          @click="clickChooseCourse(item)"
           class="flex mt-4 flex-col"
         >
           <div class="flex">
@@ -108,11 +109,50 @@
       </div>
     </div>
   </div>
+  <ConfirmModal
+    :showModal="modalChooseCourse"
+    @closeModal="closeModalChoose"
+    @save="closeModalChoose"
+    :showFooter="false"
+    :widthCustom="600"
+  >
+    <template #icon>
+      <img :src="LEARN" alt="" srcset="" />
+    </template>
+    <template #content>
+      <div class="text-primary_black my-5 flex gap-1">
+        Do you want to choose
+        <div class="font-semibold">Listening</div>
+        or
+        <div class="font-semibold">Reading</div>
+        ?
+      </div>
+    </template>
+    <template #select>
+      <div class="flex gap-20">
+        <div
+          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="goToListening"
+        >
+          <span class="text-base text-primary">Listening</span>
+        </div>
+        <div
+          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="goToReading"
+        >
+          <span class="text-base text-white">Reading</span>
+        </div>
+      </div>
+    </template>
+  </ConfirmModal>
 </template>
 
 <script>
+import courseApi from '../../../apis/course';
 import userApi from '../../../apis/user';
+import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import Avatar from '../../../components/common/Avatar.vue';
+import { formatSpacerIntoHyphen } from '../../../constants/function';
 import {
   AVATAR,
   BACKGROUND,
@@ -125,66 +165,85 @@ import moment from 'moment';
 
 export default {
   name: 'Profile',
-  components: { Avatar },
+  components: { Avatar, ConfirmModal },
   created() {
     this.USERS = USERS;
     this.SOCIAL_FACEBOOK = SOCIAL_FACEBOOK;
+    this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
     this.SOCIAL_INSTAGRAM = SOCIAL_INSTAGRAM;
     this.SOCIAL_LINKEDIN = SOCIAL_LINKEDIN;
     this.BACKGROUND = BACKGROUND;
     this.AVATAR = AVATAR;
     this.getDetail();
+    this.getAllCourse();
   },
   data() {
     return {
+      title: null,
+      modalChooseCourse: false,
       BACKGROUND: BACKGROUND,
       fullName: null,
       bio: null,
       registrationDate: null,
       avatar: null,
-      listCourses: [
-        {
-          id: 1,
-          title: 'Basic Level',
-          subtitle: 'English for individuals with basic knowledge.',
-          name: 'Basic English Course',
-          content:
-            'In this course, we will learn basic vocabulary, simple reading and listening lessons.',
-          color: '#0068FF',
-        },
-        {
-          id: 2,
-          title: 'Intermediate Level',
-          subtitle: 'English for individuals with intermediate knowledge.',
-          name: 'Intermediate English Course',
-          content:
-            'In this course, we will learn basic vocabulary, simple reading and listening lessons.',
-          color: '#AA53EE',
-        },
-        {
-          id: 3,
-          title: 'Advanced Level',
-          subtitle: 'English for individuals with advanced knowledge.',
-          name: 'Advanced English Course',
-          content:
-            'In this course, we will learn basic vocabulary, simple reading and listening lessons.',
-          courseFinished: '3/10',
-          color: '#87CF2A',
-        },
-        {
-          id: 4,
-          title: 'Grammar',
-          subtitle: 'English for individuals with basic knowledge.',
-          content:
-            'In this course, we will learn basic vocabulary, simple reading and listening lessons.',
-          name: 'Grammar English Course',
-          color: '#7C89CE',
-        },
-      ],
-      socialMediaConnection: null,
+      listCourses: [],
+      socialMediaConnection: {},
     };
   },
   methods: {
+    clickChooseCourse(data) {
+      this.title = data?.name;
+      this.modalChooseCourse = true;
+    },
+    closeModalChoose() {
+      this.modalChooseCourse = false;
+    },
+    goToListening() {
+      const path = formatSpacerIntoHyphen(this.title).toLowerCase();
+      this.$router.push({
+        name: 'ListCourseListening',
+        params: { name: path },
+      });
+    },
+    goToReading() {
+      const path = formatSpacerIntoHyphen(this.title).toLowerCase();
+      this.$router.push({ name: 'ListCourseReading', params: { name: path } });
+    },
+    /**
+     * get all course
+     */
+    async getAllCourse() {
+      this.listCourses = [];
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const data = await courseApi.allCourse();
+        data.forEach((item) => {
+          if (item?.courseLevel != 'PENDING') {
+            if (item.courseStatus == 'APPROVED') {
+              let modifiedLevel =
+                item?.courseLevel.charAt(0).toUpperCase() +
+                item?.courseLevel.slice(1).toLowerCase();
+              console.log(item);
+              this.listCourses.push({
+                id: item?.id,
+                title: modifiedLevel + ' Level',
+                level: modifiedLevel,
+                subtitle: item?.description,
+                percentages: [{ percentage: 0 }],
+                name: item?.name,
+                courseFinished: 0,
+                color: item?.colorCode,
+                status: item.courseStatus == 'PENDING' ? true : false,
+              });
+            }
+          }
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        this.emitter.emit('isShowLoading', false);
+        console.log(error);
+      }
+    },
     async getDetail() {
       const email = localStorage.getItem('email');
       const res = await userApi.getUser(email);

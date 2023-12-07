@@ -1,117 +1,26 @@
 <template>
-  <div class="flex">
-    <div class="w-3/5">
-      <ButtonBack title="Course Reading" :hide-back="true" @back="onBack" />
-      <div
-        class="profile-background mt-5"
-        :style="{ backgroundImage: 'url(' + MOUNTAIN_CLIMB + ')' }"
-      />
-      <div class="text-left mt-5">
-        <div>
-          Here you can find activities to practise your reading skills. Reading
-          will help you to improve your understanding of the language and build
-          your vocabulary.
-        </div>
-        <div class="mt-5">
-          The self-study lessons in this section are written and organised by
-          English level based on the Common European Framework of Reference for
-          languages (CEFR). There are different types of texts and interactive
-          exercises that practise the reading skills you need to do well in your
-          studies, to get ahead at work and to communicate in English in your
-          free time.
-        </div>
-      </div>
-      <ListCourse :data="listReading" @clicked="goToDetailCourse" />
-    </div>
+  <div class="w-full">
+    <ButtonBack title="Course Reading" :hide-back="true" @back="onBack" />
     <div
-      class="sticky top-24 w-2/5 mx-3 mt-14 contain-list__reading border-8 border-table_border bg-white"
-    >
-      <!-- Reading -->
-      <div class="relative mt-3 ml-3">
-        <div
-          @click="showListCourseReading"
-          class="px-2 text-lg text-left font-semibold cursor-pointer hover:underline"
-        >
-          Reading ( {{ listDetailReadingFinished.length }}/{{
-            listDetailReading.length
-          }}
-          )
-        </div>
-        <div
-          ref="course"
-          :class="['detail-course absolute text-left', { open: courseReading }]"
-        >
-          <div
-            v-for="(item, key) in listDetailReading"
-            :key="key"
-            class="flex gap-2 items-center cursor-pointer justify-around"
-          >
-            <div
-              @click="goToDetailReadingSection(item)"
-              class="hover:underline break-words w-3/4 text-overflow"
-            >
-              - {{ item.title }}
-            </div>
-            <img
-              :src="item.status == 0 ? CANCEL : CHECKED"
-              alt=""
-              class="w-4 h-4 checked"
-            />
-          </div>
-        </div>
+      class="profile-background mt-5 mr-10"
+      :style="{ backgroundImage: 'url(' + MOUNTAIN_CLIMB + ')' }"
+    />
+    <div class="text-left mt-5">
+      <div>
+        Here you can find activities to practise your reading skills. Reading
+        will help you to improve your understanding of the language and build
+        your vocabulary.
       </div>
-      <!-- Listening -->
-      <div class="relative ml-3" ref="listening">
-        <div
-          @click="showListCourseListening"
-          class="px-2 text-lg text-left font-semibold cursor-pointer hover:underline"
-        >
-          Listening ( {{ listDetailListeningFinished.length }}/{{
-            listDetailListening.length
-          }}
-          )
-        </div>
-        <div
-          ref="courseListening"
-          :class="[
-            'detail-course-listening absolute text-left',
-            { open: courseListening },
-          ]"
-        >
-          <div
-            v-for="(item, key) in listDetailListening"
-            :key="key"
-            class="flex gap-2 items-center cursor-pointer justify-around"
-          >
-            <div
-              @click="goToDetailListeningSection(item)"
-              class="hover:underline break-words w-3/4 text-overflow"
-            >
-              - {{ item.title }}
-            </div>
-            <img
-              :src="item.status == 0 ? CANCEL : CHECKED"
-              alt=""
-              class="w-4 h-4 checked"
-            />
-          </div>
-        </div>
-      </div>
-      <div ref="text" class="flex ml-5 gap-1 flex-wrap">
-        Create post
-        <div
-          v-if="userInfor.level == 'ADVANCED'"
-          class="font-semibold cursor-pointer hover:underline"
-        >
-          ( No )
-        </div>
-        <div v-else class="font-semibold cursor-pointer hover:underline">
-          ( Yes )
-        </div>
-        Click
-        <div class="text-primary cursor-pointer hover:underline">here</div>
+      <div class="mt-5">
+        The self-study lessons in this section are written and organised by
+        English level based on the Common European Framework of Reference for
+        languages (CEFR). There are different types of texts and interactive
+        exercises that practise the reading skills you need to do well in your
+        studies, to get ahead at work and to communicate in English in your free
+        time.
       </div>
     </div>
+    <ListCourse :data="listReading" @clicked="goToDetailCourse" />
   </div>
   <div
     v-if="userInfor.level == 'ADVANCED'"
@@ -376,7 +285,7 @@ export default {
   overflow: hidden;
 }
 .profile-background {
-  height: 450px;
+  height: 550px;
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
