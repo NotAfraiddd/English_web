@@ -45,6 +45,7 @@
                 :avatar="true"
                 @update="getAvatar"
                 :disabled="!editAvatar"
+                :name="inputEmail"
               />
               <div />
             </div>
@@ -349,7 +350,7 @@
       </div>
       <div
         class="cursor-pointer rounded-lg bg-green-500 w-24 h-8 leading-8 hover:opacity-50 ml-auto mt-5"
-        @click="handleUpdateSocialNetwork"
+        @click="handleUpdateProfile"
       >
         <span class="text-base text-white">Update</span>
       </div>
@@ -419,12 +420,17 @@ export default {
       this.inputEmail = res?.email;
       this.inputDate = res?.registrationDate;
       res.gender ? (this.inputGender = 0) : (this.inputGender = 1);
-      this.socialMediaConnection = res?.socialMediaConnection;
+      this.inputFaceBook = res?.socialMediaConnection?.facebookURL;
+      this.inputInstagram = res?.socialMediaConnection?.instagramURL;
+      this.inputLinkedin = res?.socialMediaConnection?.linkedinURL;
       console.log(res.level);
       if (res.level == 'PENDING') this.inputLevel = 0;
       else if (res.level == 'BEGINNER') this.inputLevel = 1;
       else if (res.level == 'INTERMIDATE') this.inputLevel = 2;
       else if (res.level == 'ADVANCED') this.inputLevel = 3;
+      if (res.level == 'PENDING' || res.level == 'BEGINNER') this.inputBlog = 1;
+      else if (res.level == 'INTERMIDATE' || res.level == 'ADVANCED')
+        this.inputBlog = 0;
     },
     async handleUpdateProfile() {
       try {
@@ -434,7 +440,7 @@ export default {
           formData.append('file', this.file);
           this.avatar = await fileAPI.updateImg(formData);
         }
-        await userApi.updateUser({
+        const data = {
           uid: this.emailLocalStorage,
           fullName: this.inputFullname,
           bio: this.inputBio,
@@ -443,15 +449,22 @@ export default {
           registrationDate: this.inputDate,
           gender: this.inputGender != 1 ? true : false,
           level: this.inputLevel,
-          socialMediaConnection: null,
+          socialMediaConnection: {
+            facebookURL: this.inputFaceBook,
+            instagramURL: this.inputInstagram,
+            linkedinURL: this.inputLinkedin,
+          },
           role: this.userInfor.role == 'ADMIN' ? 'ADMIN' : 'USER',
-        });
+        };
+        console.log(data);
+        await userApi.updateUser(data);
         notification.success({ message: 'Update profile success' });
-        await this.getDetail();
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
         console.error(error);
         this.emitter.emit('isShowLoading', false);
+      } finally {
+        await this.getDetail();
       }
     },
     handleUpdateSocialNetwork() {
@@ -571,7 +584,6 @@ export default {
     },
     // blog
     updateBlog(e) {
-      console.log(e);
       this.inputBlog = e;
     },
     handleEditBlog(data) {
@@ -626,6 +638,7 @@ export default {
   },
   data() {
     return {
+      inputFaceBook: null,
       userInfor: null,
       emailLocalStorage: null,
       activeKey: 1,

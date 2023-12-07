@@ -6,10 +6,10 @@
     />
     <div class="relative">
       <figure class="personal-figure absolute w-32 h-32 my-0 mr-0 ml-7">
-        <img
-          :src="avatar"
-          class="personal-avatar w-32 h-32 rounded-full object-cover"
-          alt="avatar"
+        <Avatar
+          :imgUrl="avatar"
+          :name="fullName"
+          class="w-32 h-32 object-cover bg-white"
         />
       </figure>
       <div class="absolute left-56 font-semibold text-xl mt-3">
@@ -30,47 +30,47 @@
           </div>
         </div>
         <div
-          v-if="socialMediaConnection"
+          v-if="socialMediaConnection.facebookURL"
           class="flex items-center gap-3 mt-3 break-all"
         >
           <img :src="SOCIAL_FACEBOOK" alt="" srcset="" class="w-6 h-6" />
           <div class="leading-6 text-primary_blue cursor-pointer">
             <a
-              href="https://www.facebook.com/profile.php?id=100007821972265"
+              :href="socialMediaConnection.facebookURL"
               target="_blank"
               class="hover:text-primary"
             >
-              https://www.facebook.com/profile.php?id=100007821972265
+              {{ socialMediaConnection.facebookURL }}
             </a>
           </div>
         </div>
         <div
-          v-if="socialMediaConnection"
+          v-if="socialMediaConnection.instagramURL"
           class="flex items-center gap-3 mt-3 break-all"
         >
           <img :src="SOCIAL_INSTAGRAM" alt="" srcset="" class="w-6 h-6" />
           <div class="leading-6 text-primary_blue cursor-pointer">
             <a
-              href="https://www.instagram.com/nh.chibao/"
+              :href="socialMediaConnection.instagramURL"
               target="_blank"
               class="hover:text-primary"
             >
-              https://www.instagram.com/nh.chibao/
+              {{ socialMediaConnection.instagramURL }}
             </a>
           </div>
         </div>
         <div
-          v-if="socialMediaConnection"
+          v-if="socialMediaConnection.linkedinURL"
           class="flex items-center gap-3 mt-3 break-all"
         >
           <img :src="SOCIAL_LINKEDIN" alt="" srcset="" class="w-6 h-6" />
           <div class="leading-6 text-primary_blue cursor-pointer">
             <a
-              href="https://www.linkedin.com/in/bao-nguyen-465722257/"
+              :href="socialMediaConnection.linkedinURL"
               target="_blank"
               class="hover:text-primary"
             >
-              https://www.linkedin.com/in/bao-nguyen-465722257/
+              {{ socialMediaConnection.linkedinURL }}
             </a>
           </div>
         </div>
@@ -112,6 +112,7 @@
 
 <script>
 import userApi from '../../../apis/user';
+import Avatar from '../../../components/common/Avatar.vue';
 import {
   AVATAR,
   BACKGROUND,
@@ -124,7 +125,7 @@ import moment from 'moment';
 
 export default {
   name: 'Profile',
-  components: {},
+  components: { Avatar },
   created() {
     this.USERS = USERS;
     this.SOCIAL_FACEBOOK = SOCIAL_FACEBOOK;
@@ -187,8 +188,7 @@ export default {
     async getDetail() {
       const email = localStorage.getItem('email');
       const res = await userApi.getUser(email);
-      console.log(res);
-      this.fullName = res?.fullName;
+      this.fullName = res?.fullName || res?.email;
       this.bio = res?.bio;
       this.registrationDate = moment(res?.registrationDate).format(
         'DD/MM/YYYY',

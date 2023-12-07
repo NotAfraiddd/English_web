@@ -113,6 +113,9 @@
         class="text-primary_black mt-5 flex items-center justify-center button-radio"
       >
         <div class="flex w-96 items-center justify-start gap-5">
+          <div class="text-base text-primary_black font-semibold member-name">
+            Gender
+          </div>
           <!-- Edit -->
           <InputGender
             :disabled="!editGender"
@@ -134,6 +137,9 @@
         class="text-primary_black mt-5 flex items-center justify-center button-radio"
       >
         <div class="flex w-96 items-center justify-start gap-5">
+          <div class="text-base text-primary_black font-semibold member-name">
+            Level
+          </div>
           <!-- Edit -->
           <InputLevel
             external-class="w-full"
@@ -156,6 +162,9 @@
         class="text-primary_black mt-5 flex items-center justify-center button-radio"
       >
         <div class="flex w-96 items-center justify-start gap-5">
+          <div class="text-base text-primary_black font-semibold member-name">
+            Status blog
+          </div>
           <!-- Edit -->
           <InputBlog
             :disabled="!editBlog"
@@ -241,7 +250,10 @@ export default {
     this.LOCK_COLOR = LOCK_COLOR;
     this.AVATAR = AVATAR;
     this.ARROW_LEFT = ARROW_LEFT;
-    this.getDetail();
+    this.emailID = this.$route.params.id;
+    if (this.emailID) {
+      this.getDetail();
+    }
   },
   computed: {
     ...mapState('course', ['file']),
@@ -257,7 +269,7 @@ export default {
           this.avatar = await fileApi.updateImg(formData);
         }
         await userApi.updateUser({
-          uid: this.emailLocalStorage,
+          uid: this.emailID,
           fullName: this.inputFullname,
           bio: this.inputBio,
           avtURL: this.avatar,
@@ -280,8 +292,7 @@ export default {
      * get detail user
      */
     async getDetail() {
-      this.emailLocalStorage = localStorage.getItem('email');
-      const res = await userApi.getUser(this.emailLocalStorage);
+      const res = await userApi.getUser(this.emailID);
       this.setUser(res);
       this.inputFullname = res?.fullName;
       this.inputBio = res?.bio;
@@ -415,7 +426,7 @@ export default {
   },
   data() {
     return {
-      emailLocalStorage: null,
+      emailID: null,
       cancelAvatar: false,
       avatar: AVATAR,
       avatarOriginal: null,

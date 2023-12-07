@@ -61,7 +61,7 @@ export default {
       }
     },
     srcImg(newValue) {
-      this.imageURL = newValue;
+      this.imageURL = newValue || AVATAR;
     },
   },
   created() {

@@ -14,6 +14,14 @@ const routes = [
         name: 'Register',
         component: () => import('../pages/login/Register.vue'),
       },
+    ],
+  },
+  {
+    path: '',
+    name: 'UserLayout',
+    component: () => import('../layouts/UserLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
       {
         path: '/test-level/listening',
         name: 'ListeningTest',
@@ -24,14 +32,6 @@ const routes = [
         name: 'ReadingTest',
         component: () => import('../pages/test/Reading.vue'),
       },
-    ],
-  },
-  {
-    path: '',
-    name: 'UserLayout',
-    component: () => import('../layouts/UserLayout.vue'),
-    meta: { requiresAuth: true },
-    children: [
       {
         path: '',
         name: 'HomeUser',

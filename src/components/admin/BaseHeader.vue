@@ -2,11 +2,19 @@
   <header
     :class="[
       'h-20 flex justify-between items-center w-full bg-white z-10 sticky top-0',
-      !checkRoute ? 'border-b-0 border-l-0' : 'border-b border-l header',
+      !checkRoute ||
+      isMatchedRoute('ListeningTest') ||
+      isMatchedRoute('ReadingTest')
+        ? 'border-b-0 border-l-0'
+        : 'border-b border-l header',
     ]"
   >
     <div
-      v-if="!checkRoute"
+      v-if="
+        !checkRoute ||
+        isMatchedRoute('ListeningTest') ||
+        isMatchedRoute('ReadingTest')
+      "
       class="content-header-left h-20 flex items-center"
       :class="[!checkRoute && 'content-header-left__user']"
     >
@@ -14,7 +22,9 @@
         class="flex justify-center items-center cursor-pointer"
         :class="
           (!showBack && 'invisible') ||
-          (this.$route.name == 'HomeUser' && 'invisible')
+          (this.$route.name == 'HomeUser' && 'invisible') ||
+          (this.$route.name == 'ListeningTest' && 'invisible') ||
+          (this.$route.name == 'ReadingTest' && 'invisible')
         "
         @click="changeBack"
         @mouseenter="hoverBack"
@@ -48,14 +58,20 @@
     <input
       v-if="hideSearch"
       v-model="searchInput"
-      class="h-10 rounded-lg pl-2 flex items-center w-80 border form-control"
+      class="h-10 rounded-lg pl-2 flex items-center w-80 border form-control invisible"
       placeholder="Search somethings..."
     />
 
     <div
       class="flex items-center justify-between content-header-right mr-8 right-0 h-20"
     >
-      <div class="h-6 w-6 bell-notify relative" @click="handleShowNotify">
+      <div
+        v-if="
+          !isMatchedRoute('ListeningTest') || !isMatchedRoute('ReadingTest')
+        "
+        class="h-6 w-6 bell-notify relative"
+        @click="handleShowNotify"
+      >
         <img :src="BELL" alt="" srcset="" class="mr-2 cursor-pointer h-full" />
         <div
           v-if="inforComment.numberNotifications > 0"
@@ -122,6 +138,7 @@
             userInfor.level == checkLevel &&
             !checkRoute,
           'custom-user-advanced': userInfor.level == checkLevel && !checkRoute,
+          'test-level': userInfor.level == 'PENDING' && checkRoute,
           'custom-user': userInfor.level != checkLevel && !checkRoute,
         }"
       >
@@ -166,9 +183,21 @@
                 class="w-12 h-12"
               />
               <div
+                v-if="
+                  !isMatchedRoute('ListeningTest') ||
+                  !isMatchedRoute('ReadingTest')
+                "
                 class="flex flex-col items-start hover:opacity-50"
                 @click="handleGoProfile"
               >
+                <div class="text-lg font-semibold text-primary_black">
+                  {{ userInfor.fullName || userInfor.email }}
+                </div>
+                <div class="text-sm font-normal text-primary_black opacity-50">
+                  {{ userInfor.email }}
+                </div>
+              </div>
+              <div v-else class="flex flex-col items-start hover:opacity-50">
                 <div class="text-lg font-semibold text-primary_black">
                   {{ userInfor.fullName || userInfor.email }}
                 </div>
@@ -433,6 +462,8 @@ export default {
         this.isMatchedRoute('TestLevelReadingCreate') ||
         this.isMatchedRoute('DetailCourseListeningPending') ||
         this.isMatchedRoute('DetailCourseReadingPending') ||
+        this.isMatchedRoute('ReadingTest') ||
+        this.isMatchedRoute('ListeningTest') ||
         this.isMatchedRoute('CommentReported')
       )
         return true;

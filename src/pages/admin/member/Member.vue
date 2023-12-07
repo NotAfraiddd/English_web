@@ -12,42 +12,34 @@
           class="flex items-center gap-3 hover:underline cursor-pointer hover:opacity-70"
         >
           <img
-            :src="record.user.avatar"
+            :src="record.user.avatar || AVATAR"
             alt=""
             srcset=""
-            class="w-10 rounded-full"
+            class="w-10 h-10 rounded-full object-cover"
           />
-          <div class="text-base">{{ record.user.name }}</div>
+          <div class="text-base text-overflow">{{ record.user.name }}</div>
         </div>
       </template>
       <template #level="{ record }">
-        <div v-if="record.level == 0" class="text-base">Basic</div>
-        <div v-else-if="record.level == 1" class="text-base">Intermediate</div>
+        <div v-if="record.level == 0" class="text-base">Pending</div>
+        <div v-else-if="record.level == 1" class="text-base">Beginner</div>
+        <div v-else-if="record.level == 2" class="text-base">Intermediate</div>
         <div v-else class="text-base">Advanced</div>
       </template>
       <template #blog="{ record }">
         <div
-          v-if="record.blog == 0"
+          v-if="record.blog == 'PENDING' || record.blog == 'BEGINNER'"
           @click="handleEdit(record.blog)"
           class="text-base text-text_green cursor-pointer hover:opacity-70"
         >
           Unlocked
         </div>
         <div
-          v-else-if="record.blog == 1"
+          v-if="record.blog == 'ADVANCED' || record.blog == 'INTERMEDIATE'"
           @click="handleEdit(record.blog)"
           class="text-base text-text_red cursor-pointer hover:opacity-70"
         >
           Locked
-        </div>
-      </template>
-      <template #status="{ record }">
-        <div
-          v-if="record.status == 1"
-          @click="handleDelete(record.id)"
-          class="bg-text_red text-white text-base mx-auto cursor-pointer hover:opacity-70 rounded-xl w-28 leading-9 h-9"
-        >
-          Delete
         </div>
       </template>
     </BaseTable>
@@ -56,7 +48,7 @@
       v-model:current="current"
       :showSizeChanger="false"
       v-model:page-size="pageSize"
-      :total="500"
+      :total="total"
       @change="onShowSizeChange"
     />
   </div>
@@ -103,41 +95,6 @@
       </div>
     </template>
   </ConfirmModal>
-  <!-- modal delete member -->
-  <ConfirmModal
-    :showModal="modalDelete"
-    @closeModal="closeModalDelete"
-    @save="closeModalDelete"
-    :showFooter="false"
-    :widthCustom="500"
-  >
-    <template #icon>
-      <img :src="GARBAGE" alt="" srcset="" class="h-10 mb-4" />
-    </template>
-    <template #content>
-      <div class="text-lg flex text-center text-primary_black">
-        Do you want
-        <p class="font-semibold text-text_red">&nbsp;delete&nbsp;</p>
-        this member ?
-      </div>
-    </template>
-    <template #select>
-      <div class="flex gap-10">
-        <div
-          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
-          @click="cancelDeleteMember"
-        >
-          <span class="text-base text-primary">Cancel</span>
-        </div>
-        <div
-          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
-          @click="acceptDeleteMember"
-        >
-          <span class="text-base text-white">OK</span>
-        </div>
-      </div>
-    </template>
-  </ConfirmModal>
 </template>
 
 <script>
@@ -153,6 +110,7 @@ import { NOTIFY, SCREEN } from '../../../constants/index';
 import { RENDER_TYPE } from '../../../constants/table';
 import ButtonBack from '../../../components/common/ButtonBack.vue';
 import userApi from '../../../apis/user';
+import moment from 'moment';
 
 export default {
   name: 'Member',
@@ -164,8 +122,39 @@ export default {
     this.ARROW_LEFT = ARROW_LEFT;
     this.NOTIFY = NOTIFY;
     this.SCREEN = SCREEN;
+    this.getAllUser();
   },
   methods: {
+    onShowSizeChange(current, pageSize) {
+      this.current = current;
+      this.getAllUser();
+    },
+    async getAllUser() {
+      const data = await userApi.getAllUser(1);
+      data?.content.forEach((item) => {
+        this.listMember.push({
+          id: item.uid,
+          user: {
+            avatar: item?.avtURL,
+            name: item?.fullName || item?.email,
+          },
+          gender: item?.gender ? 1 : 0,
+          registration_date: moment(item?.registrationDate).format(
+            'DD/MM/YYYY',
+          ),
+          level:
+            item?.level == 'PENDING'
+              ? 0
+              : item?.level == 'BEGINNER'
+              ? 1
+              : item?.level == 'ADVANCED'
+              ? 3
+              : 2,
+          blog: item?.level,
+        });
+      });
+      this.total = data?.totalElements;
+    },
     goToDetail(dataID) {
       this.$router.push({ name: 'AdminDetail', params: { id: dataID } });
     },
@@ -183,154 +172,17 @@ export default {
     acceptUpdateStatusBlog() {
       this.modalEdit = false;
     },
-    // modal delete
-    handleDelete(data) {
-      this.modalDeleteId = data;
-      this.modalDelete = true;
-    },
-    closeModalDelete() {
-      this.modalDelete = false;
-    },
-    cancelDeleteMember() {
-      this.modalDelete = false;
-    },
-    acceptDeleteMember() {
-      const index = this.listMember.findIndex(
-        (member) => member.id == this.modalDeleteId,
-      );
-      this.listMember.splice(index, 1);
-      this.modalDelete = false;
-    },
   },
   data() {
     return {
+      total: 0,
+      current: 1,
       modalDelete: false,
       modalDeleteId: null,
       statusBlog: null,
       modalEdit: false,
       memberAPI: [],
-      listMember: [
-        {
-          id: 1,
-          user: {
-            avatar: AVATAR,
-            name: 'Nguyen Huynh Chi Bao',
-          },
-          gender: 1,
-          registration_date: '09/06/2023',
-          level: 0,
-          blog: 1,
-          status: 1,
-        },
-        {
-          id: 2,
-          user: {
-            avatar: AVATAR,
-            name: 'Nguyen Huynh Chi Bao',
-          },
-          gender: 0,
-          registration_date: '09/06/2023',
-          level: 0,
-          blog: 0,
-          status: 1,
-        },
-        {
-          id: 3,
-          user: {
-            avatar: AVATAR,
-            name: 'Nguyen Huynh Chi Bao',
-          },
-          gender: 0,
-          registration_date: '09/06/2023',
-          level: 0,
-          blog: 0,
-          status: 1,
-        },
-        {
-          id: 4,
-          user: {
-            avatar: AVATAR,
-            name: 'Nguyen Huynh Chi Bao',
-          },
-          gender: 0,
-          registration_date: '09/06/2023',
-          level: 0,
-          blog: 0,
-          status: 1,
-        },
-        {
-          id: 5,
-          user: {
-            avatar: AVATAR,
-            name: 'Nguyen Huynh Chi Bao',
-          },
-          gender: 0,
-          registration_date: '09/06/2023',
-          level: 0,
-          blog: 0,
-          status: 1,
-        },
-        {
-          id: 6,
-          user: {
-            avatar: AVATAR,
-            name: 'Nguyen Huynh Chi Bao',
-          },
-          gender: 0,
-          registration_date: '09/06/2023',
-          level: 0,
-          blog: 0,
-          status: 1,
-        },
-        {
-          id: 7,
-          user: {
-            avatar: AVATAR,
-            name: 'Nguyen Huynh Chi Bao',
-          },
-          gender: 0,
-          registration_date: '09/06/2023',
-          level: 0,
-          blog: 0,
-          status: 1,
-        },
-        {
-          id: 8,
-          user: {
-            avatar: AVATAR,
-            name: 'Nguyen Huynh Chi Bao',
-          },
-          gender: 0,
-          registration_date: '09/06/2023',
-          level: 0,
-          blog: 0,
-          status: 1,
-        },
-        {
-          id: 9,
-          user: {
-            avatar: AVATAR,
-            name: 'Nguyen Huynh Chi Bao',
-          },
-          gender: 1,
-          registration_date: '09/06/2023',
-          level: 2,
-          blog: 1,
-          status: 1,
-        },
-        {
-          id: 10,
-          user: {
-            avatar: AVATAR,
-            name: 'Nguyen Huynh Chi Bao',
-          },
-          gender: 1,
-          registration_date: '09/06/2023',
-          level: 2,
-          blog: 1,
-          status: 1,
-        },
-      ],
+      listMember: [],
       columns: [
         {
           headerClass:
@@ -347,7 +199,7 @@ export default {
           title: 'Gender',
           key: 'gender',
           render(record) {
-            return record.gender == 1 ? 'Female' : 'Male';
+            return record.gender == 0 ? 'Female' : 'Male';
           },
         },
         {
@@ -372,14 +224,6 @@ export default {
           title: 'Blog',
           renderType: RENDER_TYPE.slot,
           slotName: 'blog',
-        },
-        {
-          headerClass:
-            'text-center text-base h-20 w-60 bg-table_header border-b-0',
-          columnClass: 'text-center text-base h-20 w-6',
-          title: '',
-          renderType: RENDER_TYPE.slot,
-          slotName: 'status',
         },
       ],
     };
@@ -412,5 +256,11 @@ export default {
   a {
     color: #fff !important;
   }
+}
+.text-overflow {
+  flex: auto;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>
