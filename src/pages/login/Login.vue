@@ -401,7 +401,6 @@ export default {
     this.EYE_ENABLE = EYE_ENABLE;
     this.ICON_LOGIN = ICON_LOGIN;
     // Trigger Enter
-    document.addEventListener('keyup', this.handleKeyPress);
   },
   watch: {
     email() {
@@ -625,12 +624,6 @@ export default {
     },
     goToRegister() {
       this.$router.push({ name: 'Register' });
-    },
-    handleKeyPress(event) {
-      if (event.keyCode === 13) {
-        console.log(event);
-        this.handleLogin();
-      }
     },
     async handleLogin() {
       this.isSubmit = true;

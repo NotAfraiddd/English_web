@@ -68,7 +68,11 @@
       <!-- chat -->
       <div class="mt-5 flex">
         <figure class="w-9 h-9 m-0">
-          <img :src="AVATAR" alt="" srcset="" class="rounded-full" />
+          <Avatar
+            :imgUrl="userInfor.avtURL"
+            :name="userInfor.fullName || userInfor.email"
+            class="w-9 h-9"
+          />
         </figure>
         <div class="emoji-panel mx-2 mt-1 cursor-pointer">
           <div id="emoji-picker">
@@ -96,7 +100,11 @@
       <div v-for="(item, index) in listComment" :key="index" class="mr-3">
         <!-- comment first -->
         <div class="flex mt-2">
-          <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
+          <Avatar
+            :imgUrl="item.avatar"
+            :name="item.name || item.userID"
+            class="w-9 h-9"
+          />
           <div class="flex flex-col w-full relative">
             <div
               class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first relative"
@@ -434,37 +442,49 @@ export default {
       !e.isComposing && this.sendChat(e.target.value);
     },
     sendChat(data) {
-      const chatContent = this.$refs.chatContent;
-      if (data) {
-        if (this.receiverName) {
-          const commentDetail = {
-            userID: this.userLogin,
-            name: this.userNameLogin,
-            avatar: AVATAR,
-            nameReply: this.receiverName,
-            content: this.contentChat,
-            numReact: 0,
-            numComment: 0,
-            created_at: moment().format('DD/MM/YYYY HH:mm'),
-          };
-          this.replyComments.push(commentDetail);
-        } else {
-          const commentDetail = {
-            userID: this.userLogin,
-            name: this.userNameLogin,
-            avatar: AVATAR,
-            nameReply: this.receiverName,
-            content: this.contentChat,
-            numReact: 0,
-            numComment: 0,
-            created_at: moment().format('DD/MM/YYYY HH:mm'),
-          };
-          this.listComment.push(commentDetail);
-          this.listComment.reverse();
+      const unblockDate = moment(this.userInfor.unblockDate);
+      const currentDate = moment();
+      if (unblockDate.isBefore(currentDate)) {
+        const chatContent = this.$refs.chatContent;
+        if (data) {
+          if (this.receiverName) {
+            const commentDetail = {
+              userID: this.userLogin,
+              name: this.userNameLogin,
+              avatar: AVATAR,
+              nameReply: this.receiverName,
+              content: this.contentChat,
+              numReact: 0,
+              numComment: 0,
+              created_at: moment().format('DD/MM/YYYY HH:mm'),
+            };
+            this.replyComments.push(commentDetail);
+          } else {
+            const commentDetail = {
+              userID: this.userLogin,
+              name: this.userNameLogin,
+              avatar: AVATAR,
+              nameReply: this.receiverName,
+              content: this.contentChat,
+              numReact: 0,
+              numComment: 0,
+              created_at: moment().format('DD/MM/YYYY HH:mm'),
+            };
+            this.listComment.push(commentDetail);
+            this.listComment.reverse();
+          }
+          this.receiverName = '';
+          this.contentChat = '';
+          chatContent.style.paddingLeft = `0px`;
         }
-        this.receiverName = '';
-        this.contentChat = '';
-        chatContent.style.paddingLeft = `0px`;
+      } else {
+        const dateBlockDate = unblockDate
+          .subtract(3, 'days')
+          .format('HH:mm DD/MM/YYYY');
+        notification.warn({
+          placement: 'topLeft',
+          message: `You are locked in for 3 days starting from ${dateBlockDate}`,
+        });
       }
     },
     handleShowComment(data) {

@@ -426,10 +426,10 @@ export default {
       console.log(res.level);
       if (res.level == 'PENDING') this.inputLevel = 0;
       else if (res.level == 'BEGINNER') this.inputLevel = 1;
-      else if (res.level == 'INTERMIDATE') this.inputLevel = 2;
+      else if (res.level == 'INTERMEDIATE') this.inputLevel = 2;
       else if (res.level == 'ADVANCED') this.inputLevel = 3;
       if (res.level == 'PENDING' || res.level == 'BEGINNER') this.inputBlog = 1;
-      else if (res.level == 'INTERMIDATE' || res.level == 'ADVANCED')
+      else if (res.level == 'INTERMEDIATE' || res.level == 'ADVANCED')
         this.inputBlog = 0;
     },
     async handleUpdateProfile() {

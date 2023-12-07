@@ -631,7 +631,7 @@ export default {
       });
     },
     handleGoProfile() {
-      const path = `@${this.userInfor.email}`;
+      const path = this.userInfor.email;
       if (this.checkRoute == true) {
         this.$router.push({ name: 'AdminDetail', params: { id: path } });
       } else {

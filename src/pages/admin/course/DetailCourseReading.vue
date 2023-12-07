@@ -293,7 +293,55 @@ export default {
         console.error(error);
       } finally {
         this.userInfor = JSON.parse(localStorage.getItem('user'));
-        this.$router.push({ name: 'ListCourseReading' });
+        const data = this.userInfor.courseAttemptList.find(
+          (item) => item.course.id == this.IDCourse,
+        );
+        let numberTrueListening = 0;
+        let numberTrueReading = 0;
+        let isReadingCompleted = false;
+        let isListeningCompleted = false;
+        data.listeningSectionAttemptList.forEach((item) => {
+          if (item.completion) numberTrueListening++;
+        });
+        data.readingSectionAttemptList.forEach((item) => {
+          if (item.completion) numberTrueReading++;
+        });
+        if (numberTrueListening == data.listeningSectionAttemptList.length) {
+          isListeningCompleted = true;
+        }
+        if (numberTrueReading == data.readingSectionAttemptList.length) {
+          isReadingCompleted = true;
+        }
+        console.log(
+          'lisstning',
+          numberTrueListening,
+          data.listeningSectionAttemptList.length,
+        );
+        console.log(
+          'reading',
+          numberTrueReading,
+          data.readingSectionAttemptList.length,
+        );
+        if (isListeningCompleted && isReadingCompleted) {
+          if (this.userInfor.level == 'BEGINNER') {
+            await userApi.updateLevel({
+              user: {
+                uid: this.userInfor.email,
+              },
+              level: 2,
+            });
+          }
+          if (this.userInfor.level == 'INTERMEDIATE') {
+            await userApi.updateLevel({
+              user: {
+                uid: this.userInfor.email,
+              },
+              level: 3,
+            });
+          }
+        }
+
+        // this.$router.push({ name: 'ListCourseReading' });
       }
     },
   },

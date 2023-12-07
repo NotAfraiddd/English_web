@@ -303,7 +303,7 @@ export default {
       this.socialMediaConnection = res?.socialMediaConnection;
       if (res.level == 'PENDING') this.inputLevel = 0;
       else if (res.level == 'BASIC') this.inputLevel = 1;
-      else if (res.level == 'INTERMIDATE') this.inputLevel = 2;
+      else if (res.level == 'INTERMEDIATE') this.inputLevel = 2;
       else if (res.level == 'ADVANCED') this.inputLevel = 3;
     },
     onBack() {

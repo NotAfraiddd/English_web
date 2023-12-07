@@ -497,6 +497,7 @@ export default {
     },
     getData(data) {
       this.editID = data.item.id;
+      localStorage.setItem('IDCourse', data.item.id);
       this.editTitle = data.item.title;
       this.editSubtitle = data.item.subtitle;
       this.editNameCourse = data.item.name;

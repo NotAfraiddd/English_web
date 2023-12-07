@@ -60,6 +60,7 @@ export default {
       this.getAllReport();
     },
     async getAllReport() {
+      this.listReported = [];
       const dataReport = await blog.getAllReportComment(this.current);
       dataReport.content.forEach((item) => {
         if (item?.reportStatus == 'PENDING')
@@ -76,6 +77,7 @@ export default {
     },
 
     async handleRejected(data) {
+      console.log(data);
       this.idUserReportComment = +data.userID;
       // join socket rejectcomment
       const dataSocket = {
@@ -92,12 +94,15 @@ export default {
       };
       this.$socket.emit('sendSignal', content);
       // remove item out list( call api)
-      this.listReported = this.listReported.filter(
-        (item) => item.userID !== this.idUserReportComment,
-      );
-      await authUser.unBlockUser({
-        userName: data?.userName,
-      });
+      try {
+        await authUser.unBlockUser({
+          userName: data?.userName,
+        });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.getAllReport();
+      }
     },
     async handleApproved(data) {
       if (!data.status) {
@@ -117,12 +122,15 @@ export default {
         };
         this.$socket.emit('sendSignal', content);
         // remove item out list( call api)
-        this.listReported = this.listReported.filter(
-          (item) => item.userID !== this.idUserReportComment,
-        );
-        await authUser.blockUser({
-          id: data?.idComment,
-        });
+        try {
+          await authUser.blockUser({
+            id: data?.idComment,
+          });
+        } catch (error) {
+          console.log(error);
+        } finally {
+          this.getAllReport();
+        }
       }
     },
     changeBack() {
