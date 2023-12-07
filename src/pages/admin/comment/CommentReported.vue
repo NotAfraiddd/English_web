@@ -6,7 +6,11 @@
     class="flex text-base flex-1 justify-between items-center mt-3 border px-5 rounded-lg h-auto"
   >
     <div class="flex items-center py-2 total-width mr-3">
-      <img :src="item.avatar" alt="" srcset="" class="h-10 w-10 rounded-full" />
+      <Avatar
+        :imgUrl="item.avatar"
+        :name="item.userName || item.fullName"
+        class="w-9 h-9"
+      />
       <div class="flex-1 flex items-start ml-3 flex-col">
         <div>{{ item.comment }} &nbsp;</div>
         <div class="font-semibold text-left">'{{ item.offense }}'</div>
@@ -27,16 +31,6 @@
       </div>
     </div>
   </div>
-  <div class="mt-5 flex justify-center">
-    <a-pagination
-      class="pagination"
-      v-model:current="current"
-      :showSizeChanger="false"
-      v-model:page-size="pageSize"
-      :total="500"
-      @change="onShowSizeChange"
-    />
-  </div>
 </template>
 
 <script>
@@ -45,9 +39,11 @@ import ButtonBack from '../../../components/common/ButtonBack.vue';
 import { ARROW_LEFT, AVATAR, ADMIN } from '../../../constants/image';
 import { NOTIFY, SOCKET } from '../../../constants/index';
 import { mapMutations } from 'vuex';
+import authUser from '../../../apis/auth';
+import Avatar from '../../../components/common/Avatar.vue';
 export default {
   name: 'CommentReported',
-  components: { ButtonBack },
+  components: { ButtonBack, Avatar },
   created() {
     this.AVATAR = AVATAR;
     this.ARROW_LEFT = ARROW_LEFT;
@@ -66,16 +62,20 @@ export default {
     async getAllReport() {
       const dataReport = await blog.getAllReportComment(this.current);
       dataReport.content.forEach((item) => {
-        this.listReported.push({
-          userID: 1,
-          avatar: ADMIN,
-          comment: 'Someone have just been reported with content',
-          offense: item.content,
-        });
+        if (item?.reportStatus == 'PENDING')
+          this.listReported.push({
+            userID: item?.postedUser,
+            avatar: item?.comment?.postedUser?.avtURL,
+            comment: 'Someone have just been reported with content',
+            offense: item.content,
+            userName: item?.comment?.postedUser?.email,
+            fullName: item?.comment?.postedUser?.fullName,
+            idComment: item?.id,
+          });
       });
     },
 
-    handleRejected(data) {
+    async handleRejected(data) {
       this.idUserReportComment = +data.userID;
       // join socket rejectcomment
       const dataSocket = {
@@ -95,8 +95,11 @@ export default {
       this.listReported = this.listReported.filter(
         (item) => item.userID !== this.idUserReportComment,
       );
+      await authUser.unBlockUser({
+        userName: data?.userName,
+      });
     },
-    handleApproved(data) {
+    async handleApproved(data) {
       if (!data.status) {
         this.idUserReportComment = +data.userID;
         // join socket react
@@ -117,6 +120,9 @@ export default {
         this.listReported = this.listReported.filter(
           (item) => item.userID !== this.idUserReportComment,
         );
+        await authUser.blockUser({
+          id: data?.idComment,
+        });
       }
     },
     changeBack() {

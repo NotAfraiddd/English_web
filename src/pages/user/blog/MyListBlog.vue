@@ -168,6 +168,7 @@ import { mapMutations } from 'vuex';
 import blogApi from '../../../apis/blog';
 import Emoji from './Emoji.vue';
 import blog from '../../../apis/blog';
+import { notification } from 'ant-design-vue';
 export default {
   name: 'MemberListBlog',
   components: { ButtonBackUser, ListBlog, MenuOption, Emoji },
@@ -222,13 +223,23 @@ export default {
   methods: {
     ...mapMutations('notify', ['setNotify']),
     async handleReport(data) {
-      const dataReport = await blog.reportComment({
-        content: data.content,
-        comment: {
-          id: data.id,
-        },
-      });
-      console.log(dataReport);
+      if (data?.userID != this.userInfor.email) {
+        await blogApi.reportComment({
+          content: data.content,
+          comment: {
+            id: data.id,
+          },
+        });
+        notification.success({
+          message: 'You have just reported successfully',
+          placement: 'topLeft',
+        });
+      } else {
+        notification.warning({
+          message: 'You cannot report your comment',
+          placement: 'topLeft',
+        });
+      }
     },
 
     onShowSizeChange(current, pageSize) {

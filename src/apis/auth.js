@@ -18,6 +18,17 @@ class authUser {
     const res = await http.post(`account/resetPassword`, data);
     return res.data;
   }
+
+  async blockUser(data) {
+    const res = await http.post(`account/block`, data);
+    return res.data;
+  }
+
+  async unBlockUser(data) {
+    const res = await http.post(`account/unblock`, data);
+    return res.data;
+  }
+
   async sendOTP(data) {
     const axiosInstance = axios.create({
       baseURL: 'http://localhost:9090/',

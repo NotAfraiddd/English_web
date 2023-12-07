@@ -166,6 +166,7 @@ import {
 import Emoji from './Emoji.vue';
 import moment from 'moment';
 import { SOCKET } from '../../../constants';
+import { notification } from 'ant-design-vue';
 
 export default {
   name: 'MyBlog',
@@ -215,13 +216,23 @@ export default {
   },
   methods: {
     async handleReport(data) {
-      const dataReport = await blogApi.reportComment({
-        content: data.content,
-        comment: {
-          id: data.id,
-        },
-      });
-      console.log(dataReport);
+      if (data?.userID != this.userInfor.email) {
+        await blogApi.reportComment({
+          content: data.content,
+          comment: {
+            id: data.id,
+          },
+        });
+        notification.success({
+          message: 'You have just reported successfully',
+          placement: 'topLeft',
+        });
+      } else {
+        notification.warn({
+          message: 'You cannot report your comment',
+          placement: 'topLeft',
+        });
+      }
     },
     async handleReactBlog(idBlog) {
       try {
