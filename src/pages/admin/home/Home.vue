@@ -35,6 +35,7 @@ export default {
     this.getUserByLevel();
     this.getBlogByLevel();
     this.getOnlineByLevel();
+    this.getAllReport();
   },
   mounted() {
     if (this.screenUI == SCREEN.comment) {
@@ -43,11 +44,11 @@ export default {
   },
   computed: {
     ...mapState('course', ['numCourse']),
-    ...mapState('blog', ['numBlog']),
+    ...mapState('blog', ['numBlog', 'numReport']),
   },
   methods: {
     ...mapMutations('course', ['setNumberCourse']),
-    ...mapMutations('blog', ['setNumBlog']),
+    ...mapMutations('blog', ['setNumBlog', 'setNumReport']),
     /**
      * get all user by level
      */
@@ -150,6 +151,20 @@ export default {
         console.log(error);
       }
     },
+    async getAllReport() {
+      try {
+        const data = await blogApi.getAllReportComment(1);
+        let report = [];
+        data.content.forEach((item) => {
+          if (item.reportStatus == 'PENDING') {
+            report.push(item);
+          }
+        });
+        this.setNumReport(report.length);
+      } catch (error) {
+        console.log(error);
+      }
+    },
     changeUI(data) {
       if (data == NOTIFY.comment)
         this.$router.push({ name: 'CommentReported' });
@@ -181,7 +196,6 @@ export default {
       },
       isHover: false,
       screenUI: SCREEN.dashboard,
-      numReport: 0,
       report: {
         id: NOTIFY.comment,
         subtitle: 'Report',

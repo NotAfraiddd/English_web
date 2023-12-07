@@ -92,7 +92,7 @@
           {{ receiverName }}
         </div>
       </div>
-      <div v-for="(item, index) in listComment" :key="item.id" class="mr-3">
+      <div v-for="item in listComment" :key="item.id" class="mr-3">
         <!-- comment first -->
         <div class="flex mt-2">
           <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
@@ -137,92 +137,7 @@
                 {{ item.created_at }}
               </div>
               <!-- menu option -->
-              <MenuOption :id-prop="item.id" />
-            </div>
-          </div>
-        </div>
-        <!-- reply comment -->
-        <div
-          @click="handleShowAllComment(index)"
-          v-if="
-            !showAllComment[index] &&
-            item.replyComments &&
-            item.replyComments.length >= 1
-          "
-          class="text-left ml-14 text-primary cursor-pointer"
-        >
-          Show {{ item.replyComments.length }} comments
-        </div>
-        <!-- Collapse comment -->
-        <div
-          v-if="
-            showAllComment[index] &&
-            item.replyComments &&
-            item.replyComments.length >= 1
-          "
-          @click="handleCloseAllComment(index)"
-          class="text-left ml-14 text-primary cursor-pointer"
-        >
-          Collapse {{ item.replyComments.length }} comments
-        </div>
-        <div v-if="showAllComment[index] && item.replyComments">
-          <div
-            class="flex mt-2 ml-12"
-            v-for="(i, ind) in item.replyComments"
-            :key="ind"
-          >
-            <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
-            <div class="flex flex-col w-full relative">
-              <div
-                class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first-2"
-              >
-                <div class="font-semibold">{{ i.name || i.userID }}</div>
-                <div class="text-left mb-1">
-                  <b v-if="i.nameReply" class="text-primary">
-                    {{ i.nameReply }}
-                  </b>
-                  {{ i.content }}
-                </div>
-                <div class="flex gap-4 justify-between flex-wrap">
-                  <div class="flex justify-center items-center cursor-pointer">
-                    <div
-                      @click="
-                        handleClickReactReply(item.replyComments, i, i.id)
-                      "
-                    >
-                      <img
-                        :src="
-                          checkListReactReplyComment[i.id]
-                            ? HEART
-                            : HEART_DEFAULT
-                        "
-                        alt=""
-                        srcset=""
-                        class="w-5 h-4"
-                      />
-                    </div>
-                    <div class="h-5 w-5 leading-5 text-primary_black">
-                      {{ i.numReact }}
-                    </div>
-                  </div>
-                  <div
-                    class="flex justify-center items-center cursor-pointer"
-                    @click="replyCommentReply(i, item.replyComments)"
-                  >
-                    <img :src="CHAT" alt="" srcset="" class="w-5 h-4" />
-                    <div class="h-5 w-5 leading-5 text-primary_black">
-                      {{ i.numComment }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="flex justify-between">
-                <div class="text-sm text-left ml-7 mt-1">
-                  {{ i.created_at }}
-                </div>
-                <!-- menu option -->
-                <MenuOption :id-prop="i.id" />
-              </div>
+              <MenuOption :id-prop="item.id" @report="handleReport(item)" />
             </div>
           </div>
         </div>
@@ -252,6 +167,7 @@ import { SOCKET } from '../../../constants';
 import { mapMutations } from 'vuex';
 import blogApi from '../../../apis/blog';
 import Emoji from './Emoji.vue';
+import blog from '../../../apis/blog';
 export default {
   name: 'MemberListBlog',
   components: { ButtonBackUser, ListBlog, MenuOption, Emoji },
@@ -305,6 +221,16 @@ export default {
   },
   methods: {
     ...mapMutations('notify', ['setNotify']),
+    async handleReport(data) {
+      const dataReport = await blog.reportComment({
+        content: data.content,
+        comment: {
+          id: data.id,
+        },
+      });
+      console.log(dataReport);
+    },
+
     onShowSizeChange(current, pageSize) {
       this.current = current;
       this.pageSize = pageSize;

@@ -131,7 +131,7 @@ export default {
       } else if (data.kind == SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN) {
         this.$toast.add({
           severity: 'success',
-          detail: 'Admin have approved reported comment of you.',
+          detail: 'Admin have approved report comment of you.',
           life: 3000,
         });
       } else if (data.kind == SOCKET.NOTIFY_BLOG_PENDING) {
@@ -149,7 +149,7 @@ export default {
       } else if (data.kind == SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN) {
         this.$toast.add({
           severity: 'warn',
-          detail: 'Admin have rejected comment of you.',
+          detail: 'Admin have rejected report comment of you.',
           life: 3000,
         });
       } else if (data.kind == SOCKET.REJECTED_BLOG_PENDING) {

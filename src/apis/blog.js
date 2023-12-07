@@ -71,6 +71,16 @@ class Blog {
     return res.data;
   }
 
+  async reportComment(data) {
+    const res = await http.post(`post/reportComment`, data);
+    return res.data;
+  }
+
+  async getAllReportComment(data) {
+    const res = await http.post(`post/getAllReport`, data);
+    return res.data;
+  }
+
   async getRecentBlog() {
     const res = await http.get(`post/getMostPopularPosts`);
     return res.data;

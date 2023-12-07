@@ -159,6 +159,43 @@ export default {
       kind: SOCKET.COMMENT,
     };
     this.$socket.emit('joinRoom', data);
+    // ------------------ reject report comment ------------------
+    this.sockets.subscribe('rejectCommentReported', (data) => {
+      if (data.kind == SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN,
+          admin: data.data.admin,
+        });
+      }
+    });
+    const rejectReportComment = {
+      room: this.idUserBlog,
+      kind: SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN,
+    };
+    // ------------------ approve report comment ------------------
+    this.$socket.emit('joinRoom', rejectReportComment);
+    // comment
+    this.sockets.subscribe('commentReported', (data) => {
+      if (data.kind == SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN) {
+        this.numNotify++;
+        this.setNotify({
+          id: 1,
+          numberNotifications: this.numNotify,
+          content: data.data,
+          kind: SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN,
+          admin: data.data.admin,
+        });
+      }
+    });
+    const aprroveReportComment = {
+      room: this.idUserBlog,
+      kind: SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN,
+    };
+    this.$socket.emit('joinRoom', aprroveReportComment);
     // ------------------ reply comment ------------------
     this.sockets.subscribe('reply', (data) => {
       if (

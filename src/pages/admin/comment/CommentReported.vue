@@ -40,8 +40,9 @@
 </template>
 
 <script>
+import blog from '../../../apis/blog';
 import ButtonBack from '../../../components/common/ButtonBack.vue';
-import { ARROW_LEFT, AVATAR } from '../../../constants/image';
+import { ARROW_LEFT, AVATAR, ADMIN } from '../../../constants/image';
 import { NOTIFY, SOCKET } from '../../../constants/index';
 import { mapMutations } from 'vuex';
 export default {
@@ -51,64 +52,49 @@ export default {
     this.AVATAR = AVATAR;
     this.ARROW_LEFT = ARROW_LEFT;
     this.NOTIFY = NOTIFY;
-  },
-  mounted() {
-    // reject comment
-    this.sockets.subscribe('rejectCommentReported', (data) => {
-      if (data.kind == SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN,
-        });
-      }
-    });
-    const rejectContent = {
-      room: this.idUserReportComment,
-      kind: SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN,
-    };
-    this.$socket.emit('joinRoom', rejectContent);
-    // comment
-    this.sockets.subscribe('commentReported', (data) => {
-      if (data.kind == SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN) {
-        this.numNotify++;
-        this.setNotify({
-          id: 1,
-          numberNotifications: this.numNotify,
-          content: data.data,
-          kind: SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN,
-        });
-      }
-    });
-    const content = {
-      room: this.idUserReportComment,
-      kind: SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN,
-    };
-    this.$socket.emit('joinRoom', content);
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
+    if (this.userInfor) {
+      this.getAllReport();
+    }
   },
   methods: {
     ...mapMutations('notify', ['setNotify']),
+    onShowSizeChange(current, pageSize) {
+      this.current = current;
+      this.getAllReport();
+    },
+    async getAllReport() {
+      const dataReport = await blog.getAllReportComment(this.current);
+      dataReport.content.forEach((item) => {
+        this.listReported.push({
+          userID: 1,
+          avatar: ADMIN,
+          comment: 'Someone have just been reported with content',
+          offense: item.content,
+        });
+      });
+    },
+
     handleRejected(data) {
-      if (!data.status) {
-        this.idUserReportComment = +data.userID;
-        // join socket rejectcomment
-        const dataSocket = {
-          room: this.idUserReportComment,
-          kind: SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN,
-        };
-        this.$socket.emit('joinRoom', dataSocket);
-        let content = {
-          data: data,
-          kind: SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN,
-        };
-        this.$socket.emit('sendSignal', content);
-        // remove item out list( call api)
-        this.listReported = this.listReported.filter(
-          (item) => item.userID !== this.idUserReportComment,
-        );
-      }
+      this.idUserReportComment = +data.userID;
+      // join socket rejectcomment
+      const dataSocket = {
+        room: this.idUserReportComment,
+        kind: SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN,
+      };
+      this.$socket.emit('joinRoom', dataSocket);
+      let content = {
+        data: data,
+        name: this.userInfor.fullName,
+        avatar: this.userInfor.avtURL,
+        admin: this.userInfor.role == 'ADMIN' ? true : false,
+        kind: SOCKET.REJECTED_COMMENT_REPORTED_FROM_ADMIN,
+      };
+      this.$socket.emit('sendSignal', content);
+      // remove item out list( call api)
+      this.listReported = this.listReported.filter(
+        (item) => item.userID !== this.idUserReportComment,
+      );
     },
     handleApproved(data) {
       if (!data.status) {
@@ -121,6 +107,9 @@ export default {
         this.$socket.emit('joinRoom', dataSocket);
         let content = {
           data: data,
+          name: this.userInfor.fullName,
+          avatar: this.userInfor.avtURL,
+          admin: this.userInfor.role == 'ADMIN' ? true : false,
           kind: SOCKET.NOTIFY_COMMENT_REPORTED_FROM_ADMIN,
         };
         this.$socket.emit('sendSignal', content);
@@ -136,53 +125,12 @@ export default {
   },
   data() {
     return {
+      current: 1,
+      pageSize: 0,
       idUserReportComment: null,
+      userInfor: null,
       numNotify: 0,
-      listReported: [
-        {
-          userID: 1,
-          avatar: AVATAR,
-          status: false,
-          comment: 'John was reported for calling a comment',
-          offense: 'stupid',
-        },
-        {
-          userID: 2,
-          avatar: AVATAR,
-          status: false,
-          comment: 'John was reported for calling a comment',
-          offense: 'shut up !!! bitch',
-        },
-        {
-          userID: 3,
-          avatar: AVATAR,
-          status: false,
-          comment: 'John was reported for calling a comment',
-          offense: 'stupid 2',
-        },
-        {
-          userID: 4,
-          avatar: AVATAR,
-          status: false,
-          comment: 'John was reported for calling a comment',
-          offense: 'shut up !!! bitch',
-        },
-        {
-          userID: 5,
-          avatar: AVATAR,
-          status: false,
-          comment: 'John was reported for calling a comment',
-          offense: 'stupid 3',
-        },
-        {
-          userID: 6,
-          avatar: AVATAR,
-          status: false,
-          comment: 'John was reported for calling a comment',
-          offense:
-            'shut up !!! bitch John was reported for calling a comment John was reported for calling a comment John was reported for calling a comment ch John was reported for calling a comment John was reported for calling a comment John was reported for calling a comment',
-        },
-      ],
+      listReported: [],
     };
   },
 };

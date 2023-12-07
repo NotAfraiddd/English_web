@@ -3,6 +3,7 @@ const blog = {
   state: {
     file: '',
     numBlog: 0,
+    numReport: 0,
   },
   mutations: {
     setFile(state, email) {
@@ -10,6 +11,9 @@ const blog = {
     },
     setNumBlog(state, numBlog) {
       state.numBlog = numBlog;
+    },
+    setNumReport(state, numReport) {
+      state.numReport = numReport;
     },
   },
 };
