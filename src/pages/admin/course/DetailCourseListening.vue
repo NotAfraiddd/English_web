@@ -197,6 +197,7 @@ import MatchWord from '../../../components/common/MatchWord.vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import courseApi from '../../../apis/course';
 import { notification } from 'ant-design-vue';
+import userApi from '../../../apis/user';
 export default {
   name: 'DetailCourseListening',
   components: {
@@ -212,10 +213,14 @@ export default {
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
     this.paramName = this.$route.params.name;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
+    this.IDCourse = JSON.parse(localStorage.getItem('IDCourse'));
     this.idSession = +this.$route.params.id;
     if (this.idSession) {
       this.getDetailSession();
       this.getRandomQuestions();
+    }
+    if (this.userInfor) {
+      this.getIdSectionAttemp();
     }
   },
   watch: {
@@ -400,6 +405,7 @@ export default {
 
       if (this.errorsMultiple.length == 0 && this.errorsMatching.length == 0) {
         notification.success({ message: 'Congratulation complete' });
+        this.submitSectionAttemp();
       } else {
         notification.warn({
           message:
@@ -408,6 +414,115 @@ export default {
       }
 
       this.checkTranscript = true;
+    },
+    async submitSectionAttemp() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        await courseApi.submitListeningSecionAttemp({
+          completion: true,
+          id: this.IDSectionAttemp,
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      } finally {
+        await this.getDetail();
+      }
+    },
+    getIdSectionAttemp() {
+      const checkCourseAttemp = this.userInfor.courseAttemptList.find(
+        (item) => item.course.id == this.IDCourse,
+      );
+      const checkSectionAttemp =
+        checkCourseAttemp.listeningSectionAttemptList.find(
+          (item) => item.listeningSection.id == this.idSession,
+        );
+      this.IDSectionAttemp = checkSectionAttemp.id;
+    },
+    /**
+     * get detail user
+     */
+    async getDetail() {
+      try {
+        const email = this.userInfor.email;
+        const data = await userApi.getUser(email);
+        localStorage.setItem('user', JSON.stringify(data));
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.userInfor = JSON.parse(localStorage.getItem('user'));
+        const data = this.userInfor.courseAttemptList.find(
+          (item) => item.course.id == this.IDCourse,
+        );
+        let numberTrueListening = 0;
+        let numberTrueReading = 0;
+        let isReadingCompleted = false;
+        let isListeningCompleted = false;
+        data.listeningSectionAttemptList.forEach((item) => {
+          if (item.completion) numberTrueListening++;
+        });
+        data.readingSectionAttemptList.forEach((item) => {
+          if (item.completion) numberTrueReading++;
+        });
+        if (numberTrueListening == data.listeningSectionAttemptList.length) {
+          isListeningCompleted = true;
+        }
+        if (numberTrueReading == data.readingSectionAttemptList.length) {
+          isReadingCompleted = true;
+        }
+        console.log(
+          'lisstning',
+          numberTrueListening,
+          data.listeningSectionAttemptList.length,
+        );
+        console.log(
+          'reading',
+          numberTrueReading,
+          data.readingSectionAttemptList.length,
+        );
+        console.log(
+          'level',
+          data.course,
+          isListeningCompleted,
+          isReadingCompleted,
+        );
+        if (isListeningCompleted && isReadingCompleted) {
+          if (this.userInfor.level == 'BEGINNER') {
+            console.log('this.userInfor.level', this.userInfor.level);
+            console.log('data.name', data.course.name);
+            console.log('data.courseLevel', data.course.courseLevel);
+            if (
+              data.course.name == 'Beginner' &&
+              data.course.courseLevel == 'BEGINNER'
+            )
+              console.log('BEGINNER');
+            //   await userApi.updateLevel({
+            //     user: {
+            //       uid: this.userInfor.email,
+            //     },
+            //     level: 2,
+            //   });
+            // }
+            // if (this.userInfor.level == 'INTERMEDIATE') {
+            //   await userApi.updateLevel({
+            //     user: {
+            //       uid: this.userInfor.email,
+            //     },
+            //     level: 3,
+            //   });
+          }
+          if (this.userInfor.level == 'INTERMEDIATE') {
+            if (
+              data.course.name == 'INTERMEDIATE' &&
+              data.course.courseLevel == 'INTERMEDIATE'
+            )
+              console.log('INTERMEDIATE');
+          }
+        }
+
+        // this.$router.push({ name: 'ListCourseReading' });
+      }
     },
     checkHeight() {
       const heightTranscript = this.$refs.transcript;
@@ -456,6 +571,8 @@ export default {
   },
   data() {
     return {
+      IDCourse: null,
+      IDSectionAttemp: null,
       script: null,
       idSession: null,
       title: null,

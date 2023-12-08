@@ -129,7 +129,6 @@ export default {
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
     this.paramName = this.$route.params.name;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
-    this.IDCourseAttemp = JSON.parse(localStorage.getItem('idCourseAttemp'));
     this.IDCourse = JSON.parse(localStorage.getItem('IDCourse'));
     this.idSession = +this.$route.params.id;
     this.getDetailSession();
@@ -256,12 +255,12 @@ export default {
         }
         this.submitMultipleChoice = true;
         if (this.errorsMultiple.length == 0) {
-          notification.success({ message: 'Success' });
+          notification.success({ message: 'Congratulation complete' });
           this.submitSectionAttemp();
         } else {
-          notification.warning({
+          notification.warn({
             message:
-              'You must complete everything before going to the next session',
+              'Unfortunately !!! Please complete it to move on to the next section',
           });
         }
       }
@@ -322,23 +321,24 @@ export default {
           numberTrueReading,
           data.readingSectionAttemptList.length,
         );
+        console.log('level', data.course);
         if (isListeningCompleted && isReadingCompleted) {
-          if (this.userInfor.level == 'BEGINNER') {
-            await userApi.updateLevel({
-              user: {
-                uid: this.userInfor.email,
-              },
-              level: 2,
-            });
-          }
-          if (this.userInfor.level == 'INTERMEDIATE') {
-            await userApi.updateLevel({
-              user: {
-                uid: this.userInfor.email,
-              },
-              level: 3,
-            });
-          }
+          // if (this.userInfor.level == 'BEGINNER') {
+          //   await userApi.updateLevel({
+          //     user: {
+          //       uid: this.userInfor.email,
+          //     },
+          //     level: 2,
+          //   });
+          // }
+          // if (this.userInfor.level == 'INTERMEDIATE') {
+          //   await userApi.updateLevel({
+          //     user: {
+          //       uid: this.userInfor.email,
+          //     },
+          //     level: 3,
+          //   });
+          // }
         }
 
         // this.$router.push({ name: 'ListCourseReading' });
@@ -348,7 +348,6 @@ export default {
   data() {
     return {
       IDSectionAttemp: null,
-      IDCourseAttemp: null,
       IDCourse: null,
       idSession: null,
       title: null,

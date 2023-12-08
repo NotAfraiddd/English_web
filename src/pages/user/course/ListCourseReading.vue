@@ -20,7 +20,14 @@
         time.
       </div>
     </div>
-    <ListCourse :data="listReading" @clicked="goToDetailCourse" />
+    <ListCourse
+      v-if="listReading.length != 0"
+      :data="listReading"
+      @clicked="goToDetailCourse"
+    />
+    <div v-else class="text-primary_grey_time mt-10 text-center text-xl">
+      No data
+    </div>
   </div>
   <div
     v-if="userInfor.level == 'ADVANCED'"

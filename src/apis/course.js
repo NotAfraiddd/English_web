@@ -95,8 +95,8 @@ class CourseApi {
   }
 
   async submitListeningSecionAttemp(data) {
-    const res = await http.post(
-      `sectionAttempt/createListeningSectionAttempt`,
+    const res = await http.put(
+      `sectionAttempt/updateListeningSectionAttempt`,
       data,
     );
     return res.data;

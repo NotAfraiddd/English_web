@@ -27,7 +27,7 @@
       :data="listListening"
       @clicked="goToDetailCourse"
     />
-    <div v-else class="text-primary_grey_time mt-10 text-right text-xl">
+    <div v-else class="text-primary_grey_time mt-10 text-center text-xl">
       No data
     </div>
   </div>
@@ -134,8 +134,8 @@ export default {
               });
             } else {
               this.listDetailListening.push({
-                id: ele.readingSection.id,
-                title: ele.readingSection.title,
+                id: ele.listeningSection.id,
+                title: ele.listeningSection.title,
                 status: 1,
               });
               this.listDetailListeningFinished =
