@@ -323,22 +323,37 @@ export default {
         );
         console.log('level', data.course);
         if (isListeningCompleted && isReadingCompleted) {
-          // if (this.userInfor.level == 'BEGINNER') {
-          //   await userApi.updateLevel({
-          //     user: {
-          //       uid: this.userInfor.email,
-          //     },
-          //     level: 2,
-          //   });
-          // }
-          // if (this.userInfor.level == 'INTERMEDIATE') {
-          //   await userApi.updateLevel({
-          //     user: {
-          //       uid: this.userInfor.email,
-          //     },
-          //     level: 3,
-          //   });
-          // }
+          if (this.userInfor.level == 'BEGINNER') {
+            console.log('this.userInfor.level', this.userInfor.level);
+            console.log('data.name', data.course.name);
+            console.log('data.courseLevel', data.course.courseLevel);
+            if (
+              data.course.name == 'Beginner' &&
+              data.course.courseLevel == 'BEGINNER'
+            )
+              console.log('BEGINNER');
+            //   await userApi.updateLevel({
+            //     user: {
+            //       uid: this.userInfor.email,
+            //     },
+            //     level: 2,
+            //   });
+            // }
+            // if (this.userInfor.level == 'INTERMEDIATE') {
+            //   await userApi.updateLevel({
+            //     user: {
+            //       uid: this.userInfor.email,
+            //     },
+            //     level: 3,
+            //   });
+          }
+          if (this.userInfor.level == 'INTERMEDIATE') {
+            if (
+              data.course.name == 'INTERMEDIATE' &&
+              data.course.courseLevel == 'INTERMEDIATE'
+            )
+              console.log('INTERMEDIATE');
+          }
         }
 
         // this.$router.push({ name: 'ListCourseReading' });

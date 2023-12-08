@@ -116,8 +116,8 @@ export default {
               });
             } else {
               this.listDetailListening.push({
-                id: ele.readingSection.id,
-                title: ele.readingSection.title,
+                id: ele.listeningSection.id,
+                title: ele.listeningSection.title,
                 status: 1,
               });
               this.listDetailListeningFinished =

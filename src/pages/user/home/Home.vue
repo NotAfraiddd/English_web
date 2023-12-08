@@ -247,6 +247,7 @@ export default {
     this.LEARN = LEARN;
     this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
+    this.idBeginner = JSON.parse(localStorage.getItem('idBeginner'));
     this.getAllCourse();
     this.getDetail();
     this.getAllBlog();
@@ -285,6 +286,9 @@ export default {
       },
       listCourses: [],
       listBlog: [],
+      idBeginner: null,
+      idAdvanced: null,
+      idIntermediate: null,
     };
   },
 
@@ -481,7 +485,7 @@ export default {
                     const hasCompletedReadingSection =
                       check?.readingSectionAttemptList.some((item) => {
                         return (
-                          item.listeningSection.id === 2 &&
+                          item.listeningSection.id === check.course.id &&
                           item.completion === true
                         );
                       });
@@ -501,7 +505,7 @@ export default {
                     const hasCompletedReadingSection =
                       check?.readingSectionAttemptList.some((item) => {
                         return (
-                          item.readingSection.id === 2 &&
+                          item.readingSection.id === check.course.id &&
                           item.completion === true
                         );
                       });
@@ -605,18 +609,54 @@ export default {
             localStorage.setItem('IDCourse', data.item.id);
             this.emitter.emit('isShowLoading', true);
             try {
-              const dataCourseAttemp = {
-                completion: 0,
-                user: {
-                  uid: this.userInfor.email,
-                },
-                course: {
-                  id: data.item.id,
-                },
-                listeningSectionAttemptList: this.listeningSectionAttemptList,
-                readingSectionAttemptList: this.readingSectionAttemptList,
-              };
-              await courseApi.createCourseAttemp(dataCourseAttemp);
+              if (data.item.id == 2) {
+                if (!this.idBeginner) {
+                  let dataBeginner = await courseApi.createCourseAttemp({
+                    completion: 0,
+                    user: {
+                      uid: this.userInfor.email,
+                    },
+                    course: {
+                      id: data.item.id,
+                    },
+                    listeningSectionAttemptList:
+                      this.listeningSectionAttemptList,
+                    readingSectionAttemptList: this.readingSectionAttemptList,
+                  });
+                  localStorage.setItem('idBeginner', dataBeginner.id);
+                } else {
+                  let dataBeginner = await courseApi.createCourseAttemp({
+                    completion: 0,
+                    id: this.idBeginner,
+                    user: {
+                      uid: this.userInfor.email,
+                    },
+                    course: {
+                      id: data.item.id,
+                    },
+                    listeningSectionAttemptList:
+                      this.listeningSectionAttemptList,
+                    readingSectionAttemptList: this.readingSectionAttemptList,
+                  });
+                  localStorage.setItem('idBeginner', dataBeginner.id);
+                }
+              }
+              // if (data.item.id == 3) {
+              //   if (this.idIntermediate) {
+              //     let dataBeginner = await courseApi.createCourseAttemp(
+              //       dataCourseAttemp,
+              //     );
+              //     localStorage.setItem('idIntermediate', dataBeginner.id);
+              //   }
+              // }
+              // if (data.item.id == 4) {
+              //   if (this.idAdvanced) {
+              //     let dataBeginner = await courseApi.createCourseAttemp(
+              //       dataCourseAttemp,
+              //     );
+              //     localStorage.setItem('idAdvanced', dataBeginner.id);
+              //   }
+              // }
 
               this.emitter.emit('isShowLoading', false);
             } catch (error) {

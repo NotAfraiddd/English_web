@@ -94,6 +94,11 @@ class CourseApi {
     return res.data;
   }
 
+  async updateCourseAttemp(data) {
+    const res = await http.put(`courseAttemp/updateCourseAttempt`, data);
+    return res.data;
+  }
+
   async submitListeningSecionAttemp(data) {
     const res = await http.put(
       `sectionAttempt/updateListeningSectionAttempt`,
