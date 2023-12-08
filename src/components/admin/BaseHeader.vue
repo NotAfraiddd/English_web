@@ -574,6 +574,9 @@ export default {
         localStorage.removeItem('isLogin');
         localStorage.removeItem('user');
         localStorage.removeItem('error');
+        localStorage.removeItem('idCoursePending');
+        localStorage.removeItem('IDCourse');
+        localStorage.removeItem('idBeginner');
         this.$router.push({ name: 'Login' });
       } catch (error) {
         console.error('Lỗi logout:', error);
