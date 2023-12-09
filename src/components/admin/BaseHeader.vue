@@ -462,6 +462,12 @@ export default {
         this.isMatchedRoute('TestLevelListeningBlogUpdate') ||
         this.isMatchedRoute('TestLevelReadingBlogCreate') ||
         this.isMatchedRoute('TestLevelListeningBlogCreate') ||
+        this.isMatchedRoute('TestLevelListeningAdvanced') ||
+        this.isMatchedRoute('TestLevelReadingAdvanced') ||
+        this.isMatchedRoute('TestLevelReadingAdvancedUpdate') ||
+        this.isMatchedRoute('TestLevelListeningAdvancedUpdate') ||
+        this.isMatchedRoute('TestLevelReadingAdvancedCreate') ||
+        this.isMatchedRoute('TestLevelListeningAdvancedCreate') ||
         this.isMatchedRoute('TestLevelReadingUpdate') ||
         this.isMatchedRoute('TestLevelListeningUpdate') ||
         this.isMatchedRoute('TestLevelReading') ||

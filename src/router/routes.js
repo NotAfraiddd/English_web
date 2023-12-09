@@ -225,6 +225,23 @@ const routes = [
           import('../pages/admin/test/TestListeningUpdateBlog.vue'),
       },
       {
+        path: 'test-level/listening/create-course',
+        name: 'TestLevelListeningAdvanced',
+        component: () => import('../pages/test/ListeningAdvanced.vue'),
+      },
+      {
+        path: 'test-level/listening/create-course/update/:id',
+        name: 'TestLevelListeningAdvancedUpdate',
+        component: () =>
+          import('../pages/admin/test/TestListeningUpdateAdvanced.vue'),
+      },
+      {
+        path: 'test-level/listening/create-course/create',
+        name: 'TestLevelListeningAdvancedCreate',
+        component: () =>
+          import('../pages/admin/test/TestListeningUpdateAdvanced.vue'),
+      },
+      {
         path: 'test-level/listening/update/:id',
         name: 'TestLevelListeningUpdate',
         component: () => import('../pages/admin/test/TestListeningUpdate.vue'),
