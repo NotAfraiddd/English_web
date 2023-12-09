@@ -42,8 +42,8 @@ export default {
           activeLinks: [],
         },
         {
-          message: 'Learn',
-          to: '/list-course',
+          message: 'Test',
+          to: '/test-level-user',
           iconPath: USER_LEARN,
           activeLinks: [],
         },

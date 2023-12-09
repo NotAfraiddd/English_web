@@ -3,6 +3,7 @@ const member = {
   state: {
     save: false,
     user: {},
+    hasErrorListening: false,
   },
   mutations: {
     setSave(state, save) {
@@ -10,6 +11,9 @@ const member = {
     },
     setUser(state, user) {
       state.user = user;
+    },
+    setErrorListening(state, hasErrorListening) {
+      state.hasErrorListening = hasErrorListening;
     },
   },
 };

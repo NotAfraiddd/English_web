@@ -3,85 +3,33 @@
     <ListTypeCourse
       :data="listCourses"
       @clicked="getData"
-      :hideProcessBar="true"
+      @add="handleAdd"
       :hideCourseFinished="true"
-      extendClass="grid-cols-user"
+      extendClass="grid-cols-user mt-2"
       extendItemClass="user-course mx-5"
     />
   </div>
-  <div v-else>
-    <ButtonBackUser title="My courses" :hide-back="true" @back="changeBack" />
-    <div class="mt-2 text-left">No courses yet</div>
-    <div class="mt-2 justify-start flex gap-1">
-      You can learn
-      <div
-        @click="handleGoToHome"
-        class="text-green-500 hover:underline cursor-pointer"
-      >
-        new courses
-      </div>
-    </div>
-  </div>
-  <ConfirmModal
-    :showModal="modalChooseCourse"
-    @closeModal="closeModalChoose"
-    @save="closeModalChoose"
-    :showFooter="false"
-    :widthCustom="600"
-  >
-    <template #icon>
-      <img :src="LEARN" alt="" srcset="" />
-    </template>
-    <template #content>
-      <div class="text-primary_black my-5 flex gap-1">
-        Do you want to choose
-        <div class="font-semibold">Listening</div>
-        or
-        <div class="font-semibold">Reading</div>
-        ?
-      </div>
-    </template>
-    <template #select>
-      <div class="flex gap-20">
-        <div
-          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
-          @click="goToListening"
-        >
-          <span class="text-base text-primary">Listening</span>
-        </div>
-        <div
-          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
-          @click="goToReading"
-        >
-          <span class="text-base text-white">Reading</span>
-        </div>
-      </div>
-    </template>
-  </ConfirmModal>
+  <div v-else>No data</div>
 </template>
 <script>
 import { notification } from 'ant-design-vue';
-import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import ListTypeCourse from '../../../components/common/ListTypeCourse.vue';
 import { formatSpacerIntoHyphen } from '../../../constants/function';
 import { LEARN } from '../../../constants/image';
-import ButtonBackUser from '../../../components/common/ButtonBackUser.vue';
+import courseApi from '../../../apis/course';
 
 export default {
   name: 'HomeUser',
-  components: { ListTypeCourse, ConfirmModal, ButtonBackUser },
+  components: { ListTypeCourse },
   created() {
     this.LEARN = LEARN;
     this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
-    if (this.userInfor) {
-      this.getListCourseStudied(this.userInfor.courseAttemptList);
-    }
+    this.getAllCourse();
   },
   data() {
     return {
       userInfor: null,
-      modalChooseCourse: false,
       userLevel: [
         { id: 1, level: 'Basic', status: 1 },
         { id: 2, level: 'Intermediate', status: 0 },
@@ -95,16 +43,32 @@ export default {
       listCourses: [],
     };
   },
-  computed: {
-    listCoursesLearned() {
-      return this.listCourses.filter(
-        (course) => course.percentages[0].percentage !== 0,
-      );
-    },
-  },
   methods: {
-    getListCourseStudied(data) {
-      console.log(data);
+    /**
+     * get all course
+     */
+    async getAllCourse() {
+      this.listCourses = [];
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const data = await courseApi.allCourse();
+        data.forEach((item) => {
+          if (item?.courseLevel == 'PENDING') {
+            this.listCourses.push({
+              id: item?.id,
+              title: item?.name,
+              subtitle: item?.description,
+              name: item?.name,
+              courseFinished: 0,
+              color: item?.colorCode,
+            });
+          }
+        });
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        this.emitter.emit('isShowLoading', false);
+        console.log(error);
+      }
     },
     handleGoToHome() {
       this.$router.push({ name: 'HomeUser' });
@@ -113,30 +77,13 @@ export default {
       this.$router.push({ name: 'HomeUser' });
     },
 
-    closeModalChoose() {
-      this.modalChooseCourse = false;
-    },
     getData(data) {
-      const result = this.userLevel.some(
-        (item) =>
-          item.level == data.item.level && item.status == data.item.status,
-      );
-      const resultCourseAll = this.userLevel.some(
-        (item) => data.item.level == 'All' && item.status == data.item.status,
-      );
-      if (result) {
-        if (!resultCourseAll) {
-          if (data.status) {
-            this.courseObject.id = data.item.id;
-            this.courseObject.title = data.item.title;
-            this.courseObject.subtitle = data.item.subtitle;
-            this.modalChooseCourse = data.status;
-          }
-        } else
-          this.$router.push({
-            name: 'Grammar',
-          });
-      } else notification.warn({ message: 'Your level is not yet achieved' });
+      if (data.item.id == 152) {
+        this.$router.push({
+          name: 'TestLevelListeningIntermediate',
+          params: { id: data.item.id },
+        });
+      }
     },
     goToListening() {
       const path = formatSpacerIntoHyphen(

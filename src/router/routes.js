@@ -23,6 +23,16 @@ const routes = [
     meta: { requiresAuth: true },
     children: [
       {
+        path: 'test-level/listening/intermediate/:id',
+        name: 'TestLevelListeningIntermediate',
+        component: () => import('../pages/user/home/ListeningIntermediate.vue'),
+      },
+      {
+        path: 'test-level/reading/intermediate/:id',
+        name: 'TestLevelReadingIntermediate',
+        component: () => import('../pages/user/home/ReadingIntermediate.vue'),
+      },
+      {
         path: '/test-level/listening',
         name: 'ListeningTest',
         component: () => import('../pages/test/Listening.vue'),
@@ -68,7 +78,7 @@ const routes = [
         component: () => import('../pages/user/blog/MyBlog.vue'),
       },
       {
-        path: '/list-course',
+        path: '/test-level-user',
         name: 'ListCourse',
         component: () => import('../pages/user/home/ListCourse.vue'),
       },
