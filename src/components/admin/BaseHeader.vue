@@ -456,6 +456,12 @@ export default {
         this.isMatchedRoute('MemberDetail') ||
         this.isMatchedRoute('Test') ||
         this.isMatchedRoute('TestLevelListening') ||
+        this.isMatchedRoute('TestLevelListeningBlog') ||
+        this.isMatchedRoute('TestLevelReadingBlog') ||
+        this.isMatchedRoute('TestLevelReadingBlogUpdate') ||
+        this.isMatchedRoute('TestLevelListeningBlogUpdate') ||
+        this.isMatchedRoute('TestLevelReadingBlogCreate') ||
+        this.isMatchedRoute('TestLevelListeningBlogCreate') ||
         this.isMatchedRoute('TestLevelReadingUpdate') ||
         this.isMatchedRoute('TestLevelListeningUpdate') ||
         this.isMatchedRoute('TestLevelReading') ||
@@ -464,6 +470,8 @@ export default {
         this.isMatchedRoute('DetailCourseReadingPending') ||
         this.isMatchedRoute('ReadingTest') ||
         this.isMatchedRoute('ListeningTest') ||
+        this.isMatchedRoute('ReadingBlogTest') ||
+        this.isMatchedRoute('ListeningBlogTest') ||
         this.isMatchedRoute('CommentReported')
       )
         return true;

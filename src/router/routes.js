@@ -33,6 +33,16 @@ const routes = [
         component: () => import('../pages/test/Reading.vue'),
       },
       {
+        path: '/test-level/listening',
+        name: 'ListeningBlogTest',
+        component: () => import('../pages/test/ListeningBlog.vue'),
+      },
+      {
+        path: '/test-level/reading',
+        name: 'ReadingBlogTest',
+        component: () => import('../pages/test/ReadingBlog.vue'),
+      },
+      {
         path: '',
         name: 'HomeUser',
         component: () => import('../pages/user/home/Home.vue'),
@@ -166,6 +176,23 @@ const routes = [
         component: () => import('../pages/test/Reading.vue'),
       },
       {
+        path: 'test-level/reading/blog',
+        name: 'TestLevelReadingBlog',
+        component: () => import('../pages/test/ReadingBlog.vue'),
+      },
+      {
+        path: 'test-level/reading/blog/update/:id',
+        name: 'TestLevelReadingBlogUpdate',
+        component: () =>
+          import('../pages/admin/test/TestReadingUpdateBlog.vue'),
+      },
+      {
+        path: 'test-level/reading/blog/create',
+        name: 'TestLevelReadingBlogCreate',
+        component: () =>
+          import('../pages/admin/test/TestReadingUpdateBlog.vue'),
+      },
+      {
         path: 'test-level/reading/update/:id',
         name: 'TestLevelReadingUpdate',
         component: () => import('../pages/admin/test/TestReadingUpdate.vue'),
@@ -179,6 +206,23 @@ const routes = [
         path: 'test-level/listening',
         name: 'TestLevelListening',
         component: () => import('../pages/test/Listening.vue'),
+      },
+      {
+        path: 'test-level/listening/blog',
+        name: 'TestLevelListeningBlog',
+        component: () => import('../pages/test/ListeningBlog.vue'),
+      },
+      {
+        path: 'test-level/listening/blog/update/:id',
+        name: 'TestLevelListeningBlogUpdate',
+        component: () =>
+          import('../pages/admin/test/TestListeningUpdateBlog.vue'),
+      },
+      {
+        path: 'test-level/listening/blog/create',
+        name: 'TestLevelListeningBlogCreate',
+        component: () =>
+          import('../pages/admin/test/TestListeningUpdateBlog.vue'),
       },
       {
         path: 'test-level/listening/update/:id',

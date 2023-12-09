@@ -35,7 +35,7 @@
 
     <div v-else class="mt-5 transcript">
       <Editor
-        api-key="no-api-key"
+        api-key="5fr2axelvpc7iydici7ly3a3gnhamti3yn1ehjq7npd0ggiv"
         v-model="content"
         :init="editorConfig"
         @getContent="handleEditorChange"
