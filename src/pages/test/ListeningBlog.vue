@@ -347,6 +347,7 @@ export default {
   },
   data() {
     return {
+      idCourse: null,
       listListening: [],
       script: null,
       idSection: null,

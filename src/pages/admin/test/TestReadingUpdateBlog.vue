@@ -164,36 +164,15 @@ export default {
     this.NOTIFY_MESSAGE = NOTIFY_MESSAGE;
     this.AVATAR = AVATAR;
     this.STAR_RED = STAR_RED;
-    this.idCourse = JSON.parse(localStorage.getItem('IDCourseTestLevel'));
-    this.inputLevel =
-      this.$route.name == 'TestLevelReadingBlogCreate'
-        ? 'Pending'
-        : JSON.parse(localStorage.getItem('IDCourse'));
-    if (this.$route.name != 'TestLevelReadingBlogCreate') {
-      this.getAllReading();
+    this.idCourse = JSON.parse(localStorage.getItem('IDCourseTestLevelBlog'));
+    this.idSection = +this.$route.params.id;
+    console.log(this.idSection);
+    if (this.idCourse) {
+      this.getDetailSectionByID();
     }
   },
 
   methods: {
-    /**
-     * get all session
-     * @param {*} dataID
-     */
-    async getAllReading() {
-      try {
-        this.emitter.emit('isShowLoading', true);
-        const arrAPI = await courseApi.getAllReadingSession({
-          id: this.idCourse,
-        });
-        this.idSection = arrAPI[0].id;
-        this.emitter.emit('isShowLoading', false);
-      } catch (error) {
-        console.log(error);
-        this.emitter.emit('isShowLoading', false);
-      } finally {
-        this.getDetailSession();
-      }
-    },
     getAvatar(data, fileImg) {
       this.avatar = data;
       this.file = fileImg;
@@ -201,7 +180,7 @@ export default {
     /**
      * get detail session
      */
-    async getDetailSession() {
+    async getDetailSectionByID() {
       try {
         this.emitter.emit('isShowLoading', true);
         const detailSession = await courseApi.getReadingSessionByID({
@@ -220,11 +199,10 @@ export default {
 
           this.dataQuestionReadingCorrect.push(+item.correctAnswer);
         });
+        this.noData = true;
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
         console.log(error);
-        if (error.response.status == 404) this.noData = true;
-        this.$router.push({ name: 'TestLevelReadingUpdate' });
         this.emitter.emit('isShowLoading', false);
       }
     },
@@ -270,7 +248,7 @@ export default {
             formData.append('file', this.file);
             this.avatar = await fileAPI.updateImg(formData);
           }
-          if (this.noData) {
+          if (!this.noData) {
             await courseApi.createReadingSession({
               description: this.subTitle,
               textContent: this.contentReading,
@@ -281,6 +259,7 @@ export default {
               },
               questionList: this.questionList,
             });
+            this.$router.push({ name: 'TestLevelReadingBlog' });
             this.emitter.emit('isShowLoading', false);
             notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
           } else {
@@ -298,7 +277,6 @@ export default {
             this.emitter.emit('isShowLoading', false);
             notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
           }
-          this.$router.push({ name: 'TestLevelReading' });
         } else {
           notification.error({ message: 'Title has not been filled in yet' });
         }
@@ -323,8 +301,8 @@ export default {
       this.checkQuestions();
       try {
         if (
-          this.dataQuestionReading.length == 9 &&
-          this.dataQuestionReadingCorrect.length == 9 &&
+          this.dataQuestionReading.length ==
+            this.dataQuestionReadingCorrect.length &&
           this.title
         ) {
           this.emitter.emit('isShowLoading', true);
@@ -370,7 +348,7 @@ export default {
       this.$router.push({ name: 'CourseReading' });
     },
     changeBack() {
-      this.$router.push({ name: 'Test' });
+      this.$router.push({ name: 'TestLevelReadingBlog' });
     },
     addQuestionReading() {
       if (this.dataQuestionReading.length <= 8)

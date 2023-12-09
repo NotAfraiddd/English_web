@@ -213,10 +213,10 @@ export default {
     this.STAR_RED = STAR_RED;
     this.namePath = this.$route.params.course;
     this.idCourse = JSON.parse(localStorage.getItem('IDCourseTestLevelBlog'));
+    this.idSection = +this.$route.params.id;
     if (this.idCourse) {
       this.getDetailSectionByID();
     }
-    this.idSection = this.$route.params.id;
   },
   methods: {
     async getDetailSectionByID() {
@@ -353,6 +353,8 @@ export default {
             });
           } else {
             await courseApi.updateListeningSession(dataUpdate);
+            this.emitter.emit('isShowLoading', false);
+            notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
           }
           this.emitter.emit('isShowLoading', false);
           notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
@@ -389,7 +391,7 @@ export default {
       this.$router.push({ name: 'CreateCourseForAdvancedReading' });
     },
     changeBack() {
-      this.$router.push({ name: 'Test' });
+      this.$router.push({ name: 'TestLevelListeningBlog' });
     },
     addWord() {
       if (this.numWords <= 4) {

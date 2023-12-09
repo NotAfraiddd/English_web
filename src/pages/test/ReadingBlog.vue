@@ -1,14 +1,6 @@
 <template>
   <div class="mx-2 mt-6">
     <ButtonBack
-      v-if="this.$route.name == 'TestLevelReading'"
-      title="Reading Test Level"
-      extend-class="mb-5"
-      @back="handleBack"
-      :hide-back="true"
-    />
-    <ButtonBack
-      v-if="this.$route.name == 'TestLevelReadingBlog'"
       title="Reading Test Level Blog"
       extend-class="mb-5"
       @back="handleBack"
@@ -17,7 +9,7 @@
     <div class="flex items-center w-full">
       <div class="bg-primary_line course-line w-full" />
       <div class="text-lg text-primary_black font-semibold w-full">
-        Reading Test
+        Reading Test Blog
       </div>
       <div class="bg-primary_line course-line w-full" />
     </div>
@@ -43,21 +35,7 @@
       />
     </div>
     <div class="flex justify-center gap-20 items-center py-5 text-base">
-      <div v-if="this.$route.name != 'TestLevelReading'" class="flex gap-20">
-        <div
-          class="cursor-pointer font-semibold rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
-          @click="onBack"
-        >
-          <span class="text-base text-primary">Back</span>
-        </div>
-        <div
-          @click="handleSubmit"
-          class="cursor-pointer font-semibold rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
-        >
-          Submit
-        </div>
-      </div>
-      <div v-else class="flex gap-20 items-center">
+      <div class="flex gap-20 items-center">
         <div
           class="cursor-pointer font-semibold rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
           @click="goToEdit"
@@ -80,76 +58,8 @@
       </div>
     </div>
   </div>
-  <ConfirmModal
-    :showModal="modalNotifyLevel"
-    @closeModal="closeModalNotifyLevel"
-    @save="closeModalNotifyLevel"
-    :showFooter="false"
-    :widthCustom="500"
-  >
-    <template #icon>
-      <img :src="CONGRATULATION" alt="" srcset="" class="h-10 w-10" />
-    </template>
-    <template #content>
-      <div class="text-base flex">
-        You have reached
-        <div class="font-medium">&nbsp;{{ level }}&nbsp;</div>
-        level
-      </div>
-    </template>
-    <template #select>
-      <div class="flex gap-10 mt-2">
-        <div
-          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
-          @click="cancelHideModal"
-        >
-          <span class="text-base text-primary">Cancel</span>
-        </div>
-        <div
-          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
-          @click="acceptShowModal"
-        >
-          <span class="text-base text-white">OK</span>
-        </div>
-      </div>
-    </template>
-  </ConfirmModal>
-  <!-- back -->
-  <ConfirmModal
-    :showModal="modalBack"
-    @closeModal="closeModalBack"
-    @save="closeModalBack"
-    :showFooter="false"
-    :widthCustom="500"
-  >
-    <template #icon>
-      <img :src="WARNING" alt="" srcset="" class="h-10 w-10" />
-    </template>
-    <template #content>
-      <div class="text-primary_black my-2">
-        Previous answers will be deleted
-      </div>
-    </template>
-    <template #select>
-      <div class="flex gap-10 mt-2">
-        <div
-          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
-          @click="cancelHideModalBack"
-        >
-          <span class="text-base text-primary">Cancel</span>
-        </div>
-        <div
-          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
-          @click="acceptShowModalBack"
-        >
-          <span class="text-base text-white">OK</span>
-        </div>
-      </div>
-    </template>
-  </ConfirmModal>
 </template>
 <script>
-import ConfirmModal from '../../components/admin/ConfirmModal.vue';
 import ButtonBack from '../../components/common/ButtonBack.vue';
 import MultipleChoice from '../../components/common/MultipleChoice.vue';
 import {
@@ -162,9 +72,10 @@ import {
 import { mapState, mapMutations } from 'vuex';
 import userApi from '../../apis/user';
 import courseApi from '../../apis/course';
+import { notification } from 'ant-design-vue';
 export default {
   name: 'ReadingTest',
-  components: { ButtonBack, MultipleChoice, ConfirmModal },
+  components: { ButtonBack, MultipleChoice },
   created() {
     this.RELOAD = RELOAD;
     this.WARNING = WARNING;
@@ -172,12 +83,9 @@ export default {
     this.ARROW_LEFT = ARROW_LEFT;
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
-    setTimeout(() => {
-      this.numberErrors = +localStorage.getItem('error');
-    }, 0);
-    this.idCourse = JSON.parse(localStorage.getItem('IDCourseTestLevel'));
+    this.idCourse = JSON.parse(localStorage.getItem('IDCourseTestLevelBlog'));
     if (this.idCourse) {
-      this.getAllListening();
+      this.getAllReading();
     }
   },
   watch: {
@@ -187,18 +95,13 @@ export default {
   },
   computed: {
     ...mapState('auth', ['error']),
-    level() {
-      if (this.error >= 20) return 'Beginner';
-      else if (10 <= this.error && this.error < 20) return 'Intermediate';
-      else return 'Advanced';
-    },
   },
   methods: {
     /**
      * get all session
      * @param {*} dataID
      */
-    async getAllListening() {
+    async getAllReading() {
       try {
         this.emitter.emit('isShowLoading', true);
         const arrAPI = await courseApi.getAllReadingSession({
@@ -206,21 +109,24 @@ export default {
         });
 
         this.listReading = [];
-        arrAPI.forEach((item) => {
-          this.listReading.push({
-            id: item?.id,
-            title: item?.title,
-            subTitle: item?.description,
-            status: item?.sectionStatus == 'PENDING' ? true : false,
-          });
+        arrAPI.forEach((item, index) => {
+          if (index == 0) {
+            this.listReading.push({
+              id: item?.id,
+              title: item?.title,
+              subTitle: item?.description,
+              status: item?.sectionStatus == 'PENDING' ? true : false,
+            });
+            this.idSection = item.id;
+          }
         });
-        this.idSection = this.listReading[0].id;
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
         console.log(error);
         this.emitter.emit('isShowLoading', false);
       } finally {
-        await this.getDetailSession();
+        if (this.idSection) await this.getDetailSession();
+        else this.$router.push({ name: 'TestLevelReadingBlogCreate' });
       }
     },
     /**
@@ -241,12 +147,11 @@ export default {
             title: item.questionContent,
             question: item.options.map((item) => item.content),
           });
-          this.correctAnswer.push(+item.correctAnswer);
+          this.correctAnswer.push(+item.correctAnswer + 1);
         });
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
         console.log(error);
-        this.$router.push({ name: 'TestLevelReadingCreate' });
         this.emitter.emit('isShowLoading', false);
       }
     },
@@ -255,7 +160,7 @@ export default {
     },
     goToEdit() {
       this.$router.push({
-        name: 'TestLevelReadingUpdate',
+        name: 'TestLevelReadingBlogUpdate',
         params: { id: this.idSection },
       });
     },
@@ -331,6 +236,9 @@ export default {
         }
         this.submitMultipleChoice = true;
       }
+      if (this.errorsMultiple.length == 0) {
+        notification.success({ message: 'Success' });
+      } else notification.warning({ message: 'Failed' });
     },
     handleSubmit() {
       // MultipleChoice
@@ -350,14 +258,13 @@ export default {
         this.$nextTick(() => {
           this.numberErrors = +localStorage.getItem('error');
           this.modalNotifyLevel = true;
-          this.checkLevel();
         });
       }
     },
   },
   data() {
     return {
-      listReading: null,
+      listReading: [],
       idCourse: null,
       title: null,
       textContent: null,
