@@ -193,6 +193,23 @@ const routes = [
           import('../pages/admin/test/TestReadingUpdateBlog.vue'),
       },
       {
+        path: 'test-level/reading/create-course',
+        name: 'TestLevelReadingAdvanced',
+        component: () => import('../pages/test/ReadingAdvanced.vue'),
+      },
+      {
+        path: 'test-level/reading/create-course/update/:id',
+        name: 'TestLevelReadingAdvancedUpdate',
+        component: () =>
+          import('../pages/admin/test/TestReadingUpdateAdvanced.vue'),
+      },
+      {
+        path: 'test-level/reading/create-course/create',
+        name: 'TestLevelReadingAdvancedCreate',
+        component: () =>
+          import('../pages/admin/test/TestReadingUpdateAdvanced.vue'),
+      },
+      {
         path: 'test-level/reading/update/:id',
         name: 'TestLevelReadingUpdate',
         component: () => import('../pages/admin/test/TestReadingUpdate.vue'),

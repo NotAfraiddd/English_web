@@ -2,7 +2,11 @@
   <div class="create-course">
     <!-- Reading -->
     <div>
-      <ButtonBack hide-back="true" @back="changeBack" />
+      <ButtonBack
+        title="Reading Test Level Advanced"
+        hide-back="true"
+        @back="changeBack"
+      />
       <div class="flex gap-10">
         <div class="flex mt-5 w-full items-center">
           <div class="flex create-course__title">
@@ -146,9 +150,13 @@ export default {
     this.NOTIFY_MESSAGE = NOTIFY_MESSAGE;
     this.AVATAR = AVATAR;
     this.STAR_RED = STAR_RED;
-    this.idCourse = JSON.parse(localStorage.getItem('IDCourseTestLevel'));
-    if (this.idCourse) this.getDetailSession();
+    this.idCourse = JSON.parse(
+      localStorage.getItem('IDCourseTestLevelAdvanced'),
+    );
     this.idSection = +this.$route.params.id;
+    if (this.idCourse) {
+      this.getDetailSectionByID();
+    }
   },
 
   methods: {
@@ -159,7 +167,7 @@ export default {
     /**
      * get detail session
      */
-    async getDetailSession() {
+    async getDetailSectionByID() {
       try {
         this.emitter.emit('isShowLoading', true);
         const detailSession = await courseApi.getReadingSessionByID({
@@ -180,11 +188,10 @@ export default {
 
           this.dataQuestionReadingCorrect.push(+item.correctAnswer);
         });
+        this.noData = true;
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
         console.log(error);
-        if (error.response.status == 404) this.noData = true;
-        this.$router.push({ name: 'TestLevelReadingUpdate' });
         this.emitter.emit('isShowLoading', false);
       }
     },
@@ -247,7 +254,7 @@ export default {
                 },
                 questionList: this.questionList,
               });
-              this.$router.push({ name: 'TestLevelReading' });
+              this.$router.push({ name: 'TestLevelReadingAdvanced' });
               this.emitter.emit('isShowLoading', false);
               notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
             } else {
@@ -265,7 +272,6 @@ export default {
               this.emitter.emit('isShowLoading', false);
               notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
             }
-            this.$router.push({ name: 'TestLevelReading' });
           } else {
             notification.error({ message: 'Title has not been filled in yet' });
           }
@@ -295,15 +301,14 @@ export default {
         notification.error({ message: NOTIFY_MESSAGE.UPDATE_FAILED });
       }
     },
-
     cancelCreate() {
       this.$router.push({ name: 'CourseReading' });
     },
     changeBack() {
-      this.$router.push({ name: 'TestLevelReading' });
+      this.$router.push({ name: 'TestLevelReadingAdvanced' });
     },
     addQuestionReading() {
-      if (this.dataQuestionReading.length <= 8)
+      if (this.dataQuestionReading.length <= 9)
         this.dataQuestionReading.push({
           title: '',
           answers: [],

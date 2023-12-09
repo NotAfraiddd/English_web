@@ -79,26 +79,12 @@
       </div>
     </div>
     <div class="border-t border-primary_line mt-5" />
-    <div
-      v-if="
-        this.$route.name == 'TestLevelReadingBlogCreate' ||
-        this.$route.name == 'TestLevelReadingBlogUpdate'
-      "
-      class="flex justify-center gap-20 mt-5 text-base"
-    >
+    <div class="flex justify-center gap-20 mt-5 text-base">
       <div
         @click="createOrUpdate"
         class="cursor-pointer rounded-lg bg-primary w-40 text-center h-8 leading-8 hover:opacity-50"
       >
         Create/Update
-      </div>
-    </div>
-    <div v-else class="flex justify-center gap-20 mt-5 text-base">
-      <div
-        @click="showModalCreate"
-        class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
-      >
-        Create
       </div>
     </div>
   </div>
@@ -166,7 +152,6 @@ export default {
     this.STAR_RED = STAR_RED;
     this.idCourse = JSON.parse(localStorage.getItem('IDCourseTestLevelBlog'));
     this.idSection = +this.$route.params.id;
-    console.log(this.idSection);
     if (this.idCourse) {
       this.getDetailSectionByID();
     }
@@ -190,6 +175,8 @@ export default {
         this.subTitle = detailSession?.description;
         this.contentReading = detailSession?.textContent;
         this.avatar = detailSession?.imgURL;
+        this.dataQuestionReadingCorrect = [];
+        this.dataQuestionReading = [];
         detailSession?.questionList.forEach((item, index) => {
           this.dataQuestionReading.push({
             id: index + 1,
@@ -224,6 +211,7 @@ export default {
       this.contentReading = data;
     },
     checkQuestions() {
+      this.questionList = [];
       this.dataQuestionReading.forEach((questionData, index) => {
         const questionObject = {
           questionContent: questionData.title,
@@ -241,44 +229,61 @@ export default {
       );
       this.checkQuestions();
       try {
-        if (this.title) {
-          this.emitter.emit('isShowLoading', true);
-          if (this.file) {
-            let formData = new FormData();
-            formData.append('file', this.file);
-            this.avatar = await fileAPI.updateImg(formData);
-          }
-          if (!this.noData) {
-            await courseApi.createReadingSession({
-              description: this.subTitle,
-              textContent: this.contentReading,
-              title: this.title,
-              imgURL: this.avatar,
-              course: {
-                id: this.idCourse,
-              },
-              questionList: this.questionList,
-            });
-            this.$router.push({ name: 'TestLevelReadingBlog' });
-            this.emitter.emit('isShowLoading', false);
-            notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
+        if (
+          this.dataQuestionReadingCorrect.length != 0 &&
+          this.dataQuestionReading.length != 0 &&
+          this.contentReading
+        ) {
+          if (this.title) {
+            this.emitter.emit('isShowLoading', true);
+            if (this.file) {
+              let formData = new FormData();
+              formData.append('file', this.file);
+              this.avatar = await fileAPI.updateImg(formData);
+            }
+            if (!this.noData) {
+              await courseApi.createReadingSession({
+                description: this.subTitle,
+                textContent: this.contentReading,
+                title: this.title,
+                imgURL: this.avatar,
+                course: {
+                  id: this.idCourse,
+                },
+                questionList: this.questionList,
+              });
+              this.$router.push({ name: 'TestLevelReadingBlog' });
+              this.emitter.emit('isShowLoading', false);
+              notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
+            } else {
+              await courseApi.updateReadingSession({
+                id: this.idSection,
+                description: this.subTitle,
+                textContent: this.contentReading,
+                title: this.title,
+                imgURL: this.avatar,
+                course: {
+                  id: this.idCourse,
+                },
+                questionList: this.questionList,
+              });
+              this.emitter.emit('isShowLoading', false);
+              notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
+            }
           } else {
-            await courseApi.updateReadingSession({
-              id: this.idSection,
-              description: this.subTitle,
-              textContent: this.contentReading,
-              title: this.title,
-              imgURL: this.avatar,
-              course: {
-                id: this.idCourse,
-              },
-              questionList: this.questionList,
-            });
-            this.emitter.emit('isShowLoading', false);
-            notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
+            notification.error({ message: 'Title has not been filled in yet' });
           }
-        } else {
-          notification.error({ message: 'Title has not been filled in yet' });
+        }
+        if (
+          this.dataQuestionReadingCorrect.length == 0 &&
+          this.dataQuestionReading.length == 0
+        ) {
+          notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_MIN });
+        }
+        if (!this.contentReading) {
+          notification.error({
+            message: 'The reading passage is not available yet',
+          });
         }
         if (
           this.dataQuestionReadingCorrect.length !=
@@ -292,56 +297,6 @@ export default {
         console.log(error);
         this.emitter.emit('isShowLoading', false);
         notification.error({ message: NOTIFY_MESSAGE.UPDATE_FAILED });
-      }
-    },
-    async createCourse() {
-      this.dataQuestionReading = this.dataQuestionReading.filter(
-        (item, index) => index === 0 || item.title !== '',
-      );
-      this.checkQuestions();
-      try {
-        if (
-          this.dataQuestionReading.length ==
-            this.dataQuestionReadingCorrect.length &&
-          this.title
-        ) {
-          this.emitter.emit('isShowLoading', true);
-          if (this.file) {
-            let formData = new FormData();
-            formData.append('file', this.file);
-            this.avatar = await fileAPI.updateImg(formData);
-          }
-          const data = await courseApi.createReadingSession({
-            description: this.subTitle,
-            textContent: this.contentReading,
-            title: this.title,
-            imgURL: this.avatar,
-            course: {
-              id: this.idCourse,
-            },
-            questionList: this.questionList,
-          });
-          this.idSection = data?.id;
-          this.emitter.emit('isShowLoading', false);
-          notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
-        } else if (this.dataQuestionReading.length != 9) {
-          notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_9 });
-        }
-        if (
-          this.dataQuestionReadingCorrect.length !=
-          this.dataQuestionReading.length
-        ) {
-          notification.error({
-            message: 'The answers has not been filled in yet',
-          });
-        }
-        if (!this.title)
-          notification.error({
-            message: 'Title has not been filled in yet',
-          });
-      } catch (error) {
-        console.log(error);
-        this.emitter.emit('isShowLoading', false);
       }
     },
     cancelCreate() {

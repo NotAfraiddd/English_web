@@ -124,7 +124,6 @@ export default {
         });
         this.listListening = [];
         arrAPI.forEach((item, index) => {
-          console.log(item, index);
           if (index == 0) {
             this.listListening.push({
               id: item?.id,

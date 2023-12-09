@@ -26,6 +26,8 @@ export const NOTIFY_MESSAGE = {
   ADD_WORD: 'Maximum 5 questions',
   ADD_QUESTION: 'Maximum 6 questions',
   ADD_QUESTION_9: 'Must 9 questions',
+  ADD_QUESTION_10: 'Maximum 10 questions',
+  ADD_QUESTION_MIN: 'Minimum 1 questions',
   CREATE_BLOG_SUCCESS: ' Create blog success',
   CREATE_BLOG_FAILED: ' Create blog failed',
   APPROVE_SUCCESS: 'Approve success',

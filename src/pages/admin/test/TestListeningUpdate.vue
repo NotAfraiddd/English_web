@@ -267,6 +267,7 @@ export default {
           });
           this.dataQuestionCorrect.push(+item?.correctAnswer);
         });
+        this.dataWords = [];
         data?.fillInBlankQuestionList.forEach((ele, index) => {
           this.dataWords.push({
             id: index + 1,

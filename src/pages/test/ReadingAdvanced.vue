@@ -1,7 +1,7 @@
 <template>
   <div class="mx-2 mt-6">
     <ButtonBack
-      title="Reading Test Level Blog"
+      title="Reading Test Level Advanced"
       extend-class="mb-5"
       @back="handleBack"
       :hide-back="true"
@@ -83,7 +83,9 @@ export default {
     this.ARROW_LEFT = ARROW_LEFT;
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
-    this.idCourse = JSON.parse(localStorage.getItem('IDCourseTestLevelBlog'));
+    this.idCourse = JSON.parse(
+      localStorage.getItem('IDCourseTestLevelAdvanced'),
+    );
     if (this.idCourse) {
       this.getAllReading();
     }
@@ -110,6 +112,7 @@ export default {
 
         this.listReading = [];
         arrAPI.forEach((item, index) => {
+          console.log(item, index);
           if (index == 0) {
             this.listReading.push({
               id: item?.id,
@@ -126,7 +129,7 @@ export default {
         this.emitter.emit('isShowLoading', false);
       } finally {
         if (this.idSection) await this.getDetailSession();
-        else this.$router.push({ name: 'TestLevelReadingBlogCreate' });
+        else this.$router.push({ name: 'TestLevelReadingAdvancedCreate' });
       }
     },
     /**
@@ -160,7 +163,7 @@ export default {
     },
     goToEdit() {
       this.$router.push({
-        name: 'TestLevelReadingBlogUpdate',
+        name: 'TestLevelReadingAdvancedUpdate',
         params: { id: this.idSection },
       });
     },
