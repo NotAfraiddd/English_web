@@ -277,11 +277,9 @@ export default {
           this.word.push(ele?.answer);
           this.numWords = data?.fillInBlankQuestionList.length;
         });
+        this.noData = true;
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
-        if (error.response.status == 404) {
-          this.noData = true;
-        }
         console.log(error);
         this.emitter.emit('isShowLoading', false);
       }
@@ -310,6 +308,7 @@ export default {
       this.numWords--;
     },
     checkQuestions() {
+      this.questionList = [];
       this.dataQuestion.forEach((questionData, index) => {
         const questionObject = {
           questionContent: questionData.title,
@@ -337,8 +336,10 @@ export default {
       this.checkWord();
       try {
         if (
-          this.dataQuestion.length == this.dataQuestionCorrect.length &&
-          this.title
+          this.dataQuestion.length != 0 &&
+          this.dataQuestionCorrect.length != 0 &&
+          this.title &&
+          this.selectedAudio
         ) {
           this.emitter.emit('isShowLoading', true);
           if (this.file) {
@@ -376,17 +377,20 @@ export default {
             questionList: this.questionList,
             fillInBlankQuestionList: this.fillInBlankQuestionList,
           };
-          if (this.noData) await courseApi.createListeningSession(data);
-          else await courseApi.updateListeningSession(dataUpdate);
-          this.emitter.emit('isShowLoading', false);
-          notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
-          this.$router.push({
-            name: 'ListCourseListening',
-            params: { name: this.namePath },
-          });
-        } else if (
-          this.dataQuestion.length != this.dataQuestionCorrect.length
-        ) {
+          if (!this.noData) {
+            await courseApi.createListeningSession(data);
+            this.$router.push({
+              name: 'TestLevelListening',
+              params: { name: this.namePath },
+            });
+            notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
+          } else {
+            await courseApi.updateListeningSession(dataUpdate);
+            this.emitter.emit('isShowLoading', false);
+            notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
+          }
+        }
+        if (this.dataQuestion.length != this.dataQuestionCorrect.length) {
           notification.error({
             message: 'Questions and answers have not been filled in completely',
           });
@@ -395,6 +399,11 @@ export default {
           notification.error({
             message: 'Title has not been filled in yet',
           });
+        if (!this.selectedAudio) {
+          notification.error({
+            message: 'There is no audio file yet',
+          });
+        }
       } catch (error) {
         console.log(error);
         this.emitter.emit('isShowLoading', false);

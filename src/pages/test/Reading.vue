@@ -155,6 +155,7 @@ import {
 import { mapState, mapMutations } from 'vuex';
 import userApi from '../../apis/user';
 import courseApi from '../../apis/course';
+import { notification } from 'ant-design-vue';
 export default {
   name: 'ReadingTest',
   components: { ButtonBack, MultipleChoice, ConfirmModal },
@@ -324,6 +325,9 @@ export default {
         }
         this.submitMultipleChoice = true;
       }
+      if (this.errorsMultiple.length == 0) {
+        notification.success({ message: 'Success' });
+      } else notification.warning({ message: 'Failed' });
     },
     handleSubmit() {
       // MultipleChoice

@@ -279,10 +279,11 @@ export default {
       this.numWords--;
     },
     checkQuestions() {
+      this.questionList = [];
       this.dataQuestion.forEach((questionData, index) => {
         const questionObject = {
           questionContent: questionData.title,
-          correctAnswer: this.dataQuestionCorrect[index],
+          correctAnswer: this.dataQuestionCorrect[index] + 1,
           options: questionData.answers.map((answer) => ({ content: answer })),
         };
         this.questionList.push(questionObject);
@@ -306,8 +307,10 @@ export default {
       this.checkWord();
       try {
         if (
-          this.dataQuestion.length == this.dataQuestionCorrect.length &&
-          this.title
+          this.dataQuestion.length != 0 &&
+          this.dataQuestionCorrect.length != 0 &&
+          this.title &&
+          this.selectedAudio
         ) {
           this.emitter.emit('isShowLoading', true);
           if (this.file) {
@@ -351,16 +354,15 @@ export default {
               name: 'TestLevelListeningBlog',
               params: { name: this.namePath },
             });
+            this.emitter.emit('isShowLoading', false);
+            notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
           } else {
             await courseApi.updateListeningSession(dataUpdate);
             this.emitter.emit('isShowLoading', false);
             notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
           }
-          this.emitter.emit('isShowLoading', false);
-          notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
-        } else if (
-          this.dataQuestion.length != this.dataQuestionCorrect.length
-        ) {
+        }
+        if (this.dataQuestion.length != this.dataQuestionCorrect.length) {
           notification.error({
             message: 'Questions and answers have not been filled in completely',
           });
@@ -369,6 +371,11 @@ export default {
           notification.error({
             message: 'Title has not been filled in yet',
           });
+        if (!this.selectedAudio) {
+          notification.error({
+            message: 'There is no audio file yet',
+          });
+        }
       } catch (error) {
         console.log(error);
         this.emitter.emit('isShowLoading', false);
@@ -404,12 +411,12 @@ export default {
       } else notification.warning({ message: 'Only 5 questions' });
     },
     addQuestion() {
-      if (this.dataQuestion.length <= 10) {
+      if (this.dataQuestion.length <= 9) {
         this.dataQuestion.push({
           title: '',
           answers: [],
         });
-      } else notification.error({ message: 'Only 11 questions' });
+      } else notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_10 });
     },
     subtractQuestion(data) {
       this.dataQuestion.splice(data, 1);

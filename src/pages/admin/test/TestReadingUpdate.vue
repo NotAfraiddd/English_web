@@ -2,7 +2,11 @@
   <div class="create-course">
     <!-- Reading -->
     <div>
-      <ButtonBack hide-back="true" @back="changeBack" />
+      <ButtonBack
+        title="Reading Test Level"
+        hide-back="true"
+        @back="changeBack"
+      />
       <div class="flex gap-10">
         <div class="flex mt-5 w-full items-center">
           <div class="flex create-course__title">
@@ -147,8 +151,8 @@ export default {
     this.AVATAR = AVATAR;
     this.STAR_RED = STAR_RED;
     this.idCourse = JSON.parse(localStorage.getItem('IDCourseTestLevel'));
-    if (this.idCourse) this.getDetailSession();
     this.idSection = +this.$route.params.id;
+    if (this.idCourse) this.getDetailSession();
   },
 
   methods: {
@@ -178,13 +182,12 @@ export default {
             answers: item.options.map((item) => item.content),
           });
 
-          this.dataQuestionReadingCorrect.push(+item.correctAnswer);
+          this.dataQuestionReadingCorrect.push(+item.correctAnswer - 1);
         });
+        this.noData = true;
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
         console.log(error);
-        if (error.response.status == 404) this.noData = true;
-        this.$router.push({ name: 'TestLevelReadingUpdate' });
         this.emitter.emit('isShowLoading', false);
       }
     },
@@ -210,7 +213,7 @@ export default {
       this.dataQuestionReading.forEach((questionData, index) => {
         const questionObject = {
           questionContent: questionData.title,
-          correctAnswer: this.dataQuestionReadingCorrect[index],
+          correctAnswer: this.dataQuestionReadingCorrect[index] + 1,
           options: questionData.answers.map((answer) => ({
             content: answer,
           })),

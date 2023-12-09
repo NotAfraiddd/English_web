@@ -217,7 +217,7 @@ export default {
       this.dataQuestionReading.forEach((questionData, index) => {
         const questionObject = {
           questionContent: questionData.title,
-          correctAnswer: this.dataQuestionReadingCorrect[index],
+          correctAnswer: this.dataQuestionReadingCorrect[index] + 1,
           options: questionData.answers.map((answer) => ({
             content: answer,
           })),
