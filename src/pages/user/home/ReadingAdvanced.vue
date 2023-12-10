@@ -1,10 +1,9 @@
 <template>
   <div class="mx-2 mt-6">
     <ButtonBack
-      title="Reading Test Level Blog"
+      title="Reading Test Level Intermediate"
       extend-class="mb-5"
       @back="handleBack"
-      :hide-back="true"
     />
     <div class="flex items-center w-full">
       <div class="bg-primary_line course-line w-full" />
@@ -37,16 +36,10 @@
     <div class="flex justify-center gap-20 items-center py-5 text-base">
       <div class="flex gap-20 items-center">
         <div
-          class="cursor-pointer font-semibold rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
-          @click="goToEdit"
-        >
-          <span class="text-base text-primary">Edit</span>
-        </div>
-        <div
-          @click="handleTest"
+          @click="handleSubmit"
           class="cursor-pointer font-semibold rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
         >
-          Test
+          Submit
         </div>
         <img
           :src="RELOAD"
@@ -58,24 +51,58 @@
       </div>
     </div>
   </div>
+  <ConfirmModal
+    :showModal="modalSubmit"
+    @closeModal="closeModalSubmit"
+    @save="closeModalSubmit"
+    :showFooter="false"
+    :widthCustom="550"
+  >
+    <template #icon>
+      <img :src="WARNING" alt="" srcset="" class="h-10 w-10" />
+    </template>
+    <template #content>
+      <div class="text-primary_black my-2 text-center">
+        Please check again, you cannot do it again if you select
+        <b>'Next to reading'</b>
+      </div>
+    </template>
+    <template #select>
+      <div class="flex gap-10 mt-2">
+        <div
+          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="closeModalNextReading"
+        >
+          <span class="text-base text-primary">Cancel</span>
+        </div>
+        <div
+          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="goToNextReading"
+        >
+          <span class="text-base text-white">OK</span>
+        </div>
+      </div>
+    </template>
+  </ConfirmModal>
 </template>
 <script>
-import ButtonBack from '../../components/common/ButtonBack.vue';
-import MultipleChoice from '../../components/common/MultipleChoice.vue';
+import ButtonBack from '../../../components/common/ButtonBack.vue';
+import MultipleChoice from '../../../components/common/MultipleChoice.vue';
 import {
   ARROW_LEFT,
   MOUNTAIN_CLIMB,
   CONGRATULATION,
   WARNING,
   RELOAD,
-} from '../../constants/image';
+} from '../../../constants/image';
 import { mapState, mapMutations } from 'vuex';
-import userApi from '../../apis/user';
-import courseApi from '../../apis/course';
+import userApi from '../../../apis/user';
+import courseApi from '../../../apis/course';
 import { notification } from 'ant-design-vue';
+import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 export default {
   name: 'ReadingTest',
-  components: { ButtonBack, MultipleChoice },
+  components: { ButtonBack, MultipleChoice, ConfirmModal },
   created() {
     this.RELOAD = RELOAD;
     this.WARNING = WARNING;
@@ -83,7 +110,7 @@ export default {
     this.ARROW_LEFT = ARROW_LEFT;
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
-    this.idCourse = JSON.parse(localStorage.getItem('IDCourseTestLevelBlog'));
+    this.idCourse = this.$route.params.id;
     if (this.idCourse) {
       this.getAllReading();
     }
@@ -94,7 +121,7 @@ export default {
     },
   },
   computed: {
-    ...mapState('auth', ['error']),
+    ...mapState('member', ['hasErrorListeningAdvanced']),
   },
   methods: {
     /**
@@ -126,7 +153,7 @@ export default {
         this.emitter.emit('isShowLoading', false);
       } finally {
         if (this.idSection) await this.getDetailSession();
-        else this.$router.push({ name: 'TestLevelReadingBlogCreate' });
+        else this.$router.push({ name: 'TestLevelReadingAdvancedCreate' });
       }
     },
     /**
@@ -160,7 +187,7 @@ export default {
     },
     goToEdit() {
       this.$router.push({
-        name: 'TestLevelReadingBlogUpdate',
+        name: 'TestLevelReadingAdvancedUpdate',
         params: { id: this.idSection },
       });
     },
@@ -199,47 +226,42 @@ export default {
     compareMultiple(valueA, valueB) {
       return JSON.stringify(valueA) === JSON.stringify(valueB);
     },
-    handleTest() {
+    async handleSubmit() {
+      let errorMulti = 0;
       if (!this.submitMultipleChoice) {
         this.errorsMultiple = [];
         for (let i = 0; i < this.dataMultipleChoice.length; i++) {
-          if (
-            this.compareMultiple(this.correctAnswer[i], this.myAnswer[i]) ==
-            false
-          ) {
-            this.errorsMultiple.push(this.dataMultipleChoice[i].id);
+          if (!this.compareMultiple(this.correctAnswer[i], this.myAnswer[i])) {
+            errorMulti++;
           }
         }
         this.submitMultipleChoice = true;
       }
-      if (this.errorsMultiple.length == 0) {
-        notification.success({ message: 'Success' });
+      if (errorMulti == 0 && !this.hasErrorListening) {
+        if (this.userInfor.level == 'BEGINNER') {
+          await userApi.updateLevel({
+            user: {
+              uid: this.userInfor.email,
+            },
+            level: 2,
+          });
+          notification.success({
+            message: 'Congratulations !!! Your level upgrade to intermediate',
+          });
+        } else
+          notification.warning({
+            message: `Your level is ${this.userInfor.level}`,
+          });
       } else notification.warning({ message: 'Failed' });
     },
-    handleSubmit() {
-      // MultipleChoice
-      if (!this.submitMultipleChoice) {
-        this.errorsMultiple = [];
-        for (let i = 0; i < this.dataMultipleChoice.length; i++) {
-          if (
-            this.compareMultiple(this.correctAnswer[i], this.myAnswer[i]) ==
-            false
-          ) {
-            this.errorsMultiple.push(this.dataMultipleChoice[i].id + 1);
-          }
-        }
-        this.submitMultipleChoice = true;
-      }
-      if (this.submitMultipleChoice) {
-        this.$nextTick(() => {
-          this.numberErrors = +localStorage.getItem('error');
-          this.modalNotifyLevel = true;
-        });
-      }
+    closeModalSubmit() {
+      this.modalSubmit = false;
+      this.submitMultipleChoice = false;
     },
   },
   data() {
     return {
+      modalSubmit: false,
       listReading: [],
       idCourse: null,
       title: null,

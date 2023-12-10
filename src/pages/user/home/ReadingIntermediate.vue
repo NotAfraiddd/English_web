@@ -199,30 +199,6 @@ export default {
       this.submitMultipleChoice = false;
       this.rotation += 360;
     },
-    async checkLevel() {
-      if (this.error >= 20) {
-        await userApi.updateLevel({
-          user: {
-            uid: this.userInfor.email,
-          },
-          level: 1,
-        });
-      } else if (10 <= this.error && this.error < 20) {
-        await userApi.updateLevel({
-          user: {
-            uid: this.userInfor.email,
-          },
-          level: 2,
-        });
-      } else if (this.error < 10) {
-        await userApi.updateLevel({
-          user: {
-            uid: this.userInfor.email,
-          },
-          level: 3,
-        });
-      }
-    },
     acceptShowModal() {
       this.modalNotifyLevel = false;
       this.$router.push({ name: 'HomeUser' });
@@ -251,7 +227,7 @@ export default {
     compareMultiple(valueA, valueB) {
       return JSON.stringify(valueA) === JSON.stringify(valueB);
     },
-    handleSubmit() {
+    async handleSubmit() {
       let errorMulti = 0;
       if (!this.submitMultipleChoice) {
         this.errorsMultiple = [];
@@ -263,9 +239,21 @@ export default {
         this.submitMultipleChoice = true;
       }
       if (errorMulti == 0 && !this.hasErrorListening) {
-        notification.success({
-          message: 'Congratulations !!! Your level upgrade to intermediate',
-        });
+        if (this.userInfor.level == 'BEGINNER') {
+          await userApi.updateLevel({
+            user: {
+              uid: this.userInfor.email,
+            },
+            level: 2,
+          });
+          notification.success({
+            message: 'Congratulations !!! Your level upgrade to intermediate',
+          });
+          this.$router.push({ name: 'HomeUser' });
+        } else
+          notification.warning({
+            message: `Your level is ${this.userInfor.level}`,
+          });
       } else notification.warning({ message: 'Failed' });
     },
     closeModalSubmit() {

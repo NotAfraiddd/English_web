@@ -260,30 +260,6 @@ export default {
       this.submitMultipleChoice = false;
       this.rotation += 360;
     },
-    async checkLevel() {
-      if (this.error >= 20) {
-        await userApi.updateLevel({
-          user: {
-            uid: this.userInfor.email,
-          },
-          level: 1,
-        });
-      } else if (10 <= this.error && this.error < 20) {
-        await userApi.updateLevel({
-          user: {
-            uid: this.userInfor.email,
-          },
-          level: 2,
-        });
-      } else if (this.error < 10) {
-        await userApi.updateLevel({
-          user: {
-            uid: this.userInfor.email,
-          },
-          level: 3,
-        });
-      }
-    },
     acceptShowModal() {
       this.modalNotifyLevel = false;
       this.$router.push({ name: 'HomeUser' });

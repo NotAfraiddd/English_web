@@ -30,47 +30,39 @@
           </div>
         </div>
         <div
-          v-if="socialMediaConnection.facebookURL"
+          v-if="inputFaceBook"
           class="flex items-center gap-3 mt-3 break-all"
         >
           <img :src="SOCIAL_FACEBOOK" alt="" srcset="" class="w-6 h-6" />
           <div class="leading-6 text-primary_blue cursor-pointer">
-            <a
-              :href="socialMediaConnection.facebookURL"
-              target="_blank"
-              class="hover:text-primary"
-            >
-              {{ socialMediaConnection.facebookURL }}
+            <a :href="inputFaceBook" target="_blank" class="hover:text-primary">
+              {{ inputFaceBook }}
             </a>
           </div>
         </div>
         <div
-          v-if="socialMediaConnection.instagramURL"
+          v-if="inputInstagram"
           class="flex items-center gap-3 mt-3 break-all"
         >
           <img :src="SOCIAL_INSTAGRAM" alt="" srcset="" class="w-6 h-6" />
           <div class="leading-6 text-primary_blue cursor-pointer">
             <a
-              :href="socialMediaConnection.instagramURL"
+              :href="inputInstagram"
               target="_blank"
               class="hover:text-primary"
             >
-              {{ socialMediaConnection.instagramURL }}
+              {{ inputInstagram }}
             </a>
           </div>
         </div>
         <div
-          v-if="socialMediaConnection.linkedinURL"
+          v-if="inputLinkedin"
           class="flex items-center gap-3 mt-3 break-all"
         >
           <img :src="SOCIAL_LINKEDIN" alt="" srcset="" class="w-6 h-6" />
           <div class="leading-6 text-primary_blue cursor-pointer">
-            <a
-              :href="socialMediaConnection.linkedinURL"
-              target="_blank"
-              class="hover:text-primary"
-            >
-              {{ socialMediaConnection.linkedinURL }}
+            <a :href="inputLinkedin" target="_blank" class="hover:text-primary">
+              {{ inputLinkedin }}
             </a>
           </div>
         </div>
@@ -187,7 +179,9 @@ export default {
       registrationDate: null,
       avatar: null,
       listCourses: [],
-      socialMediaConnection: {},
+      inputFaceBook: null,
+      inputInstagram: null,
+      inputLinkedin: null,
     };
   },
   methods: {
@@ -223,7 +217,6 @@ export default {
               let modifiedLevel =
                 item?.courseLevel.charAt(0).toUpperCase() +
                 item?.courseLevel.slice(1).toLowerCase();
-              console.log(item);
               this.listCourses.push({
                 id: item?.id,
                 title: modifiedLevel + ' Level',
@@ -253,7 +246,9 @@ export default {
         'DD/MM/YYYY',
       );
       this.avatar = res?.avtURL;
-      this.socialMediaConnection = res?.socialMediaConnection;
+      this.inputFaceBook = res?.facebookURL;
+      this.inputInstagram = res?.instagramURL;
+      this.inputLinkedin = res?.linkedinURL;
     },
   },
 };

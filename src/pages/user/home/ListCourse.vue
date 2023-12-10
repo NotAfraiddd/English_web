@@ -3,7 +3,6 @@
     <ListTypeCourse
       :data="listCourses"
       @clicked="getData"
-      @add="handleAdd"
       :hideCourseFinished="true"
       extendClass="grid-cols-user mt-2"
       extendItemClass="user-course mx-5"
@@ -54,14 +53,16 @@ export default {
         const data = await courseApi.allCourse();
         data.forEach((item) => {
           if (item?.courseLevel == 'PENDING') {
-            this.listCourses.push({
-              id: item?.id,
-              title: item?.name,
-              subtitle: item?.description,
-              name: item?.name,
-              courseFinished: 0,
-              color: item?.colorCode,
-            });
+            if (item?.id != 1) {
+              this.listCourses.push({
+                id: item?.id,
+                title: item?.name,
+                subtitle: item?.description,
+                name: item?.name,
+                courseFinished: 0,
+                color: item?.colorCode,
+              });
+            }
           }
         });
         this.emitter.emit('isShowLoading', false);
@@ -83,6 +84,16 @@ export default {
           name: 'TestLevelListeningIntermediate',
           params: { id: data.item.id },
         });
+      }
+      if (data.item.id == 202) {
+        if (this.userInfor.level == 'INTERMEDIATE') {
+          this.$router.push({
+            name: 'TestLevelListeningCreateCourse',
+            params: { id: data.item.id },
+          });
+        } else {
+          notification.warning({ message: 'Your level is not Intermediate' });
+        }
       }
     },
     goToListening() {

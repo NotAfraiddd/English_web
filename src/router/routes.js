@@ -33,6 +33,16 @@ const routes = [
         component: () => import('../pages/user/home/ReadingIntermediate.vue'),
       },
       {
+        path: 'test-level/listening/advanced/:id',
+        name: 'TestLevelListeningCreateCourse',
+        component: () => import('../pages/user/home/ListeningAdvanced.vue'),
+      },
+      {
+        path: 'test-level/reading/advanced/:id',
+        name: 'TestLevelReadingCreateCourse',
+        component: () => import('../pages/user/home/ReadingAdvanced.vue'),
+      },
+      {
         path: '/test-level/listening',
         name: 'ListeningTest',
         component: () => import('../pages/test/Listening.vue'),

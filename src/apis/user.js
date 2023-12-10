@@ -16,6 +16,12 @@ class UserApi {
     const res = await http.post(`user/updateInfo`, data);
     return res.data;
   }
+
+  async updateSocial(data) {
+    const res = await http.put(`user/updateSocialConnect`, data);
+    return res.data;
+  }
+
   async getTotalUser() {
     const res = await http.get(`user/totalMember`);
     return res.data;

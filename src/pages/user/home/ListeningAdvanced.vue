@@ -1,7 +1,7 @@
 <template>
   <div class="mx-2 mt-4">
     <ButtonBack
-      title="Listening Test Level Intermediate"
+      title="Listening Test Level Advanced"
       extend-class="mb-5"
       @back="handleBack"
     />
@@ -139,10 +139,10 @@ export default {
     },
   },
   computed: {
-    ...mapState('member', ['hasErrorListening']),
+    ...mapState('member', ['hasErrorListeningAdvanced']),
   },
   methods: {
-    ...mapMutations('member', ['setErrorListening']),
+    ...mapMutations('member', ['setErrorListeningAdvanced']),
     /**
      * get all session
      * @param {*} dataID
@@ -251,7 +251,7 @@ export default {
       this.myAnswer = [];
       this.dataListWords = [];
       this.getRandomQuestions();
-      this.setErrorListening(false);
+      this.setErrorListeningAdvanced(false);
     },
     handleSubmit() {
       let errorMulti = 0;
@@ -276,12 +276,12 @@ export default {
         this.submitMatching = true;
       }
       if (errorMulti == 0 && errorMatch == 0) {
-        this.setErrorListening(false);
+        this.setErrorListeningAdvanced(false);
         // notification.success({
         //   message: 'Congratulations !!! Your level upgrade to intermediate',
         // });
       } else {
-        this.setErrorListening(true);
+        this.setErrorListeningAdvanced(true);
         // notification.warning({ message: 'Failed' });
       }
       this.modalNextReading = true;
@@ -344,7 +344,7 @@ export default {
     },
     closeModalNextReading() {
       this.modalNextReading = false;
-      this.setErrorListening(false);
+      this.setErrorListeningAdvanced(false);
       this.submitMultipleChoice = false;
       this.submitMatching = false;
     },

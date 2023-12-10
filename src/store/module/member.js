@@ -4,6 +4,7 @@ const member = {
     save: false,
     user: {},
     hasErrorListening: false,
+    hasErrorListeningAdvanced: false,
   },
   mutations: {
     setSave(state, save) {
@@ -14,6 +15,9 @@ const member = {
     },
     setErrorListening(state, hasErrorListening) {
       state.hasErrorListening = hasErrorListening;
+    },
+    setErrorListeningAdvanced(state, hasErrorListeningAdvanced) {
+      state.hasErrorListeningAdvanced = hasErrorListeningAdvanced;
     },
   },
 };

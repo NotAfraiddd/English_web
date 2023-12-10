@@ -416,14 +416,13 @@ export default {
       this.setUser(res);
       this.inputFullname = res?.fullName;
       this.inputBio = res?.bio;
-      this.avatar = res?.avtURL;
+      this.avatar = res?.avtURL || AVATAR;
       this.inputEmail = res?.email;
       this.inputDate = res?.registrationDate;
       res.gender ? (this.inputGender = 0) : (this.inputGender = 1);
-      this.inputFaceBook = res?.socialMediaConnection?.facebookURL;
-      this.inputInstagram = res?.socialMediaConnection?.instagramURL;
-      this.inputLinkedin = res?.socialMediaConnection?.linkedinURL;
-      console.log(res.level);
+      this.inputFaceBook = res?.facebookURL;
+      this.inputInstagram = res?.instagramURL;
+      this.inputLinkedin = res?.linkedinURL;
       if (res.level == 'PENDING') this.inputLevel = 0;
       else if (res.level == 'BEGINNER') this.inputLevel = 1;
       else if (res.level == 'INTERMEDIATE') this.inputLevel = 2;
@@ -449,14 +448,11 @@ export default {
           registrationDate: this.inputDate,
           gender: this.inputGender != 1 ? true : false,
           level: this.inputLevel,
-          socialMediaConnection: {
-            facebookURL: this.inputFaceBook,
-            instagramURL: this.inputInstagram,
-            linkedinURL: this.inputLinkedin,
-          },
+          facebookURL: this.inputFaceBook,
+          instagramURL: this.inputInstagram,
+          linkedinURL: this.inputLinkedin,
           role: this.userInfor.role == 'ADMIN' ? 'ADMIN' : 'USER',
         };
-        console.log(data);
         await userApi.updateUser(data);
         notification.success({ message: 'Update profile success' });
         this.emitter.emit('isShowLoading', false);
@@ -638,6 +634,7 @@ export default {
   },
   data() {
     return {
+      idSocial: null,
       inputFaceBook: null,
       userInfor: null,
       emailLocalStorage: null,
