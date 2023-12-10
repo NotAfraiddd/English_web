@@ -214,6 +214,36 @@
       </div>
     </template>
   </ConfirmModal>
+  <!-- modal login -->
+  <ConfirmModal
+    :showModal="modalLogin"
+    @closeModal="closeModalLogin"
+    @save="closeModalLogin"
+    :showFooter="false"
+    :widthCustom="600"
+  >
+    <template #content>
+      <div class="text-primary_black my-4 text-center">
+        You must be logged in to do this action
+      </div>
+    </template>
+    <template #select>
+      <div class="flex gap-20">
+        <div
+          class="cursor-pointer rounded-lg border-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="closeModalLogin"
+        >
+          <span class="text-base text-primary">Cancel</span>
+        </div>
+        <div
+          class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+          @click="goToLogin"
+        >
+          <span class="text-base text-white">Go to Login</span>
+        </div>
+      </div>
+    </template>
+  </ConfirmModal>
 </template>
 <script>
 import { notification } from 'ant-design-vue';
@@ -247,6 +277,7 @@ export default {
     this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
     this.idBeginner = JSON.parse(localStorage.getItem('idBeginner'));
+    this.isLogin = JSON.parse(localStorage.getItem('isLogin'));
     this.getAllCourse();
     this.getDetail();
     this.getAllBlog();
@@ -260,6 +291,8 @@ export default {
   },
   data() {
     return {
+      modalLogin: false,
+      isLogin: false,
       checkLevel: 'ADVANCED',
       modalCheckLastOne: false,
       showModalChooseCourse: false,
@@ -313,10 +346,14 @@ export default {
   },
   methods: {
     handleGoToBlog(data) {
-      this.$router.push({
-        name: 'DetailBlog',
-        params: { username: data.userID, id: data.id },
-      });
+      if (this.isLogin)
+        this.$router.push({
+          name: 'DetailBlog',
+          params: { username: data.userID, id: data.id },
+        });
+      else {
+        this.modalLogin = true;
+      }
     },
     async getAllBlog() {
       try {
@@ -366,6 +403,9 @@ export default {
     },
     cancelAPICreateCourse() {
       this.modalCheckLastOne = false;
+    },
+    closeModalLogin() {
+      this.modalLogin = false;
     },
     /**
      * show and hide modal check last one
@@ -592,15 +632,22 @@ export default {
     changeBack() {
       this.$router.push({ name: 'HomeUser' });
     },
-    async getData(data) {
-      if (data.status) {
-        this.courseObject.id = data.item.id;
-        this.courseObject.title = data.item.title;
-        this.courseObject.subtitle = data.item.subtitle;
-        this.modalChooseCourse = data.status;
-        if (data.item.id) {
-          localStorage.setItem('IDCourse', data.item.id);
+    goToLogin() {
+      this.$router.push({ name: 'Login' });
+    },
+    getData(data) {
+      if (this.isLogin) {
+        if (data.status) {
+          this.courseObject.id = data.item.id;
+          this.courseObject.title = data.item.title;
+          this.courseObject.subtitle = data.item.subtitle;
+          this.modalChooseCourse = data.status;
+          if (data.item.id) {
+            localStorage.setItem('IDCourse', data.item.id);
+          }
         }
+      } else {
+        this.modalLogin = true;
       }
     },
     goToListening() {

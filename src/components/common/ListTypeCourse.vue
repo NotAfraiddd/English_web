@@ -54,17 +54,19 @@
         </div>
       </div>
     </div>
-    <div v-if="showAddCourse" class="course relative mx-5">
-      <div
-        @click="handleAdd"
-        class="flex justify-center cursor-pointer border-dashed border-4 border-primary_black_opacity-600 flex-col w-full px-4 gap-1 rounded-2xl h-40"
-      >
+    <div v-if="isLogin">
+      <div v-if="showAddCourse" class="course relative mx-5">
         <div
-          class="bg-text_back mx-auto w-7 h-7 rounded-full text-xl font-semibold text-gray-400"
+          @click="handleAdd"
+          class="flex justify-center cursor-pointer border-dashed border-4 border-primary_black_opacity-600 flex-col w-full px-4 gap-1 rounded-2xl h-40"
         >
-          +
+          <div
+            class="bg-text_back mx-auto w-7 h-7 rounded-full text-xl font-semibold text-gray-400"
+          >
+            +
+          </div>
+          <div class="text-primary_black font-semibold">Add new course</div>
         </div>
-        <div class="text-primary_black font-semibold">Add new course</div>
       </div>
     </div>
   </div>
@@ -78,6 +80,7 @@ export default {
   components: { Processbar },
   created() {
     this.DELETE_GRAY_ICON = DELETE_GRAY_ICON;
+    this.isLogin = JSON.parse(localStorage.getItem('isLogin'));
   },
   emits: ['clicked', 'add', 'delete'],
   props: {
@@ -106,7 +109,9 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      isLogin: false,
+    };
   },
 };
 </script>

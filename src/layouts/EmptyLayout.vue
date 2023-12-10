@@ -1,5 +1,6 @@
 <template>
-  <div class="px-10">
+  <div class="px-5">
+    <BaseHeader v-if="isMatchedRoute('HomeUserNotLogin')" />
     <router-view />
   </div>
   <LoadingScreen v-if="isLoading" />
@@ -8,10 +9,11 @@
 <script>
 import LoadingScreen from '../components/common/LoadingScreen.vue';
 import { LoadingMixins } from '..//mixins/Loading';
+import BaseHeader from '../components/admin/BaseHeader.vue';
 
 export default {
   name: 'EmptyLayout',
-  components: { LoadingScreen },
+  components: { LoadingScreen, BaseHeader },
   mixins: [LoadingMixins],
   data() {
     return {
@@ -26,10 +28,21 @@ export default {
       }, 1000);
     },
   },
+  methods: {
+    /**
+     *  Check if the route name matches the route being displayed.
+     *  @returns {boolean} - Returns true if the route name matches the current route, false otherwise.
+     */
+    isMatchedRoute(routeName) {
+      return this.$route.matched.some(({ name }) => {
+        return name == routeName;
+      });
+    },
+  },
 };
 </script>
 
-<style scoped>
+<style>
 html *::-webkit-scrollbar {
   border-radius: 0;
   height: 12px;

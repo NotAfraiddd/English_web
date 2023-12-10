@@ -19,6 +19,7 @@
       :class="[!checkRoute && 'content-header-left__user']"
     >
       <div
+        v-if="isLogin"
         class="flex justify-center items-center cursor-pointer"
         :class="
           (!showBack && 'invisible') ||
@@ -63,6 +64,7 @@
     />
 
     <div
+      v-if="isLogin"
       class="flex items-center justify-between content-header-right mr-8 right-0 h-20"
     >
       <div
@@ -248,6 +250,21 @@
         </ul>
       </div>
     </div>
+    <div v-else class="flex w-28 justify-between h-5">
+      <div
+        @click="handleGoToLogin"
+        class="cursor-pointer text-primary_black hover:text-primary hover:underline"
+      >
+        Login
+      </div>
+      <div class="h-full w-2-px bg-primary" />
+      <div
+        @click="handleGoToRegister"
+        class="cursor-pointer text-primary_black hover:text-primary hover:underline"
+      >
+        Register
+      </div>
+    </div>
   </header>
 </template>
 <script>
@@ -278,6 +295,7 @@ export default {
     this.LOCK = LOCK;
     this.AVATAR = AVATAR;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
+    this.isLogin = JSON.parse(localStorage.getItem('isLogin'));
     if (this.userInfor.level != 'BEGINNER') {
       this.statusBlog = false;
     } else this.statusBlog = true;
@@ -473,6 +491,7 @@ export default {
   },
   data() {
     return {
+      isLogin: false,
       checkLevel: 'ADVANCED',
       userInfor: null,
       totalOnline: 0,
@@ -512,6 +531,12 @@ export default {
   },
   methods: {
     ...mapMutations('auth', ['setEmail', 'setPassword']),
+    handleGoToLogin() {
+      this.$router.push({ name: 'Login' });
+    },
+    handleGoToRegister() {
+      this.$router.push({ name: 'Register' });
+    },
     handleGoToCreateCourse() {
       this.$router.push({ name: 'CreateCourseForAdvancedListening' });
     },
@@ -573,11 +598,7 @@ export default {
         this.emitter.emit('isShowLoading', false);
         localStorage.removeItem('email');
         localStorage.removeItem('isLogin');
-        localStorage.removeItem('user');
         localStorage.removeItem('error');
-        localStorage.removeItem('idCoursePending');
-        localStorage.removeItem('IDCourse');
-        localStorage.removeItem('idBeginner');
         this.$router.push({ name: 'Login' });
       } catch (error) {
         console.error('Lỗi logout:', error);

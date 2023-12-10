@@ -3,6 +3,7 @@ const routes = [
     path: '/auth',
     name: 'EmptyLayout',
     component: () => import('../layouts/EmptyLayout.vue'),
+    meta: { requiresAuth: false },
     children: [
       {
         path: '/login',
@@ -13,6 +14,11 @@ const routes = [
         path: '/register',
         name: 'Register',
         component: () => import('../pages/login/Register.vue'),
+      },
+      {
+        path: '/not-login',
+        name: 'HomeUserNotLogin',
+        component: () => import('../pages/user/home/Home.vue'),
       },
     ],
   },
