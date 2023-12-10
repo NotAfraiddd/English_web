@@ -88,7 +88,7 @@
       </div>
       <div
         v-if="this.$route.name != 'UpdateCourseReading'"
-        @click="createCourse"
+        @click="createOrUpdate"
         class="cursor-pointer rounded-lg bg-primary border w-24 text-center h-8 leading-8 hover:opacity-50"
       >
         Create
@@ -198,6 +198,12 @@ export default {
             formData.append('file', this.file);
             this.avatar = await fileAPI.updateImg(formData);
           }
+          this.questionList = this.questionList.map((item) => {
+            return {
+              ...item,
+              correctAnswer: item.correctAnswer - 1,
+            };
+          });
           if (this.noData) {
             await courseApi.createReadingSession({
               description: this.subTitle,
@@ -226,6 +232,7 @@ export default {
             this.emitter.emit('isShowLoading', false);
             notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
           }
+          this.$router.push({ name: 'CourseReading' });
         } else {
           notification.error({ message: 'Title has not been filled in yet' });
         }
@@ -304,54 +311,7 @@ export default {
         this.questionList.push(questionObject);
       });
     },
-    async createCourse() {
-      this.dataQuestionReading = this.dataQuestionReading.filter(
-        (item, index) => index === 0 || item.title !== '',
-      );
-      this.checkQuestions();
-      try {
-        if (
-          this.dataQuestionReading.length ==
-            this.dataQuestionReadingCorrect.length &&
-          this.title
-        ) {
-          this.emitter.emit('isShowLoading', true);
-          await courseApi.createReadingSession({
-            description: this.subTitle,
-            textContent: this.contentReading,
-            title: this.title,
-            course: {
-              id: this.idCourse,
-            },
-            questionList: this.questionList,
-          });
-          this.emitter.emit('isShowLoading', false);
-          notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
-          this.$router.push({
-            name: 'CourseReading',
-            params: { name: this.namePath },
-          });
-        } else if (this.dataQuestionReading.length != 2) {
-          notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_9 });
-        }
-        if (
-          this.dataQuestionReadingCorrect.length !=
-          this.dataQuestionReading.length
-        ) {
-          notification.error({
-            message: 'The answers has not been filled in yet',
-          });
-        }
-        if (!this.title)
-          notification.error({
-            message: 'Title has not been filled in yet',
-          });
-      } catch (error) {
-        console.log(error);
-        this.emitter.emit('isShowLoading', false);
-        notification.error({ message: NOTIFY_MESSAGE.CREATE_FAILED });
-      }
-    },
+
     cancelCreate() {
       this.$router.push({ name: 'CourseReading' });
     },

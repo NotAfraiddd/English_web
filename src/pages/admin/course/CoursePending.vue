@@ -152,34 +152,74 @@ export default {
      * reject
      */
     async handleReject(data) {
-      this.idCourse = data.id;
-      try {
-        this.emitter.emit('isShowLoading', true);
-        const data = await courseApi.rejectedCourse({ id: this.idCourse });
-        const dataSocket = {
-          room: this.userID,
-          kind: SOCKET.REJECTED_COURSE_PENDING,
-        };
-        this.$socket.emit('joinRoom', dataSocket);
-        let content = {
-          data: data,
-          kind: SOCKET.REJECTED_COURSE_PENDING,
-        };
-        notification.success({ message: 'Reject course' });
-        this.$socket.emit('sendSignal', content);
-      } catch (error) {
-        this.emitter.emit('isShowLoading', false);
-        console.log(error);
-      } finally {
-        this.listCourse = [];
-        await this.getAllCoursePending();
+      if (typeof data.id == 'number') {
+        this.idCourse = data.id;
+        try {
+          this.emitter.emit('isShowLoading', true);
+          const data = await courseApi.rejectedCourse({ id: this.idCourse });
+          const dataSocket = {
+            room: this.userID,
+            kind: SOCKET.REJECTED_COURSE_PENDING,
+          };
+          this.$socket.emit('joinRoom', dataSocket);
+          let content = {
+            data: data,
+            kind: SOCKET.REJECTED_COURSE_PENDING,
+          };
+          notification.success({ message: 'Reject course' });
+          this.$socket.emit('sendSignal', content);
+        } catch (error) {
+          this.emitter.emit('isShowLoading', false);
+          console.log(error);
+        } finally {
+          this.listCourse = [];
+          await this.getAllCoursePending();
+        }
+      } else {
+        let number = +data.id.split('-').pop();
+        let dataReading = null;
+        let dataListeing = null;
+        try {
+          if (data?.type == 'Reading') {
+            dataReading = await courseApi.rejectedReadingSession({
+              id: number,
+            });
+            notification.success({
+              message: 'Rejected section reading successfully',
+            });
+          }
+          if (data?.type == 'Listening') {
+            dataListeing = await courseApi.rejectedListeningSession({
+              id: number,
+            });
+            notification.success({
+              message: 'Rejected section listening successfully',
+            });
+          }
+
+          const dataSocket = {
+            room: this.userID,
+            kind: SOCKET.NOTIFY_COURSE_PENDING,
+          };
+          this.$socket.emit('joinRoom', dataSocket);
+          let content = {
+            data: data?.type == 'Reading' ? dataReading : dataListeing,
+            kind: SOCKET.NOTIFY_COURSE_PENDING,
+          };
+          this.$socket.emit('sendSignal', content);
+        } catch (error) {
+          this.emitter.emit('isShowLoading', false);
+          console.log(error);
+        } finally {
+          this.listCourse = [];
+          await this.getAllCoursePending();
+        }
       }
     },
     /**
      * approve
      */
     async handleAprroved(data) {
-      console.log(data);
       if (typeof data.id == 'number') {
         this.idCourse = data.id;
         try {

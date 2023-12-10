@@ -256,7 +256,7 @@ export default {
             title: item.questionContent,
             question: item.options.map((item) => item.content),
           });
-          this.correctAnswer.push(+item.correctAnswer);
+          this.correctAnswer.push(+item.correctAnswer + 1);
         });
         detailSession?.fillInBlankQuestionList.forEach((ele, index) => {
           this.listQuestions.push({
