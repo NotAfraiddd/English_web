@@ -9,7 +9,12 @@
       <div class="bg-primary_line course-line w-full" />
     </div>
     <div class="detail-field mx-auto mt-5">
-      <img :src="MOUNTAIN_CLIMB" alt="" srcset="" class="detail-image" />
+      <img
+        :src="imgURL || MOUNTAIN_CLIMB"
+        alt=""
+        srcset=""
+        class="detail-image object-cover"
+      />
     </div>
     <Audio
       :data-prop="selectedAudio"
@@ -213,14 +218,10 @@ export default {
     this.MOUNTAIN_CLIMB = MOUNTAIN_CLIMB;
     this.paramName = this.$route.params.name;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
-    this.IDCourse = JSON.parse(localStorage.getItem('IDCourse'));
     this.idSession = +this.$route.params.id;
     if (this.idSession) {
-      this.getDetailSession();
+      this.getDetailSession(this.idSession);
       this.getRandomQuestions();
-    }
-    if (this.userInfor) {
-      this.getIdSectionAttemp();
     }
   },
   watch: {
@@ -282,15 +283,15 @@ export default {
     /**
      * get detail session
      */
-    async getDetailSession() {
+    async getDetailSession(data) {
       try {
         this.emitter.emit('isShowLoading', true);
         const detailSession = await courseApi.getListeningSessionByID({
-          id: this.idSession,
+          id: data,
         });
         this.title = detailSession?.title;
         this.textContent = detailSession?.textContent;
-        this.imgURL = detailSession?.imgURL;
+        this.imgURL = detailSession?.thumbnailURL;
         this.selectedAudio = detailSession?.mediaURL;
         this.script = detailSession?.script;
         detailSession?.questionList.forEach((item, index) => {
@@ -430,16 +431,7 @@ export default {
         await this.getDetail();
       }
     },
-    getIdSectionAttemp() {
-      const checkCourseAttemp = this.userInfor.courseAttemptList.find(
-        (item) => item.course.id == this.IDCourse,
-      );
-      const checkSectionAttemp =
-        checkCourseAttemp.listeningSectionAttemptList.find(
-          (item) => item.listeningSection.id == this.idSession,
-        );
-      this.IDSectionAttemp = checkSectionAttemp.id;
-    },
+
     /**
      * get detail user
      */
@@ -543,8 +535,11 @@ export default {
     },
     handleUpdate() {
       this.$router.push({
-        name: 'UpdateCourseReading',
-        params: { name: this.paramName },
+        name: 'UpdateCourseListening',
+        params: {
+          name: this.paramName,
+          id: this.idSession,
+        },
       });
     },
     goToDetailCourse(data) {

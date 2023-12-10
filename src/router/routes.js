@@ -340,7 +340,7 @@ const routes = [
           import('../pages/admin/course/CreateCourseListening.vue'),
       },
       {
-        path: 'course/:course/listening/detail/:name/update',
+        path: 'course/:course/listening/detail/:id/update',
         name: 'UpdateCourseListening',
         component: () =>
           import('../pages/admin/course/CreateCourseListening.vue'),

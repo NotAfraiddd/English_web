@@ -445,6 +445,7 @@ export default {
       if (
         this.isMatchedRoute('Dashboard') ||
         this.isMatchedRoute('UpdateCourseReading') ||
+        this.isMatchedRoute('UpdateCourseListening') ||
         this.isMatchedRoute('BlogPending') ||
         this.isMatchedRoute('DetailBlogPending') ||
         this.isMatchedRoute('CoursePending') ||

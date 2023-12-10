@@ -47,11 +47,13 @@
         external-class="w-52 flex mr-auto"
         :selectedValueProp="inputLevel"
         @update="updateLevel"
+        :disabled="true"
       />
     </div>
     <!-- listening -->
     <ImageUpload
-      :src-img="AVATAR"
+      :src-img="avatar"
+      @update="getAvatar"
       extend-class="w-96 h-96"
       extend-class-icon="icon-remove"
     />
@@ -63,7 +65,7 @@
     <ButtonBack title="Transcript" extend-class="mt-5" />
     <Word :contentProp="contentListening" @update="updateContentListening" />
     <ButtonBack
-      title="Listen to the dialogue above and choose the correct answer ( only 6 questions )"
+      title="Listen to the dialogue above and choose the correct answer"
       extend-class="mt-5"
     />
     <AddAnswer
@@ -80,18 +82,23 @@
       </div>
     </div>
     <ButtonBack
-      title="Listen to the dialogue above and match the beginnings and endings of the phrases ( only 11 questions )"
+      title="Listen to the dialogue above and match the beginnings and endings of the phrases"
       extend-class="text-left mt-5"
     />
-    <div class="text-primary_black font-semibold mt-2 text-left">
-      Phrases or words that need to be filled in
-    </div>
+    <div class="text-primary_black font-semibold mt-2 text-left">Answers</div>
+
     <div class="flex gap-2 items-center w-full flex-wrap">
       <div
         v-for="(item, index) in numWords"
         :key="index"
         class="flex items-center"
       >
+        <input
+          type="text"
+          :disabled="true"
+          class="border w-10 h-10 rounded-lg text-center bg-table_header mr-2"
+          :placeholder="index + 1"
+        />
         <input
           type="text"
           v-model="word[index]"
@@ -122,7 +129,7 @@
     />
 
     <div class="border-t border-primary_line mt-5" />
-    <div v-if="!checkName" class="flex justify-center gap-20 mt-5 text-base">
+    <div class="flex justify-center gap-20 mt-5 text-base">
       <div
         @click="cancelCreate"
         class="border border-primary w-24 text-center text-primary h-8 leading-8 hover:opacity-70 rounded-lg cursor-pointer"
@@ -131,23 +138,9 @@
       </div>
       <div
         @click="createCourse"
-        class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
+        class="cursor-pointer rounded-lg bg-primary w-40 text-center h-8 leading-8 hover:opacity-50"
       >
-        Create
-      </div>
-    </div>
-    <div v-else class="flex justify-center gap-20 mt-5 text-base">
-      <div
-        @click="showModalCreate"
-        class="cursor-pointer rounded-lg bg-primary w-24 text-center h-8 leading-8 hover:opacity-50"
-      >
-        Create
-      </div>
-      <div
-        @click="nextReading"
-        class="cursor-pointer rounded-lg border border-primary text-primary w-40 text-center h-8 leading-8 hover:opacity-50"
-      >
-        Next Reading
+        Create/Update
       </div>
     </div>
   </div>
@@ -200,6 +193,7 @@ import Inputlevel from '../../../components/common/InputLevel2.vue';
 import ConfirmModal from '../../../components/admin/ConfirmModal.vue';
 import courseApi from '../../../apis/course';
 import fileAPI from '../../../apis/file';
+import { mapState } from 'vuex';
 export default {
   name: 'CreateCourseListening',
   components: {
@@ -217,11 +211,60 @@ export default {
     this.NOTIFY_MESSAGE = NOTIFY_MESSAGE;
     this.AVATAR = AVATAR;
     this.STAR_RED = STAR_RED;
-    if (this.$route.name == 'CreateCourseForAdvancedListening')
-      this.checkName = true;
+    if (this.$route.params.course == 'beginner') this.inputLevel = 1;
+    if (this.$route.params.course == 'intermediate') this.inputLevel = 2;
+    if (this.$route.params.course == 'advanced') this.inputLevel = 3;
+    this.idCourse = JSON.parse(localStorage.getItem('IDCourse'));
+    this.idSection = +this.$route.params.id;
+    if (this.idCourse) {
+      this.getDetailSectionByID();
+    }
+  },
+  computed: {
+    ...mapState('course', ['media', 'file']),
   },
 
   methods: {
+    async getDetailSectionByID() {
+      try {
+        this.emitter.emit('isShowLoading', true);
+        const data = await courseApi.getListeningSessionByID({
+          id: this.idSection,
+        });
+        this.title = data?.title;
+        this.avatar = data?.thumbnailURL;
+        this.selectedAudio = data?.mediaURL;
+        this.subTitle = data?.description;
+        this.contentListening = data?.script;
+        data?.questionList.forEach((item, index) => {
+          this.dataQuestion.push({
+            id: index + 1,
+            title: item.questionContent,
+            answers: item.options.map((item) => item.content),
+          });
+          this.dataQuestionCorrect.push(+item?.correctAnswer - 1);
+        });
+        this.dataWords = [];
+        data?.fillInBlankQuestionList.forEach((ele, index) => {
+          this.dataWords.push({
+            id: index + 1,
+            contentLeft: ele?.leftContent,
+            contentRight: ele?.rightContent,
+          });
+          this.word.push(ele?.answer);
+          this.numWords = data?.fillInBlankQuestionList.length;
+        });
+        this.noData = true;
+        this.emitter.emit('isShowLoading', false);
+      } catch (error) {
+        console.log(error);
+        this.emitter.emit('isShowLoading', false);
+      }
+    },
+    getAvatar(data, fileImg) {
+      this.avatar = data;
+      this.file = fileImg;
+    },
     // level
     updateLevel(e) {
       this.inputLevel = e;
@@ -242,6 +285,27 @@ export default {
       this.dataWords.splice(index, 1);
       this.numWords--;
     },
+    checkQuestions() {
+      this.questionList = [];
+      this.dataQuestion.forEach((questionData, index) => {
+        const questionObject = {
+          questionContent: questionData.title,
+          correctAnswer: this.dataQuestionCorrect[index] + 1,
+          options: questionData.answers.map((answer) => ({ content: answer })),
+        };
+        this.questionList.push(questionObject);
+      });
+    },
+    checkWord() {
+      this.dataWords.forEach((item, index) => {
+        const questionObject = {
+          leftContent: item.contentLeft,
+          rightContent: item.contentRight,
+          answer: this.word[index],
+        };
+        this.fillInBlankQuestionList.push(questionObject);
+      });
+    },
     async createCourse() {
       this.dataQuestion = this.dataQuestion.filter(
         (item, index) => index === 0 || item.title !== '',
@@ -250,8 +314,10 @@ export default {
       this.checkWord();
       try {
         if (
-          this.dataQuestion.length == this.dataQuestionCorrect.length &&
-          this.title
+          this.dataQuestion.length != 0 &&
+          this.dataQuestionCorrect.length != 0 &&
+          this.title &&
+          this.selectedAudio
         ) {
           this.emitter.emit('isShowLoading', true);
           if (this.file) {
@@ -276,29 +342,31 @@ export default {
             questionList: this.questionList,
             fillInBlankQuestionList: this.fillInBlankQuestionList,
           };
-          const dataUpdate = {
-            id: this.idSection,
-            description: this.subTitle,
-            script: this.contentListening,
-            title: this.title,
-            mediaURL: this.selectedAudio,
-            thumbnailURL: this.avatar,
-            course: {
-              id: this.idCourse,
-            },
-            questionList: this.questionList,
-            fillInBlankQuestionList: this.fillInBlankQuestionList,
-          };
-          if (this.noData) await courseApi.createListeningSession(data);
-          else await courseApi.updateListeningSession(dataUpdate);
+
+          if (!this.noData) {
+            await courseApi.createListeningSession(data);
+            notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
+          } else {
+            const dataUpdate = {
+              id: this.idSection,
+              description: this.subTitle,
+              script: this.contentListening,
+              title: this.title,
+              mediaURL: this.selectedAudio,
+              thumbnailURL: this.avatar,
+              course: {
+                id: this.idCourse,
+              },
+              questionList: this.questionList,
+              fillInBlankQuestionList: this.fillInBlankQuestionList,
+            };
+            await courseApi.updateListeningSession(dataUpdate);
+            notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
+          }
           this.emitter.emit('isShowLoading', false);
-          notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
-          this.$router.push({
-            name: 'CourseListening',
-          });
-        } else if (
-          this.dataQuestion.length != this.dataQuestionCorrect.length
-        ) {
+          this.$router.push({ name: 'CourseListening' });
+        }
+        if (this.dataQuestion.length != this.dataQuestionCorrect.length) {
           notification.error({
             message: 'Questions and answers have not been filled in completely',
           });
@@ -307,6 +375,11 @@ export default {
           notification.error({
             message: 'Title has not been filled in yet',
           });
+        if (!this.selectedAudio) {
+          notification.error({
+            message: 'There is no audio file yet',
+          });
+        }
       } catch (error) {
         console.log(error);
         this.emitter.emit('isShowLoading', false);
@@ -342,7 +415,7 @@ export default {
       } else notification.warning({ message: 'Only 5 questions' });
     },
     addQuestion() {
-      if (this.dataQuestion.length <= 5)
+      if (this.dataQuestion.length <= 9)
         this.dataQuestion.push({
           title: '',
           answers: [],
@@ -362,12 +435,13 @@ export default {
         $('.create-course').animate({ scrollTo: element.scrollHeight }, 0);
     },
   },
-  computed: {},
-
   data() {
     return {
+      questionList: [],
+      idSection: null,
+      file: null,
+      avatar: AVATAR,
       showModalCreateCourse: false,
-      checkName: false,
       inputLevel: 1,
       contentListening: '',
       screen: UI.UI_LISTENING,
@@ -376,31 +450,18 @@ export default {
       indexFocus: null,
       numWords: 1,
       word: [],
-      dataQuestion: [
-        {
-          title: 'ababa',
-          answers: ['ABCABABAAB', 'CHIBAO'],
-        },
-        {
-          title: 'ababa',
-          answers: ['ABCABABAAB', 'CHIBAO'],
-        },
-      ],
-      dataQuestionReading: [
-        {
-          title: '',
-          answers: [],
-        },
-      ],
+      dataQuestion: [],
+      dataQuestionReading: [],
       dataWords: [
-        { id: 1, contentLeft: '', contentRight: '' },
-        { id: 2, contentLeft: '', contentRight: '' },
-        { id: 3, contentLeft: '', contentRight: '' },
-        { id: 4, contentLeft: '', contentRight: '' },
-        { id: 5, contentLeft: '', contentRight: '' },
+        {
+          id: 0,
+          contentLeft: '',
+          contentRight: '',
+        },
       ],
       selectedAudio: null,
-      dataQuestionCorrect: [1, 2], // example
+      dataQuestionCorrect: [],
+      fillInBlankQuestionList: [],
     };
   },
 };

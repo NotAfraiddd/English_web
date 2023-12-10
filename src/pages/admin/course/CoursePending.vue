@@ -179,6 +179,7 @@ export default {
      * approve
      */
     async handleAprroved(data) {
+      console.log(data);
       if (typeof data.id == 'number') {
         this.idCourse = data.id;
         try {
@@ -204,15 +205,33 @@ export default {
         }
       } else {
         let number = +data.id.split('-').pop();
+        let dataReading = null;
+        let dataListeing = null;
         try {
-          const data = await courseApi.approvedSession({ id: number });
+          if (data?.type == 'Reading') {
+            dataReading = await courseApi.approvedReadingSession({
+              id: number,
+            });
+            notification.success({
+              message: 'Approved section reading successfully',
+            });
+          }
+          if (data?.type == 'Listening') {
+            dataListeing = await courseApi.approvedListeningSession({
+              id: number,
+            });
+            notification.success({
+              message: 'Approved section listening successfully',
+            });
+          }
+
           const dataSocket = {
             room: this.userID,
             kind: SOCKET.NOTIFY_COURSE_PENDING,
           };
           this.$socket.emit('joinRoom', dataSocket);
           let content = {
-            data: data,
+            data: data?.type == 'Reading' ? dataReading : dataListeing,
             kind: SOCKET.NOTIFY_COURSE_PENDING,
           };
           this.$socket.emit('sendSignal', content);

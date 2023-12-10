@@ -175,7 +175,9 @@ export default {
     if (this.$route.name == 'CreateCourseForAdvancedReading')
       this.checkName = true;
     this.idCourse = JSON.parse(localStorage.getItem('IDCourse'));
-    this.inputLevel = JSON.parse(localStorage.getItem('IDCourse'));
+    if (this.$route.params.course == 'beginner') this.inputLevel = 1;
+    if (this.$route.params.course == 'intermediate') this.inputLevel = 2;
+    if (this.$route.params.course == 'advanced') this.inputLevel = 3;
     this.idSection = +this.$route.params.id;
     if (this.idSection) {
       this.getDetailSession();
@@ -272,7 +274,6 @@ export default {
       }
     },
     getAvatar(data, fileImg) {
-      console.log(data, fileImg);
       this.avatar = data;
       this.file = fileImg;
     },

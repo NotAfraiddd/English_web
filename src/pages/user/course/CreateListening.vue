@@ -82,7 +82,7 @@
       </div>
     </div>
     <ButtonBack
-      title="Listen to the dialogue above and match the beginnings and endings of the phrases ( only 5 questions )"
+      title="Listen to the dialogue above and match the beginnings and endings of the phrases"
       extend-class="text-left mt-5"
     />
     <div class="text-primary_black font-semibold mt-2 text-left">Answers</div>
@@ -251,6 +251,7 @@ export default {
 
     subtractWord(index) {
       this.word.splice(index, 1);
+      this.dataWords.splice(index, 1);
       this.numWords--;
     },
     checkQuestions() {
@@ -281,9 +282,10 @@ export default {
       this.checkWord();
       try {
         if (
-          this.dataQuestion.length == 9 &&
-          this.dataQuestionCorrect.length == 9 &&
-          this.title
+          this.dataQuestion.length != 0 &&
+          this.dataQuestionCorrect.length != 0 &&
+          this.title &&
+          this.selectedAudio
         ) {
           this.emitter.emit('isShowLoading', true);
           if (this.file) {
@@ -318,18 +320,20 @@ export default {
         } else if (this.dataQuestion.length != 9) {
           notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_9 });
         }
-        if (
-          this.dataQuestionCorrect.length != 9 &&
-          this.dataQuestion.length == 9
-        ) {
+        if (this.dataQuestion.length != this.dataQuestionCorrect.length) {
           notification.error({
-            message: 'The answers has not been filled in yet',
+            message: 'Questions and answers have not been filled in completely',
           });
         }
         if (!this.title)
           notification.error({
             message: 'Title has not been filled in yet',
           });
+        if (!this.selectedAudio) {
+          notification.error({
+            message: 'There is no audio file yet',
+          });
+        }
       } catch (error) {
         console.log(error);
         this.emitter.emit('isShowLoading', false);
@@ -356,8 +360,14 @@ export default {
       this.$router.push({ name: 'ListCourseListening' });
     },
     addWord() {
-      if (this.numWords <= 4) this.numWords++;
-      else notification.error({ message: NOTIFY_MESSAGE.ADD_WORD });
+      if (this.numWords <= 4) {
+        this.numWords++;
+        this.dataWords.push({
+          id: this.numWords - 1,
+          contentLeft: '',
+          contentRight: '',
+        });
+      } else notification.warning({ message: 'Only 5 questions' });
     },
     addQuestion() {
       if (this.dataQuestion.length <= 9)
@@ -365,7 +375,7 @@ export default {
           title: '',
           answers: [],
         });
-      else notification.error({ message: 'Only 9 questions' });
+      else notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION });
     },
     subtractQuestion(data) {
       this.dataQuestion.splice(data, 1);
@@ -401,20 +411,8 @@ export default {
       indexFocus: null,
       numWords: 1,
       word: [],
-      dataQuestion: [
-        {
-          title: '',
-          answers: [],
-        },
-      ],
-      dataWords: [
-        { id: 1, contentLeft: '', contentRight: '', answer: '' },
-        { id: 2, contentLeft: '', contentRight: '', answer: '' },
-        { id: 3, contentLeft: '', contentRight: '', answer: '' },
-        { id: 4, contentLeft: '', contentRight: '', answer: '' },
-        { id: 5, contentLeft: '', contentRight: '', answer: '' },
-      ],
-
+      dataQuestion: [],
+      dataWords: [{ id: 1, contentLeft: '', contentRight: '' }],
       selectedAudio: null,
       dataQuestionCorrect: [], // example
     };
