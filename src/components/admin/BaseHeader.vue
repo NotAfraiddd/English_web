@@ -142,23 +142,10 @@
           'custom-user': userInfor.level != checkLevel && !checkRoute,
         }"
       >
-        <div v-if="checkRoute == true" class="flex items-center cursor-pointer">
+        <div class="flex items-center cursor-pointer">
           <span class="name mx-3">
             {{ userInfor.fullName || userInfor.email }}
           </span>
-          <Avatar
-            :imgUrl="userInfor.avtURL"
-            :name="userInfor.fullName || userInfor.email"
-            class="w-9 h-9"
-          />
-        </div>
-        <div v-else class="flex justify-center items-center cursor-pointer">
-          <div
-            @click="handleGoToMyCourse"
-            class="name ml-2 w-24 hover:underline"
-          >
-            My course
-          </div>
           <Avatar
             :imgUrl="userInfor.avtURL"
             :name="userInfor.fullName || userInfor.email"
@@ -666,7 +653,10 @@ export default {
       if (!this.statusBlog) {
         this.$router.push({ name: 'CreateBlog' });
       } else {
-        notification.warning({ message: 'Blogging function is not open yet' });
+        notification.warning({
+          message:
+            'The level is not enough to open the blogging function, please select Test level to upgrade the level',
+        });
       }
     },
     handleGoToMyBlog() {

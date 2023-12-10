@@ -351,8 +351,9 @@ export default {
         await courseApi.createCourse({
           name: this.createName,
           description: this.createTitle,
+          courseStatus: 1,
           courseLevel: 0,
-          colorCode: '#ccc',
+          colorCode: '#eee',
           creatorUserid: {
             uid: this.userInfor.email,
           },
@@ -375,7 +376,8 @@ export default {
           name: this.createName1,
           description: this.createTitle1,
           courseLevel: 0,
-          colorCode: '#ccc',
+          courseStatus: 1,
+          colorCode: '#80add4',
           creatorUserid: {
             uid: this.userInfor.email,
           },
@@ -398,7 +400,8 @@ export default {
           name: this.createName2,
           description: this.createTitle2,
           courseLevel: 0,
-          colorCode: '#ccc',
+          courseStatus: 1,
+          colorCode: '#d49f80',
           creatorUserid: {
             uid: this.userInfor.email,
           },
@@ -495,7 +498,8 @@ export default {
           id: this.idCourseTest,
           name: this.createName,
           description: this.createTitle,
-          color: '#ccc',
+          colorCode: '#f05959',
+          courseStatus: 1,
           courseLevel: 0,
           creatorUserid: {
             uid: this.userInfor.email,
@@ -515,8 +519,9 @@ export default {
           id: this.idCourseTest1,
           name: this.createName1,
           description: this.createTitle1,
-          color: '#ccc',
+          colorCode: '#80add4',
           courseLevel: 0,
+          courseStatus: 1,
           creatorUserid: {
             uid: this.userInfor.email,
           },
@@ -536,8 +541,9 @@ export default {
           id: this.idCourseTest2,
           name: this.createName2,
           description: this.createTitle2,
-          color: '#ccc',
+          colorCode: '#d49f80',
           courseLevel: 0,
+          courseStatus: 1,
           creatorUserid: {
             uid: this.userInfor.email,
           },

@@ -247,14 +247,17 @@ export default {
             level: 2,
           });
           notification.success({
-            message: 'Congratulations !!! Your level upgrade to intermediate',
+            message: 'Congratulations !!! Your level upgrade to Intermediate',
           });
           this.$router.push({ name: 'HomeUser' });
         } else
           notification.warning({
             message: `Your level is ${this.userInfor.level}`,
           });
-      } else notification.warning({ message: 'Failed' });
+      } else {
+        notification.warning({ message: 'Failed' });
+        this.$router.push({ name: 'HomeUser' });
+      }
     },
     closeModalSubmit() {
       this.modalSubmit = false;

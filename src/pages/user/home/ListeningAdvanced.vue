@@ -291,7 +291,7 @@ export default {
     },
     goToNextReading() {
       this.$router.push({
-        name: 'TestLevelReadingIntermediate',
+        name: 'TestLevelReadingCreateCourse',
         params: { id: this.idCourse },
       });
     },

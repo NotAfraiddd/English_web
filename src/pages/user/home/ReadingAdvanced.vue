@@ -1,14 +1,14 @@
 <template>
   <div class="mx-2 mt-6">
     <ButtonBack
-      title="Reading Test Level Intermediate"
+      title="Reading Test Level Advanced"
       extend-class="mb-5"
       @back="handleBack"
     />
     <div class="flex items-center w-full">
       <div class="bg-primary_line course-line w-full" />
       <div class="text-lg text-primary_black font-semibold w-full">
-        Reading Test Blog
+        Reading Test To Update Advanced
       </div>
       <div class="bg-primary_line course-line w-full" />
     </div>
@@ -238,21 +238,23 @@ export default {
         this.submitMultipleChoice = true;
       }
       if (errorMulti == 0 && !this.hasErrorListening) {
-        if (this.userInfor.level == 'BEGINNER') {
+        if (this.userInfor.level == 'INTERMEDIATE') {
+          console.log(this.userInfor.level);
           await userApi.updateLevel({
             user: {
               uid: this.userInfor.email,
             },
-            level: 2,
+            level: 3,
           });
           notification.success({
-            message: 'Congratulations !!! Your level upgrade to intermediate',
+            message: 'Congratulations !!! Your level upgrade to Advanced',
           });
-        } else
-          notification.warning({
-            message: `Your level is ${this.userInfor.level}`,
-          });
-      } else notification.warning({ message: 'Failed' });
+          this.$router.push({ name: 'HomeUser' });
+        }
+      } else {
+        notification.warning({ message: 'Failed' });
+        this.$router.push({ name: 'HomeUser' });
+      }
     },
     closeModalSubmit() {
       this.modalSubmit = false;

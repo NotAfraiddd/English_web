@@ -91,7 +91,12 @@ export default {
             name: 'TestLevelListeningCreateCourse',
             params: { id: data.item.id },
           });
-        } else {
+        } else if (this.userInfor.level == 'ADVANCED')
+          notification.warning({
+            message:
+              'Your level is Advanced, so cannot update to level Advanced',
+          });
+        else {
           notification.warning({ message: 'Your level is not Intermediate' });
         }
       }

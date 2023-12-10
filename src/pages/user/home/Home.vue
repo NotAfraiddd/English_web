@@ -5,7 +5,6 @@
       :data="listCourses"
       @clicked="getData"
       @add="handleAdd"
-      :hideProcessBar="true"
       :hideCourseFinished="true"
       :show-add-course="isAdvanced"
       extendClass="grid-cols-user mt-2"
@@ -470,7 +469,6 @@ export default {
                 title: modifiedLevel + ' Level',
                 level: modifiedLevel,
                 subtitle: item?.description,
-                percentages: [{ percentage: 0 }],
                 name: item?.name,
                 courseFinished: 0,
                 color: item?.colorCode,
@@ -595,79 +593,15 @@ export default {
       this.$router.push({ name: 'HomeUser' });
     },
     async getData(data) {
-      const result = this.userLevel.some(
-        (item) =>
-          item.level == data.item.level && item.status == data.item.status,
-      );
-      if (!result) {
-        if (data.status) {
-          this.courseObject.id = data.item.id;
-          this.courseObject.title = data.item.title;
-          this.courseObject.subtitle = data.item.subtitle;
-          this.modalChooseCourse = data.status;
-          if (data.item.id) {
-            localStorage.setItem('IDCourse', data.item.id);
-            this.emitter.emit('isShowLoading', true);
-            try {
-              if (data.item.id == 2) {
-                if (!this.idBeginner) {
-                  let dataBeginner = await courseApi.createCourseAttemp({
-                    completion: 0,
-                    user: {
-                      uid: this.userInfor.email,
-                    },
-                    course: {
-                      id: data.item.id,
-                    },
-                    listeningSectionAttemptList:
-                      this.listeningSectionAttemptList,
-                    readingSectionAttemptList: this.readingSectionAttemptList,
-                  });
-                  localStorage.setItem('idBeginner', dataBeginner.id);
-                } else {
-                  let dataBeginner = await courseApi.createCourseAttemp({
-                    completion: 0,
-                    id: this.idBeginner,
-                    user: {
-                      uid: this.userInfor.email,
-                    },
-                    course: {
-                      id: data.item.id,
-                    },
-                    listeningSectionAttemptList:
-                      this.listeningSectionAttemptList,
-                    readingSectionAttemptList: this.readingSectionAttemptList,
-                  });
-                  localStorage.setItem('idBeginner', dataBeginner.id);
-                }
-              }
-              // if (data.item.id == 3) {
-              //   if (this.idIntermediate) {
-              //     let dataBeginner = await courseApi.createCourseAttemp(
-              //       dataCourseAttemp,
-              //     );
-              //     localStorage.setItem('idIntermediate', dataBeginner.id);
-              //   }
-              // }
-              // if (data.item.id == 4) {
-              //   if (this.idAdvanced) {
-              //     let dataBeginner = await courseApi.createCourseAttemp(
-              //       dataCourseAttemp,
-              //     );
-              //     localStorage.setItem('idAdvanced', dataBeginner.id);
-              //   }
-              // }
-
-              this.emitter.emit('isShowLoading', false);
-            } catch (error) {
-              console.log(error);
-              this.emitter.emit('isShowLoading', false);
-            } finally {
-              await this.getDetail();
-            }
-          }
+      if (data.status) {
+        this.courseObject.id = data.item.id;
+        this.courseObject.title = data.item.title;
+        this.courseObject.subtitle = data.item.subtitle;
+        this.modalChooseCourse = data.status;
+        if (data.item.id) {
+          localStorage.setItem('IDCourse', data.item.id);
         }
-      } else notification.warn({ message: 'Your level is not yet achieved' });
+      }
     },
     goToListening() {
       const path = formatSpacerIntoHyphen(
