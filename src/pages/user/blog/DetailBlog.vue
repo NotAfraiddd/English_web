@@ -369,10 +369,7 @@ export default {
   methods: {
     ...mapMutations('notify', ['setNotify']),
     handleGoToBlog(data) {
-      this.$router.push({
-        name: 'DetailBlog',
-        params: { username: data.userID, id: data.id },
-      });
+      this.getDetailBlogByID(data.id);
     },
     async getAllBlog() {
       try {
