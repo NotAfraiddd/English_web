@@ -186,7 +186,7 @@ export default {
             answers: item.options.map((item) => item.content),
           });
 
-          this.dataQuestionReadingCorrect.push(+item.correctAnswer);
+          this.dataQuestionReadingCorrect.push(+item.correctAnswer - 1);
         });
         this.noData = true;
         this.emitter.emit('isShowLoading', false);
@@ -238,7 +238,9 @@ export default {
           this.dataQuestionReadingCorrect.length != 0 &&
           this.dataQuestionReading.length != 0 &&
           this.contentReading &&
-          !checkCorrect
+          !checkCorrect &&
+          this.dataQuestionReadingCorrect.length ==
+            this.dataQuestionReading.length
         ) {
           if (this.title) {
             this.emitter.emit('isShowLoading', true);
@@ -274,6 +276,7 @@ export default {
                 questionList: this.questionList,
               });
               this.emitter.emit('isShowLoading', false);
+              this.$router.push({ name: 'TestLevelReadingAdvanced' });
               notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
             }
           } else {
@@ -348,7 +351,7 @@ export default {
       idCourse: null,
       questionList: [],
       showModalCreateCourse: false,
-      inputLevel: 1,
+      inputLevel: 2,
       contentReading: '',
       title: '',
       dataQuestionReading: [],
