@@ -28,10 +28,10 @@
         {{ item?.title }}
       </div>
       <div class="flex">
-        <img
-          :src="item.avatar"
-          alt=""
-          class="w-5 h-5 rounded-full object-cover"
+        <Avatar
+          :imgUrl="item.avatar"
+          :name="item.userID"
+          class="w-5 h-5 border"
         />
         <div class="ml-3 flex justify-between items-center gap-2">
           <div class="text-sm font-semibold">{{ item?.name }}</div>
@@ -261,6 +261,7 @@ import InputLevel from '../../../components/common/InputLevel.vue';
 import { mapState } from 'vuex';
 import courseApi from '../../../apis/course';
 import blog from '../../../apis/blog';
+import Avatar from '../../../components/common/avatar.vue';
 export default {
   name: 'HomeUser',
   components: {
@@ -268,6 +269,7 @@ export default {
     ConfirmModal,
     InputLevel,
     Slider,
+    Avatar,
   },
   created() {
     this.WARNING = WARNING;

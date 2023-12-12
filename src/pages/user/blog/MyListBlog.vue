@@ -537,6 +537,7 @@ export default {
       });
     },
     async getCommentByIDBlog() {
+      this.listComment = [];
       try {
         const data = await blogApi.getComment({
           post: {
@@ -576,9 +577,8 @@ export default {
     },
     sendChat(data) {
       const unblockDate = moment(this.userInfor.unblockDate);
-      const currentDate = moment();
       //
-      if (unblockDate.isBefore(currentDate)) {
+      if (!this.userInfor.unblockDate) {
         const chatContent = this.$refs.chatContent;
         if (data) {
           if (this.receiverName) {

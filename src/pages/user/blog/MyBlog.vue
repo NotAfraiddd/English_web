@@ -100,11 +100,7 @@
       <div v-for="(item, index) in listComment" :key="index" class="mr-3">
         <!-- comment first -->
         <div class="flex mt-2">
-          <Avatar
-            :imgUrl="item.avatar"
-            :name="item.name || item.userID"
-            class="w-9 h-9"
-          />
+          <Avatar :imgUrl="item.avatar" :name="item.name" class="w-9 h-9" />
           <div class="flex flex-col w-full relative">
             <div
               class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first relative"
@@ -175,10 +171,11 @@ import Emoji from './Emoji.vue';
 import moment from 'moment';
 import { SOCKET } from '../../../constants';
 import { notification } from 'ant-design-vue';
+import Avatar from '../../../components/common/Avatar.vue';
 
 export default {
   name: 'MyBlog',
-  components: { ButtonBackUser, ListBlog, Emoji },
+  components: { ButtonBackUser, ListBlog, Emoji, Avatar },
   created() {
     this.CHAT = CHAT;
     this.HEART = HEART;
@@ -220,6 +217,7 @@ export default {
       replyComments: [],
       listComment: [],
       listBlog: [],
+      IDBlog: null,
     };
   },
   methods: {
@@ -443,8 +441,7 @@ export default {
     },
     sendChat(data) {
       const unblockDate = moment(this.userInfor.unblockDate);
-      const currentDate = moment();
-      if (unblockDate.isBefore(currentDate)) {
+      if (this.userInfor.unblockDate == null) {
         const chatContent = this.$refs.chatContent;
         if (data) {
           if (this.receiverName) {
@@ -487,11 +484,51 @@ export default {
         });
       }
     },
+    async getCommentByIDBlog() {
+      this.listComment = [];
+      try {
+        const data = await blogApi.getComment({
+          post: {
+            id: this.IDBlog,
+          },
+          index: this.current,
+          itemsPerPage: 5,
+        });
+        data.content.forEach((item) => {
+          const replyComments = item?.commentReplies.map((ele) => {
+            return {
+              id: ele?.id,
+              userID: ele?.replyUser?.email,
+              name: ele?.replyUser?.fullName,
+              content: ele?.content,
+              nameReply: ele?.mention?.fullName,
+              numReact: 10,
+              numComment: 2,
+              created_at: moment(ele?.postedTime).format('DD/MM/YYYY HH:mm'),
+            };
+          });
+          this.listComment.push({
+            id: item?.id,
+            userID: item?.postedUser?.email,
+            name: item?.postedUser?.fullName || item?.postedUser?.email,
+            avatar: item?.postedUser?.avtURL,
+            content: item?.commentContent,
+            numReact: 0,
+            numComment: 0,
+            created_at: moment(item?.postedTime).format('DD/MM/YYYY HH:mm'),
+            replyComments: replyComments,
+          });
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
     handleShowComment(data) {
       this.idUserBlog = data.data.id;
-      console.log('this.idUserBlog', this.idUserBlog);
+      this.IDBlog = data?.data.id;
       if (data.status) {
         this.showComment = true;
+        this.getCommentByIDBlog();
       }
     },
     handleCloseComment() {

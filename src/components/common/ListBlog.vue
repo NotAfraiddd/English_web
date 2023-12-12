@@ -11,12 +11,7 @@
     >
       <div class="flex flex-col">
         <div v-if="user" class="flex gap-3 items-center">
-          <img
-            :src="item.avatar"
-            alt=""
-            srcset=""
-            class="h-8 w-8 object-cover rounded-full"
-          />
+          <Avatar :imgUrl="item.avatar" :name="item?.userID" class="w-9 h-9" />
           <div class="flex flex-col items-start">
             <div class="font-semibold text-base">{{ item.author }}</div>
             <div class="text-xs">{{ item.date }}</div>
@@ -126,6 +121,8 @@
 </template>
 <script>
 import { OPTION_ICON, HEART, CHAT, HEART_DEFAULT } from '../../constants/image';
+import Avatar from '../common/Avatar.vue';
+
 export default {
   name: 'ListBlog',
   created() {
@@ -134,6 +131,7 @@ export default {
     this.HEART_DEFAULT = HEART_DEFAULT;
     this.OPTION_ICON = OPTION_ICON;
   },
+  components: { Avatar },
   emits: ['showComment', 'changePath', 'clickReact', 'rejected', 'approved'],
   props: {
     data: { type: Array, default: () => [] },

@@ -8,12 +8,12 @@
     />
     <div class="flex justify-between">
       <div class="flex gap-3 items-center">
-        <img
-          :src="detailBlog.avatar"
-          alt=""
-          srcset=""
-          class="h-10 w-10 rounded-full object-cover"
+        <Avatar
+          :imgUrl="detailBlog.avatar"
+          :name="detailBlog?.name"
+          class="w-10 h-10"
         />
+
         <div class="flex flex-col items-start">
           <div class="font-semibold text-base">{{ detailBlog.name }}</div>
           <div class="text-xs">Date: {{ detailBlog.created_at }}</div>
@@ -85,10 +85,10 @@
           {{ item?.title }}
         </div>
         <div class="flex">
-          <img
-            :src="item.avatar"
-            alt=""
-            class="w-5 h-5 rounded-full object-cover"
+          <Avatar
+            :imgUrl="item.avatar"
+            :name="item.userID"
+            class="w-5 h-5 border"
           />
           <div class="ml-3 flex justify-between items-center gap-2">
             <div class="text-sm font-semibold">{{ item?.name }}</div>
@@ -293,9 +293,11 @@ import { SOCKET } from '../../../constants';
 import blogApi from '../../../apis/blog';
 import { v4 as uuidv4 } from 'uuid';
 import ButtonBackUser from '../../../components/common/ButtonBackUser.vue';
+import Avatar from '../../../components/common/Avatar.vue';
+import { notification } from 'ant-design-vue';
 export default {
   name: 'DetailBlog',
-  components: { Emoji, MenuOption, ButtonBackUser },
+  components: { Emoji, MenuOption, ButtonBackUser, Avatar },
   created() {
     this.GROUP_STUDENT_1 = GROUP_STUDENT_1;
     this.GROUP_STUDENT_2 = GROUP_STUDENT_2;
@@ -391,6 +393,7 @@ export default {
       }
     },
     async getCommentByIDBlog() {
+      this.listComment = [];
       try {
         const data = await blogApi.getComment({
           post: {
@@ -466,7 +469,7 @@ export default {
         this.emitter.emit('isShowLoading', true);
         const data = await blogApi.getDetailBlog({ id: dataID });
         this.detailBlog.avatar = data?.author?.avtURL;
-        this.detailBlog.name = data?.author?.fullName;
+        this.detailBlog.name = data?.author?.fullName || data?.author?.email;
         this.detailBlog.content = data?.content;
         this.detailBlog.created_at = moment(data?.createDate).format(
           'DD/MM/YYYY HH:mm',
@@ -720,64 +723,75 @@ export default {
     },
     sendChat(data) {
       //
-      const chatContent = this.$refs.chatContent;
-      if (data) {
-        if (this.receiverName) {
-          // join socket
-          const dataSocket = {
-            room: this.idUserBlog + `REPLY`,
-            kind: SOCKET.REPLY_COMMENT,
-          };
-          this.$socket.emit('joinRoom', dataSocket);
-          const commentDetail = {
-            id: this.idUserBlog,
-            userID: this.userInfor.uid,
-            name: this.userInfor.fullName,
-            avatar: this.userInfor.avtURL,
-            nameReply: this.receiverName,
-            content: this.contentChat,
-            numReact: 0,
-            numComment: 0,
-            created_at: moment().format('DD/MM/YYYY HH:mm'),
-            admin: this.userInfor.role == 'ADMIN' ? true : false,
-          };
-          const comment = {
-            data: commentDetail,
-            kind: SOCKET.REPLY_COMMENT,
-          };
-          this.$socket.emit('sendSignal', comment);
-          this.replyComments.push(commentDetail);
-        } else {
-          const dataSocket = {
-            room: this.idUserBlog,
-            kind: SOCKET.COMMENT,
-          };
-          this.$socket.emit('joinRoom', dataSocket);
-          const commentDetail = {
-            id: this.idUserBlog,
-            userID: this.userInfor.uid,
-            name: this.userInfor.fullName,
-            avatar: this.userInfor.avtURL,
-            nameReply: this.receiverName,
-            content: this.contentChat,
-            numReact: 0,
-            numComment: 0,
-            replyComments: [],
-            created_at: moment().format('DD/MM/YYYY HH:mm'),
-            admin: this.userInfor.role == 'ADMIN' ? true : false,
-          };
-          const comment = {
-            data: commentDetail,
-            kind: SOCKET.COMMENT,
-          };
-          this.$socket.emit('sendSignal', comment);
-          this.listComment.unshift(commentDetail);
-          this.handleComment();
-          this.comment++;
+      const unblockDate = moment(this.userInfor.unblockDate);
+      if (!unblockDate) {
+        const chatContent = this.$refs.chatContent;
+        if (data) {
+          if (this.receiverName) {
+            // join socket
+            const dataSocket = {
+              room: this.idUserBlog + `REPLY`,
+              kind: SOCKET.REPLY_COMMENT,
+            };
+            this.$socket.emit('joinRoom', dataSocket);
+            const commentDetail = {
+              id: this.idUserBlog,
+              userID: this.userInfor.uid,
+              name: this.userInfor.fullName,
+              avatar: this.userInfor.avtURL,
+              nameReply: this.receiverName,
+              content: this.contentChat,
+              numReact: 0,
+              numComment: 0,
+              created_at: moment().format('DD/MM/YYYY HH:mm'),
+              admin: this.userInfor.role == 'ADMIN' ? true : false,
+            };
+            const comment = {
+              data: commentDetail,
+              kind: SOCKET.REPLY_COMMENT,
+            };
+            this.$socket.emit('sendSignal', comment);
+            this.replyComments.push(commentDetail);
+          } else {
+            const dataSocket = {
+              room: this.idUserBlog,
+              kind: SOCKET.COMMENT,
+            };
+            this.$socket.emit('joinRoom', dataSocket);
+            const commentDetail = {
+              id: this.idUserBlog,
+              userID: this.userInfor.uid,
+              name: this.userInfor.fullName,
+              avatar: this.userInfor.avtURL,
+              nameReply: this.receiverName,
+              content: this.contentChat,
+              numReact: 0,
+              numComment: 0,
+              replyComments: [],
+              created_at: moment().format('DD/MM/YYYY HH:mm'),
+              admin: this.userInfor.role == 'ADMIN' ? true : false,
+            };
+            const comment = {
+              data: commentDetail,
+              kind: SOCKET.COMMENT,
+            };
+            this.$socket.emit('sendSignal', comment);
+            this.listComment.unshift(commentDetail);
+            this.handleComment();
+            this.comment++;
+          }
+          this.receiverName = '';
+          this.contentChat = '';
+          chatContent.style.paddingLeft = `0px`;
         }
-        this.receiverName = '';
-        this.contentChat = '';
-        chatContent.style.paddingLeft = `0px`;
+      } else {
+        const dateBlockDate = unblockDate
+          .subtract(3, 'days')
+          .format('HH:mm DD/MM/YYYY');
+        notification.warn({
+          placement: 'topLeft',
+          message: `You are locked in for 3 days starting from ${dateBlockDate}`,
+        });
       }
     },
     handleShowComment() {
