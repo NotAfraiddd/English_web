@@ -191,10 +191,14 @@ export default {
       );
       this.checkQuestions();
       try {
+        const checkCorrect = this.dataQuestionReadingCorrect.some(
+          (item) => item < 0,
+        );
         if (
           this.dataQuestionReadingCorrect.length != 0 &&
           this.dataQuestionReading.length != 0 &&
-          this.contentReading
+          this.contentReading &&
+          !checkCorrect
         ) {
           if (this.title) {
             this.emitter.emit('isShowLoading', true);
@@ -203,12 +207,6 @@ export default {
               formData.append('file', this.file);
               this.avatar = await fileAPI.updateImg(formData);
             }
-            this.questionList = this.questionList.map((item) => {
-              return {
-                ...item,
-                correctAnswer: item.correctAnswer - 1,
-              };
-            });
             if (!this.noData) {
               await courseApi.createReadingSession({
                 description: this.subTitle,
@@ -221,6 +219,7 @@ export default {
                 questionList: this.questionList,
               });
               this.emitter.emit('isShowLoading', false);
+              this.$router.push({ name: 'CourseReading' });
               notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
             } else {
               await courseApi.updateReadingSession({
@@ -235,9 +234,9 @@ export default {
                 questionList: this.questionList,
               });
               this.emitter.emit('isShowLoading', false);
+              this.$router.push({ name: 'CourseReading' });
               notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
             }
-            this.$router.push({ name: 'CourseReading' });
           } else {
             notification.error({ message: 'Title has not been filled in yet' });
           }
@@ -259,6 +258,11 @@ export default {
         if (!this.contentReading) {
           notification.error({
             message: 'The reading passage is not available yet',
+          });
+        }
+        if (checkCorrect) {
+          notification.error({
+            message: 'The answers has not been filled in yet',
           });
         }
       } catch (error) {
@@ -287,7 +291,7 @@ export default {
             answers: item.options.map((item) => item.content),
           });
 
-          this.dataQuestionReadingCorrect.push(+item.correctAnswer);
+          this.dataQuestionReadingCorrect.push(+item.correctAnswer - 1);
         });
         this.noData = true;
         this.emitter.emit('isShowLoading', false);
@@ -334,7 +338,7 @@ export default {
       this.$router.push({ name: 'CourseReading' });
     },
     addQuestionReading() {
-      if (this.dataQuestionReading.length <= 8)
+      if (this.dataQuestionReading.length <= 9)
         this.dataQuestionReading.push({
           title: '',
           answers: [],
