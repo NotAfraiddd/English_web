@@ -22,10 +22,20 @@
     </div>
     <ButtonBack title="Reading text" extend-class="mt-5" />
     <div class="text-left detail-text mt-5" v-html="textContent" />
-    <ButtonBack
-      title="Read the passage above and choose the correct"
-      extend-class="mt-5"
-    />
+    <div class="flex items-center flex-wrap mt-5 gap-5">
+      <ButtonBack title="Read the passage above and choose the correct" />
+      <div
+        v-if="userInfor.role == 'ADMIN' && isMatchedRoute('TestLevelReading')"
+        class="h-6 border-orange border rounded-xl flex items-center"
+      >
+        <div
+          class="text-primary_black hover:underline cursor-pointer mx-3"
+          @click="showModalMuilti"
+        >
+          Correct Answers
+        </div>
+      </div>
+    </div>
     <div class="px-5 pb-2 mt-5 detail-multiple-choice">
       <MultipleChoice
         :data="dataMultipleChoice"
@@ -136,6 +146,23 @@
           @click="acceptShowModalBack"
         >
           <span class="text-base text-white">OK</span>
+        </div>
+      </div>
+    </template>
+  </ConfirmModal>
+  <ConfirmModal
+    :showModal="modalMuilti"
+    @closeModal="closeModalMuilti"
+    @save="closeModalMuilti"
+    :showFooter="false"
+    :widthCustom="300"
+  >
+    <template #content>
+      <div class="w-full text-center text-xl text-primary">Correct Answers</div>
+      <div v-for="(item, index) in correctAnswer" :key="index" class="w-full">
+        <div class="text-base flex w-full justify-between mt-3">
+          <div>Answers {{ index + 1 }} is</div>
+          <div class="text-orange">{{ item }}</div>
         </div>
       </div>
     </template>
@@ -327,6 +354,23 @@ export default {
         });
       }
     },
+    /**
+     * show modal
+     */
+    showModalMuilti() {
+      this.modalMuilti = true;
+    },
+    /**
+     * close modal
+     */
+    closeModalMuilti() {
+      this.modalMuilti = false;
+    },
+    isMatchedRoute(routeName) {
+      return this.$route.matched.some(({ name }) => {
+        return name == routeName;
+      });
+    },
   },
   data() {
     return {
@@ -347,6 +391,7 @@ export default {
       myAnswer: [],
       correctAnswer: [],
       dataMultipleChoice: [],
+      modalMuilti: false,
     };
   },
 };

@@ -227,10 +227,14 @@ export default {
       );
       this.checkQuestions();
       try {
+        const checkCorrect = this.dataQuestionReadingCorrect.some(
+          (item) => item < 0,
+        );
         if (
           this.dataQuestionReadingCorrect.length != 0 &&
           this.dataQuestionReading.length != 0 &&
-          this.contentReading
+          this.contentReading &&
+          !checkCorrect
         ) {
           if (this.title) {
             this.emitter.emit('isShowLoading', true);
@@ -292,6 +296,11 @@ export default {
             message: 'The reading passage is not available yet',
           });
         }
+        if (checkCorrect) {
+          notification.error({
+            message: 'The answers has not been filled in yet',
+          });
+        }
       } catch (error) {
         console.log(error);
         this.emitter.emit('isShowLoading', false);
@@ -306,7 +315,7 @@ export default {
       this.$router.push({ name: 'TestLevelReading' });
     },
     addQuestionReading() {
-      if (this.dataQuestionReading.length <= 8)
+      if (this.dataQuestionReading.length <= 9)
         this.dataQuestionReading.push({
           title: '',
           answers: [],

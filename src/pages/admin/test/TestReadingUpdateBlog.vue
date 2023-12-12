@@ -184,7 +184,7 @@ export default {
             answers: item.options.map((item) => item.content),
           });
 
-          this.dataQuestionReadingCorrect.push(+item.correctAnswer);
+          this.dataQuestionReadingCorrect.push(+item.correctAnswer - 1);
         });
         this.noData = true;
         this.emitter.emit('isShowLoading', false);
@@ -229,10 +229,14 @@ export default {
       );
       this.checkQuestions();
       try {
+        const checkCorrect = this.dataQuestionReadingCorrect.some(
+          (item) => item < 0,
+        );
         if (
           this.dataQuestionReadingCorrect.length != 0 &&
           this.dataQuestionReading.length != 0 &&
-          this.contentReading
+          this.contentReading &&
+          !checkCorrect
         ) {
           if (this.title) {
             this.emitter.emit('isShowLoading', true);
@@ -267,6 +271,7 @@ export default {
                 },
                 questionList: this.questionList,
               });
+              this.$router.push({ name: 'TestLevelReadingBlog' });
               this.emitter.emit('isShowLoading', false);
               notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
             }
@@ -293,6 +298,11 @@ export default {
             message: 'The answers or questions has not been filled in yet',
           });
         }
+        if (checkCorrect) {
+          notification.error({
+            message: 'The answers has not been filled in yet',
+          });
+        }
       } catch (error) {
         console.log(error);
         this.emitter.emit('isShowLoading', false);
@@ -306,12 +316,12 @@ export default {
       this.$router.push({ name: 'TestLevelReadingBlog' });
     },
     addQuestionReading() {
-      if (this.dataQuestionReading.length <= 8)
+      if (this.dataQuestionReading.length <= 9)
         this.dataQuestionReading.push({
           title: '',
           answers: [],
         });
-      else notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_9 });
+      else notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_10 });
     },
     subtractQuestionReading(data) {
       this.dataQuestionReading.splice(data, 1);

@@ -21,10 +21,23 @@
     </div>
     <ButtonBack title="Reading text" extend-class="mt-5" />
     <div class="text-left detail-text mt-5" v-html="textContent" />
-    <ButtonBack
-      title="Read the passage above and choose the correct"
-      extend-class="mt-5"
-    />
+    <div class="flex items-center flex-wrap mt-5 gap-5">
+      <ButtonBack title="Read the passage above and choose the correct" />
+      <div
+        v-if="
+          userInfor.role == 'ADMIN' &&
+          isMatchedRoute('TestLevelReadingAdvanced')
+        "
+        class="h-6 border-orange border rounded-xl flex items-center"
+      >
+        <div
+          class="text-primary_black hover:underline cursor-pointer mx-3"
+          @click="showModalMuilti"
+        >
+          Correct Answers
+        </div>
+      </div>
+    </div>
     <div class="px-5 pb-2 mt-5 detail-multiple-choice">
       <MultipleChoice
         :data="dataMultipleChoice"
@@ -58,6 +71,23 @@
       </div>
     </div>
   </div>
+  <ConfirmModal
+    :showModal="modalMuilti"
+    @closeModal="closeModalMuilti"
+    @save="closeModalMuilti"
+    :showFooter="false"
+    :widthCustom="300"
+  >
+    <template #content>
+      <div class="w-full text-center text-xl text-primary">Correct Answers</div>
+      <div v-for="(item, index) in correctAnswer" :key="index" class="w-full">
+        <div class="text-base flex w-full justify-between mt-3">
+          <div>Answers {{ index + 1 }} is</div>
+          <div class="text-orange">{{ item }}</div>
+        </div>
+      </div>
+    </template>
+  </ConfirmModal>
 </template>
 <script>
 import ButtonBack from '../../components/common/ButtonBack.vue';
@@ -73,9 +103,10 @@ import { mapState, mapMutations } from 'vuex';
 import userApi from '../../apis/user';
 import courseApi from '../../apis/course';
 import { notification } from 'ant-design-vue';
+import ConfirmModal from '../../components/admin/ConfirmModal.vue';
 export default {
   name: 'ReadingTest',
-  components: { ButtonBack, MultipleChoice },
+  components: { ButtonBack, MultipleChoice, ConfirmModal },
   created() {
     this.RELOAD = RELOAD;
     this.WARNING = WARNING;
@@ -150,7 +181,7 @@ export default {
             title: item.questionContent,
             question: item.options.map((item) => item.content),
           });
-          this.correctAnswer.push(+item.correctAnswer + 1);
+          this.correctAnswer.push(+item.correctAnswer);
         });
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
@@ -240,9 +271,27 @@ export default {
         });
       }
     },
+    /**
+     * show modal
+     */
+    showModalMuilti() {
+      this.modalMuilti = true;
+    },
+    /**
+     * close modal
+     */
+    closeModalMuilti() {
+      this.modalMuilti = false;
+    },
+    isMatchedRoute(routeName) {
+      return this.$route.matched.some(({ name }) => {
+        return name == routeName;
+      });
+    },
   },
   data() {
     return {
+      modalMuilti: false,
       listReading: [],
       idCourse: null,
       title: null,
