@@ -261,7 +261,7 @@ import InputLevel from '../../../components/common/InputLevel.vue';
 import { mapState } from 'vuex';
 import courseApi from '../../../apis/course';
 import blog from '../../../apis/blog';
-import Avatar from '../../../components/common/avatar.vue';
+import Avatar from '../../../components/common/Avatar.vue';
 export default {
   name: 'HomeUser',
   components: {
