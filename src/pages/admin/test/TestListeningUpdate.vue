@@ -64,10 +64,22 @@
     />
     <ButtonBack title="Transcript" extend-class="mt-5" />
     <Word :contentProp="contentListening" @update="updateContentListening" />
-    <ButtonBack
-      title="Listen to the dialogue above and choose the correct answer ( only 11 questions )"
-      extend-class="mt-5"
-    />
+    <div class="flex items-center flex-wrap mt-5 gap-5">
+      <ButtonBack
+        title="Listen to the dialogue above and choose the correct answer"
+      />
+      <div
+        v-if="userInfor.role == 'ADMIN' && checkRoute"
+        class="h-6 border-orange border rounded-xl flex items-center"
+      >
+        <div
+          class="text-primary_black hover:underline cursor-pointer mx-3"
+          @click="showModalMuilti"
+        >
+          Correct Answers
+        </div>
+      </div>
+    </div>
     <AddAnswer
       :data-questions="dataQuestion"
       @subtract="subtractQuestion"
@@ -228,6 +240,7 @@ export default {
     this.namePath = this.$route.params.course;
     this.idCourse = JSON.parse(localStorage.getItem('IDCourseTestLevel'));
     this.getAllListening();
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
   },
   methods: {
     /**
@@ -379,13 +392,12 @@ export default {
           };
           if (!this.noData) {
             await courseApi.createListeningSession(data);
-            this.$router.push({
-              name: 'TestLevelListening',
-              params: { name: this.namePath },
-            });
+            this.$router.push({ name: 'TestLevelListening' });
             notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
           } else {
             await courseApi.updateListeningSession(dataUpdate);
+            this.$router.push({ name: 'TestLevelListening' });
+
             this.emitter.emit('isShowLoading', false);
             notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
           }
@@ -465,6 +477,7 @@ export default {
 
   data() {
     return {
+      userInfor: null,
       noData: false,
       idSection: null,
       idCourse: null,
