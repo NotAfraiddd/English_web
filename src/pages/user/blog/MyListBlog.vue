@@ -279,7 +279,7 @@ export default {
           this.listBlog.push({
             id: item?.id,
             userID: item?.author?.uid,
-            author: item?.author?.fullName,
+            author: item?.author?.fullName || item?.author.email,
             avatar: item?.author?.avtURL,
             imageTitle: item?.thumbnailURL,
             title: item?.title || 'Notitle',
