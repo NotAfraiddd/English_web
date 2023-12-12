@@ -191,50 +191,62 @@ export default {
       );
       this.checkQuestions();
       try {
-        if (this.title) {
-          this.emitter.emit('isShowLoading', true);
-          if (this.file) {
-            let formData = new FormData();
-            formData.append('file', this.file);
-            this.avatar = await fileAPI.updateImg(formData);
-          }
-          this.questionList = this.questionList.map((item) => {
-            return {
-              ...item,
-              correctAnswer: item.correctAnswer - 1,
-            };
-          });
-          if (this.noData) {
-            await courseApi.createReadingSession({
-              description: this.subTitle,
-              textContent: this.contentReading,
-              title: this.title,
-              imgURL: this.avatar,
-              course: {
-                id: this.idCourse,
-              },
-              questionList: this.questionList,
+        if (
+          this.dataQuestionReadingCorrect.length != 0 &&
+          this.dataQuestionReading.length != 0 &&
+          this.contentReading
+        ) {
+          if (this.title) {
+            this.emitter.emit('isShowLoading', true);
+            if (this.file) {
+              let formData = new FormData();
+              formData.append('file', this.file);
+              this.avatar = await fileAPI.updateImg(formData);
+            }
+            this.questionList = this.questionList.map((item) => {
+              return {
+                ...item,
+                correctAnswer: item.correctAnswer - 1,
+              };
             });
-            this.emitter.emit('isShowLoading', false);
-            notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
+            if (!this.noData) {
+              await courseApi.createReadingSession({
+                description: this.subTitle,
+                textContent: this.contentReading,
+                title: this.title,
+                imgURL: this.avatar,
+                course: {
+                  id: this.idCourse,
+                },
+                questionList: this.questionList,
+              });
+              this.emitter.emit('isShowLoading', false);
+              notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
+            } else {
+              await courseApi.updateReadingSession({
+                id: this.idSection,
+                description: this.subTitle,
+                textContent: this.contentReading,
+                title: this.title,
+                imgURL: this.avatar,
+                course: {
+                  id: this.idCourse,
+                },
+                questionList: this.questionList,
+              });
+              this.emitter.emit('isShowLoading', false);
+              notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
+            }
+            this.$router.push({ name: 'CourseReading' });
           } else {
-            await courseApi.updateReadingSession({
-              id: this.idSection,
-              description: this.subTitle,
-              textContent: this.contentReading,
-              title: this.title,
-              imgURL: this.avatar,
-              course: {
-                id: this.idCourse,
-              },
-              questionList: this.questionList,
-            });
-            this.emitter.emit('isShowLoading', false);
-            notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
+            notification.error({ message: 'Title has not been filled in yet' });
           }
-          this.$router.push({ name: 'CourseReading' });
-        } else {
-          notification.error({ message: 'Title has not been filled in yet' });
+        }
+        if (
+          this.dataQuestionReadingCorrect.length == 0 &&
+          this.dataQuestionReading.length == 0
+        ) {
+          notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_MIN });
         }
         if (
           this.dataQuestionReadingCorrect.length !=
@@ -242,6 +254,11 @@ export default {
         ) {
           notification.error({
             message: 'The answers or questions has not been filled in yet',
+          });
+        }
+        if (!this.contentReading) {
+          notification.error({
+            message: 'The reading passage is not available yet',
           });
         }
       } catch (error) {
@@ -272,11 +289,9 @@ export default {
 
           this.dataQuestionReadingCorrect.push(+item.correctAnswer);
         });
+        this.noData = true;
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
-        console.log(error);
-        if (error.response.status == 404) this.noData = true;
-        this.$router.push({ name: 'TestLevelReadingUpdate' });
         this.emitter.emit('isShowLoading', false);
       }
     },
@@ -324,7 +339,7 @@ export default {
           title: '',
           answers: [],
         });
-      else notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_9 });
+      else notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_10 });
     },
     subtractQuestionReading(data) {
       this.dataQuestionReading.splice(data, 1);
@@ -342,6 +357,7 @@ export default {
 
   data() {
     return {
+      noData: false,
       avatar: AVATAR,
       file: null,
       idSection: null,

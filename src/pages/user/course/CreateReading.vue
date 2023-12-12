@@ -232,8 +232,6 @@ export default {
             name: 'ListCourseReading',
             params: { name: this.namePath },
           });
-        } else if (this.dataQuestionReading.length != 9) {
-          notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_9 });
         }
         if (
           this.dataQuestionReadingCorrect.length != 9 &&
