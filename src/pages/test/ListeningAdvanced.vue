@@ -23,10 +23,25 @@
     </div>
     <Audio :data-prop="selectedAudio" :hideChoose="false" />
     <div ref="transcriptTop">
-      <ButtonBack
-        title="Listen to the dialogue above and choose the correct answer"
-        extend-class="mt-5"
-      />
+      <div class="flex items-center flex-wrap mt-5 gap-5">
+        <ButtonBack
+          title="Listen to the dialogue above and choose the correct answer"
+        />
+        <div
+          v-if="
+            userInfor.role == 'ADMIN' &&
+            isMatchedRoute('TestLevelListeningAdvanced')
+          "
+          class="h-6 border-orange border rounded-xl flex items-center"
+        >
+          <div
+            class="text-primary_black hover:underline cursor-pointer mx-3"
+            @click="showModalMuilti"
+          >
+            Correct Answers
+          </div>
+        </div>
+      </div>
       <div class="px-5 pb-2 mt-5 detail-multiple-choice">
         <MultipleChoice
           :data="dataMultipleChoice"
@@ -37,10 +52,25 @@
         />
       </div>
     </div>
-    <ButtonBack
-      title="Listen to the dialogue above and match the beginnings and endings of the phrases"
-      extend-class="mt-5"
-    />
+    <div class="flex items-center flex-wrap mt-5 gap-5">
+      <ButtonBack
+        title="Listen to the dialogue above and match the beginnings and endings of the phrases"
+      />
+      <div
+        v-if="
+          userInfor.role == 'ADMIN' &&
+          isMatchedRoute('TestLevelListeningAdvanced')
+        "
+        class="h-6 border-orange border rounded-xl flex items-center"
+      >
+        <div
+          class="text-primary_black hover:underline cursor-pointer mx-3"
+          @click="showModalMatch"
+        >
+          Correct Answers
+        </div>
+      </div>
+    </div>
     <MatchWord
       :data-list-words="dataListWords"
       :list-answers="listAnswers"
@@ -73,6 +103,40 @@
       />
     </div>
   </div>
+  <ConfirmModal
+    :showModal="modalMuilti"
+    @closeModal="closeModalMuilti"
+    @save="closeModalMuilti"
+    :showFooter="false"
+    :widthCustom="300"
+  >
+    <template #content>
+      <div class="w-full text-center text-xl text-primary">Correct Answers</div>
+      <div v-for="(item, index) in correctAnswer" :key="index" class="w-full">
+        <div class="text-base flex w-full justify-between mt-3">
+          <div>Answers {{ index + 1 }} is</div>
+          <div class="text-orange">{{ item }}</div>
+        </div>
+      </div>
+    </template>
+  </ConfirmModal>
+  <ConfirmModal
+    :showModal="modalMatch"
+    @closeModal="closeModalMatch"
+    @save="closeModalMatch"
+    :showFooter="false"
+    :widthCustom="300"
+  >
+    <template #content>
+      <div class="w-full text-center text-xl text-primary">Correct Answers</div>
+      <div v-for="(item, index) in listQuestions" :key="index" class="w-full">
+        <div class="text-base flex w-full justify-between mt-3">
+          <div>Answers {{ index + 1 }} is</div>
+          <div class="text-orange">{{ item.word }}</div>
+        </div>
+      </div>
+    </template>
+  </ConfirmModal>
 </template>
 <script>
 import ButtonBack from '../../components/common/ButtonBack.vue';
@@ -83,10 +147,11 @@ import MatchWord from '../../components/common/MatchWord.vue';
 import { mapState, mapMutations } from 'vuex';
 import courseApi from '../../apis/course';
 import { notification } from 'ant-design-vue';
+import ConfirmModal from '../../components/admin/ConfirmModal.vue';
 
 export default {
   name: 'ListeningTest',
-  components: { ButtonBack, Audio, MultipleChoice, MatchWord },
+  components: { ButtonBack, Audio, MultipleChoice, MatchWord, ConfirmModal },
   created() {
     this.RELOAD = RELOAD;
     this.ARROW_LEFT = ARROW_LEFT;
@@ -101,6 +166,7 @@ export default {
     if (this.idCourse) {
       this.getAllListening();
     }
+    this.userInfor = JSON.parse(localStorage.getItem('user'));
   },
   watch: {
     listAnswers() {
@@ -112,6 +178,27 @@ export default {
   },
   methods: {
     ...mapMutations('auth', ['setError', 'setDefaultError']),
+    /**
+     * show modal
+     */
+    showModalMuilti() {
+      this.modalMuilti = true;
+    },
+    /**
+     * close modal
+     */
+    closeModalMuilti() {
+      this.modalMuilti = false;
+    },
+    /**
+     * show modal
+     */
+    showModalMatch() {
+      this.modalMatch = true;
+    },
+    closeModalMatch() {
+      this.modalMatch = false;
+    },
     /**
      * get all session
      * @param {*} dataID
@@ -179,7 +266,7 @@ export default {
         });
         this.title = detailSession?.title;
         this.textContent = detailSession?.textContent;
-        this.imgURL = detailSession?.imgURL;
+        this.imgURL = detailSession?.thumbnailURL;
         this.selectedAudio = detailSession?.mediaURL;
         this.script = detailSession?.script;
         detailSession?.questionList.forEach((item, index) => {
@@ -188,7 +275,7 @@ export default {
             title: item.questionContent,
             question: item.options.map((item) => item.content),
           });
-          this.correctAnswer.push(+item.correctAnswer + 1);
+          this.correctAnswer.push(+item.correctAnswer);
         });
         detailSession?.fillInBlankQuestionList.forEach((ele, index) => {
           this.listQuestions.push({
@@ -217,6 +304,7 @@ export default {
         item.word = null;
       });
       this.myAnswer = [];
+      this.dataListWords = [];
       this.getRandomQuestions();
     },
     handleTest() {
@@ -348,6 +436,8 @@ export default {
   },
   data() {
     return {
+      modalMuilti: false,
+      modalMatch: false,
       idCourse: null,
       listListening: [],
       script: null,

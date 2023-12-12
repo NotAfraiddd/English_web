@@ -267,7 +267,7 @@ export default {
         });
         this.title = detailSession?.title;
         this.textContent = detailSession?.textContent;
-        this.imgURL = detailSession?.imgURL;
+        this.imgURL = detailSession?.thumbnailURL;
         this.selectedAudio = detailSession?.mediaURL;
         this.script = detailSession?.script;
         detailSession?.questionList.forEach((item, index) => {

@@ -65,7 +65,7 @@
     <ButtonBack title="Transcript" extend-class="mt-5" />
     <Word :contentProp="contentListening" @update="updateContentListening" />
     <ButtonBack
-      title="Listen to the dialogue above and choose the correct answer ( only 11 questions )"
+      title="Listen to the dialogue above and choose the correct answer"
       extend-class="mt-5"
     />
     <AddAnswer
@@ -236,7 +236,7 @@ export default {
             title: item.questionContent,
             answers: item.options.map((item) => item.content),
           });
-          this.dataQuestionCorrect.push(+item?.correctAnswer);
+          this.dataQuestionCorrect.push(+item?.correctAnswer - 1);
         });
         this.dataWords = [];
         data?.fillInBlankQuestionList.forEach((ele, index) => {
@@ -306,11 +306,13 @@ export default {
       this.checkQuestions();
       this.checkWord();
       try {
+        const checkCorrect = this.dataQuestionCorrect.some((item) => item < 0);
         if (
           this.dataQuestion.length != 0 &&
           this.dataQuestionCorrect.length != 0 &&
           this.title &&
-          this.selectedAudio
+          this.selectedAudio &&
+          !checkCorrect
         ) {
           this.emitter.emit('isShowLoading', true);
           if (this.file) {
@@ -352,12 +354,15 @@ export default {
             await courseApi.createListeningSession(data);
             this.$router.push({
               name: 'TestLevelListeningBlog',
-              params: { name: this.namePath },
             });
             this.emitter.emit('isShowLoading', false);
             notification.success({ message: NOTIFY_MESSAGE.CREATE_SUCCESS });
           } else {
+            console.log(this.questionList);
             await courseApi.updateListeningSession(dataUpdate);
+            this.$router.push({
+              name: 'TestLevelListeningBlog',
+            });
             this.emitter.emit('isShowLoading', false);
             notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
           }
@@ -374,6 +379,11 @@ export default {
         if (!this.selectedAudio) {
           notification.error({
             message: 'There is no audio file yet',
+          });
+        }
+        if (checkCorrect) {
+          notification.error({
+            message: 'The answers has not been filled in yet',
           });
         }
       } catch (error) {
