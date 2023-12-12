@@ -68,10 +68,6 @@
         </div>
       </div>
     </div>
-    <ButtonBack
-      title="Listen to the dialogue above and match the beginnings and endings of the phrases"
-      extend-class="mt-5"
-    />
     <MatchWord
       :data-list-words="dataListWords"
       :list-answers="listAnswers"

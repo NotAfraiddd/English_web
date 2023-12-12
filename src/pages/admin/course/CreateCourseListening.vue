@@ -242,7 +242,7 @@ export default {
             title: item.questionContent,
             answers: item.options.map((item) => item.content),
           });
-          this.dataQuestionCorrect.push(+item?.correctAnswer - 1);
+          this.dataQuestionCorrect.push(+item?.correctAnswer);
         });
         this.dataWords = [];
         data?.fillInBlankQuestionList.forEach((ele, index) => {
@@ -313,11 +313,13 @@ export default {
       this.checkQuestions();
       this.checkWord();
       try {
+        const checkCorrect = this.dataQuestionCorrect.some((item) => item < 0);
         if (
           this.dataQuestion.length != 0 &&
           this.dataQuestionCorrect.length != 0 &&
           this.title &&
-          this.selectedAudio
+          this.selectedAudio &&
+          !checkCorrect
         ) {
           this.emitter.emit('isShowLoading', true);
           if (this.file) {
@@ -378,6 +380,11 @@ export default {
         if (!this.selectedAudio) {
           notification.error({
             message: 'There is no audio file yet',
+          });
+        }
+        if (checkCorrect) {
+          notification.error({
+            message: 'The answers has not been filled in yet',
           });
         }
       } catch (error) {

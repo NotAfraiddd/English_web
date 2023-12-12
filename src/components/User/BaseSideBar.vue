@@ -6,7 +6,10 @@
     >
       CircleZ
     </div>
-    <BaseMenu :panel="userPanel" />
+    <BaseMenu
+      v-if="!isMatchedRoute('ListeningTest') && !isMatchedRoute('ReadingTest')"
+      :panel="userPanel"
+    />
   </div>
 </template>
 <script>
@@ -52,8 +55,15 @@ export default {
   },
   mounted() {},
   methods: {
+    isMatchedRoute(routeName) {
+      return this.$route.name === routeName;
+    },
     handleGoToHome() {
-      this.$router.push({ name: 'HomeUser' });
+      if (
+        !this.isMatchedRoute('ListeningTest') &&
+        !this.isMatchedRoute('ReadingTest')
+      )
+        this.$router.push({ name: 'HomeUser' });
     },
   },
 };

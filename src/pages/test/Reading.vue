@@ -287,7 +287,29 @@ export default {
       this.submitMultipleChoice = false;
       this.rotation += 360;
     },
-    acceptShowModal() {
+    async acceptShowModal() {
+      if (this.error >= 20) {
+        await userApi.updateLevel({
+          user: {
+            uid: this.userInfor.email,
+          },
+          level: 1,
+        });
+      } else if (10 <= this.error && this.error < 20) {
+        await userApi.updateLevel({
+          user: {
+            uid: this.userInfor.email,
+          },
+          level: 2,
+        });
+      } else {
+        await userApi.updateLevel({
+          user: {
+            uid: this.userInfor.email,
+          },
+          level: 3,
+        });
+      }
       this.modalNotifyLevel = false;
       this.$router.push({ name: 'HomeUser' });
     },
