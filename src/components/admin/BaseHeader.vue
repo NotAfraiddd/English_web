@@ -179,7 +179,9 @@
                 class="flex flex-col items-start hover:opacity-50"
                 @click="handleGoProfile"
               >
-                <div class="text-lg font-semibold text-primary_black">
+                <div
+                  class="text-lg font-semibold text-primary_black text-overflow"
+                >
                   {{ userInfor.fullName || userInfor.email }}
                 </div>
                 <div class="text-sm font-normal text-primary_black opacity-50">
@@ -187,7 +189,9 @@
                 </div>
               </div>
               <div v-else class="flex flex-col items-start hover:opacity-50">
-                <div class="text-lg font-semibold text-primary_black">
+                <div
+                  class="text-lg font-semibold text-primary_black text-overflow"
+                >
                   {{ userInfor.fullName || userInfor.email }}
                 </div>
                 <div class="text-sm font-normal text-primary_black opacity-50">

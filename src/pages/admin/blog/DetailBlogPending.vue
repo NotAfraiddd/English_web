@@ -2,7 +2,8 @@
   <div class="text-primary_black relative">
     <ButtonBack title="Blog detail" @back="changeBack" :hide-back="true" />
     <div class="flex mt-5">
-      <Avatar :imgUrl="avatar" class="w-10 border" />
+      <Avatar :imgUrl="avatar" :name="name" class="w-10 h-10 border" />
+
       <div class="flex flex-col ml-4 items-start">
         <div class="text-sm">{{ created_at }}</div>
         <div class="text-base font-semibold">{{ name }}</div>
@@ -56,7 +57,7 @@ export default {
         const data = await blogApi.getDetailBlog({ id: this.idBlog });
         this.content = data?.content;
         this.created_at = moment(data?.createDate).format('DD/MM/YYYY HH:mm');
-        this.name = data?.author?.fullName;
+        this.name = data?.author?.fullName || data?.author?.email;
         this.avatar = data?.author?.avtURL;
         this.title = data?.title;
         this.emitter.emit('isShowLoading', false);

@@ -110,9 +110,11 @@
     <div class="text-sm text-left">( Report spam or bad content )</div>
     <!-- chat -->
     <div class="mt-5 flex">
-      <figure class="w-9 h-9 m-0">
-        <img :src="AVATAR" alt="" srcset="" class="rounded-full" />
-      </figure>
+      <Avatar
+        :imgUrl="userInfor.avtURL"
+        :name="userInfor.fullName || userInfor.email"
+        class="w-9 h-9"
+      />
       <div class="emoji-panel mx-2 mt-1 cursor-pointer">
         <div id="emoji-picker">
           <img :src="ICON_LAUGH" alt="" srcset="" />
@@ -139,7 +141,7 @@
     <div v-for="(item, index) in listComment" :key="item.id" class="mr-3">
       <!-- comment first -->
       <div class="flex mt-2">
-        <img :src="AVATAR" alt="" srcset="" class="rounded-full w-9 h-9" />
+        <Avatar :imgUrl="item.avatar" :name="item.name" class="w-9 h-9" />
         <div class="flex flex-col w-full relative">
           <div
             class="flex flex-col items-start ml-5 bg-primary_comment rounded-xl px-5 py-3 comment-first relative"
@@ -381,7 +383,7 @@ export default {
             id: item?.id,
             userID: item?.author?.email,
             avatar: item?.author?.avtURL,
-            name: item?.author?.fullName,
+            name: item?.author?.fullName || item?.author?.email,
             title: item?.title,
             thumnail: item?.thumbnailURL,
             created_at: moment(item?.createDate).format('DD/MM/YYYY HH:mm'),
@@ -418,7 +420,7 @@ export default {
           this.listComment.push({
             id: item?.id,
             userID: item?.postedUser?.email,
-            name: item?.postedUser?.fullName,
+            name: item?.postedUser?.fullName || item?.postedUser?.email,
             avatar: item?.postedUser?.avtURL,
             content: item?.commentContent,
             numReact: 0,
@@ -725,66 +727,39 @@ export default {
     sendChat(data) {
       //
       const unblockDate = moment(this.userInfor.unblockDate);
-      if (!unblockDate) {
+      if (this.userInfor.unblockDate == null) {
         const chatContent = this.$refs.chatContent;
         if (data) {
-          if (this.receiverName) {
-            // join socket
-            const dataSocket = {
-              room: this.idUserBlog + `REPLY`,
-              kind: SOCKET.REPLY_COMMENT,
-            };
-            this.$socket.emit('joinRoom', dataSocket);
-            const commentDetail = {
-              id: this.idUserBlog,
-              userID: this.userInfor.uid,
-              name: this.userInfor.fullName,
-              avatar: this.userInfor.avtURL,
-              nameReply: this.receiverName,
-              content: this.contentChat,
-              numReact: 0,
-              numComment: 0,
-              created_at: moment().format('DD/MM/YYYY HH:mm'),
-              admin: this.userInfor.role == 'ADMIN' ? true : false,
-            };
-            const comment = {
-              data: commentDetail,
-              kind: SOCKET.REPLY_COMMENT,
-            };
-            this.$socket.emit('sendSignal', comment);
-            this.replyComments.push(commentDetail);
-          } else {
-            const dataSocket = {
-              room: this.idUserBlog,
-              kind: SOCKET.COMMENT,
-            };
-            this.$socket.emit('joinRoom', dataSocket);
-            const commentDetail = {
-              id: this.idUserBlog,
-              userID: this.userInfor.uid,
-              name: this.userInfor.fullName,
-              avatar: this.userInfor.avtURL,
-              nameReply: this.receiverName,
-              content: this.contentChat,
-              numReact: 0,
-              numComment: 0,
-              replyComments: [],
-              created_at: moment().format('DD/MM/YYYY HH:mm'),
-              admin: this.userInfor.role == 'ADMIN' ? true : false,
-            };
-            const comment = {
-              data: commentDetail,
-              kind: SOCKET.COMMENT,
-            };
-            this.$socket.emit('sendSignal', comment);
-            this.listComment.unshift(commentDetail);
-            this.handleComment();
-            this.comment++;
-          }
-          this.receiverName = '';
-          this.contentChat = '';
-          chatContent.style.paddingLeft = `0px`;
+          const dataSocket = {
+            room: this.idUserBlog,
+            kind: SOCKET.COMMENT,
+          };
+          this.$socket.emit('joinRoom', dataSocket);
+          const commentDetail = {
+            id: this.idUserBlog,
+            userID: this.userInfor.uid,
+            name: this.userInfor.fullName || this.userInfor.email,
+            avatar: this.userInfor.avtURL,
+            nameReply: this.receiverName,
+            content: this.contentChat,
+            numReact: 0,
+            numComment: 0,
+            replyComments: [],
+            created_at: moment().format('DD/MM/YYYY HH:mm'),
+            admin: this.userInfor.role == 'ADMIN' ? true : false,
+          };
+          const comment = {
+            data: commentDetail,
+            kind: SOCKET.COMMENT,
+          };
+          this.$socket.emit('sendSignal', comment);
+          this.listComment.unshift(commentDetail);
+          this.handleComment();
+          this.comment++;
         }
+        this.receiverName = '';
+        this.contentChat = '';
+        chatContent.style.paddingLeft = `0px`;
       } else {
         const dateBlockDate = unblockDate
           .subtract(3, 'days')

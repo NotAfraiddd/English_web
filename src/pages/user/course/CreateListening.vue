@@ -229,6 +229,9 @@ export default {
       this.checkName = true;
     this.namePath = this.$route.params.course;
     this.idCourse = JSON.parse(localStorage.getItem('IDCourse'));
+    if (this.$route.params.course == 'beginner-level') this.inputLevel = 1;
+    if (this.$route.params.course == 'intermediate-level') this.inputLevel = 2;
+    if (this.$route.params.course == 'advanced-level') this.inputLevel = 3;
   },
   methods: {
     updateAvatar(data) {
@@ -258,7 +261,7 @@ export default {
       this.dataQuestion.forEach((questionData, index) => {
         const questionObject = {
           questionContent: questionData.title,
-          correctAnswer: this.dataQuestionCorrect[index] + 1,
+          correctAnswer: this.dataQuestionCorrect[index],
           options: questionData.answers.map((answer) => ({ content: answer })),
         };
         this.questionList.push(questionObject);
@@ -280,12 +283,21 @@ export default {
       );
       this.checkQuestions();
       this.checkWord();
+      const checkCorrect = this.dataQuestionCorrect.some((item) => item < 0);
+
+      const checkQuestion = this.dataQuestion.some(
+        (item) => item.answers.length == 0,
+      );
+      const checkMatchWords = this.dataWords.length === 5;
       try {
         if (
           this.dataQuestion.length != 0 &&
           this.dataQuestionCorrect.length != 0 &&
           this.title &&
-          this.selectedAudio
+          this.selectedAudio &&
+          !checkCorrect &&
+          !checkQuestion &&
+          checkMatchWords
         ) {
           this.emitter.emit('isShowLoading', true);
           if (this.file) {
@@ -317,10 +329,11 @@ export default {
             name: 'ListCourseListening',
             params: { name: this.namePath },
           });
-        } else if (this.dataQuestion.length != 9) {
-          notification.error({ message: NOTIFY_MESSAGE.ADD_QUESTION_9 });
         }
-        if (this.dataQuestion.length != this.dataQuestionCorrect.length) {
+        if (
+          this.dataQuestion.length != this.dataQuestionCorrect.length ||
+          checkQuestion
+        ) {
           notification.error({
             message: 'Questions and answers have not been filled in completely',
           });
@@ -332,6 +345,16 @@ export default {
         if (!this.selectedAudio) {
           notification.error({
             message: 'There is no audio file yet',
+          });
+        }
+        if (checkCorrect) {
+          notification.error({
+            message: 'The answers has not been filled in yet',
+          });
+        }
+        if (!checkMatchWords) {
+          notification.error({
+            message: 'Fill in the blanks with 5 sentences',
           });
         }
       } catch (error) {
@@ -357,7 +380,10 @@ export default {
       this.$router.push({ name: 'CreateCourseForAdvancedReading' });
     },
     changeBack() {
-      this.$router.push({ name: 'ListCourseListening' });
+      this.$router.push({
+        name: 'ListCourseListening',
+        params: { name: this.namePath },
+      });
     },
     addWord() {
       if (this.numWords <= 4) {
@@ -406,8 +432,8 @@ export default {
       inputLevel: 1,
       contentListening: '',
       screen: UI.UI_LISTENING,
-      title: 'title',
-      subTitle: 'subTitle',
+      title: '',
+      subTitle: '',
       indexFocus: null,
       numWords: 1,
       word: [],

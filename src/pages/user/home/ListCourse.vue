@@ -24,7 +24,9 @@ export default {
     this.LEARN = LEARN;
     this.formatSpacerIntoHyphen = formatSpacerIntoHyphen;
     this.userInfor = JSON.parse(localStorage.getItem('user'));
-    this.getAllCourse();
+    this.$nextTick(() => {
+      this.getAllCourse();
+    });
   },
   data() {
     return {
