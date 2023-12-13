@@ -158,32 +158,15 @@ export default {
 
         this.listListening = [];
 
-        if (
-          this.userInfor.role == 'ADMIN' ||
-          this.userInfor.level == 'ADVANCED'
-        ) {
-          arrAPI.forEach((item) => {
-            this.listListening.push({
-              id: item?.id,
-              title: item?.title,
-              subTitle: item?.description,
-              image: item?.thumbnailURL || EXAMPLE,
-              status: item?.sectionStatus == 'PENDING' ? true : false,
-            });
+        arrAPI.forEach((item) => {
+          this.listListening.push({
+            id: item?.id,
+            title: item?.title,
+            subTitle: item?.description,
+            image: item?.thumbnailURL || EXAMPLE,
+            status: item?.sectionStatus == 'PENDING' ? true : false,
           });
-        } else {
-          arrAPI.forEach((item) => {
-            if (item?.sectionStatus == 'APPROVED') {
-              this.listListening.push({
-                id: item?.id,
-                title: item?.description,
-                subTitle: item?.textContent,
-                image: item?.thumbnailURL || EXAMPLE,
-                status: false,
-              });
-            }
-          });
-        }
+        });
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
         console.log(error);

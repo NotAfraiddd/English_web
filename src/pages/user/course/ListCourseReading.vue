@@ -139,33 +139,15 @@ export default {
         });
 
         this.listReading = [];
-
-        if (
-          this.userInfor.role == 'ADMIN' ||
-          this.userInfor.level == 'ADVANCED'
-        ) {
-          arrAPI.forEach((item) => {
-            this.listReading.push({
-              id: item?.id,
-              title: item?.title,
-              subTitle: item?.description,
-              image: item?.imgURL || EXAMPLE,
-              status: item?.sectionStatus == 'PENDING' ? true : false,
-            });
+        arrAPI.forEach((item) => {
+          this.listReading.push({
+            id: item?.id,
+            title: item?.title,
+            subTitle: item?.description,
+            image: item?.imgURL || EXAMPLE,
+            status: item?.sectionStatus == 'PENDING' ? true : false,
           });
-        } else {
-          arrAPI.forEach((item) => {
-            if (item?.sectionStatus == 'APPROVED') {
-              this.listReading.push({
-                id: item?.id,
-                title: item?.title,
-                subTitle: item?.description,
-                image: item?.imgURL || EXAMPLE,
-                status: false,
-              });
-            }
-          });
-        }
+        });
 
         this.emitter.emit('isShowLoading', false);
       } catch (error) {
