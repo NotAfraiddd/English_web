@@ -117,17 +117,7 @@
         <div class="text-primary_black mx-2">or</div>
         <div class="border-primary_line w-full border-b" />
       </div>
-      <div
-        class="flex justify-center items-center border mx-10 h-10 leading-10 rounded-lg text-lg font-semibold cursor-pointer hover:opacity-70"
-      >
-        <img :src="GOOGLE" alt="" srcset="" class="w-5 h-5 mr-2" />
-        <div
-          @click="handleLoginGoogle"
-          class="h-7 leading-7 text-primary_black"
-        >
-          Login with Google
-        </div>
-      </div>
+
       <div
         class="mt-2 text-base text-primary_black flex mx-auto justify-center"
       >

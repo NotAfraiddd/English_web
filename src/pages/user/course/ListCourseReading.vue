@@ -140,13 +140,14 @@ export default {
 
         this.listReading = [];
         arrAPI.forEach((item) => {
-          this.listReading.push({
-            id: item?.id,
-            title: item?.title,
-            subTitle: item?.description,
-            image: item?.imgURL || EXAMPLE,
-            status: item?.sectionStatus == 'PENDING' ? true : false,
-          });
+          if (item.sectionStatus != 'REJECTED')
+            this.listReading.push({
+              id: item?.id,
+              title: item?.title,
+              subTitle: item?.description,
+              image: item?.imgURL || EXAMPLE,
+              status: item?.sectionStatus == 'PENDING' ? true : false,
+            });
         });
 
         this.emitter.emit('isShowLoading', false);

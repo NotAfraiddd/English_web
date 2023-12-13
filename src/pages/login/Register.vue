@@ -384,13 +384,11 @@ export default {
               level: 'PENDING',
               role: 'USER',
               accountStatus: 'ONLINE',
-              socialMediaConnection: {
-                facebookURL: '',
-                youtubeURL: '',
-                instagramURL: '',
-                twitterURL: '',
-                linkedinURL: '',
-              },
+              facebookURL: '',
+              youtubeURL: '',
+              instagramURL: '',
+              twitterURL: '',
+              linkedinURL: '',
             },
           });
           this.emitter.emit('isShowLoading', false);

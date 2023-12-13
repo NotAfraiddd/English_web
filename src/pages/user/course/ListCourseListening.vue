@@ -159,13 +159,14 @@ export default {
         this.listListening = [];
 
         arrAPI.forEach((item) => {
-          this.listListening.push({
-            id: item?.id,
-            title: item?.title,
-            subTitle: item?.description,
-            image: item?.thumbnailURL || EXAMPLE,
-            status: item?.sectionStatus == 'PENDING' ? true : false,
-          });
+          if (item.sectionStatus != 'REJECTED')
+            this.listListening.push({
+              id: item?.id,
+              title: item?.title,
+              subTitle: item?.description,
+              image: item?.thumbnailURL || EXAMPLE,
+              status: item?.sectionStatus == 'PENDING' ? true : false,
+            });
         });
         this.emitter.emit('isShowLoading', false);
       } catch (error) {

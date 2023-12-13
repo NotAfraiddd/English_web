@@ -306,13 +306,19 @@ export default {
       this.checkQuestions();
       this.checkWord();
       try {
+        const checkQuestion = this.dataQuestion.some(
+          (item) => item.answers.length == 0,
+        );
+        const checkMatchWords = this.dataWords.length === 5;
         const checkCorrect = this.dataQuestionCorrect.some((item) => item < 0);
         if (
           this.dataQuestion.length != 0 &&
           this.dataQuestionCorrect.length != 0 &&
           this.title &&
           this.selectedAudio &&
-          !checkCorrect
+          !checkCorrect &&
+          !checkQuestion &&
+          checkMatchWords
         ) {
           this.emitter.emit('isShowLoading', true);
           if (this.file) {
@@ -367,7 +373,10 @@ export default {
             notification.success({ message: NOTIFY_MESSAGE.UPDATE_SUCCESS });
           }
         }
-        if (this.dataQuestion.length != this.dataQuestionCorrect.length) {
+        if (
+          this.dataQuestion.length != this.dataQuestionCorrect.length ||
+          checkQuestion
+        ) {
           notification.error({
             message: 'Questions and answers have not been filled in completely',
           });
@@ -379,6 +388,11 @@ export default {
         if (!this.selectedAudio) {
           notification.error({
             message: 'There is no audio file yet',
+          });
+        }
+        if (!checkMatchWords) {
+          notification.error({
+            message: 'Fill in the blanks with 5 sentences',
           });
         }
         if (checkCorrect) {

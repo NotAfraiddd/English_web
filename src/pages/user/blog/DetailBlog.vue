@@ -465,6 +465,7 @@ export default {
       this.$router.push({ name: 'MyBlog' });
     },
     async getDetailBlogByID(dataID) {
+      this.checkUserReact = false;
       try {
         this.emitter.emit('isShowLoading', true);
         const data = await blogApi.getDetailBlog({ id: dataID });
