@@ -320,6 +320,7 @@ export default {
   watch: {
     user(newVal, oldVal) {
       localStorage.setItem('user', JSON.stringify(newVal));
+      this.userInfor = JSON.parse(localStorage.getItem('user'));
     },
     searchInputProp(newValue) {
       this.searchInput = newValue;

@@ -83,30 +83,6 @@
       </div>
     </div>
 
-    <!-- date -->
-    <div class="text-primary_black mt-5">
-      <div
-        class="member-detail__width flex items-center mx-auto justify-center"
-      >
-        <div class="mt-4 flex items-start flex-col contain__member-contain">
-          <div class="text-base text-primary_black font-semibold member-name">
-            Registration Date
-          </div>
-          <InputCalendar
-            @update="updateCalendar"
-            :calendarProp="inputDate"
-            :disabled="!editDate"
-            external-class="w-96 border-t-0 border-r-0 border-l-0 border-b"
-          />
-        </div>
-        <!-- Edit -->
-        <ButtonEdit
-          @cancel="handleCancelDate"
-          @edit="handleEditDate"
-          @update="handleUpdateDate"
-        />
-      </div>
-    </div>
     <!-- gender -->
     <div class="mx-auto member-detail__width">
       <div
@@ -128,6 +104,31 @@
           @cancel="handleCancelGender"
           @edit="handleEditGender"
           @update="handleUpdateGender"
+        />
+      </div>
+    </div>
+
+    <!-- blog -->
+    <div class="mx-auto member-detail__width">
+      <div
+        class="text-primary_black mt-5 flex items-center justify-center button-radio"
+      >
+        <div class="flex w-96 items-center justify-start gap-5">
+          <div class="text-base text-primary_black font-semibold member-name">
+            Status blog
+          </div>
+          <!-- Edit -->
+          <InputBlog
+            :disabled="!editBlog"
+            :radio-prop="inputBlog"
+            @update="updateBlog"
+          />
+        </div>
+
+        <ButtonEdit
+          @cancel="handleCancelBlog"
+          @edit="handleEditBlog"
+          @update="handleUpdateBlog"
         />
       </div>
     </div>
@@ -153,30 +154,32 @@
           @cancel="handleCancelLevel"
           @edit="handleEditLevel"
           @update="handleUpdateLevel"
+          extend-class="invisible"
         />
       </div>
     </div>
-    <!-- blog -->
-    <div class="mx-auto member-detail__width">
+    <!-- date -->
+    <div class="text-primary_black mt-5">
       <div
-        class="text-primary_black mt-5 flex items-center justify-center button-radio"
+        class="member-detail__width flex items-center mx-auto justify-center"
       >
-        <div class="flex w-96 items-center justify-start gap-5">
+        <div class="mt-4 flex items-start flex-col contain__member-contain">
           <div class="text-base text-primary_black font-semibold member-name">
-            Status blog
+            Registration Date
           </div>
-          <!-- Edit -->
-          <InputBlog
-            :disabled="!editBlog"
-            :radio-prop="inputBlog"
-            @update="updateBlog"
+          <InputCalendar
+            @update="updateCalendar"
+            :calendarProp="inputDate"
+            :disabled="!editDate"
+            external-class="w-96 border-t-0 border-r-0 border-l-0 border-b"
           />
         </div>
-
+        <!-- Edit -->
         <ButtonEdit
-          @cancel="handleCancelBlog"
-          @edit="handleEditBlog"
-          @update="handleUpdateBlog"
+          @cancel="handleCancelDate"
+          @edit="handleEditDate"
+          @update="handleUpdateDate"
+          extend-class="invisible"
         />
       </div>
     </div>
@@ -293,7 +296,7 @@ export default {
      */
     async getDetail() {
       const res = await userApi.getUser(this.emailID);
-      this.setUser(res);
+      // this.setUser(res);
       this.inputFullname = res?.fullName;
       this.inputBio = res?.bio;
       this.avatar = res?.avtURL || AVATAR;

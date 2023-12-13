@@ -29,14 +29,14 @@
       <template #blog="{ record }">
         <div
           v-if="record.blog == 'PENDING' || record.blog == 'BEGINNER'"
-          @click="handleEdit(record.blog)"
+          @click="handleEdit(record.blog, record.email)"
           class="text-base text-text_green cursor-pointer hover:opacity-70"
         >
           Unlocked
         </div>
         <div
           v-if="record.blog == 'ADVANCED' || record.blog == 'INTERMEDIATE'"
-          @click="handleEdit(record.blog)"
+          @click="handleEdit(record.blog, record.email)"
           class="text-base text-text_red cursor-pointer hover:opacity-70"
         >
           Locked
@@ -130,10 +130,14 @@ export default {
       this.getAllUser();
     },
     async getAllUser() {
+      this.listMember = [];
+      this.emitter.emit('isShowLoading', true);
       const data = await userApi.getAllUser(1);
+      this.emitter.emit('isShowLoading', false);
       data?.content.forEach((item) => {
         this.listMember.push({
-          id: item.uid,
+          id: item?.uid,
+          email: item?.email,
           user: {
             avatar: item?.avtURL,
             name: item?.fullName || item?.email,
@@ -159,7 +163,10 @@ export default {
       this.$router.push({ name: 'AdminDetail', params: { id: dataID } });
     },
     // modal edit
-    handleEdit(data) {
+    handleEdit(data, email) {
+      this.email = email;
+      if (data == 'BEGINNER' || data == 'PENDING') this.isBlock = true;
+      else this.isBlock = false;
       this.statusBlog = data;
       this.modalEdit = true;
     },
@@ -169,12 +176,30 @@ export default {
     cancelUpdateStatusBlog() {
       this.modalEdit = false;
     },
-    acceptUpdateStatusBlog() {
+    async acceptUpdateStatusBlog() {
+      if (this.isBlock) {
+        await userApi.updateLevel({
+          user: {
+            uid: this.email,
+          },
+          level: 2,
+        });
+      } else {
+        await userApi.updateLevel({
+          user: {
+            uid: this.email,
+          },
+          level: 1,
+        });
+      }
+      await this.getAllUser();
       this.modalEdit = false;
     },
   },
   data() {
     return {
+      email: null,
+      isBlock: false,
       total: 0,
       current: 1,
       modalDelete: false,

@@ -114,32 +114,6 @@
           </div>
         </div>
 
-        <!-- date -->
-        <div class="text-primary_black mt-5">
-          <div
-            class="member-detail__width flex items-center mx-auto justify-center"
-          >
-            <div class="mt-4 flex items-start flex-col contain__member-contain">
-              <div
-                class="text-base text-primary_black font-semibold member-name"
-              >
-                Registration Date
-              </div>
-              <InputCalendar
-                @update="updateCalendar"
-                :calendarProp="inputDate"
-                :disabled="!editDate"
-                external-class="w-96 border-t-0 border-r-0 border-l-0 border-b"
-              />
-            </div>
-            <!-- Edit -->
-            <ButtonEdit
-              @cancel="handleCancelDate"
-              @edit="handleEditDate"
-              @update="handleUpdateDate"
-            />
-          </div>
-        </div>
         <!-- gender -->
         <div class="mx-auto member-detail__width">
           <div
@@ -165,6 +139,33 @@
               @cancel="handleCancelGender"
               @edit="handleEditGender"
               @update="handleUpdateGender"
+            />
+          </div>
+        </div>
+        <!-- date -->
+        <div class="text-primary_black mt-5">
+          <div
+            class="member-detail__width flex items-center mx-auto justify-center"
+          >
+            <div class="mt-4 flex items-start flex-col contain__member-contain">
+              <div
+                class="text-base text-primary_black font-semibold member-name"
+              >
+                Registration Date
+              </div>
+              <InputCalendar
+                @update="updateCalendar"
+                :calendarProp="inputDate"
+                :disabled="!editDate"
+                external-class="w-96 border-t-0 border-r-0 border-l-0 border-b"
+              />
+            </div>
+            <!-- Edit -->
+            <ButtonEdit
+              @cancel="handleCancelDate"
+              @edit="handleEditDate"
+              @update="handleUpdateDate"
+              extend-class="invisible"
             />
           </div>
         </div>

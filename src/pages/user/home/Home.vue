@@ -280,9 +280,11 @@ export default {
     this.userInfor = JSON.parse(localStorage.getItem('user'));
     this.idBeginner = JSON.parse(localStorage.getItem('idBeginner'));
     this.isLogin = JSON.parse(localStorage.getItem('isLogin'));
-    this.getAllCourse();
-    this.getDetail();
-    this.getAllBlog();
+    this.$nextTick(() => {
+      this.getAllCourse();
+      this.getDetail();
+      this.getAllBlog();
+    });
   },
   computed: {
     ...mapState('notify', ['statusCallAPICourse']),
